@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Let’s Try! Tools — Numbers</title>
-<link rel="stylesheet" href="css/lets-try.css">
+<link rel="stylesheet" href="../css/lets-try.css">
 </head>
 <body>
   <header class="site-header">
@@ -334,7 +334,7 @@
   function closeSettings(){settingsPanel.classList.remove('open');scrim.classList.remove('open')}
   previousButton.onclick=()=>{stopAuto();previous()};nextButton.onclick=()=>{stopAuto();next()};shuffleButton.onclick=shuffleAction;autoButton.onclick=toggleAuto;timerDownButton.onclick=()=>changeTimer(-1);timerUpButton.onclick=()=>changeTimer(1);
   gameButton.onclick=e=>{e.stopPropagation();toggleGameMenu()};gameMenu.querySelectorAll('[data-game]').forEach(b=>b.onclick=()=>setGameMode(b.dataset.game));document.addEventListener('click',e=>{if(!gameMenu.contains(e.target)&&e.target!==gameButton)closeGameMenu()});
-  settingsButton.onclick=openSettings;closeSettingsButton.onclick=closeSettings;scrim.onclick=closeSettings;menuButton.onclick=()=>location.href='lets_try_1.html';
+  settingsButton.onclick=openSettings;closeSettingsButton.onclick=closeSettings;scrim.onclick=closeSettings;menuButton.onclick=()=>location.href='../lets_try_1.html';
   textbookSetButton.onclick=()=>{selectedNumbers=[...TEXTBOOK_NUMBERS];rebuildDeck()};selectAllButton.onclick=()=>{selectedNumbers=[...ALL_NUMBERS];rebuildDeck()};clearButton.onclick=()=>{selectedNumbers=[1];rebuildDeck()};resetButton.onclick=()=>{selectedNumbers=[...TEXTBOOK_NUMBERS];autoSeconds=3;displayMode='numberWord';previousDisplayMode='numberWord';sizeBalance=50;missingAnswerSize=10;missingAnswerSizeRange.value=10;missingAnswerSizeValue.textContent='10 px';document.documentElement.style.setProperty('--missing-answer-size','10px');document.querySelector('input[name="displayMode"][value="numberWord"]').checked=true;sizeBalanceRange.value=50;returnToFlashcards();rebuildDeck()};
   document.querySelectorAll('input[name="displayMode"]').forEach(r=>r.onchange=()=>{displayMode=r.value;previousDisplayMode=displayMode;gameMode='flashcards';gameButton.textContent='Game';render()});sizeBalanceRange.oninput=()=>{sizeBalance=Number(sizeBalanceRange.value);render()};missingAnswerSizeRange.oninput=()=>{missingAnswerSize=Number(missingAnswerSizeRange.value);document.documentElement.style.setProperty('--missing-answer-size',`${missingAnswerSize}px`);missingAnswerSizeValue.textContent=`${missingAnswerSize} px`};keyboardHelp.onclick=()=>keyboardHelp.classList.toggle('collapsed');
   document.addEventListener('keydown',e=>{
