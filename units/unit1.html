@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Let’s Try! Tools — Greetings</title>
-  <link rel="stylesheet" href="css/lets-try.css">
+  <link rel="stylesheet" href="../css/lets-try.css">
 </head>
 <body>
   <header class="site-header">
@@ -459,7 +459,7 @@ class FlashcardDeck {
       element.style.backgroundSize = "100% 100%";
       element.style.backgroundPosition = "center";
     } else {
-      element.style.backgroundImage = "url(\"https://crawlinuk.web.fc2.com/schoolapps/elementary/images/flags.png\")";
+      element.style.backgroundImage = "url(\"../images/flags.png\")";
       element.style.backgroundSize = "401% 301%";
       element.style.backgroundPosition = `${card.sprite.x}% ${card.sprite.y}%`;
     }
@@ -1238,7 +1238,7 @@ class FlashcardDeck {
   elements.timerDownButton.addEventListener("click", () => changeTimer(-1));
   elements.timerUpButton.addEventListener("click", () => changeTimer(1));
   elements.menuButton.addEventListener("click", () => {
-    window.location.href = "lets_try_1.html";
+    window.location.href = "../lets_try_1.html";
   });
 
   elements.scrim.addEventListener("click", closePanels);
