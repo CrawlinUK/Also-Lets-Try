@@ -1,0 +1,2460 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Let’s Try! Tools — Greetings</title>
+  <style>
+@font-face {
+  font-family: "ClassroomFallback";
+  src: local("Century Gothic"), local("Tw Cen MT"), local("Comic Sans MS");
+}
+
+:root {
+  --ink: #17191d;
+  --muted: #5f6872;
+  --line: #dce4e8;
+  --surface: #ffffff;
+  --page: #f5f8f6;
+  --blue: #1687df;
+  --green: #20b769;
+  --purple: #7955cf;
+  --teal: #20b9bd;
+  --unit-colour: #8fcf3f;
+  --unit-number: #a8dc52;
+  --unit-green: #79bf2c;
+  --soft: #eff4f7;
+  --shadow: 0 10px 30px rgba(31, 47, 40, 0.12);
+  --display-size: clamp(56px, 6.5vw, 112px);
+  --picture-scale: 1;
+  --text-scale: 1;
+  --answer-gap: 12px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+[hidden] {
+  display: none !important;
+}
+
+html,
+body {
+  width: 100%;
+  min-height: 100%;
+  margin: 0;
+}
+
+body {
+  overflow: hidden;
+  color: var(--ink);
+  background: var(--page);
+  font-family: "ClassroomFallback", "Century Gothic", "Tw Cen MT", "Comic Sans MS", sans-serif;
+}
+
+button,
+input {
+  font: inherit;
+}
+
+button {
+  color: inherit;
+  cursor: pointer;
+}
+
+#fc2_footer {
+  display: none !important;
+}
+
+.site-header {
+  height: 78px;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  padding: 8px 20px;
+  background: var(--surface);
+  border-bottom: 3px solid var(--unit-green);
+}
+
+.menu-button,
+.route-button {
+  min-height: 48px;
+  border: 0;
+  border-radius: 14px;
+  background: var(--soft);
+  font-weight: 800;
+}
+
+.menu-button {
+  width: 58px;
+  font-size: 28px;
+}
+
+.route-button {
+  margin-left: auto;
+  padding: 0 18px;
+}
+
+.site-title {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: var(--ink);
+  font-weight: 900;
+  line-height: 1;
+}
+
+.unit-word,
+.unit-name {
+  font-size: clamp(28px, 3vw, 44px);
+}
+
+.unit-number {
+  display: inline-block;
+  margin: 0 3px;
+  color: var(--unit-number);
+  font-family: Arial, sans-serif;
+  font-size: clamp(56px, 6vw, 82px);
+  font-weight: 1000;
+  line-height: .75;
+  -webkit-text-stroke: 5px #191919;
+  paint-order: stroke fill;
+  text-shadow: 2px 3px 0 rgba(0,0,0,.12);
+}
+
+.app {
+  height: calc(100vh - 78px);
+  display: grid;
+  grid-template-rows: minmax(0, 1fr) auto auto;
+  gap: 12px;
+  padding: 14px 18px 12px;
+}
+
+.flashcard {
+  min-height: 0;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  padding: 9px 18px 8px;
+  overflow: hidden;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 24px;
+  box-shadow: var(--shadow);
+}
+
+.prompt {
+  text-align: center;
+  color: #46545e;
+  font-size: clamp(22px, 2.4vw, 34px);
+  font-weight: 900;
+  line-height: 1.1;
+}
+
+.answer-area {
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--answer-gap);
+  padding: 10px;
+  overflow: hidden;
+}
+
+.picture-frame {
+  width: calc(min(68vh, 72vw, 820px) * var(--picture-scale));
+  aspect-ratio: 3 / 2;
+  flex: 0 1 auto;
+  overflow: hidden;
+  border-radius: 14px;
+  box-shadow: 0 9px 22px rgba(25, 38, 33, 0.22);
+}
+
+.feeling-picture {
+  width: 100%;
+  height: 100%;
+  border-radius: inherit;
+  transform-origin: center;
+  background-image: url("https://crawlinuk.web.fc2.com/schoolapps/elementary/images/flags.png");
+  background-repeat: no-repeat;
+  background-size: 401% 301%;
+  transform-origin: center;
+}
+
+.display-text {
+  max-width: 94%;
+  font-size: calc(var(--display-size) * var(--text-scale));
+  font-weight: 900;
+  line-height: 1.06;
+  text-align: center;
+  overflow-wrap: anywhere;
+}
+
+.native-text {
+  max-width: 92%;
+  margin-top: -8px;
+  color: #46545e;
+  font-size: clamp(28px, 3.2vw, 52px);
+  font-weight: 800;
+  line-height: 1.05;
+  text-align: center;
+}
+
+.flashcard.picture-only .picture-frame {
+  width: calc(min(72vh, 82vw, 960px) * var(--picture-scale));
+}
+
+.flashcard.picture-only .display-text,
+.flashcard.picture-only .native-text {
+  display: none;
+}
+
+.flashcard.text-only .picture-frame {
+  display: none;
+}
+
+.flashcard.text-only .display-text {
+  font-size: calc(var(--display-size) * var(--text-scale));
+}
+
+.guess-active {
+  color: #ffffff;
+  background: var(--teal);
+  border-color: var(--teal);
+}
+
+.missing-area {
+  min-height: 0;
+  height: 100%;
+  display: grid;
+  grid-template-rows: minmax(0, 1fr);
+  padding: 2px 8px 8px;
+}
+
+.missing-title {
+  display: none;
+}
+
+.missing-grid {
+  min-height: 0;
+  height: 100%;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-auto-rows: minmax(0, 1fr);
+  gap: 12px;
+  align-content: stretch;
+}
+
+.missing-card {
+  min-height: 0;
+  width: 100%;
+  display: grid;
+  place-items: center;
+  padding: 4px;
+  background: #f7faf8;
+  border: 2px solid var(--line);
+  border-radius: 18px;
+  overflow: hidden;
+}
+
+.missing-picture {
+  background-color: #ffffff;
+  box-shadow: 0 5px 14px rgba(25, 38, 33, 0.18);
+  width: min(25vh, 27vw, 360px);
+  max-height: 96%;
+  aspect-ratio: 3 / 2;
+  background-image: url("https://crawlinuk.web.fc2.com/schoolapps/elementary/images/flags.png");
+  background-repeat: no-repeat;
+  background-size: 401% 301%;
+  transform-origin: center;
+}
+
+.missing-card.covered {
+  background: #eef2f4;
+  border-style: dashed;
+}
+
+.missing-card.covered::after {
+  content: "?";
+  font-size: clamp(54px, 8vw, 110px);
+  font-weight: 900;
+  color: #7a8790;
+}
+
+.missing-card.covered .missing-picture {
+  display: none;
+}
+
+.missing-grid.cards-4 {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.missing-grid.cards-5,
+.missing-grid.cards-6 {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.missing-grid.cards-7,
+.missing-grid.cards-8 {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.missing-grid.cards-9 {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.game-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.game-actions button {
+  min-height: 46px;
+  border: 0;
+  border-radius: 10px;
+  background: var(--soft);
+  font-weight: 900;
+}
+
+.game-note {
+  margin: 9px 0 0;
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.35;
+}
+
+ .balance-labels {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 5px;
+  font-weight: 900;
+}
+
+.balance-slider {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 9px;
+}
+
+.balance-slider input[type="range"] {
+  width: 100%;
+}
+
+.control-bar {
+  display: grid;
+  grid-template-columns: minmax(135px, 1fr) minmax(125px, 0.9fr) minmax(120px, 1fr) minmax(125px, 1fr) minmax(100px, 0.85fr) minmax(115px, 0.9fr);
+  gap: 10px;
+}
+
+.control {
+  min-height: 64px;
+  padding: 8px 14px;
+  border: 0;
+  border-radius: 15px;
+  color: #ffffff;
+  font-size: clamp(16px, 1.6vw, 23px);
+  font-weight: 900;
+  box-shadow: 0 5px 12px rgba(20, 40, 35, 0.12);
+}
+
+.previous {
+  background: var(--blue);
+}
+
+.next {
+  background: var(--green);
+}
+
+.shuffle {
+  background: var(--purple);
+}
+
+.quiet {
+  color: var(--ink);
+  background: var(--surface);
+  border: 1px solid var(--line);
+}
+
+.card-counter {
+  min-height: 64px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 15px;
+}
+
+.card-counter strong {
+  font-size: clamp(23px, 2.3vw, 34px);
+  line-height: 1;
+}
+
+.card-counter span {
+  margin-top: 5px;
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.shortcut-bar {
+  min-height: 42px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+  padding: 7px 14px;
+  color: var(--muted);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 13px;
+  font-size: 14px;
+}
+
+.shortcut-bar span {
+  white-space: nowrap;
+}
+
+kbd {
+  display: inline-block;
+  min-width: 28px;
+  padding: 3px 7px;
+  color: var(--ink);
+  text-align: center;
+  background: #f7f9fa;
+  border: 1px solid #d9e0e4;
+  border-radius: 6px;
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05);
+}
+
+.scrim {
+  position: fixed;
+  z-index: 20;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0;
+  background: rgba(10, 17, 14, 0.34);
+  transition: opacity 0.18s ease;
+}
+
+.scrim.open {
+  pointer-events: auto;
+  opacity: 1;
+}
+
+.settings-panel,
+.navigation-panel {
+  position: fixed;
+  z-index: 30;
+  top: 16px;
+  right: 16px;
+  width: min(440px, calc(100vw - 32px));
+  max-height: calc(100vh - 32px);
+  padding: 20px;
+  overflow: auto;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  box-shadow: 0 20px 60px rgba(18, 30, 24, 0.25);
+  transform: translateX(calc(100% + 34px));
+  transition: transform 0.2s ease;
+}
+
+.navigation-panel {
+  left: 16px;
+  right: auto;
+  transform: translateX(calc(-100% - 34px));
+}
+
+.settings-panel.open,
+.navigation-panel.open {
+  transform: translateX(0);
+}
+
+.settings-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.settings-heading h2,
+.setting-section h3 {
+  margin: 0;
+}
+
+.settings-heading h2 {
+  font-size: 28px;
+}
+
+.settings-heading p {
+  margin: 5px 0 0;
+  color: var(--muted);
+}
+
+.close-button {
+  width: 40px;
+  height: 40px;
+  border: 0;
+  border-radius: 50%;
+  background: var(--soft);
+  font-size: 25px;
+  font-weight: 900;
+}
+
+.setting-section {
+  margin-top: 23px;
+}
+
+.setting-section h3 {
+  margin-bottom: 11px;
+  font-size: 20px;
+}
+
+.word-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+
+.word-option {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  min-height: 44px;
+  padding: 8px;
+  background: #f4f6f5;
+  border-radius: 10px;
+  font-weight: 800;
+}
+
+.word-option input {
+  width: 20px;
+  height: 20px;
+  accent-color: var(--green);
+}
+
+.setting-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-top: 11px;
+}
+
+.setting-actions button {
+  min-height: 42px;
+  border: 0;
+  border-radius: 10px;
+  background: var(--soft);
+  font-weight: 900;
+}
+
+.message {
+  min-height: 20px;
+  margin: 8px 0 0;
+  color: #a13d35;
+  font-weight: 800;
+}
+
+.segmented {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  overflow: hidden;
+  border: 1px solid #cbd8df;
+  border-radius: 11px;
+}
+
+.segmented.three {
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.segmented label {
+  min-width: 0;
+}
+
+.segmented input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.segmented span {
+  min-height: 52px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px;
+  text-align: center;
+  font-weight: 800;
+  border-right: 1px solid #cbd8df;
+}
+
+.segmented label:last-child span {
+  border-right: 0;
+}
+
+.segmented input:checked + span {
+  color: #0d5fa7;
+  background: #eaf5ff;
+  box-shadow: inset 0 0 0 2px #1789df;
+}
+
+.route-card {
+  width: 100%;
+  display: block;
+  margin-top: 12px;
+  padding: 18px;
+  text-align: left;
+  background: #f4f7f5;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+}
+
+.route-card strong,
+.route-card span {
+  display: block;
+}
+
+.route-card strong {
+  font-size: 22px;
+}
+
+.route-card span {
+  margin-top: 5px;
+  color: var(--muted);
+}
+
+@media (max-width: 980px) {
+  .shortcut-bar {
+    display: none;
+  }
+
+  .app {
+    grid-template-rows: minmax(0, 1fr) auto;
+  }
+
+  .control-bar {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .control,
+  .card-counter {
+    min-height: 52px;
+  }
+
+  .picture-frame {
+    width: min(33vh, 35vw, 270px);
+  }
+
+  :root {
+    --display-size: clamp(58px, 10vw, 110px);
+  }
+}
+
+@media (max-width: 850px) {
+  .missing-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .missing-picture {
+    width: min(20vh, 40vw, 300px);
+  }
+}
+
+@media (max-width: 650px) {
+  .site-header {
+    height: 60px;
+    padding: 7px 10px;
+  }
+
+  .site-title {
+    font-size: 18px;
+  }
+
+  .route-button {
+    display: none;
+  }
+
+  .app {
+    height: calc(100vh - 60px);
+    padding: 8px;
+    gap: 8px;
+  }
+
+  .flashcard {
+    padding: 10px;
+    border-radius: 18px;
+  }
+
+  .prompt {
+    font-size: 24px;
+  }
+
+  .answer-area {
+    gap: clamp(18px, 4vh, 36px);
+  }
+
+  .picture-frame {
+    width: min(30vh, 45vw, 220px);
+  }
+
+  .control-bar {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 7px;
+  }
+
+  .control,
+  .card-counter {
+    min-height: 47px;
+    font-size: 14px;
+  }
+
+  .word-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .segmented.three {
+    grid-template-columns: 1fr;
+  }
+
+  .segmented.three span {
+    border-right: 0;
+    border-bottom: 1px solid #cbd8df;
+  }
+
+  .segmented.three label:last-child span {
+    border-bottom: 0;
+  }
+
+  :root {
+    --display-size: clamp(50px, 15vw, 92px);
+  }
+}
+
+@media (max-height: 700px) and (min-width: 651px) {
+  .site-header {
+    height: 58px;
+  }
+
+  .app {
+    height: calc(100vh - 58px);
+    padding-top: 7px;
+    gap: 7px;
+  }
+
+  .flashcard {
+    padding-top: 8px;
+  }
+
+  .prompt {
+    font-size: 24px;
+  }
+
+  .answer-area {
+    gap: clamp(14px, 3.5vh, 28px);
+  }
+
+  .picture-frame {
+    width: min(32vh, 23vw, 235px);
+  }
+
+  .native-text {
+  max-width: 92%;
+  margin-top: -8px;
+  color: #46545e;
+  font-size: clamp(28px, 3.2vw, 52px);
+  font-weight: 800;
+  line-height: 1.05;
+  text-align: center;
+}
+
+.flashcard.picture-only .picture-frame {
+    width: min(48vh, 36vw, 360px);
+  }
+
+  .control,
+  .card-counter {
+    min-height: 50px;
+  }
+
+  .shortcut-bar {
+    display: none;
+  }
+
+  .app {
+    grid-template-rows: minmax(0, 1fr) auto;
+  }
+
+  :root {
+    --display-size: clamp(62px, 8vw, 105px);
+  }
+}
+
+
+.home-screen {
+  min-height: calc(100vh - 78px);
+  padding: 32px;
+}
+
+.home-hero {
+  text-align: center;
+  margin: 18px auto 34px;
+}
+
+.home-hero h1 {
+  margin: 0;
+  font-size: clamp(42px, 6vw, 76px);
+  line-height: 1;
+}
+
+.home-hero p {
+  margin: 14px 0 0;
+  color: var(--muted);
+  font-size: 22px;
+  font-weight: 700;
+}
+
+.home-grid {
+  max-width: 1150px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 22px;
+}
+
+.home-card {
+  min-height: 220px;
+  border: 0;
+  border-radius: 26px;
+  padding: 24px;
+  color: #fff;
+  box-shadow: var(--shadow);
+}
+
+.home-card strong,
+.home-card span {
+  display: block;
+}
+
+.home-card strong {
+  margin-top: 14px;
+  font-size: 34px;
+}
+
+.home-card span:last-child {
+  margin-top: 6px;
+  font-size: 18px;
+  font-weight: 800;
+}
+
+.home-icon {
+  font-size: 70px;
+}
+
+.textbook-card {
+  background: linear-gradient(145deg, #ffc928, #eba500);
+}
+
+.category-card {
+  background: linear-gradient(145deg, #4ca7ed, #2c75c3);
+}
+
+.muted-card {
+  background: linear-gradient(145deg, #f09043, #d96f28);
+  opacity: .55;
+}
+
+.unit-menu {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.unit-menu-heading {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  margin-bottom: 20px;
+}
+
+.unit-menu-heading h2 {
+  margin: 0;
+  font-size: 42px;
+}
+
+.small-back {
+  min-height: 44px;
+  padding: 0 16px;
+  border: 0;
+  border-radius: 12px;
+  background: var(--soft);
+  font-weight: 900;
+}
+
+.unit-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+}
+
+.unit-item {
+  min-height: 120px;
+  padding: 18px;
+  text-align: left;
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  box-shadow: var(--shadow);
+}
+
+.unit-item strong,
+.unit-item span {
+  display: block;
+}
+
+.unit-item strong {
+  font-size: 26px;
+}
+
+.unit-item span {
+  margin-top: 5px;
+  font-size: 18px;
+}
+
+.unit-item.enabled {
+  border-left: 14px solid #ffc51c;
+}
+
+.unit-item.disabled {
+  opacity: .45;
+}
+
+@media (max-width: 800px) {
+  .home-screen {
+    padding: 18px;
+  }
+
+  .home-grid,
+  .unit-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+
+.game-menu-wrap {
+  position: relative;
+  min-width: 0;
+}
+
+.game-menu-wrap > .control {
+  width: 100%;
+  height: 100%;
+}
+
+.game-menu {
+  position: absolute;
+  z-index: 60;
+  right: 0;
+  bottom: calc(100% + 10px);
+  width: min(240px, 80vw);
+  padding: 8px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  box-shadow: 0 14px 38px rgba(18, 30, 24, 0.22);
+}
+
+.game-menu button {
+  width: 100%;
+  min-height: 46px;
+  padding: 9px 12px;
+  text-align: left;
+  background: transparent;
+  border: 0;
+  border-radius: 9px;
+  font-weight: 900;
+}
+
+.game-menu button:hover,
+.game-menu button:focus-visible {
+  background: var(--soft);
+}
+
+.keyword-area {
+  min-height: 0;
+  height: 100%;
+  padding: 2px 8px 8px;
+}
+
+.keyword-grid {
+  min-height: 0;
+  height: 100%;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-auto-rows: minmax(0, 1fr);
+  gap: 12px;
+  align-content: stretch;
+}
+.keyword-card {
+  min-height: 0;
+  width: 100%;
+  display: grid;
+  place-items: center;
+  padding: 4px;
+  overflow: hidden;
+  background: #f7faf8;
+  border: 2px solid var(--line);
+  border-radius: 18px;
+}
+
+.keyword-card.selected {
+  border: 6px solid var(--unit-colour);
+  padding: 0;
+}
+
+.keyword-picture {
+  background-color: #ffffff;
+  box-shadow: 0 5px 14px rgba(25, 38, 33, 0.18);
+  width: min(25vh, 27vw, 360px);
+  max-height: 96%;
+  aspect-ratio: 3 / 2;
+  background-image: url("https://crawlinuk.web.fc2.com/schoolapps/elementary/images/flags.png");
+  background-repeat: no-repeat;
+  background-size: 401% 301%;
+  transform-origin: center;
+}
+
+.keyword-grid.cards-4 {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.keyword-grid.cards-5,
+.keyword-grid.cards-6,
+.keyword-grid.cards-9 {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.keyword-grid.cards-7,
+.keyword-grid.cards-8 {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+@media (max-width: 850px) {
+  .keyword-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .keyword-picture {
+    width: min(20vh, 40vw, 300px);
+  }
+}
+
+
+.left-right-area {
+  position: relative;
+  min-height: 0;
+  height: 100%;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 18px;
+  padding: 2px 8px 8px;
+}
+
+.left-right-card {
+  position: relative;
+  min-width: 0;
+  min-height: 0;
+  display: grid;
+  place-items: center;
+  padding: 8px;
+  overflow: hidden;
+  background: #f7faf8;
+  border: 2px solid var(--line);
+  border-radius: 20px;
+}
+
+.left-right-card.correct {
+  border: 8px solid #20b769;
+  padding: 2px;
+}
+
+.left-right-card.wrong {
+  border: 8px solid #e45151;
+  padding: 2px;
+}
+
+.answer-mark {
+  position: absolute;
+  z-index: 4;
+  inset: 0;
+  display: none;
+  place-items: center;
+  color: #e32636;
+  font-family: Arial, sans-serif;
+  font-size: min(34vh, 25vw, 340px);
+  font-weight: 900;
+  line-height: 1;
+  pointer-events: none;
+  text-shadow:
+    -4px -4px 0 rgba(255,255,255,.92),
+     4px -4px 0 rgba(255,255,255,.92),
+    -4px  4px 0 rgba(255,255,255,.92),
+     4px  4px 0 rgba(255,255,255,.92);
+}
+
+.answer-mark.show { display: grid; }
+.answer-mark.correct::before { content: "○"; }
+.answer-mark.wrong::before { content: "×"; }
+
+.left-right-picture {
+  background-color: #ffffff;
+  box-shadow: 0 5px 14px rgba(25, 38, 33, 0.18);
+  width: 94%;
+  height: auto;
+  max-height: 94%;
+  aspect-ratio: 3 / 2;
+  background-image: url("https://crawlinuk.web.fc2.com/schoolapps/elementary/images/flags.png");
+  background-repeat: no-repeat;
+  background-size: 401% 301%;
+  transform-origin: center;
+}
+
+.left-right-centre {
+  position: absolute;
+  z-index: 5;
+  left: 50%;
+  top: 50%;
+  width: min(42vw, 520px);
+  display: grid;
+  justify-items: center;
+  gap: 12px;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+
+.left-right-word {
+  max-width: 100%;
+  padding: 16px 28px;
+  color: var(--ink);
+  background: rgba(255, 255, 255, 0.94);
+  border: 3px solid var(--unit-colour);
+  border-radius: 18px;
+  font-size: clamp(52px, 7vw, 118px);
+  font-weight: 900;
+  line-height: 1;
+  text-align: center;
+}
+
+.left-right-next {
+  min-width: 170px;
+  min-height: 54px;
+  padding: 8px 24px;
+  color: #fff;
+  background: var(--green);
+  border: 0;
+  border-radius: 14px;
+  font-size: 23px;
+  font-weight: 900;
+  pointer-events: auto;
+}
+
+@media (max-width: 720px) {
+  .left-right-area { gap: 8px; }
+  .left-right-word {
+    max-width: 48vw;
+    padding: 10px 14px;
+    font-size: clamp(36px, 9vw, 72px);
+  }
+}
+
+</style>
+</head>
+<body>
+  <header class="site-header">
+    <button class="menu-button" id="menuButton" type="button" aria-label="Return to main menu">☰</button>
+    <div class="site-title" id="siteTitle">
+      <span class="unit-word">Unit</span>
+      <span class="unit-number">1</span>
+      <span class="unit-name">Hello!</span>
+    </div>
+  </header>
+
+
+  <main class="home-screen" id="homeScreen">
+    <section class="home-hero">
+      <h1>Classroom English Tools</h1>
+      <p>Choose a textbook or browse by topic.</p>
+    </section>
+
+    <section class="home-grid">
+      <button class="home-card textbook-card" id="letsTryOneButton" type="button">
+        <span class="home-icon">📘</span>
+        <strong>Let’s Try! 1</strong>
+        <span>Units 1–9</span>
+      </button>
+
+      <button class="home-card muted-card" type="button" disabled>
+        <span class="home-icon">📙</span>
+        <strong>Let’s Try! 2</strong>
+        <span>Coming later</span>
+      </button>
+
+      <button class="home-card category-card" id="greetingsCategoryButton" type="button">
+        <span class="home-icon">🧩</span>
+        <strong>Categories</strong>
+        <span>Greetings</span>
+      </button>
+    </section>
+
+    <section class="unit-menu" id="unitMenu" hidden>
+      <div class="unit-menu-heading">
+        <button class="small-back" id="unitMenuBackButton" type="button">◀ Back</button>
+        <h2>Let’s Try! 1</h2>
+      </div>
+      <div class="unit-grid">
+        <button class="unit-item enabled" id="unitOneButton" type="button">
+          <strong>Unit 1</strong><span>Hello!</span>
+        </button>
+        <button class="unit-item enabled" id="unitTwoLinkButton" type="button">
+          <strong>Unit 2</strong><span>How are you?</span>
+        </button>
+        <button class="unit-item disabled" type="button" disabled><strong>Unit 3</strong><span>How many?</span></button>
+        <button class="unit-item disabled" type="button" disabled><strong>Unit 4</strong><span>I like blue.</span></button>
+        <button class="unit-item disabled" type="button" disabled><strong>Unit 5</strong><span>What do you like?</span></button>
+        <button class="unit-item disabled" type="button" disabled><strong>Unit 6</strong><span>ALPHABET</span></button>
+        <button class="unit-item disabled" type="button" disabled><strong>Unit 7</strong><span>This is for you.</span></button>
+        <button class="unit-item disabled" type="button" disabled><strong>Unit 8</strong><span>What’s this?</span></button>
+        <button class="unit-item disabled" type="button" disabled><strong>Unit 9</strong><span>Who are you?</span></button>
+      </div>
+    </section>
+  </main>
+
+  <main class="app" id="appScreen" hidden>
+    <section class="flashcard" aria-live="polite">
+      <div class="prompt" id="mainPrompt">Hello!</div>
+
+      <div class="answer-area" id="answerArea">
+        <div class="picture-frame" id="pictureFrame">
+          <div class="feeling-picture" id="feelingPicture" role="img"></div>
+        </div>
+        <div class="display-text" id="displayText">Terve</div>
+        <div class="native-text" id="nativeText" hidden></div>
+      </div>
+
+      <div class="missing-area" id="missingArea" hidden>
+        <div class="missing-title">What’s missing?</div>
+        <div class="missing-grid" id="missingGrid"></div>
+      </div>
+
+      <div class="keyword-area" id="keywordArea" hidden>
+        <div class="keyword-grid" id="keywordGrid"></div>
+      </div>
+
+      <div class="left-right-area" id="leftRightArea" hidden>
+        <button class="left-right-card" id="leftChoice" type="button" aria-label="Choose left picture">
+          <div class="left-right-picture" id="leftPicture" role="img"></div>
+          <div class="answer-mark" id="leftAnswerMark" aria-hidden="true"></div>
+        </button>
+
+        <div class="left-right-centre">
+          <div class="left-right-word" id="leftRightWord">Terve</div>
+          <button class="left-right-next" id="leftRightNextButton" type="button" hidden>Next ▶</button>
+        </div>
+
+        <button class="left-right-card" id="rightChoice" type="button" aria-label="Choose right picture">
+          <div class="left-right-picture" id="rightPicture" role="img"></div>
+          <div class="answer-mark" id="rightAnswerMark" aria-hidden="true"></div>
+        </button>
+      </div>
+    </section>
+
+    <nav class="control-bar" aria-label="Flashcard controls">
+      <button class="control previous" id="previousButton" type="button">◀ Previous</button>
+
+      <div class="card-counter">
+        <strong id="counter">1 / 6</strong>
+        <span>Flashcard mode</span>
+      </div>
+
+      <button class="control next" id="nextButton" type="button">Next ▶</button>
+      <button class="control shuffle" id="shuffleButton" type="button">↝ Shuffle</button>
+      <div class="game-menu-wrap">
+        <button class="control quiet game-menu-button" id="gameButton" type="button"
+                aria-haspopup="true" aria-expanded="false">Game</button>
+        <div class="game-menu" id="gameMenu" hidden>
+          <button type="button" data-game="guess">Guess</button>
+          <button type="button" data-game="missing">Missing game</button>
+          <button type="button" data-game="keyword">Keyword game</button>
+          <button type="button" data-game="leftRight">Left or Right</button>
+          <button type="button" data-game="flashcards">Back to flashcards</button>
+        </div>
+      </div>
+      <button class="control quiet" id="settingsButton" type="button">⚙ Settings</button>
+    </nav>
+
+    <div class="shortcut-bar">
+      <strong>Keyboard:</strong>
+      <span><kbd>Space</kbd> / <kbd>→</kbd> Next</span>
+      <span><kbd>←</kbd> Previous</span>
+      <span><kbd>R</kbd> Shuffle</span>
+      <span><kbd>G</kbd> Games</span>
+      <span><kbd>Esc</kbd> Close settings</span>
+    </div>
+  </main>
+
+  <div class="scrim" id="scrim"></div>
+
+  <aside class="settings-panel" id="settingsPanel" aria-label="Settings">
+    <div class="settings-heading">
+      <div>
+        <h2>Settings</h2>
+        <p>Select the cards and display style.</p>
+      </div>
+      <button class="close-button" id="closeSettingsButton" type="button" aria-label="Close settings">×</button>
+    </div>
+
+    <section class="setting-section">
+      <h3>Words</h3>
+      <div class="word-grid" id="wordGrid"></div>
+      <div class="setting-actions">
+        <button id="textbookSetButton" type="button">Textbook set</button>
+        <button id="selectAllButton" type="button">Select all</button>
+        <button id="clearButton" type="button">Clear</button>
+        <button id="resetButton" type="button">Reset</button>
+      </div>
+      <p class="message" id="message"></p>
+    </section>
+
+    <section class="setting-section">
+      <h3>Greeting display</h3>
+      <div class="segmented">
+        <label>
+          <input type="radio" name="textDisplay" value="word" checked>
+          <span>Greeting</span>
+        </label>
+        <label>
+          <input type="radio" name="textDisplay" value="sentence">
+          <span>Country name</span>
+        </label>
+      </div>
+    </section>
+
+    <section class="setting-section">
+      <h3>Display mode</h3>
+      <div class="segmented three">
+        <label>
+          <input type="radio" name="displayMode" value="pictureText" checked>
+          <span>Picture + text</span>
+        </label>
+        <label>
+          <input type="radio" name="displayMode" value="picture">
+          <span>Picture only</span>
+        </label>
+        <label>
+          <input type="radio" name="displayMode" value="text">
+          <span>Text only</span>
+        </label>
+      </div>
+    </section>
+
+    <section class="setting-section">
+      <h3>Size</h3>
+
+      <div class="balance-labels" aria-hidden="true">
+        <span>Image</span>
+        <span>Text</span>
+      </div>
+
+      <div class="balance-slider">
+        <span>◀</span>
+        <input id="sizeBalanceRange" type="range" min="0" max="100" value="50" step="5"
+               aria-label="Image and text size balance">
+        <span>▶</span>
+      </div>
+    </section>
+
+
+  </aside>
+
+
+  <script>
+const FEELINGS = [
+  {
+    id: "finland",
+    word: "Terve",
+    sentence: "Finland",
+    textbook: true,
+    sprite: { x: 66.15, y: 0, flip: false }
+  },
+  {
+    id: "china",
+    word: "Nǐ hǎo",
+    native: "你好",
+    sentence: "China",
+    textbook: true,
+    sprite: { x: 66.6667, y: 100, flip: false }
+  },
+  {
+    id: "germany",
+    word: "Guten Tag",
+    sentence: "Germany",
+    textbook: true,
+    sprite: { x: 100, y: 0, flip: false }
+  },
+  {
+    id: "japan",
+    word: "Konnichiwa",
+    sentence: "Japan",
+    textbook: true,
+    sprite: { x: 33.3333, y: 50, flip: false }
+  },
+  {
+    id: "kenya",
+    word: "Jambo",
+    sentence: "Kenya",
+    textbook: true,
+    sprite: { x: 66.6667, y: 50, flip: false }
+  },
+  {
+    id: "india",
+    word: "Namaste",
+    native: "नमस्ते",
+    sentence: "India",
+    textbook: true,
+    sprite: { x: 0, y: 50, flip: false }
+  },
+  {
+    id: "korea",
+    word: "Annyeonghaseyo",
+    native: "안녕하세요",
+    sentence: "Korea",
+    textbook: true,
+    sprite: { special: "korea", flip: false }
+  },
+  {
+    id: "usa",
+    word: "Hello",
+    sentence: "USA",
+    textbook: true,
+    sprite: { x: 100, y: 100, flip: false }
+  },
+  {
+    id: "australia",
+    word: "Hello",
+    sentence: "Australia",
+    textbook: true,
+    sprite: { x: 0, y: 0, flip: false }
+  }
+];
+
+</script>
+  <script>
+class FlashcardDeck {
+  constructor(cards = []) {
+    this.cards = [];
+    this.position = 0;
+    this.setCards(cards);
+  }
+
+  static shuffle(cards) {
+    const result = [...cards];
+
+    for (let index = result.length - 1; index > 0; index -= 1) {
+      const randomIndex = Math.floor(Math.random() * (index + 1));
+      [result[index], result[randomIndex]] = [result[randomIndex], result[index]];
+    }
+
+    return result;
+  }
+
+  setCards(cards, avoidFirstId = null) {
+    this.cards = FlashcardDeck.shuffle(cards);
+
+    if (
+      avoidFirstId &&
+      this.cards.length > 1 &&
+      this.cards[0].id === avoidFirstId
+    ) {
+      [this.cards[0], this.cards[1]] = [this.cards[1], this.cards[0]];
+    }
+
+    this.position = 0;
+  }
+
+  get current() {
+    return this.cards[this.position] || null;
+  }
+
+  get length() {
+    return this.cards.length;
+  }
+
+  next() {
+    if (!this.cards.length) {
+      return null;
+    }
+
+    if (this.position < this.cards.length - 1) {
+      this.position += 1;
+      return this.current;
+    }
+
+    const finalCardId = this.current.id;
+    this.setCards(this.cards, finalCardId);
+    return this.current;
+  }
+
+  previous() {
+    if (this.position > 0) {
+      this.position -= 1;
+    }
+
+    return this.current;
+  }
+
+  reshuffle() {
+    const currentId = this.current ? this.current.id : null;
+    this.setCards(this.cards, currentId);
+    return this.current;
+  }
+}
+
+</script>
+  <script>
+(() => {
+  "use strict";
+
+  const elements = {
+    flashcard: document.querySelector(".flashcard"),
+    mainPrompt: document.getElementById("mainPrompt"),
+    siteTitle: document.getElementById("siteTitle"),
+    picture: document.getElementById("feelingPicture"),
+    displayText: document.getElementById("displayText"),
+    nativeText: document.getElementById("nativeText"),
+    counter: document.getElementById("counter"),
+    wordGrid: document.getElementById("wordGrid"),
+    message: document.getElementById("message"),
+    previousButton: document.getElementById("previousButton"),
+    nextButton: document.getElementById("nextButton"),
+    shuffleButton: document.getElementById("shuffleButton"),
+    gameButton: document.getElementById("gameButton"),
+    gameMenu: document.getElementById("gameMenu"),
+    settingsButton: document.getElementById("settingsButton"),
+    settingsPanel: document.getElementById("settingsPanel"),
+    closeSettingsButton: document.getElementById("closeSettingsButton"),
+    menuButton: document.getElementById("menuButton"),
+    scrim: document.getElementById("scrim"),
+    textbookSetButton: document.getElementById("textbookSetButton"),
+    selectAllButton: document.getElementById("selectAllButton"),
+    clearButton: document.getElementById("clearButton"),
+    resetButton: document.getElementById("resetButton"),
+    homeScreen: document.getElementById("homeScreen"),
+    appScreen: document.getElementById("appScreen"),
+    unitMenu: document.getElementById("unitMenu"),
+    letsTryOneButton: document.getElementById("letsTryOneButton"),
+    greetingsCategoryButton: document.getElementById("greetingsCategoryButton"),
+    unitOneButton: document.getElementById("unitOneButton"),
+    unitTwoLinkButton: document.getElementById("unitTwoLinkButton"),
+    unitMenuBackButton: document.getElementById("unitMenuBackButton"),
+    answerArea: document.getElementById("answerArea"),
+    missingArea: document.getElementById("missingArea"),
+    missingGrid: document.getElementById("missingGrid"),
+    keywordArea: document.getElementById("keywordArea"),
+    keywordGrid: document.getElementById("keywordGrid"),
+    leftRightArea: document.getElementById("leftRightArea"),
+    leftChoice: document.getElementById("leftChoice"),
+    rightChoice: document.getElementById("rightChoice"),
+    leftPicture: document.getElementById("leftPicture"),
+    rightPicture: document.getElementById("rightPicture"),
+    leftAnswerMark: document.getElementById("leftAnswerMark"),
+    rightAnswerMark: document.getElementById("rightAnswerMark"),
+    leftRightWord: document.getElementById("leftRightWord"),
+    leftRightNextButton: document.getElementById("leftRightNextButton"),
+    sizeBalanceRange: document.getElementById("sizeBalanceRange")
+  };
+
+  const state = {
+    route: "textbook",
+    textDisplay: "word",
+    displayMode: "pictureText",
+    previousDisplayMode: "pictureText",
+    gameMode: "flashcards",
+    hiddenMissingIds: new Set(),
+    missingOrder: [],
+    keywordSelectedIds: new Set(),
+    keywordOrder: [],
+    leftRightCorrectSide: "left",
+    leftRightLeftCard: null,
+    leftRightRightCard: null,
+    leftRightTarget: null,
+    leftRightLocked: false,
+    selectedIds: new Set(
+      FEELINGS.filter((feeling) => feeling.textbook).map((feeling) => feeling.id)
+    )
+  };
+
+  const deck = new FlashcardDeck(getSelectedCards());
+
+  function applySprite(element, card) {
+    if (card.sprite.special === "korea") {
+      element.style.backgroundImage = "url(\"data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A//www.w3.org/2000/svg%27%20viewBox%3D%270%200%20900%20600%27%3E%0A%3Crect%20width%3D%27900%27%20height%3D%27600%27%20fill%3D%27white%27/%3E%0A%3Cg%20transform%3D%27translate%28450%20300%29%20rotate%2833.69%29%27%3E%0A%3Cpath%20d%3D%27M0-100A100%20100%200%200%201%200%20100A50%2050%200%200%201%200%200A50%2050%200%200%200%200-100Z%27%20fill%3D%27%23cd2e3a%27/%3E%0A%3Cpath%20d%3D%27M0%20100A100%20100%200%200%201%200-100A50%2050%200%200%201%200%200A50%2050%200%200%200%200%20100Z%27%20fill%3D%27%230047a0%27/%3E%0A%3C/g%3E%0A%3Cg%20fill%3D%27%23111%27%3E%0A%3Cg%20transform%3D%27translate%28190%20145%29%20rotate%28-34%29%27%3E%3Crect%20x%3D%27-65%27%20y%3D%27-28%27%20width%3D%27130%27%20height%3D%2716%27/%3E%3Crect%20x%3D%27-65%27%20y%3D%270%27%20width%3D%27130%27%20height%3D%2716%27/%3E%3Crect%20x%3D%27-65%27%20y%3D%2728%27%20width%3D%27130%27%20height%3D%2716%27/%3E%3C/g%3E%0A%3Cg%20transform%3D%27translate%28710%20455%29%20rotate%28-34%29%27%3E%3Crect%20x%3D%27-65%27%20y%3D%27-28%27%20width%3D%2755%27%20height%3D%2716%27/%3E%3Crect%20x%3D%2710%27%20y%3D%27-28%27%20width%3D%2755%27%20height%3D%2716%27/%3E%3Crect%20x%3D%27-65%27%20y%3D%270%27%20width%3D%27130%27%20height%3D%2716%27/%3E%3Crect%20x%3D%27-65%27%20y%3D%2728%27%20width%3D%2755%27%20height%3D%2716%27/%3E%3Crect%20x%3D%2710%27%20y%3D%2728%27%20width%3D%2755%27%20height%3D%2716%27/%3E%3C/g%3E%0A%3Cg%20transform%3D%27translate%28710%20145%29%20rotate%2834%29%27%3E%3Crect%20x%3D%27-65%27%20y%3D%27-28%27%20width%3D%2755%27%20height%3D%2716%27/%3E%3Crect%20x%3D%2710%27%20y%3D%27-28%27%20width%3D%2755%27%20height%3D%2716%27/%3E%3Crect%20x%3D%27-65%27%20y%3D%270%27%20width%3D%2755%27%20height%3D%2716%27/%3E%3Crect%20x%3D%2710%27%20y%3D%270%27%20width%3D%2755%27%20height%3D%2716%27/%3E%3Crect%20x%3D%27-65%27%20y%3D%2728%27%20width%3D%27130%27%20height%3D%2716%27/%3E%3C/g%3E%0A%3Cg%20transform%3D%27translate%28190%20455%29%20rotate%2834%29%27%3E%3Crect%20x%3D%27-65%27%20y%3D%27-28%27%20width%3D%27130%27%20height%3D%2716%27/%3E%3Crect%20x%3D%27-65%27%20y%3D%270%27%20width%3D%2755%27%20height%3D%2716%27/%3E%3Crect%20x%3D%2710%27%20y%3D%270%27%20width%3D%2755%27%20height%3D%2716%27/%3E%3Crect%20x%3D%27-65%27%20y%3D%2728%27%20width%3D%27130%27%20height%3D%2716%27/%3E%3C/g%3E%0A%3C/g%3E%3C/svg%3E\")";
+      element.style.backgroundSize = "100% 100%";
+      element.style.backgroundPosition = "center";
+    } else {
+      element.style.backgroundImage = "url(\"https://crawlinuk.web.fc2.com/schoolapps/elementary/images/flags.png\")";
+      element.style.backgroundSize = "401% 301%";
+      element.style.backgroundPosition = `${card.sprite.x}% ${card.sprite.y}%`;
+    }
+
+    element.style.transform = card.sprite.flip ? "scaleX(-1)" : "scaleX(1)";
+    element.style.clipPath = "none";
+  }
+
+  function setAppHeader(mode = "textbook") {
+    if (mode === "home") {
+      elements.siteTitle.innerHTML = '<span class="unit-name">Classroom English Tools</span>';
+      return;
+    }
+
+    if (mode === "category") {
+      elements.siteTitle.innerHTML = '<span class="unit-name">Greetings</span>';
+      return;
+    }
+
+    elements.siteTitle.innerHTML =
+      '<span class="unit-word">Unit</span>' +
+      '<span class="unit-number">1</span>' +
+      '<span class="unit-name">Hello!</span>';
+  }
+
+  function getSelectedCards() {
+    return FEELINGS.filter((feeling) => state.selectedIds.has(feeling.id));
+  }
+
+  function buildWordOptions() {
+    const fragment = document.createDocumentFragment();
+
+    FEELINGS.forEach((feeling) => {
+      const label = document.createElement("label");
+      label.className = "word-option";
+
+      const checkbox = document.createElement("input");
+      checkbox.type = "checkbox";
+      checkbox.value = feeling.id;
+      checkbox.checked = state.selectedIds.has(feeling.id);
+      checkbox.addEventListener("change", () => {
+        if (checkbox.checked) {
+          state.selectedIds.add(feeling.id);
+        } else {
+          state.selectedIds.delete(feeling.id);
+        }
+
+        rebuildDeck();
+      });
+
+      const text = document.createElement("span");
+      text.textContent = feeling.word;
+
+      label.append(checkbox, text);
+      fragment.append(label);
+    });
+
+    elements.wordGrid.replaceChildren(fragment);
+  }
+
+  function syncWordOptions() {
+    elements.wordGrid.querySelectorAll("input").forEach((checkbox) => {
+      checkbox.checked = state.selectedIds.has(checkbox.value);
+    });
+  }
+
+  function rebuildDeck() {
+    const selectedCards = getSelectedCards();
+
+    if (!selectedCards.length) {
+      elements.message.textContent = "Select at least one word.";
+      deck.setCards([]);
+      render();
+      return;
+    }
+
+    elements.message.textContent = "";
+    deck.setCards(selectedCards);
+    render();
+  }
+
+  function render() {
+    closeGameMenu();
+
+    if (state.gameMode === "missing") {
+      renderMissingGame();
+      return;
+    }
+
+    if (state.gameMode === "keyword") {
+      renderKeywordGame();
+      return;
+    }
+
+    if (state.gameMode === "leftRight") {
+      renderLeftRightGame();
+      return;
+    }
+
+    elements.answerArea.hidden = false;
+    elements.missingArea.hidden = true;
+    elements.keywordArea.hidden = true;
+    elements.leftRightArea.hidden = true;
+    elements.flashcard.classList.add("normal-flashcards");
+    elements.mainPrompt.textContent = "Hello!";
+
+    const card = deck.current;
+
+    elements.flashcard.classList.toggle("picture-only", state.displayMode === "picture");
+    elements.flashcard.classList.toggle("text-only", state.displayMode === "text");
+
+    if (!card) {
+      elements.picture.removeAttribute("style");
+      elements.picture.setAttribute("aria-label", "No card selected");
+      elements.displayText.textContent = "Choose a greeting";
+      elements.nativeText.hidden = true;
+      elements.counter.textContent = "0 / 0";
+      return;
+    }
+
+    applySprite(elements.picture, card);
+    elements.picture.setAttribute(
+      "aria-label",
+      card.native ? `${card.sentence}: ${card.word}, ${card.native}` : `${card.sentence}: ${card.word}`
+    );
+
+    elements.displayText.textContent =
+      state.textDisplay === "sentence" ? card.sentence : card.word;
+
+    if (state.textDisplay === "word" && card.native) {
+      elements.nativeText.textContent = card.native;
+      elements.nativeText.hidden = false;
+    } else {
+      elements.nativeText.textContent = "";
+      elements.nativeText.hidden = true;
+    }
+
+    elements.counter.textContent = `${deck.position + 1} / ${deck.length}`;
+    elements.counter.nextElementSibling.textContent =
+      state.displayMode === "picture" ? "Guess mode" : "Flashcard mode";
+
+    elements.previousButton.disabled = false;
+    elements.nextButton.disabled = false;
+    elements.previousButton.textContent = "◀ Previous";
+    elements.nextButton.textContent = "Next ▶";
+    elements.shuffleButton.textContent = "↝ Shuffle";
+  }
+
+  function renderMissingGame() {
+    const cards = getSelectedCards();
+
+    elements.answerArea.hidden = true;
+    elements.missingArea.hidden = false;
+    elements.keywordArea.hidden = true;
+    elements.leftRightArea.hidden = true;
+    elements.flashcard.classList.remove("normal-flashcards");
+    elements.mainPrompt.textContent = "What’s missing?";
+    elements.flashcard.classList.remove("picture-only", "text-only");
+
+    if (!cards.length) {
+      elements.missingGrid.replaceChildren();
+      elements.counter.textContent = "0 / 0";
+      return;
+    }
+
+    const cardMap = new Map(cards.map((card) => [card.id, card]));
+    const orderedCards = state.missingOrder
+      .map((id) => cardMap.get(id))
+      .filter(Boolean);
+
+    if (orderedCards.length !== cards.length) {
+      state.missingOrder = FlashcardDeck.shuffle(cards).map((card) => card.id);
+      renderMissingGame();
+      return;
+    }
+
+    const fragment = document.createDocumentFragment();
+
+    orderedCards.forEach((card) => {
+      const tile = document.createElement("button");
+      tile.type = "button";
+      tile.className = "missing-card";
+      tile.setAttribute("aria-label",
+        state.hiddenMissingIds.has(card.id)
+          ? `Reveal ${card.word}`
+          : `Hide ${card.word}`
+      );
+
+      const picture = document.createElement("div");
+      picture.className = "missing-picture";
+      applySprite(picture, card);
+      picture.setAttribute("role", "img");
+      picture.setAttribute("aria-label", card.word);
+
+      if (state.hiddenMissingIds.has(card.id)) {
+        tile.classList.add("covered");
+      }
+
+      tile.append(picture);
+      tile.addEventListener("click", () => {
+        if (state.hiddenMissingIds.has(card.id)) {
+          state.hiddenMissingIds.delete(card.id);
+        } else {
+          state.hiddenMissingIds.add(card.id);
+        }
+        renderMissingGame();
+      });
+
+      fragment.append(tile);
+    });
+
+    elements.missingGrid.className = `missing-grid cards-${cards.length}`;
+    elements.missingGrid.replaceChildren(fragment);
+
+    const visibleCount = cards.length - state.hiddenMissingIds.size;
+    elements.counter.textContent = `${visibleCount} / ${cards.length}`;
+    elements.counter.nextElementSibling.textContent = "Missing game";
+
+    elements.previousButton.disabled = false;
+    elements.nextButton.disabled = false;
+    elements.previousButton.textContent = "Flashcards";
+    elements.nextButton.textContent = "New game";
+    elements.shuffleButton.textContent = "Rearrange";
+  }
+
+  function renderKeywordGame() {
+    const cards = getSelectedCards();
+
+    elements.answerArea.hidden = true;
+    elements.missingArea.hidden = true;
+    elements.keywordArea.hidden = false;
+    elements.leftRightArea.hidden = true;
+    elements.flashcard.classList.remove("normal-flashcards");
+    elements.mainPrompt.textContent = "Keyword game";
+    elements.flashcard.classList.remove("picture-only", "text-only");
+
+    if (!cards.length) {
+      elements.keywordGrid.replaceChildren();
+      elements.counter.textContent = "0 / 0";
+      return;
+    }
+
+    const cardMap = new Map(cards.map((card) => [card.id, card]));
+    let orderedCards = state.keywordOrder
+      .map((id) => cardMap.get(id))
+      .filter(Boolean);
+
+    if (orderedCards.length !== cards.length) {
+      state.keywordOrder = FlashcardDeck.shuffle(cards).map((card) => card.id);
+      orderedCards = state.keywordOrder.map((id) => cardMap.get(id)).filter(Boolean);
+    }
+
+    const fragment = document.createDocumentFragment();
+
+    orderedCards.forEach((card) => {
+      const tile = document.createElement("button");
+      tile.type = "button";
+      tile.className = "keyword-card";
+      tile.classList.toggle("selected", state.keywordSelectedIds.has(card.id));
+      tile.setAttribute(
+        "aria-label",
+        state.keywordSelectedIds.has(card.id)
+          ? `Unselect ${card.word}`
+          : `Select ${card.word}`
+      );
+
+      const picture = document.createElement("div");
+      picture.className = "keyword-picture";
+      applySprite(picture, card);
+      picture.setAttribute("role", "img");
+      picture.setAttribute("aria-label", card.word);
+
+      tile.append(picture);
+      tile.addEventListener("click", () => {
+        if (state.keywordSelectedIds.has(card.id)) {
+          state.keywordSelectedIds.delete(card.id);
+        } else {
+          state.keywordSelectedIds.add(card.id);
+        }
+        renderKeywordGame();
+      });
+
+      fragment.append(tile);
+    });
+
+    elements.keywordGrid.className = `keyword-grid cards-${cards.length}`;
+    elements.keywordGrid.replaceChildren(fragment);
+
+    elements.counter.textContent = `${state.keywordSelectedIds.size} / ${cards.length}`;
+    elements.counter.nextElementSibling.textContent = "Keywords selected";
+
+    elements.previousButton.disabled = false;
+    elements.nextButton.disabled = false;
+    elements.previousButton.textContent = "Flashcards";
+    elements.nextButton.textContent = "Clear";
+    elements.shuffleButton.textContent = "Rearrange";
+  }
+
+
+  function leftRightLabel(card) {
+    return card.word;
+  }
+
+  function chooseLeftRightQuestion() {
+    const cards = getSelectedCards();
+
+    if (cards.length < 2) {
+      elements.message.textContent = "Select at least two different cards.";
+      return false;
+    }
+
+    elements.message.textContent = "";
+
+    const target = cards[Math.floor(Math.random() * cards.length)];
+    const targetIsGoodFine = target.id === "good" || target.id === "fine";
+
+    const distractors = cards.filter((card) => {
+      if (card.id === target.id) return false;
+
+      const cardIsGoodFine = card.id === "good" || card.id === "fine";
+      return !(targetIsGoodFine && cardIsGoodFine);
+    });
+
+    if (!distractors.length) {
+      elements.message.textContent = "Select another card as well as good/fine.";
+      return false;
+    }
+
+    const distractor = distractors[Math.floor(Math.random() * distractors.length)];
+    const correctOnLeft = Math.random() < 0.5;
+
+    state.leftRightCorrectSide = correctOnLeft ? "left" : "right";
+    state.leftRightLeftCard = correctOnLeft ? target : distractor;
+    state.leftRightRightCard = correctOnLeft ? distractor : target;
+    state.leftRightTarget = target;
+    state.leftRightLocked = false;
+
+    return true;
+  }
+
+  function renderLeftRightGame() {
+    if (!state.leftRightLeftCard || !state.leftRightRightCard) {
+      if (!chooseLeftRightQuestion()) return;
+    }
+
+    elements.answerArea.hidden = true;
+    elements.missingArea.hidden = true;
+    elements.keywordArea.hidden = true;
+    elements.leftRightArea.hidden = false;
+    elements.flashcard.classList.remove("normal-flashcards");
+    elements.mainPrompt.textContent = "Left or Right?";
+    elements.flashcard.classList.remove("picture-only", "text-only");
+
+    applySprite(elements.leftPicture, state.leftRightLeftCard);
+    applySprite(elements.rightPicture, state.leftRightRightCard);
+    elements.leftPicture.setAttribute("aria-label", state.leftRightLeftCard.word);
+    elements.rightPicture.setAttribute("aria-label", state.leftRightRightCard.word);
+    elements.leftRightWord.textContent = leftRightLabel(state.leftRightTarget);
+
+    elements.leftChoice.classList.remove("correct", "wrong");
+    elements.rightChoice.classList.remove("correct", "wrong");
+    elements.leftAnswerMark.className = "answer-mark";
+    elements.rightAnswerMark.className = "answer-mark";
+    elements.leftRightNextButton.hidden = true;
+
+    elements.counter.textContent = "← / →";
+    elements.counter.nextElementSibling.textContent = "Choose a side";
+
+    elements.previousButton.disabled = false;
+    elements.nextButton.disabled = false;
+    elements.previousButton.textContent = "Flashcards";
+    elements.nextButton.textContent = "New";
+    elements.shuffleButton.textContent = "New";
+  }
+
+  function answerLeftRight(side) {
+    if (state.gameMode !== "leftRight" || state.leftRightLocked) return;
+
+    state.leftRightLocked = true;
+
+    const chosenCard = side === "left" ? elements.leftChoice : elements.rightChoice;
+    const correctCard = state.leftRightCorrectSide === "left"
+      ? elements.leftChoice
+      : elements.rightChoice;
+    const chosenMark = side === "left"
+      ? elements.leftAnswerMark
+      : elements.rightAnswerMark;
+    const correctMark = state.leftRightCorrectSide === "left"
+      ? elements.leftAnswerMark
+      : elements.rightAnswerMark;
+
+    if (side === state.leftRightCorrectSide) {      chosenCard.classList.add("correct");
+      chosenMark.classList.add("show", "correct");
+    } else {
+      chosenCard.classList.add("wrong");
+      correctCard.classList.add("correct");
+      chosenMark.classList.add("show", "wrong");
+      correctMark.classList.add("show", "correct");
+    }
+
+    elements.leftRightNextButton.hidden = false;
+  }
+
+  function nextLeftRightQuestion() {
+    if (state.gameMode !== "leftRight") return;
+    if (chooseLeftRightQuestion()) renderLeftRightGame();
+  }
+
+  function startLeftRightGame() {
+    if (!chooseLeftRightQuestion()) return;
+    state.gameMode = "leftRight";
+    closePanels();
+    render();
+  }
+
+  function openGameMenu() {
+    const willOpen = elements.gameMenu.hidden;
+    elements.gameMenu.hidden = !willOpen;
+    elements.gameButton.setAttribute("aria-expanded", String(willOpen));
+  }
+
+  function closeGameMenu() {
+    elements.gameMenu.hidden = true;
+    elements.gameButton.setAttribute("aria-expanded", "false");
+  }
+
+  function startGuessMode() {
+    state.gameMode = "flashcards";
+
+    if (state.displayMode !== "picture") {
+      state.previousDisplayMode = state.displayMode;
+      state.displayMode = "picture";
+    }
+
+    const pictureRadio = document.querySelector(
+      'input[name="displayMode"][value="picture"]'
+    );
+    if (pictureRadio) {
+      pictureRadio.checked = true;
+    }
+
+    closePanels();
+    render();
+  }
+
+  function startKeywordGame() {
+    if (!getSelectedCards().length) {
+      elements.message.textContent = "Select at least one word.";
+      return;
+    }
+
+    state.gameMode = "keyword";
+    state.keywordSelectedIds.clear();
+    state.keywordOrder = FlashcardDeck.shuffle(getSelectedCards()).map((card) => card.id);
+    closePanels();
+    render();
+  }
+
+  function chooseMissingCard() {
+    const cards = getSelectedCards();
+
+    if (!cards.length) {
+      state.hiddenMissingIds.clear();
+      state.missingOrder = [];
+      render();
+      return;
+    }
+
+    state.hiddenMissingIds.clear();
+    const randomCard = cards[Math.floor(Math.random() * cards.length)];
+    state.hiddenMissingIds.add(randomCard.id);
+    state.missingOrder = FlashcardDeck.shuffle(cards).map((card) => card.id);
+    render();
+  }
+
+  function nextCard() {
+    if (state.gameMode === "missing") {
+      chooseMissingCard();
+      return;
+    }
+
+    if (state.gameMode === "keyword") {
+      state.keywordSelectedIds.clear();
+      render();
+      return;
+    }
+
+    if (state.gameMode === "leftRight") {
+      if (chooseLeftRightQuestion()) renderLeftRightGame();
+      return;
+    }
+
+    if (!deck.length) {
+      return;
+    }
+
+    deck.next();
+    render();
+  }
+
+  function previousCard() {
+    if (
+      state.gameMode === "missing" ||
+      state.gameMode === "keyword" ||
+      state.gameMode === "leftRight"
+    ) {
+      returnToFlashcards();
+      return;
+    }
+
+    if (!deck.length) {
+      return;
+    }
+
+    deck.previous();
+    render();
+  }
+
+  function shuffleDeck() {
+    if (state.gameMode === "missing") {
+      const cards = getSelectedCards();
+      state.missingOrder = FlashcardDeck.shuffle(cards).map((card) => card.id);
+      render();
+      return;
+    }
+
+    if (state.gameMode === "keyword") {
+      const cards = getSelectedCards();
+      state.keywordOrder = FlashcardDeck.shuffle(cards).map((card) => card.id);
+      render();
+      return;
+    }
+
+    if (state.gameMode === "leftRight") {
+      if (chooseLeftRightQuestion()) renderLeftRightGame();
+      return;
+    }
+
+    if (!deck.length) {
+      return;
+    }
+
+    deck.reshuffle();
+    render();
+  }
+
+  function selectGame(mode) {
+    closeGameMenu();
+
+    if (mode === "guess") {
+      startGuessMode();
+    } else if (mode === "missing") {
+      startMissingGame();
+    } else if (mode === "keyword") {
+      startKeywordGame();
+    } else if (mode === "leftRight") {
+      startLeftRightGame();
+    } else if (mode === "flashcards") {
+      returnToFlashcards();
+    }
+  }
+
+  function startMissingGame() {
+    if (!getSelectedCards().length) {
+      elements.message.textContent = "Select at least one word.";
+      return;
+    }
+
+    state.gameMode = "missing";
+    state.hiddenMissingIds.clear();
+    state.missingOrder = [];
+    closePanels();
+    chooseMissingCard();
+  }
+
+  function returnToFlashcards() {
+    state.gameMode = "flashcards";
+    state.hiddenMissingIds.clear();
+    state.missingOrder = [];
+    state.keywordSelectedIds.clear();
+    state.keywordOrder = [];
+    state.leftRightLeftCard = null;
+    state.leftRightRightCard = null;
+    state.leftRightTarget = null;
+    state.leftRightLocked = false;
+    closePanels();
+    render();
+  }
+
+  function updateSizing() {
+    const balance = Number(elements.sizeBalanceRange.value);
+
+    // Centre = equal emphasis. Moving left favours the image;
+    // moving right favours the text.
+    const offset = (balance - 50) / 50;
+    const pictureScale = 1 - (offset * 0.30);
+    const textScale = 1 + (offset * 0.30);
+
+    document.documentElement.style.setProperty("--picture-scale", pictureScale);
+    document.documentElement.style.setProperty("--text-scale", textScale);
+  }
+
+  function setPanel(panel, open) {
+    if (panel !== elements.settingsPanel) {
+      elements.settingsPanel.classList.remove("open");
+    }
+
+    panel.classList.toggle("open", open);
+    elements.scrim.classList.toggle("open", open);
+  }
+
+  function closePanels() {
+    elements.settingsPanel.classList.remove("open");
+    elements.scrim.classList.remove("open");
+  }
+
+  function applyRoute(route) {
+    state.route = route;
+
+    if (route === "textbook") {
+      setAppHeader("textbook");
+      state.selectedIds = new Set(
+        FEELINGS.filter((feeling) => feeling.textbook).map((feeling) => feeling.id)
+      );
+    } else {
+      setAppHeader("category");
+    }
+
+    elements.homeScreen.hidden = true;
+    elements.appScreen.hidden = false;
+    syncWordOptions();
+    rebuildDeck();
+    closePanels();
+  }
+
+  elements.leftChoice.addEventListener("click", () => answerLeftRight("left"));
+  elements.rightChoice.addEventListener("click", () => answerLeftRight("right"));
+  elements.leftRightNextButton.addEventListener("click", nextLeftRightQuestion);
+
+  elements.previousButton.addEventListener("click", previousCard);
+  elements.nextButton.addEventListener("click", nextCard);
+  elements.shuffleButton.addEventListener("click", shuffleDeck);
+  elements.gameButton.addEventListener("click", (event) => {
+    event.stopPropagation();
+    openGameMenu();
+  });
+
+  elements.gameMenu.querySelectorAll("[data-game]").forEach((button) => {
+    button.addEventListener("click", () => selectGame(button.dataset.game));
+  });
+
+  document.addEventListener("click", (event) => {
+    if (!elements.gameMenu.contains(event.target) && event.target !== elements.gameButton) {
+      closeGameMenu();
+    }
+  });
+
+  elements.settingsButton.addEventListener("click", () => {
+    setPanel(elements.settingsPanel, true);
+  });
+
+  elements.closeSettingsButton.addEventListener("click", closePanels);
+
+  elements.sizeBalanceRange.addEventListener("input", updateSizing);
+  elements.menuButton.addEventListener("click", () => {
+    closePanels();
+    elements.appScreen.hidden = true;
+    elements.homeScreen.hidden = false;
+    document.querySelector(".home-hero").hidden = false;
+    document.querySelector(".home-grid").hidden = false;
+    elements.unitMenu.hidden = true;
+    setAppHeader("home");
+  });
+
+  elements.scrim.addEventListener("click", closePanels);
+
+  elements.letsTryOneButton.addEventListener("click", () => {
+    document.querySelector(".home-hero").hidden = true;
+    document.querySelector(".home-grid").hidden = true;
+    elements.unitMenu.hidden = false;
+  });
+
+  elements.unitMenuBackButton.addEventListener("click", () => {
+    document.querySelector(".home-hero").hidden = false;
+    document.querySelector(".home-grid").hidden = false;
+    elements.unitMenu.hidden = true;
+  });
+
+  elements.unitOneButton.addEventListener("click", () => applyRoute("textbook"));
+  elements.unitTwoLinkButton.addEventListener("click", () => {
+    window.location.href = "lets_try_feelings_v1_13.html";
+  });
+  elements.greetingsCategoryButton.addEventListener("click", () => applyRoute("category"));
+
+  document.querySelectorAll('input[name="textDisplay"]').forEach((radio) => {
+    radio.addEventListener("change", () => {
+      state.textDisplay = radio.value;
+      state.gameMode = "flashcards";
+      render();
+    });
+  });
+
+  document.querySelectorAll('input[name="displayMode"]').forEach((radio) => {
+    radio.addEventListener("change", () => {
+      state.displayMode = radio.value;
+      if (radio.value !== "picture") {
+        state.previousDisplayMode = radio.value;
+      }
+      state.gameMode = "flashcards";
+      state.keywordSelectedIds.clear();
+      state.keywordOrder = [];
+      render();
+    });
+  });
+
+  elements.textbookSetButton.addEventListener("click", () => {
+    state.selectedIds = new Set(
+      FEELINGS.filter((feeling) => feeling.textbook).map((feeling) => feeling.id)
+    );
+    syncWordOptions();
+    rebuildDeck();
+  });
+
+  elements.selectAllButton.addEventListener("click", () => {
+    state.selectedIds = new Set(FEELINGS.map((feeling) => feeling.id));
+    syncWordOptions();
+    rebuildDeck();
+  });
+
+  elements.clearButton.addEventListener("click", () => {
+    state.selectedIds.clear();
+    syncWordOptions();
+    rebuildDeck();
+  });
+
+  elements.resetButton.addEventListener("click", () => {
+    state.textDisplay = "word";
+    state.displayMode = "pictureText";
+    state.previousDisplayMode = "pictureText";
+    state.gameMode = "flashcards";
+    state.hiddenMissingIds.clear();
+    state.missingOrder = [];
+    state.keywordSelectedIds.clear();
+    state.keywordOrder = [];
+    document.querySelector('input[name="textDisplay"][value="word"]').checked = true;
+    document.querySelector('input[name="displayMode"][value="pictureText"]').checked = true;
+
+    elements.sizeBalanceRange.value = "50";
+    updateSizing();
+
+    applyRoute("textbook");
+  });
+
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape") {
+      closePanels();
+      return;
+    }
+
+    if (
+      elements.settingsPanel.classList.contains("open")
+    ) {
+      return;
+    }
+
+    if (state.gameMode === "leftRight") {
+      if (event.key === "ArrowLeft") {
+        event.preventDefault();
+        answerLeftRight("left");
+        return;
+      }
+
+      if (event.key === "ArrowRight") {
+        event.preventDefault();
+        answerLeftRight("right");
+        return;
+      }
+
+      if (event.code === "Space" || event.key === "Enter") {
+        event.preventDefault();
+        if (state.leftRightLocked) nextLeftRightQuestion();
+        return;
+      }
+    }
+
+    if (event.code === "Space" || event.key === "ArrowRight" || event.key === "Enter") {
+      event.preventDefault();
+      nextCard();
+    } else if (event.key === "ArrowLeft") {
+      event.preventDefault();
+      previousCard();
+    } else if (event.key.toLowerCase() === "r") {
+      shuffleDeck();
+    } else if (event.key.toLowerCase() === "g") {
+      openGameMenu();
+    }
+  });
+
+  buildWordOptions();
+  setAppHeader("home");
+  updateSizing();
+  render();
+})();
+
+</script>
+</body>
+</html>
+
+<style>
+.flashcard.normal-flashcards {
+  grid-template-rows: minmax(0, 1fr);
+}
+.flashcard.normal-flashcards .prompt {
+  display: none;
+}
+.control-bar {
+  position: relative;
+  padding-top: 14px;
+}
+.control-bar::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -18px;
+  right: -18px;
+  height: 3px;
+  background: var(--unit-green);
+}
+.control.game-menu-button::before {
+  content: "🎮 ";
+}
+</style>
+
+<style>
+@media (max-width: 650px) {
+  .site-header {
+    height: 64px;
+    padding: 6px 10px;
+    gap: 10px;
+  }
+  .app {
+    height: calc(100vh - 64px);
+  }
+  .unit-word,
+  .unit-name {
+    font-size: 22px;
+  }
+  .unit-number {
+    font-size: 48px;
+    -webkit-text-stroke-width: 3px;
+  }
+}
+</style>
