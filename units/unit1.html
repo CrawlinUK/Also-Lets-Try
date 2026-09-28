@@ -1,0 +1,1394 @@
+<!DOCTYPE html>
+<html lang="en" data-unit="1">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Let’s Try! Tools — Greetings</title>
+  <link rel="stylesheet" href="css/lets-try.css">
+</head>
+<body>
+  <header class="site-header">
+    <button class="menu-button" id="menuButton" type="button" aria-label="Return to unit menu">☰</button>
+    <div class="site-title" id="siteTitle">
+      <span class="unit-word">Unit</span>
+      <span class="unit-number">1</span>
+      <span class="unit-name">Hello!</span>
+    </div>
+    <div class="game-title" id="mainPrompt" aria-live="polite"></div>
+  </header>
+
+
+  <main class="home-screen" id="homeScreen" hidden>
+    <section class="home-hero">
+      <h1>Classroom English Tools</h1>
+      <p>Choose a textbook or browse by topic.</p>
+    </section>
+
+    <section class="home-grid">
+      <button class="home-card textbook-card" id="letsTryOneButton" type="button">
+        <span class="home-icon">📘</span>
+        <strong>Let’s Try! 1</strong>
+        <span>Units 1–9</span>
+      </button>
+
+      <button class="home-card muted-card" type="button" disabled>
+        <span class="home-icon">📙</span>
+        <strong>Let’s Try! 2</strong>
+        <span>Coming later</span>
+      </button>
+
+      <button class="home-card category-card" id="greetingsCategoryButton" type="button">
+        <span class="home-icon">🧩</span>
+        <strong>Categories</strong>
+        <span>Greetings</span>
+      </button>
+    </section>
+
+    <section class="unit-menu" id="unitMenu" hidden>
+      <div class="unit-menu-heading">
+        <button class="small-back" id="unitMenuBackButton" type="button">◀ Back</button>
+        <h2>Let’s Try! 1</h2>
+      </div>
+      <div class="unit-grid">
+        <button class="unit-item enabled" id="unitOneButton" type="button">
+          <strong>Unit 1</strong><span>Hello!</span>
+        </button>
+        <button class="unit-item enabled" id="unitTwoLinkButton" type="button">
+          <strong>Unit 2</strong><span>How are you?</span>
+        </button>
+        <button class="unit-item enabled" id="unitThreeButton" type="button"><strong>Unit 3</strong><span>How many?</span></button>
+        <button class="unit-item disabled" type="button" disabled><strong>Unit 4</strong><span>I like blue.</span></button>
+        <button class="unit-item disabled" type="button" disabled><strong>Unit 5</strong><span>What do you like?</span></button>
+        <button class="unit-item disabled" type="button" disabled><strong>Unit 6</strong><span>ALPHABET</span></button>
+        <button class="unit-item disabled" type="button" disabled><strong>Unit 7</strong><span>This is for you.</span></button>
+        <button class="unit-item disabled" type="button" disabled><strong>Unit 8</strong><span>What’s this?</span></button>
+        <button class="unit-item disabled" type="button" disabled><strong>Unit 9</strong><span>Who are you?</span></button>
+      </div>
+    </section>
+  </main>
+
+  <main class="app" id="appScreen">
+    <section class="flashcard" aria-live="polite">
+<div class="answer-area" id="answerArea">
+        <div class="picture-frame" id="pictureFrame">
+          <div class="feeling-picture" id="feelingPicture" role="img"></div>
+        </div>
+        <div class="display-text" id="displayText">Terve</div>
+      </div>
+
+      <div class="missing-area" id="missingArea" hidden>
+        <div class="missing-title">What’s missing?</div>
+        <div class="missing-grid" id="missingGrid"></div>
+      </div>
+
+      <div class="keyword-area" id="keywordArea" hidden>
+        <div class="keyword-grid" id="keywordGrid"></div>
+      </div>
+
+      <div class="left-right-area" id="leftRightArea" hidden>
+        <button class="left-right-card" id="leftChoice" type="button" aria-label="Choose left picture">
+          <div class="left-right-picture" id="leftPicture" role="img"></div>
+          <div class="answer-mark" id="leftAnswerMark" aria-hidden="true"></div>
+        </button>
+
+        <div class="left-right-centre">
+          <div class="left-right-word" id="leftRightWord">Terve</div>
+          <button class="left-right-next" id="leftRightNextButton" type="button" hidden>Next ▶</button>
+        </div>
+
+        <button class="left-right-card" id="rightChoice" type="button" aria-label="Choose right picture">
+          <div class="left-right-picture" id="rightPicture" role="img"></div>
+          <div class="answer-mark" id="rightAnswerMark" aria-hidden="true"></div>
+        </button>
+      </div>
+
+      <div class="floating-timer timer-control" aria-label="Automatic timer">
+        <button id="timerDownButton" type="button" aria-label="Decrease timer">−</button>
+        <span class="timer-value" id="timerValue">3 sec</span>
+        <button id="timerUpButton" type="button" aria-label="Increase timer">+</button>
+      </div>
+      <button class="floating-auto" id="autoButton" type="button" aria-label="Start automatic flashcards" title="Start automatic flashcards">▶</button>
+    </section>
+
+    <button class="side-nav side-previous" id="previousButton" type="button" aria-label="Previous card">◀</button>
+    <button class="side-nav side-next" id="nextButton" type="button" aria-label="Next card">▶</button>
+    <aside class="missing-answer-hints" id="missingAnswerHints" aria-label="Teacher Missing Game answers" hidden>
+    <section class="setting-section">
+      <h3>Missing Game answer size</h3>
+      <div class="missing-answer-size-row">
+        <input id="missingAnswerSizeRange" type="range" min="8" max="24" value="10" step="1"
+               aria-label="Missing Game answer size">
+        <output class="missing-answer-size-value" id="missingAnswerSizeValue" for="missingAnswerSizeRange">10 px</output>
+      </div>
+    </section>
+
+  </aside>
+
+    <nav class="control-bar" aria-label="Flashcard controls">
+      <div class="card-counter">
+        <strong id="counter">1 / 6</strong>
+        <span>Flashcard mode</span>
+      </div>
+
+      <button class="control shuffle" id="shuffleButton" type="button">↝ Shuffle</button>
+      <div class="game-menu-wrap">
+        <button class="control quiet game-menu-button" id="gameButton" type="button"
+                aria-haspopup="true" aria-expanded="false">Game</button>
+        <div class="game-menu" id="gameMenu" hidden>
+          <button type="button" data-game="guess">Guess (hides text)</button>
+          <button type="button" data-game="missing">Missing game</button>
+          <button type="button" data-game="keyword">Keyword game</button>
+          <button type="button" data-game="leftRight">Left or Right</button>
+          <button type="button" data-game="flashcards">Back to flashcards</button>
+        </div>
+      </div>
+      <button class="control quiet" id="settingsButton" type="button">⚙ Settings</button>
+    </nav>
+
+    <div class="keyboard-help collapsed" id="keyboardHelp">
+      <div class="keyboard-help-text">
+        ← / → = previous / next<br>
+        Space / Enter = next<br>
+        A = start / stop auto<br>
+        R = shuffle<br>
+        G = games<br>
+        ↑ / ↓ = timer up / down<br>
+        Esc = close settings
+      </div>
+      <div class="keyboard-help-icon">!</div>
+    </div>
+  </main>
+
+  <div class="scrim" id="scrim"></div>
+
+  <aside class="settings-panel" id="settingsPanel" aria-label="Settings">
+    <div class="settings-heading">
+      <div>
+        <h2>Settings</h2>
+        <p>Select the cards and display style.</p>
+      </div>
+      <button class="close-button" id="closeSettingsButton" type="button" aria-label="Close settings">×</button>
+    </div>
+
+    <section class="setting-section">
+      <h3>Words</h3>
+      <div class="word-grid" id="wordGrid"></div>
+      <div class="setting-actions">
+        <button id="textbookSetButton" type="button">Textbook set</button>
+        <button id="selectAllButton" type="button">Select all</button>
+        <button id="clearButton" type="button">Clear</button>
+        <button id="resetButton" type="button">Reset</button>
+      </div>
+      <p class="message" id="message"></p>
+    </section>
+
+    <section class="setting-section">
+      <h3>Greeting display</h3>
+      <div class="segmented">
+        <label>
+          <input type="radio" name="textDisplay" value="word" checked>
+          <span>Greeting</span>
+        </label>
+        <label>
+          <input type="radio" name="textDisplay" value="sentence">
+          <span>Country name</span>
+        </label>
+      </div>
+    </section>
+
+    <section class="setting-section">
+      <h3>Display mode</h3>
+      <div class="segmented three">
+        <label>
+          <input type="radio" name="displayMode" value="pictureText" checked>
+          <span>Picture + text</span>
+        </label>
+        <label>
+          <input type="radio" name="displayMode" value="picture">
+          <span>Picture only</span>
+        </label>
+        <label>
+          <input type="radio" name="displayMode" value="text">
+          <span>Text only</span>
+        </label>
+      </div>
+    </section>
+
+    <section class="setting-section">
+      <h3>Size</h3>
+
+      <div class="balance-labels" aria-hidden="true">
+        <span>Image</span>
+        <span>Text</span>
+      </div>
+
+      <div class="balance-slider">
+        <span>◀</span>
+        <input id="sizeBalanceRange" type="range" min="0" max="100" value="50" step="5"
+               aria-label="Image and text size balance">
+        <span>▶</span>
+      </div>
+    </section>
+
+
+  </aside>
+
+
+  <script>
+const FEELINGS = [
+  {
+    id: "finland",
+    word: "Terve",
+    sentence: "Finland",
+    textbook: true,
+    sprite: { x: 66.15, y: 0, flip: false }
+  },
+  {
+    id: "china",
+    word: "Nǐ hǎo",
+    sentence: "China",
+    textbook: true,
+    sprite: { x: 66.6667, y: 100, flip: false }
+  },
+  {
+    id: "germany",
+    word: "Guten Tag",
+    sentence: "Germany",
+    textbook: true,
+    sprite: { x: 100, y: 0, flip: false }
+  },
+  {
+    id: "japan",
+    word: "Konnichiwa",
+    sentence: "Japan",
+    textbook: true,
+    sprite: { x: 33.3333, y: 50, flip: false }
+  },
+  {
+    id: "kenya",
+    word: "Jambo",
+    sentence: "Kenya",
+    textbook: true,
+    sprite: { x: 66.6667, y: 50, flip: false }
+  },
+  {
+    id: "india",
+    word: "Namaste",
+    sentence: "India",
+    textbook: true,
+    sprite: { x: 0, y: 50, flip: false }
+  },
+  {
+    id: "korea",
+    word: "Annyeonghaseyo",
+    sentence: "Korea",
+    textbook: true,
+    sprite: { special: "korea", flip: false }
+  },
+  {
+    id: "usa",
+    word: "Hello",
+    sentence: "USA",
+    textbook: true,
+    sprite: { x: 100, y: 100, flip: false }
+  },
+  {
+    id: "australia",
+    word: "Hello",
+    sentence: "Australia",
+    textbook: true,
+    sprite: { x: 0, y: 0, flip: false }
+  }
+];
+
+</script>
+  <script>
+class FlashcardDeck {
+  constructor(cards = []) {
+    this.cards = [];
+    this.position = 0;
+    this.setCards(cards);
+  }
+
+  static shuffle(cards) {
+    const result = [...cards];
+
+    for (let index = result.length - 1; index > 0; index -= 1) {
+      const randomIndex = Math.floor(Math.random() * (index + 1));
+      [result[index], result[randomIndex]] = [result[randomIndex], result[index]];
+    }
+
+    return result;
+  }
+
+  setCards(cards) {
+    this.cards = [...cards];
+    this.position = 0;
+  }
+
+  get current() {
+    return this.cards[this.position] || null;
+  }
+
+  get length() {
+    return this.cards.length;
+  }
+
+  next() {
+    if (!this.cards.length) return null;
+    this.position = (this.position + 1) % this.cards.length;
+    return this.current;
+  }
+
+  previous() {
+    if (!this.cards.length) return null;
+    this.position = (this.position - 1 + this.cards.length) % this.cards.length;
+    return this.current;
+  }
+
+  reshuffle() {
+    if (!this.cards.length) return null;
+
+    const currentId = this.current ? this.current.id : null;
+    this.cards = FlashcardDeck.shuffle(this.cards);
+
+    if (
+      currentId &&
+      this.cards.length > 1 &&
+      this.cards[0].id === currentId
+    ) {
+      [this.cards[0], this.cards[1]] = [this.cards[1], this.cards[0]];
+    }
+
+    this.position = 0;
+    return this.current;
+  }
+}
+
+</script>
+  <script>
+(() => {
+  "use strict";
+
+  const elements = {
+    flashcard: document.querySelector(".flashcard"),
+    mainPrompt: document.getElementById("mainPrompt"),
+    siteTitle: document.getElementById("siteTitle"),
+    picture: document.getElementById("feelingPicture"),
+    displayText: document.getElementById("displayText"),
+    counter: document.getElementById("counter"),
+    wordGrid: document.getElementById("wordGrid"),
+    message: document.getElementById("message"),
+    previousButton: document.getElementById("previousButton"),
+    nextButton: document.getElementById("nextButton"),
+    shuffleButton: document.getElementById("shuffleButton"),
+    gameButton: document.getElementById("gameButton"),
+    gameMenu: document.getElementById("gameMenu"),
+    settingsButton: document.getElementById("settingsButton"),
+    keyboardHelp: document.getElementById("keyboardHelp"),
+    settingsPanel: document.getElementById("settingsPanel"),
+    closeSettingsButton: document.getElementById("closeSettingsButton"),
+    menuButton: document.getElementById("menuButton"),
+    scrim: document.getElementById("scrim"),
+    textbookSetButton: document.getElementById("textbookSetButton"),
+    selectAllButton: document.getElementById("selectAllButton"),
+    clearButton: document.getElementById("clearButton"),
+    resetButton: document.getElementById("resetButton"),
+    homeScreen: document.getElementById("homeScreen"),
+    appScreen: document.getElementById("appScreen"),
+    unitMenu: document.getElementById("unitMenu"),
+    letsTryOneButton: document.getElementById("letsTryOneButton"),
+    greetingsCategoryButton: document.getElementById("greetingsCategoryButton"),
+    unitOneButton: document.getElementById("unitOneButton"),
+    unitTwoLinkButton: document.getElementById("unitTwoLinkButton"),
+    unitThreeButton: document.getElementById("unitThreeButton"),
+    unitMenuBackButton: document.getElementById("unitMenuBackButton"),
+    answerArea: document.getElementById("answerArea"),
+    missingArea: document.getElementById("missingArea"),
+    missingGrid: document.getElementById("missingGrid"),
+    keywordArea: document.getElementById("keywordArea"),
+    keywordGrid: document.getElementById("keywordGrid"),
+    leftRightArea: document.getElementById("leftRightArea"),
+    leftChoice: document.getElementById("leftChoice"),
+    rightChoice: document.getElementById("rightChoice"),
+    leftPicture: document.getElementById("leftPicture"),
+    rightPicture: document.getElementById("rightPicture"),
+    leftAnswerMark: document.getElementById("leftAnswerMark"),
+    rightAnswerMark: document.getElementById("rightAnswerMark"),
+    leftRightWord: document.getElementById("leftRightWord"),
+    leftRightNextButton: document.getElementById("leftRightNextButton"),
+    sizeBalanceRange: document.getElementById("sizeBalanceRange"),
+    autoButton: document.getElementById("autoButton"),
+    timerDownButton: document.getElementById("timerDownButton"),
+    timerUpButton: document.getElementById("timerUpButton"),
+    timerValue: document.getElementById("timerValue"),
+    missingAnswerHints: document.getElementById("missingAnswerHints"),
+    missingAnswerSizeRange: document.getElementById("missingAnswerSizeRange"),
+    missingAnswerSizeValue: document.getElementById("missingAnswerSizeValue")
+  };
+
+  const state = {
+    route: "textbook",
+    textDisplay: "word",
+    displayMode: "pictureText",
+    previousDisplayMode: "pictureText",
+    gameMode: "flashcards",
+    autoSeconds: 3,
+    autoRemaining: 3,
+    autoTimer: null,
+    missingAnswerSize: 10,
+    hiddenMissingIds: new Set(),
+    missingOrder: [],
+    keywordSelectedIds: new Set(),
+    keywordOrder: [],
+    leftRightCorrectSide: "left",
+    leftRightLeftCard: null,
+    leftRightRightCard: null,
+    leftRightTarget: null,
+    leftRightLocked: false,
+    selectedIds: new Set(
+      FEELINGS.filter((feeling) => feeling.textbook).map((feeling) => feeling.id)
+    )
+  };
+
+  const deck = new FlashcardDeck(getSelectedCards());
+
+  function applySprite(element, card) {
+    if (card.sprite.special === "korea") {
+      element.style.backgroundImage = "url(\"data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A//www.w3.org/2000/svg%27%20viewBox%3D%270%200%20900%20600%27%3E%0A%3Crect%20width%3D%27900%27%20height%3D%27600%27%20fill%3D%27white%27/%3E%0A%3Cg%20transform%3D%27translate%28450%20300%29%20rotate%2833.69%29%27%3E%0A%3Cpath%20d%3D%27M0-100A100%20100%200%200%201%200%20100A50%2050%200%200%201%200%200A50%2050%200%200%200%200-100Z%27%20fill%3D%27%23cd2e3a%27/%3E%0A%3Cpath%20d%3D%27M0%20100A100%20100%200%200%201%200-100A50%2050%200%200%201%200%200A50%2050%200%200%200%200%20100Z%27%20fill%3D%27%230047a0%27/%3E%0A%3C/g%3E%0A%3Cg%20fill%3D%27%23111%27%3E%0A%3Cg%20transform%3D%27translate%28190%20145%29%20rotate%28-34%29%27%3E%3Crect%20x%3D%27-65%27%20y%3D%27-28%27%20width%3D%27130%27%20height%3D%2716%27/%3E%3Crect%20x%3D%27-65%27%20y%3D%270%27%20width%3D%27130%27%20height%3D%2716%27/%3E%3Crect%20x%3D%27-65%27%20y%3D%2728%27%20width%3D%27130%27%20height%3D%2716%27/%3E%3C/g%3E%0A%3Cg%20transform%3D%27translate%28710%20455%29%20rotate%28-34%29%27%3E%3Crect%20x%3D%27-65%27%20y%3D%27-28%27%20width%3D%2755%27%20height%3D%2716%27/%3E%3Crect%20x%3D%2710%27%20y%3D%27-28%27%20width%3D%2755%27%20height%3D%2716%27/%3E%3Crect%20x%3D%27-65%27%20y%3D%270%27%20width%3D%27130%27%20height%3D%2716%27/%3E%3Crect%20x%3D%27-65%27%20y%3D%2728%27%20width%3D%2755%27%20height%3D%2716%27/%3E%3Crect%20x%3D%2710%27%20y%3D%2728%27%20width%3D%2755%27%20height%3D%2716%27/%3E%3C/g%3E%0A%3Cg%20transform%3D%27translate%28710%20145%29%20rotate%2834%29%27%3E%3Crect%20x%3D%27-65%27%20y%3D%27-28%27%20width%3D%2755%27%20height%3D%2716%27/%3E%3Crect%20x%3D%2710%27%20y%3D%27-28%27%20width%3D%2755%27%20height%3D%2716%27/%3E%3Crect%20x%3D%27-65%27%20y%3D%270%27%20width%3D%2755%27%20height%3D%2716%27/%3E%3Crect%20x%3D%2710%27%20y%3D%270%27%20width%3D%2755%27%20height%3D%2716%27/%3E%3Crect%20x%3D%27-65%27%20y%3D%2728%27%20width%3D%27130%27%20height%3D%2716%27/%3E%3C/g%3E%0A%3Cg%20transform%3D%27translate%28190%20455%29%20rotate%2834%29%27%3E%3Crect%20x%3D%27-65%27%20y%3D%27-28%27%20width%3D%27130%27%20height%3D%2716%27/%3E%3Crect%20x%3D%27-65%27%20y%3D%270%27%20width%3D%2755%27%20height%3D%2716%27/%3E%3Crect%20x%3D%2710%27%20y%3D%270%27%20width%3D%2755%27%20height%3D%2716%27/%3E%3Crect%20x%3D%27-65%27%20y%3D%2728%27%20width%3D%27130%27%20height%3D%2716%27/%3E%3C/g%3E%0A%3C/g%3E%3C/svg%3E\")";
+      element.style.backgroundSize = "100% 100%";
+      element.style.backgroundPosition = "center";
+    } else {
+      element.style.backgroundImage = "url(\"https://crawlinuk.web.fc2.com/schoolapps/elementary/images/flags.png\")";
+      element.style.backgroundSize = "401% 301%";
+      element.style.backgroundPosition = `${card.sprite.x}% ${card.sprite.y}%`;
+    }
+
+    element.style.transform = card.sprite.flip ? "scaleX(-1)" : "scaleX(1)";
+    element.style.clipPath = "none";
+  }
+
+  function setAppHeader(mode = "textbook") {
+    if (mode === "home") {
+      elements.siteTitle.innerHTML = '<span class="unit-name">Classroom English Tools</span>';
+      return;
+    }
+
+    if (mode === "category") {
+      elements.siteTitle.innerHTML = '<span class="unit-name">Greetings</span>';
+      return;
+    }
+
+    elements.siteTitle.innerHTML =
+      '<span class="unit-word">Unit</span>' +
+      '<span class="unit-number">1</span>' +
+      '<span class="unit-name">Hello!</span>';
+  }
+
+  function getSelectedCards() {
+    return FEELINGS.filter((feeling) => state.selectedIds.has(feeling.id));
+  }
+
+  function buildWordOptions() {
+    const fragment = document.createDocumentFragment();
+    FEELINGS.forEach((feeling) => {
+      const button = document.createElement("button");
+      button.type = "button";
+      button.className = "word-option-button";
+      button.textContent = feeling.word;
+      button.dataset.cardId = feeling.id;
+      button.classList.toggle("selected", state.selectedIds.has(feeling.id));
+      button.setAttribute("aria-pressed", String(state.selectedIds.has(feeling.id)));
+      button.addEventListener("click", () => {
+        if (state.selectedIds.has(feeling.id)) {
+          if (state.selectedIds.size === 1) {
+            elements.message.textContent = "At least one card must stay selected.";
+            return;
+          }
+          state.selectedIds.delete(feeling.id);
+        } else {
+          state.selectedIds.add(feeling.id);
+        }
+        rebuildDeck();
+      });
+      fragment.append(button);
+    });
+    elements.wordGrid.replaceChildren(fragment);
+  }
+
+  function syncWordOptions() {
+    elements.wordGrid.querySelectorAll("[data-card-id]").forEach((button) => {
+      const selected = state.selectedIds.has(button.dataset.cardId);
+      button.classList.toggle("selected", selected);
+      button.setAttribute("aria-pressed", String(selected));
+    });
+  }
+
+  function rebuildDeck() {
+    syncWordOptions();
+    const selectedCards = getSelectedCards();
+
+    if (!selectedCards.length) {
+      elements.message.textContent = "Select at least one word.";
+      deck.setCards([]);
+      render();
+      return;
+    }
+
+    elements.message.textContent = "";
+    deck.setCards(selectedCards);
+    render();
+  }
+
+  function keepSideArrowsClean() {
+    elements.previousButton.textContent = "◀";
+    elements.nextButton.textContent = "▶";
+  }
+
+  function render() {
+    closeGameMenu();
+
+    if (state.gameMode === "missing") {
+      renderMissingGame();
+      return;
+    }
+
+    if (state.gameMode === "keyword") {
+      renderKeywordGame();
+      return;
+    }
+
+    if (state.gameMode === "leftRight") {
+      renderLeftRightGame();
+      return;
+    }
+
+    elements.answerArea.hidden = false;
+    elements.missingArea.hidden = true;
+    elements.keywordArea.hidden = true;
+    elements.leftRightArea.hidden = true;
+    elements.flashcard.classList.add("normal-flashcards");
+    elements.mainPrompt.textContent = "";
+
+    const card = deck.current;
+
+    const effectiveDisplayMode = state.gameMode === "guess" ? "picture" : state.displayMode;
+    elements.flashcard.classList.toggle("picture-only", effectiveDisplayMode === "picture");
+    elements.flashcard.classList.toggle("text-only", effectiveDisplayMode === "text");
+
+    if (!card) {
+      elements.picture.removeAttribute("style");
+      elements.picture.setAttribute("aria-label", "No card selected");
+      elements.displayText.textContent = "Choose a greeting";
+      elements.counter.textContent = "0 / 0";
+      return;
+    }
+
+    applySprite(elements.picture, card);
+    elements.picture.setAttribute(
+      "aria-label",
+      `${card.sentence}: ${card.word}`
+    );
+
+    elements.displayText.textContent =
+      state.textDisplay === "sentence" ? card.sentence : card.word;
+
+
+    elements.counter.textContent = `${deck.position + 1} / ${deck.length}`;
+    elements.counter.nextElementSibling.textContent =
+      state.gameMode === "guess" ? "Guess mode" : "Flashcard mode";
+
+    elements.previousButton.disabled = false;
+    elements.nextButton.disabled = false;
+    elements.previousButton.textContent = "◀";
+    elements.nextButton.textContent = "▶";
+    elements.shuffleButton.textContent = "↝ Shuffle";
+    keepSideArrowsClean();
+    updateGameNavigation();
+    requestAnimationFrame(alignSideNav);
+  }
+
+
+  function reverseText(value) {
+    return Array.from(String(value)).reverse().join("");
+  }
+
+  function updateMissingAnswerHints() {
+    const cards = getSelectedCards();
+    const cardMap = new Map(cards.map((card) => [card.id, card]));
+    const lines = state.missingOrder
+      .map((id, index) => ({ card: cardMap.get(id), position: index + 1 }))
+      .filter((item) => item.card && state.hiddenMissingIds.has(item.card.id))
+      .map((item) => `${reverseText(item.card.sentence)}${item.position}`);
+
+    elements.missingAnswerHints.replaceChildren(...lines.map((line) => {
+      const row = document.createElement("div");
+      row.textContent = line;
+      return row;
+    }));
+    elements.missingAnswerHints.hidden = state.gameMode !== "missing" || lines.length === 0;
+  }
+
+  function renderMissingGame() {
+    const cards = getSelectedCards();
+
+    elements.answerArea.hidden = true;
+    elements.missingArea.hidden = false;
+    elements.keywordArea.hidden = true;
+    elements.leftRightArea.hidden = true;
+    elements.flashcard.classList.remove("normal-flashcards");
+    elements.mainPrompt.textContent = "What’s missing?";
+    elements.flashcard.classList.remove("picture-only", "text-only");
+
+    if (!cards.length) {
+      elements.missingGrid.replaceChildren();
+      elements.counter.textContent = "0 / 0";
+      return;
+    }
+
+    const cardMap = new Map(cards.map((card) => [card.id, card]));
+    const orderedCards = state.missingOrder
+      .map((id) => cardMap.get(id))
+      .filter(Boolean);
+
+    if (orderedCards.length !== cards.length) {
+      state.missingOrder = FlashcardDeck.shuffle(cards).map((card) => card.id);
+      renderMissingGame();
+      return;
+    }
+
+    const fragment = document.createDocumentFragment();
+
+    orderedCards.forEach((card) => {
+      const tile = document.createElement("button");
+      tile.type = "button";
+      tile.className = "missing-card";
+      tile.setAttribute("aria-label",
+        state.hiddenMissingIds.has(card.id)
+          ? `Reveal ${card.word}`
+          : `Hide ${card.word}`
+      );
+
+      const picture = document.createElement("div");
+      picture.className = "missing-picture";
+      applySprite(picture, card);
+      picture.setAttribute("role", "img");
+      picture.setAttribute("aria-label", card.word);
+
+      if (state.hiddenMissingIds.has(card.id)) {
+        tile.classList.add("covered");
+      }
+
+      tile.append(picture);
+      tile.addEventListener("click", () => {
+        if (state.hiddenMissingIds.has(card.id)) {
+          state.hiddenMissingIds.delete(card.id);
+        } else {
+          state.hiddenMissingIds.add(card.id);
+        }
+        renderMissingGame();
+      });
+
+      fragment.append(tile);
+    });
+
+    elements.missingGrid.className = `missing-grid cards-${cards.length}`;
+    elements.missingGrid.replaceChildren(fragment);
+    updateMissingAnswerHints();
+
+    const visibleCount = cards.length - state.hiddenMissingIds.size;
+    elements.counter.textContent = `${visibleCount} / ${cards.length}`;
+    elements.counter.nextElementSibling.textContent = "Missing game";
+
+    elements.previousButton.disabled = false;
+    elements.nextButton.disabled = false;
+    elements.previousButton.textContent = "◀";
+    elements.nextButton.textContent = "▶";
+    elements.shuffleButton.textContent = "Randomise";
+    keepSideArrowsClean();
+    updateGameNavigation();
+    requestAnimationFrame(alignSideNav);
+  }
+
+  function renderKeywordGame() {
+    const cards = getSelectedCards();
+
+    elements.answerArea.hidden = true;
+    elements.missingArea.hidden = true;
+    elements.keywordArea.hidden = false;
+    elements.leftRightArea.hidden = true;
+    elements.flashcard.classList.remove("normal-flashcards");
+    elements.mainPrompt.textContent = "Keyword Game";
+    elements.flashcard.classList.remove("picture-only", "text-only");
+
+    if (!cards.length) {
+      elements.keywordGrid.replaceChildren();
+      elements.counter.textContent = "0 / 0";
+      return;
+    }
+
+    const cardMap = new Map(cards.map((card) => [card.id, card]));
+    let orderedCards = state.keywordOrder
+      .map((id) => cardMap.get(id))
+      .filter(Boolean);
+
+    if (orderedCards.length !== cards.length) {
+      state.keywordOrder = FlashcardDeck.shuffle(cards).map((card) => card.id);
+      orderedCards = state.keywordOrder.map((id) => cardMap.get(id)).filter(Boolean);
+    }
+
+    const fragment = document.createDocumentFragment();
+
+    orderedCards.forEach((card) => {
+      const tile = document.createElement("button");
+      tile.type = "button";
+      tile.className = "keyword-card";
+      tile.classList.toggle("selected", state.keywordSelectedIds.has(card.id));
+      tile.setAttribute(
+        "aria-label",
+        state.keywordSelectedIds.has(card.id)
+          ? `Unselect ${card.word}`
+          : `Select ${card.word}`
+      );
+
+      const picture = document.createElement("div");
+      picture.className = "keyword-picture";
+      applySprite(picture, card);
+      picture.setAttribute("role", "img");
+      picture.setAttribute("aria-label", card.word);
+
+      tile.append(picture);
+      tile.addEventListener("click", () => {
+        if (state.keywordSelectedIds.has(card.id)) {
+          state.keywordSelectedIds.delete(card.id);
+        } else {
+          state.keywordSelectedIds.add(card.id);
+        }
+        renderKeywordGame();
+      });
+
+      fragment.append(tile);
+    });
+
+    elements.keywordGrid.className = `keyword-grid cards-${cards.length}`;
+    elements.keywordGrid.replaceChildren(fragment);
+
+    elements.counter.textContent = `${state.keywordSelectedIds.size} / ${cards.length}`;
+    elements.counter.nextElementSibling.textContent = "Keywords selected";
+
+    elements.previousButton.disabled = false;
+    elements.nextButton.disabled = false;
+    elements.previousButton.textContent = "◀";
+    elements.nextButton.textContent = "▶";
+    elements.shuffleButton.textContent = "Randomise";
+    keepSideArrowsClean();
+    updateGameNavigation();
+    requestAnimationFrame(alignSideNav);
+  }
+
+
+  function leftRightLabel(card) {
+    return card.word;
+  }
+
+  function chooseLeftRightQuestion() {
+    const cards = getSelectedCards();
+
+    if (cards.length < 2) {
+      elements.message.textContent = "Select at least two different cards.";
+      return false;
+    }
+
+    elements.message.textContent = "";
+
+    const target = cards[Math.floor(Math.random() * cards.length)];
+    const targetIsGoodFine = target.id === "good" || target.id === "fine";
+
+    const distractors = cards.filter((card) => {
+      if (card.id === target.id) return false;
+
+      const cardIsGoodFine = card.id === "good" || card.id === "fine";
+      return !(targetIsGoodFine && cardIsGoodFine);
+    });
+
+    if (!distractors.length) {
+      elements.message.textContent = "Select another card as well as good/fine.";
+      return false;
+    }
+
+    const distractor = distractors[Math.floor(Math.random() * distractors.length)];
+    const correctOnLeft = Math.random() < 0.5;
+
+    state.leftRightCorrectSide = correctOnLeft ? "left" : "right";
+    state.leftRightLeftCard = correctOnLeft ? target : distractor;
+    state.leftRightRightCard = correctOnLeft ? distractor : target;
+    state.leftRightTarget = target;
+    state.leftRightLocked = false;
+
+    return true;
+  }
+
+  function renderLeftRightGame() {
+    if (!state.leftRightLeftCard || !state.leftRightRightCard) {
+      if (!chooseLeftRightQuestion()) return;
+    }
+
+    elements.answerArea.hidden = true;
+    elements.missingArea.hidden = true;
+    elements.keywordArea.hidden = true;
+    elements.leftRightArea.hidden = false;
+    elements.flashcard.classList.remove("normal-flashcards");
+    elements.mainPrompt.textContent = "Left or Right?";
+    elements.flashcard.classList.remove("picture-only", "text-only");
+
+    applySprite(elements.leftPicture, state.leftRightLeftCard);
+    applySprite(elements.rightPicture, state.leftRightRightCard);
+    elements.leftPicture.setAttribute("aria-label", state.leftRightLeftCard.word);
+    elements.rightPicture.setAttribute("aria-label", state.leftRightRightCard.word);
+    elements.leftRightWord.textContent = leftRightLabel(state.leftRightTarget);
+
+    elements.leftChoice.classList.remove("correct", "wrong");
+    elements.rightChoice.classList.remove("correct", "wrong");
+    elements.leftAnswerMark.className = "answer-mark";
+    elements.rightAnswerMark.className = "answer-mark";
+    elements.leftRightNextButton.hidden = true;
+
+    elements.counter.textContent = "← / →";
+    elements.counter.nextElementSibling.textContent = "Choose a side";
+
+    elements.previousButton.disabled = false;
+    elements.nextButton.disabled = false;
+    elements.previousButton.textContent = "◀";
+    elements.nextButton.textContent = "▶";
+    elements.shuffleButton.textContent = "New";
+    keepSideArrowsClean();
+    updateGameNavigation();
+    requestAnimationFrame(alignSideNav);
+  }
+
+  function answerLeftRight(side) {
+    if (state.gameMode !== "leftRight" || state.leftRightLocked) return;
+
+    state.leftRightLocked = true;
+
+    const chosenCard = side === "left" ? elements.leftChoice : elements.rightChoice;
+    const correctCard = state.leftRightCorrectSide === "left"
+      ? elements.leftChoice
+      : elements.rightChoice;
+    const chosenMark = side === "left"
+      ? elements.leftAnswerMark
+      : elements.rightAnswerMark;
+    const correctMark = state.leftRightCorrectSide === "left"
+      ? elements.leftAnswerMark
+      : elements.rightAnswerMark;
+
+    if (side === state.leftRightCorrectSide) {
+      chosenCard.classList.add("correct");
+      chosenMark.classList.add("show", "correct");
+    } else {
+      chosenCard.classList.add("wrong");
+      correctCard.classList.add("correct");
+      chosenMark.classList.add("show", "wrong");
+      correctMark.classList.add("show", "correct");
+    }
+
+    elements.leftRightNextButton.hidden = false;
+  }
+
+  function nextLeftRightQuestion() {
+    if (state.gameMode !== "leftRight") return;
+    if (chooseLeftRightQuestion()) renderLeftRightGame();
+  }
+
+  function startLeftRightGame() {
+    if (!chooseLeftRightQuestion()) return;
+    state.gameMode = "leftRight";
+    closePanels();
+    render();
+  }
+
+  function openGameMenu() {
+    const willOpen = elements.gameMenu.hidden;
+    elements.gameMenu.hidden = !willOpen;
+    elements.gameButton.setAttribute("aria-expanded", String(willOpen));
+  }
+
+  function closeGameMenu() {
+    elements.gameMenu.hidden = true;
+    elements.gameButton.setAttribute("aria-expanded", "false");
+  }
+
+  function startGuessMode() {
+    state.gameMode = "guess";
+    closePanels();
+    render();
+  }
+
+  function startKeywordGame() {
+    if (!getSelectedCards().length) {
+      elements.message.textContent = "Select at least one word.";
+      return;
+    }
+
+    state.gameMode = "keyword";
+    state.keywordSelectedIds.clear();
+    state.keywordOrder = FlashcardDeck.shuffle(getSelectedCards()).map((card) => card.id);
+    closePanels();
+    render();
+  }
+
+  function chooseMissingCard() {
+    const cards = getSelectedCards();
+
+    if (!cards.length) {
+      state.hiddenMissingIds.clear();
+      state.missingOrder = [];
+      render();
+      return;
+    }
+
+    state.hiddenMissingIds.clear();
+    const randomCard = cards[Math.floor(Math.random() * cards.length)];
+    state.hiddenMissingIds.add(randomCard.id);
+    state.missingOrder = FlashcardDeck.shuffle(cards).map((card) => card.id);
+    render();
+  }
+
+
+  function alignSideNav() {
+    const rect = elements.flashcard.getBoundingClientRect();
+    [elements.previousButton, elements.nextButton].forEach((button) => {
+      button.style.top = `${rect.top}px`;
+      button.style.height = `${rect.height}px`;
+    });
+  }
+
+  function stopAuto() {
+    if (state.autoTimer) clearInterval(state.autoTimer);
+    state.autoTimer = null;
+    state.autoRemaining = state.autoSeconds;
+    elements.timerValue.textContent = `${state.autoSeconds} sec`;
+    elements.autoButton.classList.remove("active");
+    elements.autoButton.textContent = "▶";
+  }
+
+  function autoTick() {
+    state.autoRemaining -= 1;
+    if (state.autoRemaining <= 0) {
+      nextCard();
+      state.autoRemaining = state.autoSeconds;
+    }
+    elements.timerValue.textContent = `${state.autoRemaining} sec`;
+  }
+
+  function toggleAuto() {
+    if (state.gameMode !== "flashcards" && state.gameMode !== "guess") return;
+    if (state.autoTimer) { stopAuto(); return; }
+    state.autoRemaining = state.autoSeconds;
+    elements.timerValue.textContent = `${state.autoRemaining} sec`;
+    elements.autoButton.classList.add("active");
+    elements.autoButton.textContent = "■";
+    state.autoTimer = setInterval(autoTick, 1000);
+  }
+
+  function changeTimer(delta) {
+    const wasRunning = Boolean(state.autoTimer);
+    if (wasRunning) stopAuto();
+    state.autoSeconds = Math.max(1, Math.min(5, state.autoSeconds + delta));
+    state.autoRemaining = state.autoSeconds;
+    elements.timerValue.textContent = `${state.autoSeconds} sec`;
+    if (wasRunning) toggleAuto();
+  }
+
+  function updateGameNavigation() {
+    const inGame = ["missing", "keyword", "leftRight"].includes(state.gameMode);
+    if (state.gameMode !== "missing") elements.missingAnswerHints.hidden = true;
+    elements.previousButton.hidden = inGame;
+    elements.nextButton.hidden = state.gameMode === "leftRight";
+    if (state.gameMode === "missing") {
+      elements.nextButton.textContent = "HIDE +";
+      elements.nextButton.classList.add("game-action");
+    } else if (state.gameMode === "keyword") {
+      elements.nextButton.textContent = "SELECT";
+      elements.nextButton.classList.add("game-action");
+    } else {
+      elements.nextButton.textContent = "▶";
+      elements.nextButton.classList.remove("game-action");
+    }
+    const gameVisible = state.gameMode === "flashcards" || state.gameMode === "guess";
+    elements.autoButton.hidden = !gameVisible;
+    document.querySelector(".floating-timer").hidden = !gameVisible;
+  }
+
+  function nextCard() {
+    if (state.gameMode === "missing") {
+      const visible = state.missingOrder.filter((id) => !state.hiddenMissingIds.has(id));
+      if (visible.length) state.hiddenMissingIds.add(visible[Math.floor(Math.random() * visible.length)]);
+      render();
+      return;
+    }
+
+    if (state.gameMode === "keyword") {
+      const cards = getSelectedCards();
+      if (cards.length) {
+        state.keywordSelectedIds.clear();
+        state.keywordSelectedIds.add(cards[Math.floor(Math.random() * cards.length)].id);
+      }
+      render();
+      return;
+    }
+
+    if (state.gameMode === "leftRight") {
+      if (chooseLeftRightQuestion()) renderLeftRightGame();
+      return;
+    }
+
+    if (!deck.length) {
+      return;
+    }
+
+    deck.next();
+    render();
+  }
+
+  function previousCard() {
+    if (["missing", "keyword", "leftRight"].includes(state.gameMode)) return;
+
+    if (!deck.length) {
+      return;
+    }
+
+    deck.previous();
+    render();
+  }
+
+  function shuffleDeck() {
+    if (state.gameMode === "missing") {
+      const cards = getSelectedCards();
+      state.missingOrder = FlashcardDeck.shuffle(cards).map((card) => card.id);
+      render();
+      return;
+    }
+
+    if (state.gameMode === "keyword") {
+      const cards = getSelectedCards();
+      state.keywordOrder = FlashcardDeck.shuffle(cards).map((card) => card.id);
+      render();
+      return;
+    }
+
+    if (state.gameMode === "leftRight") {
+      if (chooseLeftRightQuestion()) renderLeftRightGame();
+      return;
+    }
+
+    if (!deck.length) {
+      return;
+    }
+
+    deck.reshuffle();
+    render();
+  }
+
+  function selectGame(mode) {
+    stopAuto();
+    closeGameMenu();
+
+    if (mode === "guess") {
+      startGuessMode();
+    } else if (mode === "missing") {
+      startMissingGame();
+    } else if (mode === "keyword") {
+      startKeywordGame();
+    } else if (mode === "leftRight") {
+      startLeftRightGame();
+    } else if (mode === "flashcards") {
+      returnToFlashcards();
+    }
+  }
+
+  function startMissingGame() {
+    if (!getSelectedCards().length) {
+      elements.message.textContent = "Select at least one word.";
+      return;
+    }
+
+    state.gameMode = "missing";
+    state.hiddenMissingIds.clear();
+    state.missingOrder = [];
+    closePanels();
+    chooseMissingCard();
+  }
+
+  function returnToFlashcards() {
+    stopAuto();
+    state.gameMode = "flashcards";
+    state.hiddenMissingIds.clear();
+    state.missingOrder = [];
+    state.keywordSelectedIds.clear();
+    state.keywordOrder = [];
+    state.leftRightLeftCard = null;
+    state.leftRightRightCard = null;
+    state.leftRightTarget = null;
+    state.leftRightLocked = false;
+    closePanels();
+    render();
+  }
+
+  function updateSizing() {
+    const balance = Number(elements.sizeBalanceRange.value);
+
+    // Centre = equal emphasis. Moving left favours the image;
+    // moving right favours the text.
+    const offset = (balance - 50) / 50;
+    const pictureScale = 1 - (offset * 0.30);
+    const textScale = 1 + (offset * 0.30);
+
+    document.documentElement.style.setProperty("--picture-scale", pictureScale);
+    document.documentElement.style.setProperty("--text-scale", textScale);
+  }
+
+  function setPanel(panel, open) {
+    if (panel !== elements.settingsPanel) {
+      elements.settingsPanel.classList.remove("open");
+    }
+
+    panel.classList.toggle("open", open);
+    elements.scrim.classList.toggle("open", open);
+  }
+
+  function closePanels() {
+    elements.settingsPanel.classList.remove("open");
+    elements.scrim.classList.remove("open");
+  }
+
+  function applyRoute(route) {
+    state.route = route;
+
+    if (route === "textbook") {
+      setAppHeader("textbook");
+      state.selectedIds = new Set(
+        FEELINGS.filter((feeling) => feeling.textbook).map((feeling) => feeling.id)
+      );
+    } else {
+      setAppHeader("category");
+    }
+
+    elements.homeScreen.hidden = true;
+    elements.appScreen.hidden = false;
+    syncWordOptions();
+    rebuildDeck();
+    closePanels();
+  }
+
+  elements.leftChoice.addEventListener("click", () => answerLeftRight("left"));
+  elements.rightChoice.addEventListener("click", () => answerLeftRight("right"));
+  elements.leftRightNextButton.addEventListener("click", nextLeftRightQuestion);
+
+  elements.keyboardHelp.addEventListener("click", () => {
+    elements.keyboardHelp.classList.toggle("collapsed");
+  });
+
+  const collapseKeyboardHelp = () => elements.keyboardHelp.classList.add("collapsed");
+
+  elements.previousButton.addEventListener("click", () => {
+    collapseKeyboardHelp();
+    stopAuto();
+    previousCard();
+  });
+  elements.nextButton.addEventListener("click", () => {
+    collapseKeyboardHelp();
+    stopAuto();
+    nextCard();
+  });
+  elements.shuffleButton.addEventListener("click", () => {
+    collapseKeyboardHelp();
+    stopAuto();
+    shuffleDeck();
+  });
+  elements.gameButton.addEventListener("click", (event) => {
+    event.stopPropagation();
+    openGameMenu();
+  });
+
+  elements.gameMenu.querySelectorAll("[data-game]").forEach((button) => {
+    button.addEventListener("click", () => selectGame(button.dataset.game));
+  });
+
+  document.addEventListener("click", (event) => {
+    if (!elements.gameMenu.contains(event.target) && event.target !== elements.gameButton) {
+      closeGameMenu();
+    }
+  });
+
+  elements.settingsButton.addEventListener("click", () => {
+    stopAuto();
+    setPanel(elements.settingsPanel, true);
+  });
+
+  elements.closeSettingsButton.addEventListener("click", closePanels);
+
+  elements.sizeBalanceRange.addEventListener("input", updateSizing);
+  elements.missingAnswerSizeRange.addEventListener("input", () => {
+    state.missingAnswerSize = Number(elements.missingAnswerSizeRange.value);
+    document.documentElement.style.setProperty("--missing-answer-size", `${state.missingAnswerSize}px`);
+    elements.missingAnswerSizeValue.textContent = `${state.missingAnswerSize} px`;
+  });
+  elements.autoButton.addEventListener("click", toggleAuto);
+  elements.timerDownButton.addEventListener("click", () => changeTimer(-1));
+  elements.timerUpButton.addEventListener("click", () => changeTimer(1));
+  elements.menuButton.addEventListener("click", () => {
+    window.location.href = "lets_try_1.html";
+  });
+
+  elements.scrim.addEventListener("click", closePanels);
+
+  elements.letsTryOneButton.addEventListener("click", () => {
+    document.querySelector(".home-hero").hidden = true;
+    document.querySelector(".home-grid").hidden = true;
+    elements.unitMenu.hidden = false;
+  });
+
+  elements.unitMenuBackButton.addEventListener("click", () => {
+    document.querySelector(".home-hero").hidden = false;
+    document.querySelector(".home-grid").hidden = false;
+    elements.unitMenu.hidden = true;
+  });
+
+  elements.unitOneButton.addEventListener("click", () => applyRoute("textbook"));
+  elements.unitTwoLinkButton.addEventListener("click", () => {
+    window.location.href = "unit2.html";
+  });
+  elements.unitThreeButton.addEventListener("click", () => { window.location.href = "unit3.html"; });
+  elements.greetingsCategoryButton.addEventListener("click", () => applyRoute("category"));
+
+  document.querySelectorAll('input[name="textDisplay"]').forEach((radio) => {
+    radio.addEventListener("change", () => {
+      state.textDisplay = radio.value;
+      state.gameMode = "flashcards";
+      render();
+    });
+  });
+
+  document.querySelectorAll('input[name="displayMode"]').forEach((radio) => {
+    radio.addEventListener("change", () => {
+      state.displayMode = radio.value;
+      if (radio.value !== "picture") {
+        state.previousDisplayMode = radio.value;
+      }
+      state.gameMode = "flashcards";
+      state.keywordSelectedIds.clear();
+      state.keywordOrder = [];
+      render();
+    });
+  });
+
+  elements.textbookSetButton.addEventListener("click", () => {
+    state.selectedIds = new Set(
+      FEELINGS.filter((feeling) => feeling.textbook).map((feeling) => feeling.id)
+    );
+    syncWordOptions();
+    rebuildDeck();
+  });
+
+  elements.selectAllButton.addEventListener("click", () => {
+    state.selectedIds = new Set(FEELINGS.map((feeling) => feeling.id));
+    syncWordOptions();
+    rebuildDeck();
+  });
+
+  elements.clearButton.addEventListener("click", () => {
+    const first = FEELINGS.find((feeling) => feeling.textbook) || FEELINGS[0];
+    state.selectedIds = new Set([first.id]);
+    syncWordOptions();
+    rebuildDeck();
+  });
+
+  elements.resetButton.addEventListener("click", () => {
+    state.textDisplay = "word";
+    state.displayMode = "pictureText";
+    state.previousDisplayMode = "pictureText";
+    state.gameMode = "flashcards";
+    state.hiddenMissingIds.clear();
+    state.missingOrder = [];
+    state.keywordSelectedIds.clear();
+    state.keywordOrder = [];
+    document.querySelector('input[name="textDisplay"][value="word"]').checked = true;
+    document.querySelector('input[name="displayMode"][value="pictureText"]').checked = true;
+
+    elements.sizeBalanceRange.value = "50";
+    elements.missingAnswerSizeRange.value = "10";
+    state.missingAnswerSize = 10;
+    document.documentElement.style.setProperty("--missing-answer-size", "10px");
+    elements.missingAnswerSizeValue.textContent = "10 px";
+    updateSizing();
+
+    applyRoute("textbook");
+  });
+
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape") {
+      closePanels();
+      return;
+    }
+
+    if (
+      elements.settingsPanel.classList.contains("open")
+    ) {
+      return;
+    }
+
+    if (state.gameMode === "leftRight") {
+      if (event.key === "ArrowLeft") {
+        event.preventDefault();
+        answerLeftRight("left");
+        return;
+      }
+
+      if (event.key === "ArrowRight") {
+        event.preventDefault();
+        answerLeftRight("right");
+        return;
+      }
+
+      if (event.code === "Space" || event.key === "Enter") {
+        event.preventDefault();
+        if (state.leftRightLocked) nextLeftRightQuestion();
+        return;
+      }
+    }
+
+    if (event.code === "Space" || event.key === "ArrowRight" || event.key === "Enter") {
+      event.preventDefault();
+      stopAuto();
+      nextCard();
+    } else if (event.key === "ArrowLeft") {
+      event.preventDefault();
+      stopAuto();
+      previousCard();
+    } else if (event.key.toLowerCase() === "r") {
+      shuffleDeck();
+    } else if (event.key.toLowerCase() === "g") {
+      openGameMenu();
+    } else if (event.key.toLowerCase() === "a") {
+      toggleAuto();
+    } else if (event.key === "ArrowUp") {
+      event.preventDefault();
+      changeTimer(1);
+    } else if (event.key === "ArrowDown") {
+      event.preventDefault();
+      changeTimer(-1);
+    }
+  });
+
+  window.addEventListener("resize", alignSideNav);
+
+  buildWordOptions();
+  setAppHeader("textbook");
+  updateSizing();
+  render();
+})();
+
+</script>
+</body>
+</html>
