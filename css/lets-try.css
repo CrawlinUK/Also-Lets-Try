@@ -732,7 +732,7 @@ html[data-unit="1"] .feeling-picture {
   height: 100%;
   border-radius: inherit;
   transform-origin: center;
-  background-image: url("https://crawlinuk.web.fc2.com/schoolapps/elementary/images/flags.png");
+  background-image: url("../images/flags.png");
   background-repeat: no-repeat;
   background-size: 401% 301%;
   transform-origin: center;
@@ -788,7 +788,7 @@ html[data-unit="1"] .missing-picture {
   width: min(25vh, 27vw, 360px);
   max-height: 96%;
   aspect-ratio: 3 / 2;
-  background-image: url("https://crawlinuk.web.fc2.com/schoolapps/elementary/images/flags.png");
+  background-image: url("../images/flags.png");
   background-repeat: no-repeat;
   background-size: 401% 301%;
   transform-origin: center;
@@ -1318,7 +1318,7 @@ html[data-unit="1"] .keyword-picture {
   width: min(25vh, 27vw, 360px);
   max-height: 96%;
   aspect-ratio: 3 / 2;
-  background-image: url("https://crawlinuk.web.fc2.com/schoolapps/elementary/images/flags.png");
+  background-image: url("../images/flags.png");
   background-repeat: no-repeat;
   background-size: 401% 301%;
   transform-origin: center;
@@ -1388,7 +1388,7 @@ html[data-unit="1"] .left-right-picture {
   height: auto;
   max-height: 94%;
   aspect-ratio: 3 / 2;
-  background-image: url("https://crawlinuk.web.fc2.com/schoolapps/elementary/images/flags.png");
+  background-image: url("../images/flags.png");
   background-repeat: no-repeat;
   background-size: 401% 301%;
   transform-origin: center;
@@ -1590,7 +1590,7 @@ html[data-unit="2"] .feeling-picture {
   width: 100%;
   height: 100%;
   transform-origin: center;
-  background-image: url("https://crawlinuk.web.fc2.com/schoolapps/elementary/images/emotions.jpg");
+  background-image: url("../images/emotions.jpg");
   background-repeat: no-repeat;
   background-size: 400% 200%;
   transform-origin: center;
@@ -1644,7 +1644,7 @@ html[data-unit="2"] .missing-picture {
   width: min(30vh, 19vw, 250px);
   max-height: 96%;
   aspect-ratio: 364 / 512;
-  background-image: url("https://crawlinuk.web.fc2.com/schoolapps/elementary/images/emotions.jpg");
+  background-image: url("../images/emotions.jpg");
   background-repeat: no-repeat;
   background-size: 400% 200%;
   transform-origin: center;
@@ -2172,7 +2172,7 @@ html[data-unit="2"] .keyword-picture {
   width: min(30vh, 19vw, 250px);
   max-height: 96%;
   aspect-ratio: 364 / 512;
-  background-image: url("https://crawlinuk.web.fc2.com/schoolapps/elementary/images/emotions.jpg");
+  background-image: url("../images/emotions.jpg");
   background-repeat: no-repeat;
   background-size: 400% 200%;
   transform-origin: center;
@@ -2246,7 +2246,7 @@ html[data-unit="2"] .left-right-picture {
   height: 96%;
   max-width: 96%;
   aspect-ratio: 364 / 512;
-  background-image: url("https://crawlinuk.web.fc2.com/schoolapps/elementary/images/emotions.jpg");
+  background-image: url("../images/emotions.jpg");
   background-repeat: no-repeat;
   background-size: 400% 200%;
   transform-origin: center;
@@ -2423,7 +2423,7 @@ html[data-unit="3"] .feeling-picture {
   width: 100%;
   height: 100%;
   transform-origin: center;
-  background-image: url("https://crawlinuk.web.fc2.com/schoolapps/elementary/images/emotions.jpg");
+  background-image: url("../images/emotions.jpg");
   background-repeat: no-repeat;
   background-size: 400% 200%;
   transform-origin: center;
@@ -2477,7 +2477,7 @@ html[data-unit="3"] .missing-picture {
   width: min(30vh, 19vw, 250px);
   max-height: 96%;
   aspect-ratio: 364 / 512;
-  background-image: url("https://crawlinuk.web.fc2.com/schoolapps/elementary/images/emotions.jpg");
+  background-image: url("../images/emotions.jpg");
   background-repeat: no-repeat;
   background-size: 400% 200%;
   transform-origin: center;
@@ -3005,7 +3005,7 @@ html[data-unit="3"] .keyword-picture {
   width: min(30vh, 19vw, 250px);
   max-height: 96%;
   aspect-ratio: 364 / 512;
-  background-image: url("https://crawlinuk.web.fc2.com/schoolapps/elementary/images/emotions.jpg");
+  background-image: url("../images/emotions.jpg");
   background-repeat: no-repeat;
   background-size: 400% 200%;
   transform-origin: center;
@@ -3079,7 +3079,7 @@ html[data-unit="3"] .left-right-picture {
   height: 96%;
   max-width: 96%;
   aspect-ratio: 364 / 512;
-  background-image: url("https://crawlinuk.web.fc2.com/schoolapps/elementary/images/emotions.jpg");
+  background-image: url("../images/emotions.jpg");
   background-repeat: no-repeat;
   background-size: 400% 200%;
   transform-origin: center;
