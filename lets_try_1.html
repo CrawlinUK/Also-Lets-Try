@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Let’s Try! 1</title>
+<style>
+@font-face{
+  font-family:"HandwritingWeCan";
+  src:url("https://crawlinuk.web.fc2.com/schoolapps/font/HandwritingWeCan-Medium.otf") format("opentype");
+  font-display:swap;
+}
+:root{--ink:#17191d;--muted:#657078;--line:#dce4e8;--surface:#fff;--page:#f5f8f6;--shadow:0 10px 30px rgba(31,47,40,.12);--u1:#7FBE25;--u2:#F6AB00;--u3:#E84283;--u4:#ED6D00;--u5:#00ADA9;--u6:#E94643;--u7:#6F58A3;--u8:#0B7CC3;--u9:#14A83B}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%;font-family:"HandwritingWeCan","Century Gothic","Tw Cen MT","Comic Sans MS",sans-serif;background:var(--page);color:var(--ink)}
+button{font:inherit;cursor:pointer}
+#fc2_footer{display:none!important}
+header{height:72px;display:flex;align-items:center;gap:18px;padding:10px 20px;background:#fff;border-bottom:1px solid var(--line)}
+.back{min-height:46px;padding:0 16px;border:0;border-radius:12px;background:#eff4f7;font-weight:900}
+header h1{margin:0;font-size:36px}
+main{max-width:1200px;margin:auto;padding:34px 24px}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.unit{min-height:120px;padding:18px;text-align:left;background:#fff;border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow)}
+.unit strong,.unit span{display:block}.unit strong{font-size:27px}.unit span{margin-top:6px;font-size:18px}
+.u1{border-left:14px solid var(--u1)}.u2{border-left:14px solid var(--u2)}.u3{border-left:14px solid var(--u3)}.u4{border-left:14px solid var(--u4)}.u5{border-left:14px solid var(--u5)}.u6{border-left:14px solid var(--u6)}.u7{border-left:14px solid var(--u7)}.u8{border-left:14px solid var(--u8)}.u9{border-left:14px solid var(--u9)}
+.disabled{opacity:.50;cursor:default}
+@media(max-width:800px){.grid{grid-template-columns:1fr}main{padding:20px 14px}}
+</style>
+</head>
+<body>
+<header><button class="back" id="back">◀ Back</button><h1>Let’s Try! 1</h1></header>
+<main>
+<section class="grid">
+  <button class="unit u1" id="unit1"><strong>Unit 1</strong><span>Hello!</span></button>
+  <button class="unit u2" id="unit2"><strong>Unit 2</strong><span>How are you?</span></button>
+  <button class="unit u3" id="unit3"><strong>Unit 3</strong><span>How many?</span></button>
+  <button class="unit u4" id="unit4"><strong>Unit 4</strong><span>I like blue.</span></button>
+  <button class="unit u5 disabled" disabled><strong>Unit 5</strong><span>What do you like?</span></button>
+  <button class="unit u6 disabled" disabled><strong>Unit 6</strong><span>ALPHABET</span></button>
+  <button class="unit u7 disabled" disabled><strong>Unit 7</strong><span>This is for you.</span></button>
+  <button class="unit u8 disabled" disabled><strong>Unit 8</strong><span>What’s this?</span></button>
+  <button class="unit u9 disabled" disabled><strong>Unit 9</strong><span>Who are you?</span></button>
+</section>
+</main>
+<script>
+document.getElementById("back").addEventListener("click",()=>location.href="index.html");
+document.getElementById("unit1").addEventListener("click",()=>location.href="unit1.html");
+document.getElementById("unit2").addEventListener("click",()=>location.href="unit2.html");
+document.getElementById("unit3").addEventListener("click",()=>location.href="unit3.html");
+document.getElementById("unit4").addEventListener("click",()=>location.href="unit4.html");
+</script>
+</body>
+</html>
