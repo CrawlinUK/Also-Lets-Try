@@ -15,14 +15,12 @@ Also-Lets-Try/
 
 ## Migration status
 
-This repository is being migrated from the existing **Let’s Try Web Helper** work.
+This repository is being migrated.
 
-The active folders are intentionally empty at the moment. Two recoverable older HTML versions have been preserved under `archive/reference/` so they cannot be mistaken for the newest classroom files.
-
-The next migration step is to bring in the latest working Let’s Try files, then move shared code and assets out of the individual HTML pages gradually.
+Two recoverable older HTML versions have been preserved under `archive/reference/` so they cannot be mistaken for the newest classroom files.
 
 ## Important
 
 Some archived pages still reference images hosted on FC2. Those dependencies will be replaced with repository assets during migration.
 
-GitHub Pages is **not yet configured as the classroom live site**. We will enable it after the current working files are in place and checked.
+GitHub Pages are **not yet configured as the classroom live site**. It will be enable after the current working files are in place and checked.
