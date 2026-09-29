@@ -234,74 +234,31 @@
   </aside>
 
 
+  <script src="../js/lets-try-data.js"></script>
   <script>
-const FEELINGS = [
-  {
-    id: "finland",
-    word: "Terve",
-    sentence: "Finland",
-    textbook: true,
-    sprite: { x: 66.15, y: 0, flip: false }
-  },
-  {
-    id: "china",
-    word: "Nǐ hǎo",
-    sentence: "China",
-    textbook: true,
-    sprite: { x: 66.6667, y: 100, flip: false }
-  },
-  {
-    id: "germany",
-    word: "Guten Tag",
-    sentence: "Germany",
-    textbook: true,
-    sprite: { x: 100, y: 0, flip: false }
-  },
-  {
-    id: "japan",
-    word: "Konnichiwa",
-    sentence: "Japan",
-    textbook: true,
-    sprite: { x: 33.3333, y: 50, flip: false }
-  },
-  {
-    id: "kenya",
-    word: "Jambo",
-    sentence: "Kenya",
-    textbook: true,
-    sprite: { x: 66.6667, y: 50, flip: false }
-  },
-  {
-    id: "india",
-    word: "Namaste",
-    sentence: "India",
-    textbook: true,
-    sprite: { x: 0, y: 50, flip: false }
-  },
-  {
-    id: "korea",
-    word: "Annyeonghaseyo",
-    sentence: "Korea",
-    textbook: true,
-    sprite: { special: "korea", flip: false }
-  },
-  {
-    id: "usa",
-    word: "Hello",
-    sentence: "USA",
-    textbook: true,
-    sprite: { x: 100, y: 100, flip: false }
-  },
-  {
-    id: "australia",
-    word: "Hello",
-    sentence: "Australia",
-    textbook: true,
-    sprite: { x: 0, y: 0, flip: false }
-  }
-];
+const UNIT_ONE = LETS_TRY_DATA.getUnit("lt1", 1);
+const WORLD_GREETINGS = LETS_TRY_DATA.getCategory("worldGreetings");
+const FLAG_SHEET = LETS_TRY_DATA.assets.sheets.flags;
+const FLAG_CELLS = LETS_TRY_DATA.assets.knownCells.flags;
+const FLAG_SHEET_URL = LETS_TRY_DATA.assetUrl(FLAG_SHEET.file);
+const UNIT_ONE_DEFAULT_IDS = new Set(UNIT_ONE.defaults.worldGreetings);
 
-</script>
+const FEELINGS = WORLD_GREETINGS.items.map((id) => {
+  const entry = WORLD_GREETINGS.entries[id];
+  const position = FLAG_CELLS[id];
+
+  if (!entry || !position) {
+    throw new Error(`Missing shared Unit 1 data for ${id}`);
+  }
+
+  return {
+    id,
+    word: entry.greeting,
+    sentence: entry.country,
+    textbook: UNIT_ONE_DEFAULT_IDS.has(id),
+    sprite: { position, flip: false }
+  };
+});
   <script>
 class FlashcardDeck {
   constructor(cards = []) {
@@ -454,16 +411,9 @@ class FlashcardDeck {
   const deck = new FlashcardDeck(getSelectedCards());
 
   function applySprite(element, card) {
-    if (card.sprite.special === "korea") {
-      element.style.backgroundImage = "url(\"data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A//www.w3.org/2000/svg%27%20viewBox%3D%270%200%20900%20600%27%3E%0A%3Crect%20width%3D%27900%27%20height%3D%27600%27%20fill%3D%27white%27/%3E%0A%3Cg%20transform%3D%27translate%28450%20300%29%20rotate%2833.69%29%27%3E%0A%3Cpath%20d%3D%27M0-100A100%20100%200%200%201%200%20100A50%2050%200%200%201%200%200A50%2050%200%200%200%200-100Z%27%20fill%3D%27%23cd2e3a%27/%3E%0A%3Cpath%20d%3D%27M0%20100A100%20100%200%200%201%200-100A50%2050%200%200%201%200%200A50%2050%200%200%200%200%20100Z%27%20fill%3D%27%230047a0%27/%3E%0A%3C/g%3E%0A%3Cg%20fill%3D%27%23111%27%3E%0A%3Cg%20transform%3D%27translate%28190%20145%29%20rotate%28-34%29%27%3E%3Crect%20x%3D%27-65%27%20y%3D%27-28%27%20width%3D%27130%27%20height%3D%2716%27/%3E%3Crect%20x%3D%27-65%27%20y%3D%270%27%20width%3D%27130%27%20height%3D%2716%27/%3E%3Crect%20x%3D%27-65%27%20y%3D%2728%27%20width%3D%27130%27%20height%3D%2716%27/%3E%3C/g%3E%0A%3Cg%20transform%3D%27translate%28710%20455%29%20rotate%28-34%29%27%3E%3Crect%20x%3D%27-65%27%20y%3D%27-28%27%20width%3D%2755%27%20height%3D%2716%27/%3E%3Crect%20x%3D%2710%27%20y%3D%27-28%27%20width%3D%2755%27%20height%3D%2716%27/%3E%3Crect%20x%3D%27-65%27%20y%3D%270%27%20width%3D%27130%27%20height%3D%2716%27/%3E%3Crect%20x%3D%27-65%27%20y%3D%2728%27%20width%3D%2755%27%20height%3D%2716%27/%3E%3Crect%20x%3D%2710%27%20y%3D%2728%27%20width%3D%2755%27%20height%3D%2716%27/%3E%3C/g%3E%0A%3Cg%20transform%3D%27translate%28710%20145%29%20rotate%2834%29%27%3E%3Crect%20x%3D%27-65%27%20y%3D%27-28%27%20width%3D%2755%27%20height%3D%2716%27/%3E%3Crect%20x%3D%2710%27%20y%3D%27-28%27%20width%3D%2755%27%20height%3D%2716%27/%3E%3Crect%20x%3D%27-65%27%20y%3D%270%27%20width%3D%2755%27%20height%3D%2716%27/%3E%3Crect%20x%3D%2710%27%20y%3D%270%27%20width%3D%2755%27%20height%3D%2716%27/%3E%3Crect%20x%3D%27-65%27%20y%3D%2728%27%20width%3D%27130%27%20height%3D%2716%27/%3E%3C/g%3E%0A%3Cg%20transform%3D%27translate%28190%20455%29%20rotate%2834%29%27%3E%3Crect%20x%3D%27-65%27%20y%3D%27-28%27%20width%3D%27130%27%20height%3D%2716%27/%3E%3Crect%20x%3D%27-65%27%20y%3D%270%27%20width%3D%2755%27%20height%3D%2716%27/%3E%3Crect%20x%3D%2710%27%20y%3D%270%27%20width%3D%2755%27%20height%3D%2716%27/%3E%3Crect%20x%3D%27-65%27%20y%3D%2728%27%20width%3D%27130%27%20height%3D%2716%27/%3E%3C/g%3E%0A%3C/g%3E%3C/svg%3E\")";
-      element.style.backgroundSize = "100% 100%";
-      element.style.backgroundPosition = "center";
-    } else {
-      element.style.backgroundImage = "url(\"../images/flags.png\")";
-      element.style.backgroundSize = "401% 301%";
-      element.style.backgroundPosition = `${card.sprite.x}% ${card.sprite.y}%`;
-    }
-
+    element.style.backgroundImage = `url("${FLAG_SHEET_URL}")`;
+    element.style.backgroundSize = FLAG_SHEET.backgroundSize;
+    element.style.backgroundPosition = card.sprite.position;
     element.style.transform = card.sprite.flip ? "scaleX(-1)" : "scaleX(1)";
     element.style.clipPath = "none";
   }
