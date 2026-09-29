@@ -196,10 +196,12 @@
   const ASSETS = {
     sheets: {
       flags: {
-        file: "images/flags.png",
-        grid: "existing",
+        file: "images/flags.svg",
+        grid: "4x4",
+        physicalCells: 16,
         logicalCategories: ["worldGreetings"],
-        status: "LT1 mapped; LT2 flag expansion to verify"
+        status: "mapped",
+        note: "Source artwork: lipis/flag-icons (MIT). Includes LT1/LT2 flags plus UK and Philippines."
       },
 
       emotions: {
@@ -259,6 +261,25 @@
     },
 
     knownCells: {
+      flags: {
+        australia: "0% 0%",
+        brazil: "33.333% 0%",
+        china: "66.667% 0%",
+        finland: "100% 0%",
+        germany: "0% 33.333%",
+        india: "33.333% 33.333%",
+        indonesia: "66.667% 33.333%",
+        japan: "100% 33.333%",
+        kenya: "0% 66.667%",
+        korea: "33.333% 66.667%",
+        "new-zealand": "66.667% 66.667%",
+        russia: "100% 66.667%",
+        "saudi-arabia": "0% 100%",
+        usa: "33.333% 100%",
+        "united-kingdom": "66.667% 100%",
+        philippines: "100% 100%"
+      },
+
       sports: {
         baseball: "0% 0%",
         dodgeball: "33.333% 0%",
