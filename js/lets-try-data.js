@@ -12,11 +12,21 @@
   - physical image-sheet membership does NOT define logical category membership.
     Example: sausage is physically on fruit.png but logically belongs to Food.
 
-  This file is not yet loaded by the live unit pages. Units 1–4 remain unchanged
-  while the master data is verified.
+  Unit 1 now loads this master data directly. Other live units remain unchanged
+  while their category data is verified.
 */
 (function (global) {
   "use strict";
+
+  const scriptUrl =
+    document.currentScript && document.currentScript.src
+      ? document.currentScript.src
+      : location.href;
+  const projectRoot = new URL("../", scriptUrl);
+
+  function assetUrl(path) {
+    return new URL(path, projectRoot).href;
+  }
 
   const numberWords = [
     0,1,2,3,4,5,6,7,8,9,10,
@@ -29,11 +39,26 @@
   const CATEGORIES = {
     worldGreetings: {
       label: "World greetings",
-      status: "partial-lt2-transcription",
       items: [
         "finland","china","germany","japan","kenya","india","korea","usa","australia",
         "russia","saudi-arabia","indonesia","new-zealand","brazil"
-      ]
+      ],
+      entries: {
+        finland:        { greeting: "Terve",              country: "Finland" },
+        china:          { greeting: "Nǐ hǎo",             country: "China" },
+        germany:        { greeting: "Guten Tag",          country: "Germany" },
+        japan:          { greeting: "Konnichiwa",         country: "Japan" },
+        kenya:          { greeting: "Jambo",              country: "Kenya" },
+        india:          { greeting: "Namaste",            country: "India" },
+        korea:          { greeting: "Annyeonghaseyo",     country: "Korea" },
+        usa:            { greeting: "Hello",              country: "USA" },
+        australia:      { greeting: "Hello",              country: "Australia" },
+        russia:         { greeting: "Zdravstvuyte",       country: "Russia" },
+        "saudi-arabia": { greeting: "As-salamu alaykum",  country: "Saudi Arabia" },
+        indonesia:      { greeting: "Selamat siang",      country: "Indonesia" },
+        "new-zealand":  { greeting: "Hello",              country: "New Zealand" },
+        brazil:         { greeting: "Boa tarde",          country: "Brazil" }
+      }
     },
 
     englishGreetings: {
@@ -198,6 +223,7 @@
       flags: {
         file: "images/flags.svg",
         grid: "4x4",
+        backgroundSize: "400% 400%",
         physicalCells: 16,
         logicalCategories: ["worldGreetings"],
         status: "mapped",
@@ -533,6 +559,7 @@
 
   global.LETS_TRY_DATA = Object.freeze({
     version: 2,
+    assetUrl,
     categories: CATEGORIES,
     assets: ASSETS,
     books: BOOKS,
