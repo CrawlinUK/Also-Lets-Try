@@ -722,7 +722,7 @@ html[data-unit="1"] .answer-area {
 
 html[data-unit="1"] .picture-frame {
   width: calc(min(68vh, 72vw, 820px) * var(--picture-scale));
-  aspect-ratio: 3 / 2;
+  aspect-ratio: 4 / 3;
   border-radius: 14px;
   box-shadow: 0 9px 22px rgba(25, 38, 33, 0.22);
 }
@@ -732,9 +732,9 @@ html[data-unit="1"] .feeling-picture {
   height: 100%;
   border-radius: inherit;
   transform-origin: center;
-  background-image: url("../images/flags.png");
+  background-image: url("../images/flags.svg");
   background-repeat: no-repeat;
-  background-size: 401% 301%;
+  background-size: 400% 400%;
   transform-origin: center;
 }
 
@@ -785,12 +785,14 @@ html[data-unit="1"] .missing-card {
 html[data-unit="1"] .missing-picture {
   background-color: #ffffff;
   box-shadow: 0 5px 14px rgba(25, 38, 33, 0.18);
-  width: min(25vh, 27vw, 360px);
-  max-height: 96%;
-  aspect-ratio: 3 / 2;
-  background-image: url("../images/flags.png");
+  width: auto;
+  height: 94%;
+  max-width: 94%;
+  max-height: 94%;
+  aspect-ratio: 4 / 3;
+  background-image: url("../images/flags.svg");
   background-repeat: no-repeat;
-  background-size: 401% 301%;
+  background-size: 400% 400%;
   transform-origin: center;
 }
 
@@ -1315,12 +1317,14 @@ html[data-unit="1"] .keyword-card.selected {
 html[data-unit="1"] .keyword-picture {
   background-color: #ffffff;
   box-shadow: 0 5px 14px rgba(25, 38, 33, 0.18);
-  width: min(25vh, 27vw, 360px);
-  max-height: 96%;
-  aspect-ratio: 3 / 2;
-  background-image: url("../images/flags.png");
+  width: auto;
+  height: 94%;
+  max-width: 94%;
+  max-height: 94%;
+  aspect-ratio: 4 / 3;
+  background-image: url("../images/flags.svg");
   background-repeat: no-repeat;
-  background-size: 401% 301%;
+  background-size: 400% 400%;
   transform-origin: center;
 }
 
@@ -1387,10 +1391,10 @@ html[data-unit="1"] .left-right-picture {
   width: 94%;
   height: auto;
   max-height: 94%;
-  aspect-ratio: 3 / 2;
-  background-image: url("../images/flags.png");
+  aspect-ratio: 4 / 3;
+  background-image: url("../images/flags.svg");
   background-repeat: no-repeat;
-  background-size: 401% 301%;
+  background-size: 400% 400%;
   transform-origin: center;
 }
 
@@ -3482,17 +3486,16 @@ html[data-unit="3"] .flashcard.word-only .number-word {
     }
 
     :is(html[data-unit="4"], html[data-unit="5"]) .game-title {
-      position: absolute;
-      left: 50%;
-      top: 0;
-      bottom: 0;
-      max-width: 42vw;
+      position: static;
+      flex: 1;
+      min-width: 0;
+      max-width: none;
       display: flex;
       align-items: center;
       justify-content: center;
-      padding: 6px 0 4px;
-      overflow: visible;
-      transform: translateX(-50%);
+      padding: 6px 8px 4px;
+      overflow: hidden;
+      transform: none;
       font-size: clamp(25px, 2.8vw, 40px);
       line-height: 1.15;
       white-space: nowrap;
@@ -3577,13 +3580,28 @@ html[data-unit="3"] .flashcard.word-only .number-word {
     }
 
     :is(html[data-unit="4"], html[data-unit="5"]) .game-picture {
-      width: auto;
-      height: 94%;
+      width: 94%;
+      height: auto;
       max-width: 94%;
       max-height: 94%;
       aspect-ratio: 1 / 1;
       background-size: contain;
       filter: drop-shadow(0 5px 7px rgba(25, 38, 33, .18));
+    }
+
+    @supports (width: 1cqw) {
+      :is(html[data-unit="4"], html[data-unit="5"]) .game-tile,
+      :is(html[data-unit="4"], html[data-unit="5"]) .left-right-choice {
+        container-type: size;
+      }
+
+      :is(html[data-unit="4"], html[data-unit="5"]) .game-tile .game-picture,
+      :is(html[data-unit="4"], html[data-unit="5"]) .left-right-choice .game-picture {
+        width: min(94cqw, 94cqh);
+        height: min(94cqw, 94cqh);
+        max-width: none;
+        max-height: none;
+      }
     }
 
     :is(html[data-unit="4"], html[data-unit="5"]) .game-tile.covered {
@@ -3632,8 +3650,8 @@ html[data-unit="3"] .flashcard.word-only .number-word {
     }
 
     :is(html[data-unit="4"], html[data-unit="5"]) .left-right-choice .game-picture {
-      width: auto;
-      height: 94%;
+      width: 94%;
+      height: auto;
       max-width: 94%;
       max-height: 94%;
       aspect-ratio: 1 / 1;
