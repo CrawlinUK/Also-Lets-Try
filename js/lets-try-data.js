@@ -422,7 +422,9 @@
         dodgeball: "33.333% 0%",
         soccer: "66.667% 0%",
         basketball: "100% 0%",
-        swimming: "0% 50%"
+        swimming: "0% 50%",
+        "table-tennis": "33.333% 50%",
+        volleyball: "66.667% 50%"
       },
 
       vegetables: {
@@ -440,7 +442,29 @@
         melon: "50% 33.333%",
         banana: "100% 33.333%",
         "kiwi-fruit": "0% 66.667%",
-        lemon: "50% 66.667%"
+        lemon: "50% 66.667%",
+        apple: "100% 66.667%",
+        strawberry: "0% 100%",
+        cherry: "50% 100%",
+        sausage: "100% 100%"
+      },
+
+      foods: {
+        "ice-cream": "0% 0%",
+        pudding: "33.333% 0%",
+        milk: "66.667% 0%",
+        "orange-juice": "100% 0%",
+        hamburger: "0% 33.333%",
+        pizza: "33.333% 33.333%",
+        spaghetti: "66.667% 33.333%",
+        sushi: "100% 33.333%",
+        steak: "0% 66.667%",
+        salad: "33.333% 66.667%",
+        cake: "66.667% 66.667%",
+        egg: "100% 66.667%",
+        jam: "0% 100%",
+        noodle: "33.333% 100%",
+        "rice-ball": "66.667% 100%"
       }
     },
 
