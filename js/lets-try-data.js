@@ -1,279 +1,523 @@
 /*
-  LET'S TRY! 1 — SHARED DATA
-  ==========================
-  Usage:
-    <script src="../js/lets-try-data.js"></script>
-    const cards = LETS_TRY_DATA.getCategory("feelings");
-    const unit4 = LETS_TRY_DATA.getUnitCards(4);
+  LET'S TRY! SHARED MASTER DATA
+  =============================
+  Book-independent vocabulary/category definitions plus Let’s Try! 1 and 2
+  unit presets.
 
-  Image paths are resolved relative to this JavaScript file, so the same data
-  works from root pages and from /units/ pages.
+  Important model:
+  - categories = the full vocabulary teachers may choose from.
+  - unit categories = categories available to that unit.
+  - defaults = the textbook words selected when the unit first opens.
+  - assets = where existing shared image sheets live.
+  - physical image-sheet membership does NOT define logical category membership.
+    Example: sausage is physically on fruit.png but logically belongs to Food.
+
+  This file is not yet loaded by the live unit pages. Units 1–4 remain unchanged
+  while the master data is verified.
 */
-
 (function (global) {
   "use strict";
 
-  const scriptUrl =
-    document.currentScript && document.currentScript.src
-      ? document.currentScript.src
-      : location.href;
+  const numberWords = [
+    0,1,2,3,4,5,6,7,8,9,10,
+    11,12,13,14,15,16,17,18,19,20,
+    30,40,50,60,70,80,90,100
+  ].map(n => String(n));
 
-  const projectRoot = new URL("../", scriptUrl);
+  const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
 
-  function assetUrl(path) {
-    return new URL(path, projectRoot).href;
-  }
-
-  const IMAGE_SHEETS = {
-    flags: {
-      file: "images/flags.png",
-      size: "401% 301%",
-      aspectRatio: "3 / 2",
-      category: "greetings",
-      status: "ready"
+  const CATEGORIES = {
+    worldGreetings: {
+      label: "World greetings",
+      status: "partial-lt2-transcription",
+      items: [
+        "finland","china","germany","japan","kenya","india","korea","usa","australia",
+        "russia","saudi-arabia","indonesia","new-zealand","brazil"
+      ]
     },
-    emotions: {
-      file: "images/emotions.jpg",
-      size: "400% 200%",
-      aspectRatio: "364 / 512",
-      category: "feelings",
-      status: "ready"
+
+    englishGreetings: {
+      label: "Greetings",
+      items: [
+        "hello","hi","good-morning","good-afternoon","good-night",
+        "goodbye","see-ya","see-you-later"
+      ]
     },
+
+    feelings: {
+      label: "Feelings",
+      items: ["happy","tired","hungry","sleepy","sad","fine","good","great","wonderful"]
+    },
+
+    numbers: {
+      label: "Numbers",
+      generated: true,
+      items: numberWords
+    },
+
+    colours: {
+      label: "Colours",
+      items: [
+        "red","pink","yellow","blue","light-blue","green","light-green",
+        "orange","purple","black","white","brown","gray"
+      ]
+    },
+
     sports: {
-      file: "images/sports.png",
-      size: "400% 300%",
-      aspectRatio: "1 / 1",
-      category: "sports",
-      status: "ready"
+      label: "Sports",
+      expectedImageSheetCount: 12,
+      status: "partial-name-map",
+      items: [
+        "baseball","dodgeball","soccer","basketball","swimming",
+        "table-tennis","volleyball"
+      ],
+      note: "The current sports.png contains 12 pictures. Seven textbook sport names are verified; five remaining sheet items still need identification."
     },
-    foods: {
-      file: "images/foods.png",
-      size: "400% 400%",
-      aspectRatio: "1 / 1",
-      category: "food",
-      status: "ready"
+
+    food: {
+      label: "Food & drink",
+      items: [
+        "ice-cream","pudding","milk","orange-juice","hamburger","pizza",
+        "spaghetti","sushi","steak","salad","cake","egg","jam","noodle",
+        "rice-ball","sausage"
+      ],
+      note: "Sausage is logically Food although its current sprite cell is physically in fruit.png."
     },
-    vegetables: {
-      file: "images/veg.png",
-      size: "300% 300%",
-      aspectRatio: "1 / 1",
-      category: "vegetables",
-      status: "ready"
-    },
+
     fruit: {
-      file: "images/fruit.png",
-      size: "300% 400%",
-      aspectRatio: "1 / 1",
-      category: "fruit",
-      status: "ready"
+      label: "Fruit",
+      items: [
+        "apple","strawberry","grapes","orange","pineapple","peach",
+        "melon","banana","kiwi-fruit","lemon","cherry"
+      ],
+      expectedImageSheetCount: 12,
+      note: "fruit.png has eleven fruit pictures plus one sausage cell."
     },
+
+    vegetables: {
+      label: "Vegetables",
+      items: [
+        "onion","green-pepper","cucumber","carrot","tomato",
+        "cabbage","corn","mushroom","potato"
+      ],
+      expectedImageSheetCount: 9
+    },
+
+    alphabet: {
+      label: "Alphabet",
+      generated: true,
+      items: alphabet
+    },
+
+    shapes: {
+      label: "Shapes",
+      items: ["circle","triangle","square","rectangle","heart","diamond","star"]
+    },
+
+    animals: {
+      label: "Animals",
+      items: [
+        "cat","panda","bear","spider","elephant","mouse","cow","tiger",
+        "rabbit","dragon","snake","horse","sheep","monkey","chicken","dog","wild-boar"
+      ]
+    },
+
+    nature: {
+      label: "Nature",
+      items: ["tree"]
+    },
+
+    bodyParts: {
+      label: "Body parts",
+      items: ["head","shoulders","knees","toes","ears","eyes","mouth","nose"]
+    },
+
+    describingWords: {
+      label: "Describing words",
+      items: ["long","short","big","small","scary","furry","round","shiny"]
+    },
+
+    weather: {
+      label: "Weather",
+      items: ["sunny","cloudy","rainy","snowy","hot","cold"]
+    },
+
+    clothes: {
+      label: "Clothes",
+      items: ["shorts","shirt","pants","jacket","boots","cap"]
+    },
+
+    playActivities: {
+      label: "Play activities",
+      items: ["play-tag","play-cards","play-dodgeball","make-a-snowman"]
+    },
+
+    days: {
+      label: "Days",
+      items: ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"]
+    },
+
+    dailyTimes: {
+      label: "Daily times",
+      items: [
+        "wake-up-time","breakfast-time","study-time","lunch-time","homework-time",
+        "snack-time","bath-time","dinner-time","bed-time","dream-time"
+      ]
+    },
+
     stationery: {
-      file: "images/stationary.png",
-      size: "400% 300%",
-      aspectRatio: "1 / 1",
-      category: "stationery",
-      status: "needs-card-map",
-      note: "Uploaded asset is named stationary.png. Keep that exact filename in code."
+      label: "Stationery",
+      items: [
+        "pencil","eraser","pencil-case","ruler","glue-stick","pen",
+        "marker","calendar","notebook","stapler","magnet","pencil-sharpener"
+      ],
+      expectedImageSheetCount: 12
+    },
+
+    schoolPlaces: {
+      label: "School places",
+      items: [
+        "library","teachers-office","school-principals-office","school-nurses-office",
+        "lunch-room","cooking-room","classroom","restroom","entrance","school-office",
+        "computer-room","music-room","arts-and-crafts-room","science-room","gym","playground"
+      ]
+    },
+
+    dailyRoutine: {
+      label: "Daily routine",
+      items: [
+        "wake-up","wash-my-face","brush-my-teeth","put-away-my-futon","have-breakfast",
+        "check-my-school-bag","leave-my-house","take-out-the-garbage","go-to-school",
+        "go-home","do-my-homework","finish-my-dinner","dream-a-wonderful-dream"
+      ]
     }
   };
 
-  function sprite(sheet, position, extra = {}) {
-    const info = IMAGE_SHEETS[sheet];
-    if (!info) throw new Error("Unknown image sheet: " + sheet);
-
-    return {
-      type: "sprite",
-      sheet,
-      src: assetUrl(info.file),
-      size: info.size,
-      position,
-      flip: false,
-      cropTop: 0,
-      ...extra
-    };
-  }
-
-  const CATEGORIES = {
-    greetings: [
-      { id: "finland", word: "Terve", sentence: "Finland", textbook: true, visual: sprite("flags", "66.15% 0%") },
-      { id: "china", word: "Nǐ hǎo", native: "你好", sentence: "China", textbook: true, visual: sprite("flags", "66.6667% 100%") },
-      { id: "germany", word: "Guten Tag", sentence: "Germany", textbook: true, visual: sprite("flags", "100% 0%") },
-      { id: "japan", word: "Konnichiwa", sentence: "Japan", textbook: true, visual: sprite("flags", "33.3333% 50%") },
-      { id: "kenya", word: "Jambo", sentence: "Kenya", textbook: true, visual: sprite("flags", "66.6667% 50%") },
-      { id: "india", word: "Namaste", native: "नमस्ते", sentence: "India", textbook: true, visual: sprite("flags", "0% 50%") },
-      {
-        id: "korea",
-        word: "Annyeonghaseyo",
-        native: "안녕하세요",
-        sentence: "Korea",
-        textbook: true,
-        visual: { type: "special", key: "korea-flag", flip: false }
+  const ASSETS = {
+    sheets: {
+      flags: {
+        file: "images/flags.png",
+        grid: "existing",
+        logicalCategories: ["worldGreetings"],
+        status: "LT1 mapped; LT2 flag expansion to verify"
       },
-      { id: "usa", word: "Hello", sentence: "USA", textbook: true, visual: sprite("flags", "100% 100%") },
-      { id: "australia", word: "Hello", sentence: "Australia", textbook: true, visual: sprite("flags", "0% 0%") }
-    ],
 
-    feelings: [
-      { id: "happy", word: "happy", sentence: "I’m happy.", textbook: true, visual: sprite("emotions", "0% 0%") },
-      { id: "tired", word: "tired", sentence: "I’m tired.", textbook: true, visual: sprite("emotions", "64% 93%", { cropTop: 3 }) },
-      { id: "hungry", word: "hungry", sentence: "I’m hungry.", textbook: true, visual: sprite("emotions", "96% 0%") },
-      { id: "sleepy", word: "sleepy", sentence: "I’m sleepy.", textbook: true, visual: sprite("emotions", "31% 93%") },
-      { id: "sad", word: "sad", sentence: "I’m sad.", textbook: true, visual: sprite("emotions", "0% 93%") },
-      { id: "fine", word: "fine", sentence: "I’m fine.", textbook: true, visual: sprite("emotions", "93% 93%", { flip: true, cropTop: 3 }) },
-      { id: "good", word: "good", sentence: "I’m good.", textbook: false, visual: sprite("emotions", "93% 93%", { cropTop: 3 }) },
-      { id: "great", word: "great", sentence: "I’m great.", textbook: false, visual: sprite("emotions", "64% 0%") },
-      { id: "wonderful", word: "wonderful", sentence: "I’m wonderful.", textbook: false, visual: sprite("emotions", "33.3333% 0%") }
-    ],
+      emotions: {
+        file: "images/emotions.jpg",
+        grid: "4x2",
+        logicalCategories: ["feelings"],
+        status: "mapped"
+      },
 
-    numbers: [
-      1,2,3,4,5,6,7,8,9,10,
-      11,12,13,14,15,16,17,18,19,20,
-      30,40,50,60,70,80,90,100
-    ].map(number => ({
-      id: "number-" + number,
-      word: String(number),
-      value: number,
-      visual: { type: "text" }
-    })),
+      foods: {
+        file: "images/foods.png",
+        grid: "4x4",
+        logicalCategories: ["food"],
+        status: "mapped",
+        note: "Contains a second milk picture as a physical duplicate."
+      },
 
-    colours: [
-      ["red", "#E53935", true],
-      ["pink", "#F28AB2", true],
-      ["yellow", "#FFD928", true],
-      ["blue", "#27A7DF", true],
-      ["light-blue", "#8DDCF4", false, "light blue"],
-      ["green", "#2DAA4F", true],
-      ["light-green", "#A9D96A", false, "light green"],
-      ["orange", "#F5A51B", true],
-      ["purple", "#A65AA6", true],
-      ["black", "#111111", true],
-      ["white", "#F8F8F4", true],
-      ["brown", "#A94D09", true],
-      ["gray", "#9FA4A8", false]
-    ].map(([id, fill, textbook, label]) => ({
-      id: id + "-color",
-      word: label || id,
-      sentence: "I like " + (label || id) + ".",
-      textbook,
-      visual: { type: "generated-colour", fill }
-    })),
+      fruit: {
+        file: "images/fruit.png",
+        grid: "3x4",
+        physicalCells: 12,
+        logicalCategories: ["fruit","food"],
+        status: "partial-cell-map",
+        note: "11 fruit + sausage. Sausage belongs to Food."
+      },
 
-    sports: [
-      ["baseball", "0% 0%"],
-      ["dodgeball", "33.333% 0%"],
-      ["soccer", "66.667% 0%"],
-      ["basketball", "100% 0%"],
-      ["swimming", "0% 50%"]
-    ].map(([word, position]) => ({
-      id: word,
-      word,
-      sentence: "I like " + word + ".",
-      textbook: true,
-      visual: sprite("sports", position)
-    })),
+      vegetables: {
+        file: "images/veg.png",
+        grid: "3x3",
+        physicalCells: 9,
+        logicalCategories: ["vegetables"],
+        status: "partial-cell-map"
+      },
 
-    food: [
-      ["ice-cream", "ice cream", "0% 0%", true, "I like ice cream."],
-      ["pudding", "pudding", "33.333% 0%", true],
-      ["milk-blue", "milk", "66.667% 0%", true],
-      ["orange-juice", "orange juice", "100% 0%", true],
-      ["hamburger", "hamburger", "0% 33.333%", true],
-      ["pizza", "pizza", "33.333% 33.333%", true],
-      ["spaghetti", "spaghetti", "66.667% 33.333%", true],
-      ["sushi", "sushi", "100% 33.333%", true],
-      ["steak", "steak", "0% 66.667%", true],
-      ["salad", "salad", "33.333% 66.667%", true],
-      ["cake", "cake", "66.667% 66.667%", true],
-      ["egg", "egg", "100% 66.667%", true, "I like eggs."],
-      ["jam", "jam", "0% 100%", true],
-      ["noodles", "noodles", "33.333% 100%", true],
-      ["rice-ball", "rice ball", "66.667% 100%", true, "I like rice balls."],
-      ["milk-red", "milk", "100% 100%", false]
-    ].map(([id, word, position, textbook, sentence]) => ({
-      id,
-      word,
-      sentence: sentence || ("I like " + word + "."),
-      textbook,
-      visual: sprite("foods", position)
-    })),
+      sports: {
+        file: "images/sports.png",
+        grid: "4x3",
+        physicalCells: 12,
+        logicalCategories: ["sports"],
+        status: "partial-cell-map"
+      },
 
-    vegetables: [
-      ["onion", "onion", "0% 0%", "I like onions."],
-      ["green-pepper", "green pepper", "50% 0%", "I like green peppers."],
-      ["cucumber", "cucumber", "100% 0%", "I like cucumbers."],
-      ["carrot", "carrot", "0% 50%", "I like carrots."]
-    ].map(([id, word, position, sentence]) => ({
-      id,
-      word,
-      sentence,
-      textbook: true,
-      visual: sprite("vegetables", position)
-    })),
+      sportsOriginal: {
+        file: "images/sports_original.png",
+        purpose: "reference",
+        status: "reference-only"
+      },
 
-    fruit: [
-      ["grapes", "grapes", "0% 0%", "I like grapes."],
-      ["orange", "orange", "50% 0%", "I like oranges."],
-      ["pineapple", "pineapple", "100% 0%", "I like pineapples."],
-      ["peach", "peach", "0% 33.333%", "I like peaches."],
-      ["melon", "melon", "50% 33.333%", "I like melons."],
-      ["banana", "banana", "100% 33.333%", "I like bananas."],
-      ["kiwi", "kiwi", "0% 66.667%", "I like kiwis."],
-      ["lemon", "lemon", "50% 66.667%", "I like lemons."]
-    ].map(([id, word, position, sentence]) => ({
-      id,
-      word,
-      sentence,
-      textbook: true,
-      visual: sprite("fruit", position)
-    })),
+      stationery: {
+        file: "images/stationary.png",
+        grid: "4x3",
+        physicalCells: 12,
+        logicalCategories: ["stationery"],
+        status: "cell-map-to-verify",
+        note: "Filename is intentionally stationary.png because that is the uploaded asset name."
+      }
+    },
 
-    // Awaiting reconstruction of the lost corrected Unit 5 mapping.
-    stationery: []
+    knownCells: {
+      sports: {
+        baseball: "0% 0%",
+        dodgeball: "33.333% 0%",
+        soccer: "66.667% 0%",
+        basketball: "100% 0%",
+        swimming: "0% 50%"
+      },
+
+      vegetables: {
+        onion: "0% 0%",
+        "green-pepper": "50% 0%",
+        cucumber: "100% 0%",
+        carrot: "0% 50%"
+      },
+
+      fruit: {
+        grapes: "0% 0%",
+        orange: "50% 0%",
+        pineapple: "100% 0%",
+        peach: "0% 33.333%",
+        melon: "50% 33.333%",
+        banana: "100% 33.333%",
+        "kiwi-fruit": "0% 66.667%",
+        lemon: "50% 66.667%"
+      }
+    },
+
+    generated: {
+      numbers: "text",
+      alphabet: "text",
+      colours: "paint-splodge/vector",
+      shapes: "vector-capable"
+    }
   };
 
-  const UNIT_SETS = {
-    1: { title: "Hello!", categories: ["greetings"] },
-    2: { title: "How are you?", categories: ["feelings"] },
-    3: { title: "How many?", categories: ["numbers"] },
-    4: { title: "I like blue.", categories: ["colours", "sports", "food", "vegetables", "fruit"] },
-    5: { title: "What do you like?", categories: ["stationery"], status: "rebuild-needed" },
-    6: { title: "ALPHABET", categories: ["alphabet"], status: "data-needed" },
-    7: { title: "This is for you.", categories: [], status: "data-needed" },
-    8: { title: "What’s this?", categories: [], status: "data-needed" },
-    9: { title: "Who are you?", categories: [], status: "data-needed" }
+  const BOOKS = {
+    lt1: {
+      label: "Let’s Try! 1",
+      units: {
+        1: {
+          title: "Hello!",
+          categories: ["worldGreetings"],
+          defaults: {
+            worldGreetings: ["finland","china","germany","japan","kenya","india","korea","usa","australia"]
+          }
+        },
+
+        2: {
+          title: "How are you?",
+          categories: ["feelings"],
+          defaults: {
+            feelings: ["happy","tired","hungry","sleepy","sad","fine"]
+          }
+        },
+
+        3: {
+          title: "How many?",
+          categories: ["numbers"],
+          defaults: {
+            numbers: ["1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16","17","18","19","20"]
+          },
+          supportWords: ["strawberry","apple","tomato"]
+        },
+
+        4: {
+          title: "I like blue.",
+          categories: ["colours","sports","food","vegetables","fruit"],
+          defaults: {
+            colours: ["red","yellow","blue","green","purple","orange","pink","brown","white","black"],
+            sports: ["baseball","dodgeball","soccer","basketball","swimming"],
+            food: ["ice-cream","pudding","milk","orange-juice"],
+            vegetables: ["onion","green-pepper","cucumber","carrot"],
+            fruit: []
+          }
+        },
+
+        5: {
+          title: "What do you like?",
+          categories: ["sports","food","fruit","vegetables","colours"],
+          defaults: {
+            sports: ["table-tennis","volleyball"],
+            food: ["hamburger","pizza","spaghetti","sushi","steak","salad","cake","egg","jam","noodle","rice-ball"],
+            fruit: ["grapes","orange","pineapple","peach","melon","banana","kiwi-fruit","lemon"],
+            vegetables: [],
+            colours: []
+          }
+        },
+
+        6: {
+          title: "ALPHABET",
+          categories: ["alphabet"],
+          defaults: { alphabet }
+        },
+
+        7: {
+          title: "This is for you.",
+          categories: ["shapes","colours"],
+          defaults: {
+            shapes: ["circle","triangle","square","rectangle","heart","diamond","star"],
+            colours: []
+          }
+        },
+
+        8: {
+          title: "What’s this?",
+          categories: ["animals","nature"],
+          defaults: {
+            animals: ["cat","panda","bear","spider","elephant"],
+            nature: ["tree"]
+          }
+        },
+
+        9: {
+          title: "Who are you?",
+          categories: ["animals","bodyParts","describingWords"],
+          reviewCategories: ["colours","shapes","numbers"],
+          defaults: {
+            animals: ["mouse","cow","tiger","rabbit","dragon","snake","horse","sheep","monkey","chicken","dog","wild-boar"],
+            bodyParts: ["head","shoulders","knees","toes","ears","eyes","mouth","nose"],
+            describingWords: ["long","short","big","small","scary","furry","round","shiny"]
+          }
+        }
+      }
+    },
+
+    lt2: {
+      label: "Let’s Try! 2",
+      units: {
+        1: {
+          title: "Hello, world!",
+          categories: ["worldGreetings"],
+          defaults: {
+            worldGreetings: [
+              "russia","saudi-arabia","india","china","korea","japan",
+              "kenya","indonesia","new-zealand","usa","brazil"
+            ]
+          },
+          status: "greeting-transliterations-to-verify"
+        },
+
+        2: {
+          title: "Let’s play cards.",
+          categories: ["weather","clothes","playActivities"],
+          defaults: {
+            weather: ["sunny","cloudy","rainy","snowy","hot","cold"],
+            clothes: ["shorts","shirt","pants","jacket","boots","cap"],
+            playActivities: ["play-tag","play-cards","play-dodgeball","make-a-snowman"]
+          }
+        },
+
+        3: {
+          title: "I like Mondays.",
+          categories: ["days"],
+          defaults: {
+            days: ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"]
+          }
+        },
+
+        4: {
+          title: "What time is it?",
+          categories: ["dailyTimes"],
+          defaults: {
+            dailyTimes: [
+              "wake-up-time","breakfast-time","study-time","lunch-time","homework-time",
+              "snack-time","bath-time","dinner-time","bed-time","dream-time"
+            ]
+          },
+          generatedTimePractice: true
+        },
+
+        5: {
+          title: "Do you have a pen?",
+          categories: ["stationery"],
+          defaults: {
+            stationery: [
+              "pencil","eraser","pencil-case","ruler","glue-stick","pen",
+              "marker","calendar","notebook","stapler","magnet","pencil-sharpener"
+            ]
+          }
+        },
+
+        6: {
+          title: "Alphabet",
+          categories: ["alphabet"],
+          defaults: { alphabet }
+        },
+
+        7: {
+          title: "What do you want?",
+          categories: ["vegetables","fruit"],
+          defaults: {
+            vegetables: ["onion","mushroom","green-pepper","tomato","cabbage","corn","carrot","cucumber","potato"],
+            fruit: ["melon","peach","banana","apple","pineapple","orange","strawberry","cherry","kiwi-fruit"]
+          }
+        },
+
+        8: {
+          title: "This is my favorite place.",
+          categories: ["schoolPlaces"],
+          defaults: {
+            schoolPlaces: [
+              "library","teachers-office","school-principals-office","school-nurses-office",
+              "lunch-room","cooking-room","classroom","restroom","entrance","school-office",
+              "computer-room","music-room","arts-and-crafts-room","science-room","gym","playground"
+            ]
+          }
+        },
+
+        9: {
+          title: "This is my day.",
+          categories: ["dailyRoutine"],
+          defaults: {
+            dailyRoutine: [
+              "wake-up","wash-my-face","brush-my-teeth","put-away-my-futon","have-breakfast",
+              "check-my-school-bag","leave-my-house","take-out-the-garbage","go-to-school",
+              "go-home","do-my-homework","finish-my-dinner","dream-a-wonderful-dream"
+            ]
+          }
+        }
+      }
+    }
   };
 
-  function cloneCards(cards) {
-    return cards.map(card => ({
-      ...card,
-      visual: card.visual ? { ...card.visual } : undefined
-    }));
+  function getCategory(id) {
+    return CATEGORIES[id] || null;
   }
 
-  function getCategory(name) {
-    return cloneCards(CATEGORIES[name] || []);
+  function getUnit(bookId, unitNumber) {
+    return BOOKS[bookId] && BOOKS[bookId].units[unitNumber]
+      ? BOOKS[bookId].units[unitNumber]
+      : null;
   }
 
-  function getUnitCards(unitNumber) {
-    const unit = UNIT_SETS[unitNumber];
-    if (!unit) return [];
-    return unit.categories.flatMap(name => getCategory(name));
+  function getUnitDefaults(bookId, unitNumber) {
+    const unit = getUnit(bookId, unitNumber);
+    return unit ? unit.defaults : null;
   }
 
-  function getImageSheet(name) {
-    const sheet = IMAGE_SHEETS[name];
-    return sheet ? { ...sheet, src: assetUrl(sheet.file) } : null;
+  function getUnitAvailableWords(bookId, unitNumber) {
+    const unit = getUnit(bookId, unitNumber);
+    if (!unit) return {};
+
+    const result = {};
+    unit.categories.forEach(categoryId => {
+      result[categoryId] = CATEGORIES[categoryId]
+        ? [...CATEGORIES[categoryId].items]
+        : [];
+    });
+    return result;
   }
 
   global.LETS_TRY_DATA = Object.freeze({
-    version: 1,
-    imageSheets: IMAGE_SHEETS,
+    version: 2,
     categories: CATEGORIES,
-    units: UNIT_SETS,
-    assetUrl,
-    sprite,
+    assets: ASSETS,
+    books: BOOKS,
     getCategory,
-    getUnitCards,
-    getImageSheet
+    getUnit,
+    getUnitDefaults,
+    getUnitAvailableWords
   });
 })(window);
