@@ -1,19 +1,19 @@
 /*
   LET'S TRY! SHARED MASTER DATA
   =============================
-  Book-independent vocabulary/category definitions plus Let’s Try! 1 and 2
-  unit presets.
+  Category-first vocabulary for Let’s Try! 1 and 2.
 
-  Important model:
-  - categories = the full vocabulary teachers may choose from.
-  - unit categories = categories available to that unit.
-  - defaults = the textbook words selected when the unit first opens.
-  - assets = where existing shared image sheets live.
-  - physical image-sheet membership does NOT define logical category membership.
-    Example: sausage is physically on fruit.png but logically belongs to Food.
+  Tag rule:
+  - Each word may have defaultIn tags such as "1-1" or "2-7".
+  - If any word in a category is tagged for a unit, that whole category becomes
+    available to that unit.
+  - Tagged words are selected by default.
+  - Untagged words stay available as optional category extras.
+  - Unit definitions therefore only need titles / special metadata; they do not
+    repeat category names or default word lists.
 
-  Unit 1 now loads this master data directly. Other live units remain unchanged
-  while their category data is verified.
+  Visual assets are separate from vocabulary membership. A word may belong to
+  one logical category while physically living on another sprite sheet.
 */
 (function (global) {
   "use strict";
@@ -28,63 +28,89 @@
     return new URL(path, projectRoot).href;
   }
 
-  const numberWords = [
-    0,1,2,3,4,5,6,7,8,9,10,
-    11,12,13,14,15,16,17,18,19,20,
-    30,40,50,60,70,80,90,100
-  ].map(n => String(n));
-
-  const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
+  function item(id, defaultIn = [], extra = {}) {
+    return { id, defaultIn, ...extra };
+  }
 
   const CATEGORIES = {
     worldGreetings: {
       label: "World greetings",
       items: [
-        "finland","china","germany","japan","kenya","india","korea","usa","australia",
-        "russia","saudi-arabia","indonesia","new-zealand","brazil"
-      ],
-      entries: {
-        finland:        { greeting: "Terve",              country: "Finland" },
-        china:          { greeting: "Nǐ hǎo",             country: "China" },
-        germany:        { greeting: "Guten Tag",          country: "Germany" },
-        japan:          { greeting: "Konnichiwa",         country: "Japan" },
-        kenya:          { greeting: "Jambo",              country: "Kenya" },
-        india:          { greeting: "Namaste",            country: "India" },
-        korea:          { greeting: "Annyeonghaseyo",     country: "Korea" },
-        usa:            { greeting: "Hello",              country: "USA" },
-        australia:      { greeting: "Hello",              country: "Australia" },
-        russia:         { greeting: "Zdravstvuyte",       country: "Russia" },
-        "saudi-arabia": { greeting: "As-salamu alaykum",  country: "Saudi Arabia" },
-        indonesia:      { greeting: "Selamat siang",      country: "Indonesia" },
-        "new-zealand":  { greeting: "Hello",              country: "New Zealand" },
-        brazil:         { greeting: "Boa tarde",          country: "Brazil" }
-      }
+        item("finland", ["1-1"], { country: "Finland", greeting: "Terve" }),
+        item("china", ["1-1", "2-1"], { country: "China", greeting: "Nǐ hǎo" }),
+        item("germany", ["1-1"], { country: "Germany", greeting: "Guten Tag" }),
+        item("japan", ["1-1", "2-1"], { country: "Japan", greeting: "Konnichiwa" }),
+        item("kenya", ["1-1", "2-1"], { country: "Kenya", greeting: "Jambo" }),
+        item("india", ["1-1", "2-1"], { country: "India", greeting: "Namaste" }),
+        item("korea", ["1-1", "2-1"], { country: "Korea", greeting: "Annyeonghaseyo" }),
+        item("usa", ["1-1", "2-1"], { country: "USA", greeting: "Hello" }),
+        item("australia", ["1-1"], { country: "Australia", greeting: "Hello" }),
+        item("russia", ["2-1"], { country: "Russia", greeting: "Zdravstvuyte" }),
+        item("saudi-arabia", ["2-1"], { country: "Saudi Arabia", greeting: "As-salamu alaykum" }),
+        item("indonesia", ["2-1"], { country: "Indonesia", greeting: "Selamat siang" }),
+        item("new-zealand", ["2-1"], { country: "New Zealand", greeting: "Hello" }),
+        item("brazil", ["2-1"], { country: "Brazil", greeting: "Boa tarde" })
+      ]
     },
 
     englishGreetings: {
       label: "Greetings",
       items: [
-        "hello","hi","good-morning","good-afternoon","good-night",
-        "goodbye","see-ya","see-you-later"
+        item("hello"),
+        item("hi"),
+        item("good-morning"),
+        item("good-afternoon"),
+        item("good-night"),
+        item("goodbye"),
+        item("see-ya"),
+        item("see-you-later")
       ]
     },
 
     feelings: {
       label: "Feelings",
-      items: ["happy","tired","hungry","sleepy","sad","fine","good","great","wonderful"]
+      items: [
+        item("happy", ["1-2"]),
+        item("tired", ["1-2"]),
+        item("hungry", ["1-2"]),
+        item("sleepy", ["1-2"]),
+        item("sad", ["1-2"]),
+        item("fine", ["1-2"]),
+        item("good"),
+        item("great"),
+        item("wonderful")
+      ]
     },
 
     numbers: {
       label: "Numbers",
       generated: true,
-      items: numberWords
+      items: [
+        item("0"),
+        item("1", ["1-3"]), item("2", ["1-3"]), item("3", ["1-3"]), item("4", ["1-3"]), item("5", ["1-3"]),
+        item("6", ["1-3"]), item("7", ["1-3"]), item("8", ["1-3"]), item("9", ["1-3"]), item("10", ["1-3"]),
+        item("11", ["1-3"]), item("12", ["1-3"]), item("13", ["1-3"]), item("14", ["1-3"]), item("15", ["1-3"]),
+        item("16", ["1-3"]), item("17", ["1-3"]), item("18", ["1-3"]), item("19", ["1-3"]), item("20", ["1-3"]),
+        item("30"), item("40"), item("50"), item("60"), item("70"), item("80"), item("90"), item("100")
+      ]
     },
 
     colours: {
       label: "Colours",
       items: [
-        "red","pink","yellow","blue","light-blue","green","light-green",
-        "orange","purple","black","white","brown","gray"
+        item("red", ["1-4"]),
+        item("pink", ["1-4"]),
+        item("yellow", ["1-4"]),
+        item("blue", ["1-4"]),
+        item("green", ["1-4"]),
+        item("orange", ["1-4"]),
+        item("purple", ["1-4"]),
+        item("black", ["1-4"]),
+        item("white", ["1-4"]),
+        item("brown", ["1-4"]),
+        item("light-blue"),
+        item("light-green"),
+        item("gray")
       ]
     },
 
@@ -93,127 +119,212 @@
       expectedImageSheetCount: 12,
       status: "partial-name-map",
       items: [
-        "baseball","dodgeball","soccer","basketball","swimming",
-        "table-tennis","volleyball"
+        item("baseball", ["1-4"]),
+        item("dodgeball", ["1-4"]),
+        item("soccer", ["1-4"]),
+        item("basketball", ["1-4"]),
+        item("swimming", ["1-4"]),
+        item("table-tennis", ["1-5"]),
+        item("volleyball", ["1-5"])
       ],
-      note: "The current sports.png contains 12 pictures. Seven textbook sport names are verified; five remaining sheet items still need identification."
+      note: "sports.png contains 12 pictures. Seven names are mapped; five category-only cells still need identification."
     },
 
     food: {
       label: "Food & drink",
       items: [
-        "ice-cream","pudding","milk","orange-juice","hamburger","pizza",
-        "spaghetti","sushi","steak","salad","cake","egg","jam","noodle",
-        "rice-ball","sausage"
+        item("ice-cream", ["1-4"]),
+        item("pudding", ["1-4"]),
+        item("milk", ["1-4"]),
+        item("orange-juice", ["1-4"]),
+        item("hamburger", ["1-5"]),
+        item("pizza", ["1-5"]),
+        item("spaghetti", ["1-5"]),
+        item("sushi", ["1-5"]),
+        item("steak", ["1-5"]),
+        item("salad", ["1-5"]),
+        item("cake", ["1-5"]),
+        item("egg", ["1-5"]),
+        item("jam", ["1-5"]),
+        item("noodle", ["1-5"]),
+        item("rice-ball", ["1-5"]),
+        item("sausage")
       ],
       note: "Sausage is logically Food although its current sprite cell is physically in fruit.png."
     },
 
     fruit: {
       label: "Fruit",
-      items: [
-        "apple","strawberry","grapes","orange","pineapple","peach",
-        "melon","banana","kiwi-fruit","lemon","cherry"
-      ],
       expectedImageSheetCount: 12,
+      items: [
+        item("apple", ["2-7"]),
+        item("strawberry", ["2-7"]),
+        item("grapes", ["1-5"]),
+        item("orange", ["1-5", "2-7"]),
+        item("pineapple", ["1-5", "2-7"]),
+        item("peach", ["1-5", "2-7"]),
+        item("melon", ["1-5", "2-7"]),
+        item("banana", ["1-5", "2-7"]),
+        item("kiwi-fruit", ["1-5", "2-7"]),
+        item("lemon", ["1-5"]),
+        item("cherry", ["2-7"])
+      ],
       note: "fruit.png has eleven fruit pictures plus one sausage cell."
     },
 
     vegetables: {
       label: "Vegetables",
+      expectedImageSheetCount: 9,
       items: [
-        "onion","green-pepper","cucumber","carrot","tomato",
-        "cabbage","corn","mushroom","potato"
-      ],
-      expectedImageSheetCount: 9
+        item("onion", ["1-4", "2-7"]),
+        item("green-pepper", ["1-4", "2-7"]),
+        item("cucumber", ["1-4", "2-7"]),
+        item("carrot", ["1-4", "2-7"]),
+        item("tomato", ["2-7"]),
+        item("cabbage", ["2-7"]),
+        item("corn", ["2-7"]),
+        item("mushroom", ["2-7"]),
+        item("potato", ["2-7"])
+      ]
     },
 
     alphabet: {
       label: "Alphabet",
       generated: true,
-      items: alphabet
+      items: [
+        item("A", ["1-6", "2-6"]), item("B", ["1-6", "2-6"]), item("C", ["1-6", "2-6"]),
+        item("D", ["1-6", "2-6"]), item("E", ["1-6", "2-6"]), item("F", ["1-6", "2-6"]),
+        item("G", ["1-6", "2-6"]), item("H", ["1-6", "2-6"]), item("I", ["1-6", "2-6"]),
+        item("J", ["1-6", "2-6"]), item("K", ["1-6", "2-6"]), item("L", ["1-6", "2-6"]),
+        item("M", ["1-6", "2-6"]), item("N", ["1-6", "2-6"]), item("O", ["1-6", "2-6"]),
+        item("P", ["1-6", "2-6"]), item("Q", ["1-6", "2-6"]), item("R", ["1-6", "2-6"]),
+        item("S", ["1-6", "2-6"]), item("T", ["1-6", "2-6"]), item("U", ["1-6", "2-6"]),
+        item("V", ["1-6", "2-6"]), item("W", ["1-6", "2-6"]), item("X", ["1-6", "2-6"]),
+        item("Y", ["1-6", "2-6"]), item("Z", ["1-6", "2-6"])
+      ]
     },
 
     shapes: {
       label: "Shapes",
-      items: ["circle","triangle","square","rectangle","heart","diamond","star"]
+      items: [
+        item("circle", ["1-7"]),
+        item("triangle", ["1-7"]),
+        item("square", ["1-7"]),
+        item("rectangle", ["1-7"]),
+        item("heart", ["1-7"]),
+        item("diamond", ["1-7"]),
+        item("star", ["1-7"])
+      ]
     },
 
     animals: {
       label: "Animals",
       items: [
-        "cat","panda","bear","spider","elephant","mouse","cow","tiger",
-        "rabbit","dragon","snake","horse","sheep","monkey","chicken","dog","wild-boar"
+        item("cat", ["1-8"]), item("panda", ["1-8"]), item("bear", ["1-8"]),
+        item("spider", ["1-8"]), item("elephant", ["1-8"]),
+        item("mouse", ["1-9"]), item("cow", ["1-9"]), item("tiger", ["1-9"]),
+        item("rabbit", ["1-9"]), item("dragon", ["1-9"]), item("snake", ["1-9"]),
+        item("horse", ["1-9"]), item("sheep", ["1-9"]), item("monkey", ["1-9"]),
+        item("chicken", ["1-9"]), item("dog", ["1-9"]), item("wild-boar", ["1-9"])
       ]
     },
 
     nature: {
       label: "Nature",
-      items: ["tree"]
+      items: [item("tree", ["1-8"])]
     },
 
     bodyParts: {
       label: "Body parts",
-      items: ["head","shoulders","knees","toes","ears","eyes","mouth","nose"]
+      items: [
+        item("head", ["1-9"]), item("shoulders", ["1-9"]), item("knees", ["1-9"]), item("toes", ["1-9"]),
+        item("ears", ["1-9"]), item("eyes", ["1-9"]), item("mouth", ["1-9"]), item("nose", ["1-9"])
+      ]
     },
 
     describingWords: {
       label: "Describing words",
-      items: ["long","short","big","small","scary","furry","round","shiny"]
+      items: [
+        item("long", ["1-9"]), item("short", ["1-9"]), item("big", ["1-9"]), item("small", ["1-9"]),
+        item("scary", ["1-9"]), item("furry", ["1-9"]), item("round", ["1-9"]), item("shiny", ["1-9"])
+      ]
     },
 
     weather: {
       label: "Weather",
-      items: ["sunny","cloudy","rainy","snowy","hot","cold"]
+      items: [
+        item("sunny", ["2-2"]), item("cloudy", ["2-2"]), item("rainy", ["2-2"]),
+        item("snowy", ["2-2"]), item("hot", ["2-2"]), item("cold", ["2-2"])
+      ]
     },
 
     clothes: {
       label: "Clothes",
-      items: ["shorts","shirt","pants","jacket","boots","cap"]
+      items: [
+        item("shorts", ["2-2"]), item("shirt", ["2-2"]), item("pants", ["2-2"]),
+        item("jacket", ["2-2"]), item("boots", ["2-2"]), item("cap", ["2-2"])
+      ]
     },
 
     playActivities: {
       label: "Play activities",
-      items: ["play-tag","play-cards","play-dodgeball","make-a-snowman"]
+      items: [
+        item("play-tag", ["2-2"]), item("play-cards", ["2-2"]),
+        item("play-dodgeball", ["2-2"]), item("make-a-snowman", ["2-2"])
+      ]
     },
 
     days: {
       label: "Days",
-      items: ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"]
+      items: [
+        item("Monday", ["2-3"]), item("Tuesday", ["2-3"]), item("Wednesday", ["2-3"]),
+        item("Thursday", ["2-3"]), item("Friday", ["2-3"]), item("Saturday", ["2-3"]), item("Sunday", ["2-3"])
+      ]
     },
 
     dailyTimes: {
       label: "Daily times",
       items: [
-        "wake-up-time","breakfast-time","study-time","lunch-time","homework-time",
-        "snack-time","bath-time","dinner-time","bed-time","dream-time"
+        item("wake-up-time", ["2-4"]), item("breakfast-time", ["2-4"]), item("study-time", ["2-4"]),
+        item("lunch-time", ["2-4"]), item("homework-time", ["2-4"]), item("snack-time", ["2-4"]),
+        item("bath-time", ["2-4"]), item("dinner-time", ["2-4"]), item("bed-time", ["2-4"]),
+        item("dream-time", ["2-4"])
       ]
     },
 
     stationery: {
       label: "Stationery",
+      expectedImageSheetCount: 12,
       items: [
-        "pencil","eraser","pencil-case","ruler","glue-stick","pen",
-        "marker","calendar","notebook","stapler","magnet","pencil-sharpener"
-      ],
-      expectedImageSheetCount: 12
+        item("pencil", ["2-5"]), item("eraser", ["2-5"]), item("pencil-case", ["2-5"]),
+        item("ruler", ["2-5"]), item("glue-stick", ["2-5"]), item("pen", ["2-5"]),
+        item("marker", ["2-5"]), item("calendar", ["2-5"]), item("notebook", ["2-5"]),
+        item("stapler", ["2-5"]), item("magnet", ["2-5"]), item("pencil-sharpener", ["2-5"])
+      ]
     },
 
     schoolPlaces: {
       label: "School places",
       items: [
-        "library","teachers-office","school-principals-office","school-nurses-office",
-        "lunch-room","cooking-room","classroom","restroom","entrance","school-office",
-        "computer-room","music-room","arts-and-crafts-room","science-room","gym","playground"
+        item("library", ["2-8"]), item("teachers-office", ["2-8"]),
+        item("school-principals-office", ["2-8"]), item("school-nurses-office", ["2-8"]),
+        item("lunch-room", ["2-8"]), item("cooking-room", ["2-8"]), item("classroom", ["2-8"]),
+        item("restroom", ["2-8"]), item("entrance", ["2-8"]), item("school-office", ["2-8"]),
+        item("computer-room", ["2-8"]), item("music-room", ["2-8"]),
+        item("arts-and-crafts-room", ["2-8"]), item("science-room", ["2-8"]),
+        item("gym", ["2-8"]), item("playground", ["2-8"])
       ]
     },
 
     dailyRoutine: {
       label: "Daily routine",
       items: [
-        "wake-up","wash-my-face","brush-my-teeth","put-away-my-futon","have-breakfast",
-        "check-my-school-bag","leave-my-house","take-out-the-garbage","go-to-school",
-        "go-home","do-my-homework","finish-my-dinner","dream-a-wonderful-dream"
+        item("wake-up", ["2-9"]), item("wash-my-face", ["2-9"]), item("brush-my-teeth", ["2-9"]),
+        item("put-away-my-futon", ["2-9"]), item("have-breakfast", ["2-9"]),
+        item("check-my-school-bag", ["2-9"]), item("leave-my-house", ["2-9"]),
+        item("take-out-the-garbage", ["2-9"]), item("go-to-school", ["2-9"]),
+        item("go-home", ["2-9"]), item("do-my-homework", ["2-9"]),
+        item("finish-my-dinner", ["2-9"]), item("dream-a-wonderful-dream", ["2-9"])
       ]
     }
   };
@@ -345,186 +456,30 @@
     lt1: {
       label: "Let’s Try! 1",
       units: {
-        1: {
-          title: "Hello!",
-          categories: ["worldGreetings"],
-          defaults: {
-            worldGreetings: ["finland","china","germany","japan","kenya","india","korea","usa","australia"]
-          }
-        },
-
-        2: {
-          title: "How are you?",
-          categories: ["feelings"],
-          defaults: {
-            feelings: ["happy","tired","hungry","sleepy","sad","fine"]
-          }
-        },
-
-        3: {
-          title: "How many?",
-          categories: ["numbers"],
-          defaults: {
-            numbers: ["1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16","17","18","19","20"]
-          },
-          supportWords: ["strawberry","apple","tomato"]
-        },
-
-        4: {
-          title: "I like blue.",
-          categories: ["colours","sports","food","vegetables","fruit"],
-          defaults: {
-            colours: ["red","yellow","blue","green","purple","orange","pink","brown","white","black"],
-            sports: ["baseball","dodgeball","soccer","basketball","swimming"],
-            food: ["ice-cream","pudding","milk","orange-juice"],
-            vegetables: ["onion","green-pepper","cucumber","carrot"],
-            fruit: []
-          }
-        },
-
-        5: {
-          title: "What do you like?",
-          categories: ["sports","food","fruit","vegetables","colours"],
-          defaults: {
-            sports: ["table-tennis","volleyball"],
-            food: ["hamburger","pizza","spaghetti","sushi","steak","salad","cake","egg","jam","noodle","rice-ball"],
-            fruit: ["grapes","orange","pineapple","peach","melon","banana","kiwi-fruit","lemon"],
-            vegetables: [],
-            colours: []
-          }
-        },
-
-        6: {
-          title: "ALPHABET",
-          categories: ["alphabet"],
-          defaults: { alphabet }
-        },
-
-        7: {
-          title: "This is for you.",
-          categories: ["shapes","colours"],
-          defaults: {
-            shapes: ["circle","triangle","square","rectangle","heart","diamond","star"],
-            colours: []
-          }
-        },
-
-        8: {
-          title: "What’s this?",
-          categories: ["animals","nature"],
-          defaults: {
-            animals: ["cat","panda","bear","spider","elephant"],
-            nature: ["tree"]
-          }
-        },
-
-        9: {
-          title: "Who are you?",
-          categories: ["animals","bodyParts","describingWords"],
-          reviewCategories: ["colours","shapes","numbers"],
-          defaults: {
-            animals: ["mouse","cow","tiger","rabbit","dragon","snake","horse","sheep","monkey","chicken","dog","wild-boar"],
-            bodyParts: ["head","shoulders","knees","toes","ears","eyes","mouth","nose"],
-            describingWords: ["long","short","big","small","scary","furry","round","shiny"]
-          }
-        }
+        1: { title: "Hello!" },
+        2: { title: "How are you?" },
+        3: { title: "How many?", supportWords: ["strawberry", "apple", "tomato"] },
+        4: { title: "I like blue." },
+        5: { title: "What do you like?" },
+        6: { title: "ALPHABET" },
+        7: { title: "This is for you." },
+        8: { title: "What’s this?" },
+        9: { title: "Who are you?", reviewCategories: ["colours", "shapes", "numbers"] }
       }
     },
 
     lt2: {
       label: "Let’s Try! 2",
       units: {
-        1: {
-          title: "Hello, world!",
-          categories: ["worldGreetings"],
-          defaults: {
-            worldGreetings: [
-              "russia","saudi-arabia","india","china","korea","japan",
-              "kenya","indonesia","new-zealand","usa","brazil"
-            ]
-          },
-          status: "greeting-transliterations-to-verify"
-        },
-
-        2: {
-          title: "Let’s play cards.",
-          categories: ["weather","clothes","playActivities"],
-          defaults: {
-            weather: ["sunny","cloudy","rainy","snowy","hot","cold"],
-            clothes: ["shorts","shirt","pants","jacket","boots","cap"],
-            playActivities: ["play-tag","play-cards","play-dodgeball","make-a-snowman"]
-          }
-        },
-
-        3: {
-          title: "I like Mondays.",
-          categories: ["days"],
-          defaults: {
-            days: ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"]
-          }
-        },
-
-        4: {
-          title: "What time is it?",
-          categories: ["dailyTimes"],
-          defaults: {
-            dailyTimes: [
-              "wake-up-time","breakfast-time","study-time","lunch-time","homework-time",
-              "snack-time","bath-time","dinner-time","bed-time","dream-time"
-            ]
-          },
-          generatedTimePractice: true
-        },
-
-        5: {
-          title: "Do you have a pen?",
-          categories: ["stationery"],
-          defaults: {
-            stationery: [
-              "pencil","eraser","pencil-case","ruler","glue-stick","pen",
-              "marker","calendar","notebook","stapler","magnet","pencil-sharpener"
-            ]
-          }
-        },
-
-        6: {
-          title: "Alphabet",
-          categories: ["alphabet"],
-          defaults: { alphabet }
-        },
-
-        7: {
-          title: "What do you want?",
-          categories: ["vegetables","fruit"],
-          defaults: {
-            vegetables: ["onion","mushroom","green-pepper","tomato","cabbage","corn","carrot","cucumber","potato"],
-            fruit: ["melon","peach","banana","apple","pineapple","orange","strawberry","cherry","kiwi-fruit"]
-          }
-        },
-
-        8: {
-          title: "This is my favorite place.",
-          categories: ["schoolPlaces"],
-          defaults: {
-            schoolPlaces: [
-              "library","teachers-office","school-principals-office","school-nurses-office",
-              "lunch-room","cooking-room","classroom","restroom","entrance","school-office",
-              "computer-room","music-room","arts-and-crafts-room","science-room","gym","playground"
-            ]
-          }
-        },
-
-        9: {
-          title: "This is my day.",
-          categories: ["dailyRoutine"],
-          defaults: {
-            dailyRoutine: [
-              "wake-up","wash-my-face","brush-my-teeth","put-away-my-futon","have-breakfast",
-              "check-my-school-bag","leave-my-house","take-out-the-garbage","go-to-school",
-              "go-home","do-my-homework","finish-my-dinner","dream-a-wonderful-dream"
-            ]
-          }
-        }
+        1: { title: "Hello, world!", status: "greeting-transliterations-to-verify" },
+        2: { title: "Let’s play cards." },
+        3: { title: "I like Mondays." },
+        4: { title: "What time is it?", generatedTimePractice: true },
+        5: { title: "Do you have a pen?" },
+        6: { title: "Alphabet" },
+        7: { title: "What do you want?" },
+        8: { title: "This is my favorite place." },
+        9: { title: "This is my day." }
       }
     }
   };
@@ -533,38 +488,69 @@
     return CATEGORIES[id] || null;
   }
 
+  function getItem(categoryId, itemId) {
+    const category = getCategory(categoryId);
+    return category
+      ? category.items.find(entry => entry.id === itemId) || null
+      : null;
+  }
+
   function getUnit(bookId, unitNumber) {
     return BOOKS[bookId] && BOOKS[bookId].units[unitNumber]
       ? BOOKS[bookId].units[unitNumber]
       : null;
   }
 
+  function getUnitKey(bookId, unitNumber) {
+    const bookNumber = bookId === "lt1" ? "1" : bookId === "lt2" ? "2" : String(bookId);
+    return `${bookNumber}-${unitNumber}`;
+  }
+
+  function getUnitCategoryIds(bookId, unitNumber) {
+    const key = getUnitKey(bookId, unitNumber);
+    return Object.entries(CATEGORIES)
+      .filter(([, category]) =>
+        category.items.some(entry => entry.defaultIn.includes(key))
+      )
+      .map(([categoryId]) => categoryId);
+  }
+
   function getUnitDefaults(bookId, unitNumber) {
-    const unit = getUnit(bookId, unitNumber);
-    return unit ? unit.defaults : null;
+    const key = getUnitKey(bookId, unitNumber);
+    const result = {};
+
+    Object.entries(CATEGORIES).forEach(([categoryId, category]) => {
+      const defaults = category.items
+        .filter(entry => entry.defaultIn.includes(key))
+        .map(entry => entry.id);
+
+      if (defaults.length) result[categoryId] = defaults;
+    });
+
+    return result;
   }
 
   function getUnitAvailableWords(bookId, unitNumber) {
-    const unit = getUnit(bookId, unitNumber);
-    if (!unit) return {};
-
     const result = {};
-    unit.categories.forEach(categoryId => {
-      result[categoryId] = CATEGORIES[categoryId]
-        ? [...CATEGORIES[categoryId].items]
-        : [];
+
+    getUnitCategoryIds(bookId, unitNumber).forEach(categoryId => {
+      result[categoryId] = CATEGORIES[categoryId].items.map(entry => entry.id);
     });
+
     return result;
   }
 
   global.LETS_TRY_DATA = Object.freeze({
-    version: 2,
+    version: 3,
     assetUrl,
     categories: CATEGORIES,
     assets: ASSETS,
     books: BOOKS,
     getCategory,
+    getItem,
     getUnit,
+    getUnitKey,
+    getUnitCategoryIds,
     getUnitDefaults,
     getUnitAvailableWords
   });
