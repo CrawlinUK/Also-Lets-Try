@@ -241,21 +241,22 @@ const WORLD_GREETINGS = LETS_TRY_DATA.getCategory("worldGreetings");
 const FLAG_SHEET = LETS_TRY_DATA.assets.sheets.flags;
 const FLAG_CELLS = LETS_TRY_DATA.assets.knownCells.flags;
 const FLAG_SHEET_URL = LETS_TRY_DATA.assetUrl(FLAG_SHEET.file);
-const UNIT_ONE_DEFAULT_IDS = new Set(UNIT_ONE.defaults.worldGreetings);
+const UNIT_ONE_DEFAULT_IDS = new Set(
+  LETS_TRY_DATA.getUnitDefaults("lt1", 1).worldGreetings || []
+);
 
-const FEELINGS = WORLD_GREETINGS.items.map((id) => {
-  const entry = WORLD_GREETINGS.entries[id];
-  const position = FLAG_CELLS[id];
+const FEELINGS = WORLD_GREETINGS.items.map((entry) => {
+  const position = FLAG_CELLS[entry.id];
 
-  if (!entry || !position) {
-    throw new Error(`Missing shared Unit 1 data for ${id}`);
+  if (!position) {
+    throw new Error(`Missing shared Unit 1 flag position for ${entry.id}`);
   }
 
   return {
-    id,
+    id: entry.id,
     word: entry.greeting,
     sentence: entry.country,
-    textbook: UNIT_ONE_DEFAULT_IDS.has(id),
+    textbook: UNIT_ONE_DEFAULT_IDS.has(entry.id),
     sprite: { position, flip: false }
   };
 });
