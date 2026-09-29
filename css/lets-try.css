@@ -3463,9 +3463,9 @@ html[data-unit="3"] .flashcard.word-only .number-word {
    because they are unit-specific or not safe to normalise.
    ============================================================ */
 
-/* Unit 4, former inline style block 1 */
+/* Units 4–5 shared flashcard/game layout */
 
-html[data-unit="4"] {
+:is(html[data-unit="4"], html[data-unit="5"]) {
       /* These values are replaced from UNIT_CONFIG when the page loads. */
       --unit-colour: #999999;
       --unit-number-colour: #bbbbbb;
@@ -3473,15 +3473,15 @@ html[data-unit="4"] {
       --answer-gap: 18px;
     }
 
-    html[data-unit="4"] .site-header {
+    :is(html[data-unit="4"], html[data-unit="5"]) .site-header {
       position: relative;
     }
 
-    html[data-unit="4"] .site-title {
+    :is(html[data-unit="4"], html[data-unit="5"]) .site-title {
       white-space: nowrap;
     }
 
-    html[data-unit="4"] .game-title {
+    :is(html[data-unit="4"], html[data-unit="5"]) .game-title {
       position: absolute;
       left: 50%;
       top: 0;
@@ -3499,13 +3499,13 @@ html[data-unit="4"] {
       pointer-events: none;
     }
 
-    html[data-unit="4"] .flashcard {
+    :is(html[data-unit="4"], html[data-unit="5"]) .flashcard {
       min-width: 0;
       grid-template-rows: minmax(0, 1fr);
       padding: 12px;
     }
 
-    html[data-unit="4"] .flashcard-stage {
+    :is(html[data-unit="4"], html[data-unit="5"]) .flashcard-stage {
       width: 100%;
       height: 100%;
       min-width: 0;
@@ -3513,12 +3513,12 @@ html[data-unit="4"] {
       display: grid;
     }
 
-    html[data-unit="4"] .answer-area {
+    :is(html[data-unit="4"], html[data-unit="5"]) .answer-area {
       min-width: 0;
       padding: 10px 100px 18px;
     }
 
-    html[data-unit="4"] .picture-frame {
+    :is(html[data-unit="4"], html[data-unit="5"]) .picture-frame {
       width: calc(min(48vh, 46vw, 560px) * var(--picture-scale));
       max-width: 90%;
       aspect-ratio: var(--picture-ratio, 3 / 2);
@@ -3527,8 +3527,8 @@ html[data-unit="4"] {
       box-shadow: 0 9px 22px rgba(25, 38, 33, .22);
     }
 
-    html[data-unit="4"] .card-picture,
-html[data-unit="4"] .game-picture {
+    :is(html[data-unit="4"], html[data-unit="5"]) .card-picture,
+:is(html[data-unit="4"], html[data-unit="5"]) .game-picture {
       width: 100%;
       height: 100%;
       background-color: #ffffff;
@@ -3538,11 +3538,11 @@ html[data-unit="4"] .game-picture {
       transform-origin: center;
     }
 
-    html[data-unit="4"] .flashcard.picture-only .picture-frame {
+    :is(html[data-unit="4"], html[data-unit="5"]) .flashcard.picture-only .picture-frame {
       width: calc(min(64vh, 60vw, 720px) * var(--picture-scale));
     }
 
-    html[data-unit="4"] .game-area {
+    :is(html[data-unit="4"], html[data-unit="5"]) .game-area {
       width: 100%;
       height: 100%;
       min-width: 0;
@@ -3551,7 +3551,7 @@ html[data-unit="4"] .game-picture {
       padding: 0;
     }
 
-    html[data-unit="4"] .game-grid {
+    :is(html[data-unit="4"], html[data-unit="5"]) .game-grid {
       width: 100%;
       height: 100%;
       min-width: 0;
@@ -3564,7 +3564,7 @@ html[data-unit="4"] .game-picture {
       justify-content: stretch;
     }
 
-    html[data-unit="4"] .game-tile {
+    :is(html[data-unit="4"], html[data-unit="5"]) .game-tile {
       min-width: 0;
       min-height: 0;
       display: grid;
@@ -3576,7 +3576,7 @@ html[data-unit="4"] .game-picture {
       border-radius: 18px;
     }
 
-    html[data-unit="4"] .game-picture {
+    :is(html[data-unit="4"], html[data-unit="5"]) .game-picture {
       width: auto;
       height: 94%;
       max-width: 94%;
@@ -3586,28 +3586,28 @@ html[data-unit="4"] .game-picture {
       filter: drop-shadow(0 5px 7px rgba(25, 38, 33, .18));
     }
 
-    html[data-unit="4"] .game-tile.covered {
+    :is(html[data-unit="4"], html[data-unit="5"]) .game-tile.covered {
       background: #eef2f4;
       border-style: dashed;
     }
 
-    html[data-unit="4"] .game-tile.covered::after {
+    :is(html[data-unit="4"], html[data-unit="5"]) .game-tile.covered::after {
       content: "?";
       color: #7a8790;
       font-size: clamp(54px, 8vw, 110px);
       font-weight: 900;
     }
 
-    html[data-unit="4"] .game-tile.covered .game-picture {
+    :is(html[data-unit="4"], html[data-unit="5"]) .game-tile.covered .game-picture {
       display: none;
     }
 
-    html[data-unit="4"] .game-tile.selected {
+    :is(html[data-unit="4"], html[data-unit="5"]) .game-tile.selected {
       padding: 0;
       border: 6px solid var(--unit-colour);
     }
 
-    html[data-unit="4"] .left-right-wrap {
+    :is(html[data-unit="4"], html[data-unit="5"]) .left-right-wrap {
       position: relative;
       width: 100%;
       height: 100%;
@@ -3618,7 +3618,7 @@ html[data-unit="4"] .game-picture {
       gap: 18px;
     }
 
-    html[data-unit="4"] .left-right-choice {
+    :is(html[data-unit="4"], html[data-unit="5"]) .left-right-choice {
       position: relative;
       min-width: 0;
       min-height: 0;
@@ -3631,7 +3631,7 @@ html[data-unit="4"] .game-picture {
       border-radius: 20px;
     }
 
-    html[data-unit="4"] .left-right-choice .game-picture {
+    :is(html[data-unit="4"], html[data-unit="5"]) .left-right-choice .game-picture {
       width: auto;
       height: 94%;
       max-width: 94%;
@@ -3639,17 +3639,17 @@ html[data-unit="4"] .game-picture {
       aspect-ratio: 1 / 1;
     }
 
-    html[data-unit="4"] .left-right-choice.correct {
+    :is(html[data-unit="4"], html[data-unit="5"]) .left-right-choice.correct {
       padding: 2px;
       border: 8px solid var(--green);
     }
 
-    html[data-unit="4"] .left-right-choice.wrong {
+    :is(html[data-unit="4"], html[data-unit="5"]) .left-right-choice.wrong {
       padding: 2px;
       border: 8px solid #e45151;
     }
 
-    html[data-unit="4"] .left-right-prompt-wrap {
+    :is(html[data-unit="4"], html[data-unit="5"]) .left-right-prompt-wrap {
       position: absolute;
       z-index: 5;
       left: 50%;
@@ -3662,7 +3662,7 @@ html[data-unit="4"] .game-picture {
       pointer-events: none;
     }
 
-    html[data-unit="4"] .left-right-prompt {
+    :is(html[data-unit="4"], html[data-unit="5"]) .left-right-prompt {
       max-width: 100%;
       padding: 16px 28px;
       color: var(--ink);
@@ -3675,38 +3675,38 @@ html[data-unit="4"] .game-picture {
       text-align: center;
     }
 
-    html[data-unit="4"] .side-nav {
+    :is(html[data-unit="4"], html[data-unit="5"]) .side-nav {
       padding: 0;
     }
 
-    html[data-unit="4"] .side-previous {
+    :is(html[data-unit="4"], html[data-unit="5"]) .side-previous {
       left: 0;
     }
 
-    html[data-unit="4"] .side-next {
+    :is(html[data-unit="4"], html[data-unit="5"]) .side-next {
       right: 0;
     }
 
-    html[data-unit="4"] .control-bar {
+    :is(html[data-unit="4"], html[data-unit="5"]) .control-bar {
       grid-template-columns: minmax(130px, .75fr) minmax(150px, 1fr) minmax(150px, 1fr) minmax(150px, 1fr);
     }
 
-    html[data-unit="4"] .game-menu {
+    :is(html[data-unit="4"], html[data-unit="5"]) .game-menu {
       width: min(260px, 80vw);
     }
 
-    html[data-unit="4"] .settings-panel {
+    :is(html[data-unit="4"], html[data-unit="5"]) .settings-panel {
       width: min(460px, calc(100vw - 32px));
     }
 
-    html[data-unit="4"] .category-option-grid {
+    :is(html[data-unit="4"], html[data-unit="5"]) .category-option-grid {
       display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
       gap: 8px;
       margin-bottom: 12px;
     }
 
-    html[data-unit="4"] .category-option {
+    :is(html[data-unit="4"], html[data-unit="5"]) .category-option {
       min-height: 48px;
       padding: 8px 10px;
       background: #fff7f0;
@@ -3715,19 +3715,19 @@ html[data-unit="4"] .game-picture {
       font-weight: 900;
     }
 
-    html[data-unit="4"] .category-option:hover,
-html[data-unit="4"] .category-option:focus-visible {
+    :is(html[data-unit="4"], html[data-unit="5"]) .category-option:hover,
+:is(html[data-unit="4"], html[data-unit="5"]) .category-option:focus-visible {
       background: #ffead9;
       border-color: var(--unit-colour);
     }
 
-    html[data-unit="4"] .card-option-grid {
+    :is(html[data-unit="4"], html[data-unit="5"]) .card-option-grid {
       display: grid;
       grid-template-columns: repeat(3, minmax(0, 1fr));
       gap: 8px;
     }
 
-    html[data-unit="4"] .card-option {
+    :is(html[data-unit="4"], html[data-unit="5"]) .card-option {
       min-width: 0;
       min-height: 50px;
       padding: 7px;
@@ -3740,152 +3740,152 @@ html[data-unit="4"] .category-option:focus-visible {
       white-space: nowrap;
     }
 
-    html[data-unit="4"] .card-option.selected {
+    :is(html[data-unit="4"], html[data-unit="5"]) .card-option.selected {
       color: #145e42;
       background: #eaf8f1;
       border-color: #28a36a;
     }
 
-    html[data-unit="4"] .segmented {
+    :is(html[data-unit="4"], html[data-unit="5"]) .segmented {
       grid-template-columns: repeat(3, 1fr);
       border: 1px solid #cbd8df;
       border-radius: 11px;
     }
 
-    html[data-unit="4"] .segmented label {
+    :is(html[data-unit="4"], html[data-unit="5"]) .segmented label {
       position: relative;
     }
 
-    html[data-unit="4"] .segmented span {
+    :is(html[data-unit="4"], html[data-unit="5"]) .segmented span {
       padding: 8px;
       border-right: 1px solid #cbd8df;
       cursor: pointer;
     }
 
-    html[data-unit="4"] .segmented input:checked + span {
+    :is(html[data-unit="4"], html[data-unit="5"]) .segmented input:checked + span {
       color: #0d5fa7;
       background: #eaf5ff;
       box-shadow: inset 0 0 0 2px #1789df;
     }
 
-    html[data-unit="4"] .balance-labels {
+    :is(html[data-unit="4"], html[data-unit="5"]) .balance-labels {
       margin-bottom: 7px;
       font-size: 16px;
       font-weight: 800;
     }
 
-    html[data-unit="4"] .balance-slider {
+    :is(html[data-unit="4"], html[data-unit="5"]) .balance-slider {
       grid-template-columns: auto minmax(0, 1fr) auto;
       gap: 10px;
       font-weight: 900;
     }
 
-    html[data-unit="4"] .balance-slider input {
+    :is(html[data-unit="4"], html[data-unit="5"]) .balance-slider input {
       width: 100%;
       accent-color: #168cf0;
     }
 
     @media (max-width: 850px) {
-      html[data-unit="4"] .app {
+      :is(html[data-unit="4"], html[data-unit="5"]) .app {
         padding-left: 72px;
         padding-right: 72px;
       }
-      html[data-unit="4"] .side-nav {
+      :is(html[data-unit="4"], html[data-unit="5"]) .side-nav {
         width: 64px;
         border-radius: 22px;
         font-size: 56px;
       }
-      html[data-unit="4"] .control-bar {
+      :is(html[data-unit="4"], html[data-unit="5"]) .control-bar {
         grid-template-columns: repeat(2, minmax(0, 1fr));
       }
-      html[data-unit="4"] .control-bar::before {
+      :is(html[data-unit="4"], html[data-unit="5"]) .control-bar::before {
         left: -72px;
         right: -72px;
       }
-      html[data-unit="4"] .game-grid {
+      :is(html[data-unit="4"], html[data-unit="5"]) .game-grid {
         gap: 8px;
       }
     }
 
     @media (max-width: 650px) {
-      html[data-unit="4"] .site-header {
+      :is(html[data-unit="4"], html[data-unit="5"]) .site-header {
         height: 60px;
         padding: 7px 10px;
       }
-      html[data-unit="4"] .unit-word,
-html[data-unit="4"] .unit-name {
+      :is(html[data-unit="4"], html[data-unit="5"]) .unit-word,
+:is(html[data-unit="4"], html[data-unit="5"]) .unit-name {
         font-size: 22px;
       }
-      html[data-unit="4"] .unit-number {
+      :is(html[data-unit="4"], html[data-unit="5"]) .unit-number {
         font-size: 50px;
         -webkit-text-stroke-width: 3px;
       }
-      html[data-unit="4"] .game-title {
+      :is(html[data-unit="4"], html[data-unit="5"]) .game-title {
         max-width: 40vw;
         padding-top: 5px;
         font-size: 21px;
         line-height: 1.15;
       }
-      html[data-unit="4"] .app {
+      :is(html[data-unit="4"], html[data-unit="5"]) .app {
         height: calc(100vh - 60px);
         padding: 8px 58px;
       }
-      html[data-unit="4"] .flashcard {
+      :is(html[data-unit="4"], html[data-unit="5"]) .flashcard {
         padding: 8px;
       }
-      html[data-unit="4"] .answer-area {
+      :is(html[data-unit="4"], html[data-unit="5"]) .answer-area {
         padding: 8px 50px 12px;
       }
-      html[data-unit="4"] .side-nav {
+      :is(html[data-unit="4"], html[data-unit="5"]) .side-nav {
         width: 52px;
         border-radius: 18px;
         font-size: 46px;
       }
-      html[data-unit="4"] .control-bar::before {
+      :is(html[data-unit="4"], html[data-unit="5"]) .control-bar::before {
         left: -58px;
         right: -58px;
       }
-      html[data-unit="4"] .control,
-html[data-unit="4"] .card-counter {
+      :is(html[data-unit="4"], html[data-unit="5"]) .control,
+:is(html[data-unit="4"], html[data-unit="5"]) .card-counter {
         min-height: 48px;
       }
-      html[data-unit="4"] .left-right-wrap {
+      :is(html[data-unit="4"], html[data-unit="5"]) .left-right-wrap {
         gap: 8px;
       }
-      html[data-unit="4"] .left-right-prompt-wrap {
+      :is(html[data-unit="4"], html[data-unit="5"]) .left-right-prompt-wrap {
         width: min(48vw, 420px);
       }
-      html[data-unit="4"] .left-right-prompt {
+      :is(html[data-unit="4"], html[data-unit="5"]) .left-right-prompt {
         padding: 10px 14px;
         font-size: clamp(34px, 9vw, 70px);
       }
-      html[data-unit="4"] .floating-timer {
+      :is(html[data-unit="4"], html[data-unit="5"]) .floating-timer {
         left: 12px;
         bottom: 12px;
       }
-      html[data-unit="4"] .floating-auto {
+      :is(html[data-unit="4"], html[data-unit="5"]) .floating-auto {
         right: 12px;
         bottom: 12px;
         width: 64px;
         height: 64px;
         font-size: 28px;
       }
-      html[data-unit="4"] .card-option-grid {
+      :is(html[data-unit="4"], html[data-unit="5"]) .card-option-grid {
         grid-template-columns: repeat(2, minmax(0, 1fr));
       }
-      html[data-unit="4"] .segmented {
+      :is(html[data-unit="4"], html[data-unit="5"]) .segmented {
         grid-template-columns: 1fr;
       }
-      html[data-unit="4"] .segmented span {
+      :is(html[data-unit="4"], html[data-unit="5"]) .segmented span {
         border-right: 0;
         border-bottom: 1px solid #cbd8df;
       }
-      html[data-unit="4"] .segmented label:last-child span {
+      :is(html[data-unit="4"], html[data-unit="5"]) .segmented label:last-child span {
         border-bottom: 0;
       }
     }
 
-/* Unit 4, former inline style block 2 */
+/* Units 4–5 shared continuation */
 
 /* Teacher-only Missing Game answer hints */
 
@@ -3900,13 +3900,13 @@ html[data-unit="4"] .card-counter {
 
 
 /*
-  UNIT 4 CATEGORY TOGGLES
+  UNITS 4–5 CATEGORY TOGGLES
   -----------------------
   Category buttons are multi-select toggles. A category appears selected when
-  all of its core Unit 4 cards are selected. Extra support cards do not control
+  all of its core unit cards are selected. Extra support cards do not control
   the category state and can still be selected manually.
 */
-html[data-unit="4"] .category-option.selected {
+:is(html[data-unit="4"], html[data-unit="5"]) .category-option.selected {
   color: #145e42;
   background: #eaf8f1;
   border-color: #28a36a;
