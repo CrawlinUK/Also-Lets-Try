@@ -1,12 +1,6 @@
 /*
   LET'S TRY! 1 — SHARED DATA
   ==========================
-  Central source of truth for vocabulary and visual assets.
-
-  Plain browser JavaScript is used instead of fetched JSON so these classroom
-  pages can work both from GitHub Pages and when opened directly from a local
-  folder.
-
   Usage:
     <script src="../js/lets-try-data.js"></script>
     const cards = LETS_TRY_DATA.getCategory("feelings");
@@ -15,6 +9,7 @@
   Image paths are resolved relative to this JavaScript file, so the same data
   works from root pages and from /units/ pages.
 */
+
 (function (global) {
   "use strict";
 
