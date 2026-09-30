@@ -1,0 +1,1052 @@
+
+    (() => {
+      "use strict";
+
+      const UNIT_CONFIG = window.LETS_TRY_UNIT_CONFIG;
+      if (!UNIT_CONFIG || !Array.isArray(UNIT_CONFIG.cards)) {
+        throw new Error("Shared unit config was not loaded.");
+      }
+
+      const UNIT_CATEGORY_IDS = window.LETS_TRY_UNIT_CATEGORY_IDS
+        || [...new Set(UNIT_CONFIG.cards.map((card) => card.category).filter(Boolean))];
+      const PLACEHOLDER_IMAGE = "";
+
+      const $ = (id) => document.getElementById(id);
+      const cardsById = new Map(UNIT_CONFIG.cards.map((card) => [card.id, card]));
+      const CATEGORY_IDS = Object.fromEntries(
+        UNIT_CATEGORY_IDS.map((categoryId) => [
+          categoryId,
+          UNIT_CONFIG.cards
+            .filter((card) => card.category === categoryId)
+            .map((card) => card.id)
+        ])
+      );
+
+      const elements = {
+        flashcard: $("flashcard"),
+        unitNumber: $("unitNumber"),
+        unitName: $("unitName"),
+        gameTitle: $("gameTitle"),
+        menuButton: $("menuButton"),
+        answerArea: $("answerArea"),
+        pictureFrame: $("pictureFrame"),
+        cardPicture: $("cardPicture"),
+        displayText: $("displayText"),
+        gameArea: $("gameArea"),
+        floatingTimer: $("floatingTimer"),
+        timerDownButton: $("timerDownButton"),
+        timerUpButton: $("timerUpButton"),
+        timerValue: $("timerValue"),
+        autoButton: $("autoButton"),
+        previousButton: $("previousButton"),
+        nextButton: $("nextButton"),
+        counter: $("counter"),
+        modeLabel: $("modeLabel"),
+        shuffleButton: $("shuffleButton"),
+        gameButton: $("gameButton"),
+        gameMenu: $("gameMenu"),
+        settingsButton: $("settingsButton"),
+        keyboardHelp: $("keyboardHelp"),
+        scrim: $("scrim"),
+        settingsPanel: $("settingsPanel"),
+        closeSettingsButton: $("closeSettingsButton"),
+        cardOptionGrid: $("cardOptionGrid"),
+        selectAllButton: $("selectAllButton"),
+        resetButton: $("resetButton"),
+        message: $("message"),
+        wordLabel: $("wordLabel"),
+        sentenceLabel: $("sentenceLabel"),
+        alternateLabel: $("alternateLabel"),
+        sizeBalanceRange: $("sizeBalanceRange"),
+        missingAnswerHints: $("missingAnswerHints"),
+        missingAnswerSizeRange: $("missingAnswerSizeRange"),
+        missingAnswerSizeValue: $("missingAnswerSizeValue")
+      };
+
+      const textbookIds = UNIT_CONFIG.cards
+        .filter((card) => card.textbook)
+        .map((card) => card.id);
+
+      const initialIds = textbookIds.length
+        ? textbookIds
+        : UNIT_CONFIG.cards.slice(0, 1).map((card) => card.id);
+
+      const state = {
+        selectedIds: new Set(initialIds),
+        deck: [],
+        position: 0,
+        displayMode: "pictureText",
+        textDisplay: "word",
+        gameMode: "flashcards",
+        sizeBalance: 50,
+        missingAnswerSize: 10,
+        autoSeconds: UNIT_CONFIG.autoSeconds,
+        countdown: UNIT_CONFIG.autoSeconds,
+        autoTimer: null,
+        countdownTimer: null,
+        missingOrder: [],
+        hiddenMissingIds: new Set(),
+        keywordOrder: [],
+        keywordSelectedIds: new Set(),
+        leftRightTarget: null,
+        leftRightLeft: null,
+        leftRightRight: null,
+        leftRightCorrectSide: null,
+        leftRightLocked: false
+      };
+
+      function shuffled(items) {
+        const result = [...items];
+        for (let index = result.length - 1; index > 0; index -= 1) {
+          const randomIndex = Math.floor(Math.random() * (index + 1));
+          [result[index], result[randomIndex]] = [result[randomIndex], result[index]];
+        }
+        return result;
+      }
+
+      function selectedCards() {
+        return UNIT_CONFIG.cards.filter((card) => state.selectedIds.has(card.id));
+      }
+
+      function currentCard() {
+        return state.deck[state.position] || null;
+      }
+
+
+      function preloadAllCardImages() {
+        const sources = [...new Set(UNIT_CONFIG.cards.map((card) => card.visual && card.visual.src).filter(Boolean))];
+        return Promise.all(sources.map((src) => new Promise((resolve) => {
+          const image = new Image();
+          image.onload = () => {
+            if (image.decode) image.decode().catch(() => {}).finally(resolve);
+            else resolve();
+          };
+          image.onerror = resolve;
+          image.src = src;
+        })));
+      }
+
+      function initialisePage() {
+        document.documentElement.classList.add("shared-unit-template");
+        document.documentElement.dataset.book = UNIT_CONFIG.bookId || "lt1";
+        document.documentElement.dataset.unit = String(UNIT_CONFIG.unitNumber);
+        document.title = UNIT_CONFIG.browserTitle;
+        document.documentElement.style.setProperty("--unit-colour", UNIT_CONFIG.unitColour);
+        document.documentElement.style.setProperty("--unit-number-colour", UNIT_CONFIG.unitNumberColour);
+        document.documentElement.style.setProperty("--picture-ratio", UNIT_CONFIG.pictureAspectRatio);
+
+        elements.unitNumber.textContent = UNIT_CONFIG.unitNumber;
+        elements.unitName.textContent = UNIT_CONFIG.unitTitle;
+        elements.wordLabel.textContent = UNIT_CONFIG.wordLabel;
+        elements.sentenceLabel.textContent = UNIT_CONFIG.sentenceLabel;
+        elements.alternateLabel.textContent = UNIT_CONFIG.alternateLabel;
+
+        const textDisplaySection = $("textDisplaySection");
+        if (textDisplaySection) {
+          textDisplaySection.hidden = UNIT_CONFIG.showTextDisplaySettings === false;
+        }
+
+        const displayLabels = UNIT_CONFIG.displayModeLabels || {};
+        const pictureTextLabel = $("pictureTextLabel");
+        const pictureOnlyLabel = $("pictureOnlyLabel");
+        const textOnlyLabel = $("textOnlyLabel");
+        if (pictureTextLabel && displayLabels.pictureText) pictureTextLabel.textContent = displayLabels.pictureText;
+        if (pictureOnlyLabel && displayLabels.picture) pictureOnlyLabel.textContent = displayLabels.picture;
+        if (textOnlyLabel && displayLabels.text) textOnlyLabel.textContent = displayLabels.text;
+
+        const balanceLabels = UNIT_CONFIG.balanceLabels || {};
+        const balancePictureLabel = $("balancePictureLabel");
+        const balanceTextLabel = $("balanceTextLabel");
+        if (balancePictureLabel && balanceLabels.picture) balancePictureLabel.textContent = balanceLabels.picture;
+        if (balanceTextLabel && balanceLabels.text) balanceTextLabel.textContent = balanceLabels.text;
+
+        state.autoSeconds = Math.max(
+          UNIT_CONFIG.autoSecondsMinimum,
+          Math.min(UNIT_CONFIG.autoSecondsMaximum, UNIT_CONFIG.autoSeconds)
+        );
+        state.countdown = state.autoSeconds;
+
+        buildCardOptions();
+        rebuildDeck();
+      }
+
+      function applyVisual(element, card) {
+        const visual = card && card.visual ? card.visual : {};
+        const textVisual = visual.type === "text";
+
+        element.classList.toggle("text-visual", textVisual);
+        element.textContent = textVisual ? String(visual.text ?? card?.alternate ?? card?.word ?? "") : "";
+
+        if (textVisual) {
+          element.style.backgroundImage = "none";
+          element.style.backgroundSize = "";
+          element.style.backgroundPosition = "";
+          element.style.transform = "none";
+          element.style.clipPath = "none";
+          return;
+        }
+
+        element.style.backgroundImage = `url("${visual.src || PLACEHOLDER_IMAGE}")`;
+        element.style.backgroundSize = visual.size || "contain";
+        element.style.backgroundPosition = visual.position || "center";
+        element.style.transform = visual.flip ? "scaleX(-1)" : "scaleX(1)";
+        element.style.clipPath = visual.cropTop
+          ? `inset(${Number(visual.cropTop)}% 0 0 0)`
+          : "none";
+      }
+
+      function cardText(card) {
+        if (!card) return "SELECT A CARD";
+        if (state.textDisplay === "sentence") return card.sentence || card.word;
+        if (state.textDisplay === "alternate") return card.alternate || card.word;
+        return card.word;
+      }
+
+      function leftRightText(card) {
+        return cardText(card);
+      }
+
+      function toggleCategory(categoryId) {
+        const ids = (CATEGORY_IDS[categoryId] || []).filter((id) => cardsById.has(id));
+        if (!ids.length) return;
+
+        const allSelected = ids.every((id) => state.selectedIds.has(id));
+
+        if (allSelected) {
+          const remaining = [...state.selectedIds].filter((id) => !ids.includes(id));
+          if (!remaining.length) {
+            elements.message.textContent = "At least one card must stay selected.";
+            return;
+          }
+          ids.forEach((id) => state.selectedIds.delete(id));
+        } else {
+          ids.forEach((id) => state.selectedIds.add(id));
+        }
+
+        elements.message.textContent = "";
+        syncCardOptions();
+        rebuildDeck();
+      }
+
+      function buildCardOptions() {
+        const fragment = document.createDocumentFragment();
+
+        UNIT_CATEGORY_IDS.forEach((categoryId) => {
+          const category = LETS_TRY_DATA.getCategory(categoryId);
+          const cards = UNIT_CONFIG.cards.filter((card) => card.category === categoryId);
+          if (!cards.length) return;
+
+          const group = document.createElement("section");
+          group.className = "category-word-group";
+          group.dataset.categoryGroup = categoryId;
+
+          const categoryButton = document.createElement("button");
+          categoryButton.type = "button";
+          categoryButton.className = "category-option";
+          categoryButton.textContent = category ? category.label : categoryId;
+          categoryButton.dataset.category = categoryId;
+          categoryButton.setAttribute("aria-pressed", "false");
+          categoryButton.addEventListener("click", () => toggleCategory(categoryId));
+
+          const wordGrid = document.createElement("div");
+          wordGrid.className = "category-card-grid";
+
+          cards.forEach((card) => {
+            const button = document.createElement("button");
+            button.type = "button";
+            button.className = "card-option";
+            button.textContent = card.optionLabel || card.word;
+            button.title = card.word;
+            button.dataset.cardId = card.id;
+            button.addEventListener("click", () => toggleCard(card.id));
+            wordGrid.append(button);
+          });
+
+          group.append(categoryButton, wordGrid);
+          fragment.append(group);
+        });
+
+        elements.cardOptionGrid.replaceChildren(fragment);
+        syncCardOptions();
+      }
+
+      function syncCategoryOptions() {
+        elements.cardOptionGrid.querySelectorAll("[data-category]").forEach((button) => {
+          const ids = (CATEGORY_IDS[button.dataset.category] || []).filter((id) => cardsById.has(id));
+          const selectedCount = ids.filter((id) => state.selectedIds.has(id)).length;
+          const allSelected = ids.length > 0 && selectedCount === ids.length;
+          const noneSelected = selectedCount === 0;
+          const partialSelected = !allSelected && !noneSelected;
+
+          button.classList.toggle("all-selected", allSelected);
+          button.classList.toggle("partial-selected", partialSelected);
+          button.classList.toggle("none-selected", noneSelected);
+          button.classList.toggle("selected", allSelected);
+          button.setAttribute("aria-pressed", allSelected ? "true" : partialSelected ? "mixed" : "false");
+        });
+      }
+
+      function syncCardOptions() {
+        elements.cardOptionGrid.querySelectorAll("[data-card-id]").forEach((button) => {
+          const selected = state.selectedIds.has(button.dataset.cardId);
+          button.classList.toggle("selected", selected);
+          button.setAttribute("aria-pressed", String(selected));
+        });
+        syncCategoryOptions();
+      }
+
+      function toggleCard(id) {
+        if (state.selectedIds.has(id)) {
+          if (state.selectedIds.size === 1) {
+            elements.message.textContent = "At least one card must stay selected.";
+            return;
+          }
+          state.selectedIds.delete(id);
+        } else {
+          state.selectedIds.add(id);
+        }
+
+        elements.message.textContent = "";
+        syncCardOptions();
+        rebuildDeck();
+      }
+
+      function rebuildDeck() {
+        stopAuto();
+        state.deck = selectedCards();
+        state.position = 0;
+        resetGameState();
+        render();
+      }
+
+      function resetGameState() {
+        state.missingOrder = [];
+        state.hiddenMissingIds.clear();
+        state.keywordOrder = [];
+        state.keywordSelectedIds.clear();
+        state.leftRightTarget = null;
+        state.leftRightLeft = null;
+        state.leftRightRight = null;
+        state.leftRightCorrectSide = null;
+        state.leftRightLocked = false;
+      }
+
+      function updateSizing() {
+        const offset = (state.sizeBalance - 50) / 50;
+        const pictureScale = 1 - (offset * .30);
+        const textScale = 1 + (offset * .30);
+        document.documentElement.style.setProperty("--picture-scale", pictureScale);
+        document.documentElement.style.setProperty("--text-scale", textScale);
+      }
+
+      function render() {
+        closeGameMenu();
+        updateSizing();
+
+        if (state.gameMode === "missing") {
+          renderMissing();
+          return;
+        }
+
+        if (state.gameMode === "keyword") {
+          renderKeyword();
+          return;
+        }
+
+        if (state.gameMode === "leftRight") {
+          renderLeftRight();
+          return;
+        }
+
+        renderFlashcards();
+      }
+
+      function showFlashcardLayout() {
+        elements.missingAnswerHints.hidden = true;
+        elements.answerArea.hidden = false;
+        elements.gameArea.hidden = true;
+        elements.floatingTimer.hidden = false;
+        elements.autoButton.hidden = false;
+        elements.previousButton.hidden = false;
+        elements.nextButton.hidden = false;
+        elements.previousButton.classList.remove("game-action");
+        elements.nextButton.classList.remove("game-action");
+        elements.previousButton.textContent = "◀";
+        elements.nextButton.textContent = "▶";
+        elements.previousButton.setAttribute("aria-label", "Previous card");
+        elements.nextButton.setAttribute("aria-label", "Next card");
+        elements.gameTitle.textContent = "";
+      }
+
+      function showGridGameLayout() {
+        stopAuto();
+        elements.answerArea.hidden = true;
+        elements.gameArea.hidden = false;
+        elements.floatingTimer.hidden = true;
+        elements.autoButton.hidden = true;
+        elements.previousButton.hidden = true;
+        elements.nextButton.hidden = false;
+        elements.nextButton.classList.add("game-action");
+      }
+
+      function renderFlashcards() {
+        showFlashcardLayout();
+
+        const card = currentCard();
+        const effectiveMode = state.gameMode === "guess" ? "picture" : state.displayMode;
+
+        elements.flashcard.classList.toggle("picture-only", effectiveMode === "picture");
+        elements.flashcard.classList.toggle("text-only", effectiveMode === "text");
+
+        if (!card) {
+          elements.cardPicture.removeAttribute("style");
+          elements.displayText.textContent = "NO CARDS AVAILABLE";
+          elements.counter.textContent = "0 / 0";
+          elements.modeLabel.textContent = "Flashcard mode";
+          return;
+        }
+
+        applyVisual(elements.cardPicture, card);
+        elements.cardPicture.setAttribute("aria-label", card.word);
+        elements.displayText.textContent = cardText(card);
+        elements.counter.textContent = `${state.position + 1} / ${state.deck.length}`;
+        elements.modeLabel.textContent = state.gameMode === "guess" ? "Guess mode" : "Flashcard mode";
+        elements.shuffleButton.textContent = "↝ Shuffle";
+        updateTimerDisplay();
+        requestAnimationFrame(alignSideNavigation);
+      }
+
+      function gridShape(count) {
+        let columns;
+        if (count <= 1) columns = 1;
+        else if (count <= 4) columns = 2;
+        else if (count <= 6) columns = 3;
+        else if (count <= 8) columns = 4;
+        else if (count === 9) columns = 3;
+        else if (count <= 20) columns = 5;
+        else if (count === 21) columns = 7;
+        else if (count <= 32) columns = 8;
+        else columns = 9;
+
+        return {
+          columns,
+          rows: Math.max(1, Math.ceil(count / columns))
+        };
+      }
+
+      function setGridShape(grid, count) {
+        const shape = gridShape(count);
+        grid.style.setProperty("--grid-cols", shape.columns);
+        grid.style.setProperty("--grid-rows", shape.rows);
+      }
+
+
+      function reverseText(value) {
+        return Array.from(String(value)).reverse().join("");
+      }
+
+      function updateMissingAnswerHints() {
+        const cardMap = new Map(selectedCards().map((card) => [card.id, card]));
+        const lines = state.missingOrder
+          .map((id, index) => ({ card: cardMap.get(id), position: index + 1 }))
+          .filter((item) => item.card && state.hiddenMissingIds.has(item.card.id))
+          .map((item) => `${reverseText(item.card.teacherAnswer || item.card.word)}${item.position}`);
+        elements.missingAnswerHints.replaceChildren(...lines.map((line) => {
+          const row = document.createElement("div");
+          row.textContent = line;
+          return row;
+        }));
+        elements.missingAnswerHints.hidden = state.gameMode !== "missing" || lines.length === 0;
+      }
+
+      function renderMissing() {
+        showGridGameLayout();
+        elements.gameTitle.textContent = "What’s missing?";
+        elements.nextButton.textContent = "HIDE +";
+        elements.nextButton.setAttribute("aria-label", "Hide one more card");
+
+        const cards = selectedCards();
+        const cardMap = new Map(cards.map((card) => [card.id, card]));
+
+        if (!state.missingOrder.length || state.missingOrder.length !== cards.length) {
+          state.missingOrder = cards.map((card) => card.id);
+        }
+
+        const grid = document.createElement("div");
+        grid.className = "game-grid";
+        setGridShape(grid, cards.length);
+
+        state.missingOrder.forEach((id) => {
+          const card = cardMap.get(id);
+          if (!card) return;
+
+          const tile = document.createElement("button");
+          tile.type = "button";
+          tile.className = "game-tile";
+          tile.classList.toggle("covered", state.hiddenMissingIds.has(id));
+
+          const picture = document.createElement("div");
+          picture.className = "game-picture";
+          applyVisual(picture, card);
+          picture.setAttribute("role", "img");
+          picture.setAttribute("aria-label", card.word);
+
+          tile.append(picture);
+          tile.addEventListener("click", () => {
+            if (state.hiddenMissingIds.has(id)) state.hiddenMissingIds.delete(id);
+            else state.hiddenMissingIds.add(id);
+            renderMissing();
+          });
+
+          grid.append(tile);
+        });
+
+        elements.gameArea.replaceChildren(grid);
+        updateMissingAnswerHints();
+        elements.counter.textContent = `${cards.length - state.hiddenMissingIds.size} / ${cards.length}`;
+        elements.modeLabel.textContent = "Missing game";
+        elements.shuffleButton.textContent = "↝ Randomise";
+        requestAnimationFrame(alignSideNavigation);
+      }
+
+      function hideOneMore() {
+        const visible = state.missingOrder.filter((id) => !state.hiddenMissingIds.has(id));
+        if (!visible.length) return;
+        const id = visible[Math.floor(Math.random() * visible.length)];
+        state.hiddenMissingIds.add(id);
+        renderMissing();
+      }
+
+      function renderKeyword() {
+        elements.missingAnswerHints.hidden = true;
+        showGridGameLayout();
+        elements.gameTitle.textContent = "Keyword game";
+        elements.nextButton.textContent = "SELECT";
+        elements.nextButton.setAttribute("aria-label", "Randomly select a keyword");
+
+        const cards = selectedCards();
+        const cardMap = new Map(cards.map((card) => [card.id, card]));
+
+        if (!state.keywordOrder.length || state.keywordOrder.length !== cards.length) {
+          state.keywordOrder = cards.map((card) => card.id);
+        }
+
+        const grid = document.createElement("div");
+        grid.className = "game-grid";
+        setGridShape(grid, cards.length);
+
+        state.keywordOrder.forEach((id) => {
+          const card = cardMap.get(id);
+          if (!card) return;
+
+          const tile = document.createElement("button");
+          tile.type = "button";
+          tile.className = "game-tile";
+          tile.classList.toggle("selected", state.keywordSelectedIds.has(id));
+
+          const picture = document.createElement("div");
+          picture.className = "game-picture";
+          applyVisual(picture, card);
+          picture.setAttribute("role", "img");
+          picture.setAttribute("aria-label", card.word);
+
+          tile.append(picture);
+          tile.addEventListener("click", () => {
+            if (state.keywordSelectedIds.has(id)) state.keywordSelectedIds.delete(id);
+            else state.keywordSelectedIds.add(id);
+            renderKeyword();
+          });
+
+          grid.append(tile);
+        });
+
+        elements.gameArea.replaceChildren(grid);
+        elements.counter.textContent = `${state.keywordSelectedIds.size} / ${cards.length}`;
+        elements.modeLabel.textContent = "Keywords selected";
+        elements.shuffleButton.textContent = "↝ Randomise";
+        requestAnimationFrame(alignSideNavigation);
+      }
+
+      function selectRandomKeyword() {
+        if (!state.keywordOrder.length) return;
+        const id = state.keywordOrder[Math.floor(Math.random() * state.keywordOrder.length)];
+        state.keywordSelectedIds.clear();
+        state.keywordSelectedIds.add(id);
+        renderKeyword();
+      }
+
+      function chooseLeftRightQuestion() {
+        const cards = selectedCards();
+
+        if (cards.length < 2) {
+          elements.message.textContent = "Select at least two cards for Left or Right.";
+          return false;
+        }
+
+        elements.message.textContent = "";
+        const target = cards[Math.floor(Math.random() * cards.length)];
+        const distractors = cards.filter((card) => card.id !== target.id);
+        const distractor = distractors[Math.floor(Math.random() * distractors.length)];
+        const correctOnLeft = Math.random() < .5;
+
+        state.leftRightTarget = target;
+        state.leftRightLeft = correctOnLeft ? target : distractor;
+        state.leftRightRight = correctOnLeft ? distractor : target;
+        state.leftRightCorrectSide = correctOnLeft ? "left" : "right";
+        state.leftRightLocked = false;
+        return true;
+      }
+
+      function renderLeftRight() {
+        elements.missingAnswerHints.hidden = true;
+        stopAuto();
+        elements.answerArea.hidden = true;
+        elements.gameArea.hidden = false;
+        elements.floatingTimer.hidden = true;
+        elements.autoButton.hidden = true;
+        elements.previousButton.hidden = true;
+        elements.nextButton.hidden = true;
+        elements.gameTitle.textContent = "Left or Right?";
+
+        if (!state.leftRightTarget && !chooseLeftRightQuestion()) return;
+
+        const wrap = document.createElement("div");
+        wrap.className = "left-right-wrap";
+        wrap.innerHTML = `
+          <button class="left-right-choice" id="leftRightLeft" type="button" aria-label="Choose left picture">
+            <div class="game-picture" id="leftRightLeftPicture" role="img"></div>
+            <div class="answer-mark" id="leftRightLeftMark" aria-hidden="true"></div>
+          </button>
+
+          <div class="left-right-prompt-wrap">
+            <div class="left-right-prompt" id="leftRightPrompt"></div>
+            <button class="left-right-next" id="leftRightNext" type="button" hidden>Next ▶</button>
+          </div>
+
+          <button class="left-right-choice" id="leftRightRight" type="button" aria-label="Choose right picture">
+            <div class="game-picture" id="leftRightRightPicture" role="img"></div>
+            <div class="answer-mark" id="leftRightRightMark" aria-hidden="true"></div>
+          </button>`;
+
+        elements.gameArea.replaceChildren(wrap);
+
+        applyVisual($("leftRightLeftPicture"), state.leftRightLeft);
+        applyVisual($("leftRightRightPicture"), state.leftRightRight);
+        $("leftRightLeftPicture").setAttribute("aria-label", state.leftRightLeft.word);
+        $("leftRightRightPicture").setAttribute("aria-label", state.leftRightRight.word);
+        $("leftRightPrompt").textContent = leftRightText(state.leftRightTarget);
+        $("leftRightLeft").addEventListener("click", () => answerLeftRight("left"));
+        $("leftRightRight").addEventListener("click", () => answerLeftRight("right"));
+        $("leftRightNext").addEventListener("click", nextLeftRightQuestion);
+
+        elements.counter.textContent = "← / →";
+        elements.modeLabel.textContent = "Choose a side";
+        elements.shuffleButton.textContent = "New";
+        requestAnimationFrame(alignSideNavigation);
+      }
+
+      function answerLeftRight(side) {
+        if (state.gameMode !== "leftRight" || state.leftRightLocked) return;
+        state.leftRightLocked = true;
+
+        const left = $("leftRightLeft");
+        const right = $("leftRightRight");
+        const leftMark = $("leftRightLeftMark");
+        const rightMark = $("leftRightRightMark");
+        const chosen = side === "left" ? left : right;
+        const correct = state.leftRightCorrectSide === "left" ? left : right;
+        const chosenMark = side === "left" ? leftMark : rightMark;
+        const correctMark = state.leftRightCorrectSide === "left" ? leftMark : rightMark;
+
+        if (side === state.leftRightCorrectSide) {
+          chosen.classList.add("correct");
+          chosenMark.classList.add("show", "correct");
+        } else {
+          chosen.classList.add("wrong");
+          correct.classList.add("correct");
+          chosenMark.classList.add("show", "wrong");
+          correctMark.classList.add("show", "correct");
+        }
+
+        $("leftRightNext").hidden = false;
+      }
+
+      function nextLeftRightQuestion() {
+        if (chooseLeftRightQuestion()) renderLeftRight();
+      }
+
+      function setGameMode(mode) {
+        stopAuto();
+        closeGameMenu();
+
+        if (mode === "flashcards") {
+          returnToFlashcards();
+          return;
+        }
+
+        state.gameMode = mode;
+
+        if (mode === "missing") {
+          state.missingOrder = selectedCards().map((card) => card.id);
+          state.hiddenMissingIds.clear();
+          hideOneMore();
+          return;
+        }
+
+        if (mode === "keyword") {
+          state.keywordOrder = selectedCards().map((card) => card.id);
+          state.keywordSelectedIds.clear();
+        }
+
+        if (mode === "leftRight") {
+          state.leftRightTarget = null;
+          if (!chooseLeftRightQuestion()) {
+            state.gameMode = "flashcards";
+          }
+        }
+
+        render();
+      }
+
+      function returnToFlashcards() {
+        stopAuto();
+        state.gameMode = "flashcards";
+        resetGameState();
+        render();
+      }
+
+      function nextCard() {
+        if (!state.deck.length) return;
+        state.position = (state.position + 1) % state.deck.length;
+        render();
+      }
+
+      function previousCard() {
+        if (!state.deck.length) return;
+        state.position = (state.position - 1 + state.deck.length) % state.deck.length;
+        render();
+      }
+
+      function shuffleAction() {
+        stopAuto();
+
+        if (state.gameMode === "missing") {
+          const original = state.missingOrder.length
+            ? [...state.missingOrder]
+            : selectedCards().map((card) => card.id);
+          state.missingOrder = shuffled(original);
+          if (
+            state.missingOrder.length > 1 &&
+            state.missingOrder.every((id, index) => id === original[index])
+          ) {
+            [state.missingOrder[0], state.missingOrder[1]] =
+              [state.missingOrder[1], state.missingOrder[0]];
+          }
+          renderMissing();
+          return;
+        }
+
+        if (state.gameMode === "keyword") {
+          const original = state.keywordOrder.length
+            ? [...state.keywordOrder]
+            : selectedCards().map((card) => card.id);
+          state.keywordOrder = shuffled(original);
+          if (
+            state.keywordOrder.length > 1 &&
+            state.keywordOrder.every((id, index) => id === original[index])
+          ) {
+            [state.keywordOrder[0], state.keywordOrder[1]] =
+              [state.keywordOrder[1], state.keywordOrder[0]];
+          }
+          renderKeyword();
+          return;
+        }
+
+        if (state.gameMode === "leftRight") {
+          nextLeftRightQuestion();
+          return;
+        }
+
+        const currentId = currentCard() ? currentCard().id : null;
+        state.deck = shuffled(state.deck);
+
+        if (currentId && state.deck.length > 1 && state.deck[0].id === currentId) {
+          [state.deck[0], state.deck[1]] = [state.deck[1], state.deck[0]];
+        }
+
+        state.position = 0;
+        render();
+      }
+
+      function updateTimerDisplay() {
+        const shown = state.autoTimer ? state.countdown : state.autoSeconds;
+        elements.timerValue.textContent = `${shown} sec`;
+      }
+
+      function stopAuto() {
+        if (state.autoTimer) clearInterval(state.autoTimer);
+        if (state.countdownTimer) clearInterval(state.countdownTimer);
+        state.autoTimer = null;
+        state.countdownTimer = null;
+        state.countdown = state.autoSeconds;
+        elements.autoButton.classList.remove("active");
+        elements.autoButton.textContent = "▶";
+        elements.autoButton.setAttribute("aria-label", "Start automatic flashcards");
+        elements.autoButton.title = "Start automatic flashcards";
+        updateTimerDisplay();
+      }
+
+      function startAuto() {
+        if (state.gameMode !== "flashcards" && state.gameMode !== "guess") return;
+
+        state.countdown = state.autoSeconds;
+        elements.autoButton.classList.add("active");
+        elements.autoButton.textContent = "■";
+        elements.autoButton.setAttribute("aria-label", "Stop automatic flashcards");
+        elements.autoButton.title = "Stop automatic flashcards";
+        updateTimerDisplay();
+
+        state.countdownTimer = setInterval(() => {
+          state.countdown -= 1;
+          if (state.countdown <= 0) state.countdown = state.autoSeconds;
+          updateTimerDisplay();
+        }, 1000);
+
+        state.autoTimer = setInterval(() => {
+          nextCard();
+          state.countdown = state.autoSeconds;
+          updateTimerDisplay();
+        }, state.autoSeconds * 1000);
+      }
+
+      function toggleAuto() {
+        if (state.autoTimer) stopAuto();
+        else startAuto();
+      }
+
+      function changeTimer(amount) {
+        state.autoSeconds = Math.max(
+          UNIT_CONFIG.autoSecondsMinimum,
+          Math.min(UNIT_CONFIG.autoSecondsMaximum, state.autoSeconds + amount)
+        );
+        const wasRunning = Boolean(state.autoTimer);
+        stopAuto();
+        updateTimerDisplay();
+        if (wasRunning) startAuto();
+      }
+
+      function alignSideNavigation() {
+        const rect = elements.flashcard.getBoundingClientRect();
+        const top = Math.max(0, rect.top);
+        const height = Math.max(80, Math.min(rect.height, window.innerHeight - top));
+
+        [elements.previousButton, elements.nextButton].forEach((button) => {
+          button.style.top = `${top}px`;
+          button.style.height = `${height}px`;
+        });
+      }
+
+      function openSettings() {
+        stopAuto();
+        elements.settingsPanel.classList.add("open");
+        elements.scrim.classList.add("open");
+      }
+
+      function closePanels() {
+        elements.settingsPanel.classList.remove("open");
+        elements.scrim.classList.remove("open");
+        closeGameMenu();
+      }
+
+      function toggleGameMenu() {
+        const willOpen = elements.gameMenu.hidden;
+        elements.gameMenu.hidden = !willOpen;
+        elements.gameButton.setAttribute("aria-expanded", String(willOpen));
+      }
+
+      function closeGameMenu() {
+        elements.gameMenu.hidden = true;
+        elements.gameButton.setAttribute("aria-expanded", "false");
+      }
+
+      elements.menuButton.addEventListener("click", () => {
+        window.location.href = UNIT_CONFIG.menuFile;
+      });
+
+      elements.previousButton.addEventListener("click", () => {
+        elements.keyboardHelp.classList.add("collapsed");
+        if (state.gameMode === "flashcards" || state.gameMode === "guess") {
+          stopAuto();
+          previousCard();
+        }
+      });
+
+      elements.nextButton.addEventListener("click", () => {
+        elements.keyboardHelp.classList.add("collapsed");
+        if (state.gameMode === "missing") hideOneMore();
+        else if (state.gameMode === "keyword") selectRandomKeyword();
+        else if (state.gameMode === "flashcards" || state.gameMode === "guess") {
+          stopAuto();
+          nextCard();
+        }
+      });
+
+      elements.shuffleButton.addEventListener("click", shuffleAction);
+      elements.autoButton.addEventListener("click", toggleAuto);
+      elements.timerDownButton.addEventListener("click", () => changeTimer(-1));
+      elements.timerUpButton.addEventListener("click", () => changeTimer(1));
+      elements.gameButton.addEventListener("click", (event) => {
+        event.stopPropagation();
+        toggleGameMenu();
+      });
+
+      elements.gameMenu.querySelectorAll("[data-game]").forEach((button) => {
+        button.addEventListener("click", () => setGameMode(button.dataset.game));
+      });
+
+      elements.settingsButton.addEventListener("click", openSettings);
+      elements.closeSettingsButton.addEventListener("click", closePanels);
+      elements.scrim.addEventListener("click", closePanels);
+      elements.keyboardHelp.addEventListener("click", () => {
+        elements.keyboardHelp.classList.toggle("collapsed");
+      });
+
+      document.addEventListener("click", (event) => {
+        if (!elements.gameMenu.contains(event.target) && event.target !== elements.gameButton) {
+          closeGameMenu();
+        }
+      });
+
+      elements.selectAllButton.addEventListener("click", () => {
+        state.selectedIds = new Set(UNIT_CONFIG.cards.map((card) => card.id));
+        syncCardOptions();
+        rebuildDeck();
+      });
+
+      elements.resetButton.addEventListener("click", () => {
+        stopAuto();
+        state.selectedIds = new Set(initialIds);
+        state.displayMode = "pictureText";
+        state.textDisplay = "word";
+        state.sizeBalance = 50;
+        state.autoSeconds = UNIT_CONFIG.autoSeconds;
+        state.countdown = state.autoSeconds;
+        document.querySelector('input[name="displayMode"][value="pictureText"]').checked = true;
+        document.querySelector('input[name="textDisplay"][value="word"]').checked = true;
+        elements.sizeBalanceRange.value = "50";
+        elements.missingAnswerSizeRange.value = "10";
+        state.missingAnswerSize = 10;
+        document.documentElement.style.setProperty("--missing-answer-size", "10px");
+        elements.missingAnswerSizeValue.textContent = "10 px";
+        syncCardOptions();
+        rebuildDeck();
+      });
+
+      document.querySelectorAll('input[name="displayMode"]').forEach((radio) => {
+        radio.addEventListener("change", () => {
+          stopAuto();
+          state.displayMode = radio.value;
+          state.gameMode = "flashcards";
+          render();
+        });
+      });
+
+      document.querySelectorAll('input[name="textDisplay"]').forEach((radio) => {
+        radio.addEventListener("change", () => {
+          state.textDisplay = radio.value;
+          render();
+        });
+      });
+
+      elements.sizeBalanceRange.addEventListener("input", () => {
+        state.sizeBalance = Number(elements.sizeBalanceRange.value);
+        render();
+      });
+      elements.missingAnswerSizeRange.addEventListener("input", () => {
+        state.missingAnswerSize = Number(elements.missingAnswerSizeRange.value);
+        document.documentElement.style.setProperty("--missing-answer-size", `${state.missingAnswerSize}px`);
+        elements.missingAnswerSizeValue.textContent = `${state.missingAnswerSize} px`;
+      });
+
+      document.addEventListener("keydown", (event) => {
+        if (event.key === "Escape") {
+          closePanels();
+          return;
+        }
+
+        if (elements.settingsPanel.classList.contains("open")) return;
+
+        if (state.gameMode === "leftRight") {
+          if (event.key === "ArrowLeft") {
+            event.preventDefault();
+            answerLeftRight("left");
+            return;
+          }
+
+          if (event.key === "ArrowRight") {
+            event.preventDefault();
+            answerLeftRight("right");
+            return;
+          }
+
+          if (event.code === "Space" || event.key === "Enter") {
+            event.preventDefault();
+            if (state.leftRightLocked) nextLeftRightQuestion();
+            return;
+          }
+        }
+
+        if (state.gameMode === "missing") {
+          if (event.key === "ArrowRight" || event.code === "Space" || event.key === "Enter") {
+            event.preventDefault();
+            hideOneMore();
+          } else if (event.key.toLowerCase() === "r") {
+            shuffleAction();
+          } else if (event.key.toLowerCase() === "g") {
+            toggleGameMenu();
+          }
+          return;
+        }
+
+        if (state.gameMode === "keyword") {
+          if (event.key === "ArrowRight" || event.code === "Space" || event.key === "Enter") {
+            event.preventDefault();
+            selectRandomKeyword();
+          } else if (event.key.toLowerCase() === "r") {
+            shuffleAction();
+          } else if (event.key.toLowerCase() === "g") {
+            toggleGameMenu();
+          }
+          return;
+        }
+
+        if (event.key === "ArrowRight" || event.code === "Space" || event.key === "Enter") {
+          event.preventDefault();
+          stopAuto();
+          nextCard();
+        } else if (event.key === "ArrowLeft") {
+          event.preventDefault();
+          stopAuto();
+          previousCard();
+        } else if (event.key.toLowerCase() === "r") {
+          shuffleAction();
+        } else if (event.key.toLowerCase() === "a") {
+          toggleAuto();
+        } else if (event.key === "ArrowUp") {
+          event.preventDefault();
+          changeTimer(1);
+        } else if (event.key === "ArrowDown") {
+          event.preventDefault();
+          changeTimer(-1);
+        } else if (event.key.toLowerCase() === "g") {
+          toggleGameMenu();
+        }
+      });
+
+      window.addEventListener("resize", () => {
+        requestAnimationFrame(alignSideNavigation);
+      });
+
+      preloadAllCardImages().then(initialisePage);
+    })();
+  
