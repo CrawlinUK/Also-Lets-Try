@@ -188,6 +188,11 @@
   }
 
   function init() {
+    const isIPad =
+      /iPad/i.test(navigator.userAgent) ||
+      (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+    root.classList.toggle("is-ipad", isIPad);
+
     setViewportHeight();
     setupFullscreen();
     updateControls();
