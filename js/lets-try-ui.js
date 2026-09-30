@@ -65,6 +65,41 @@
     });
   }
 
+  function placeTimerInControlBar() {
+    if (root.dataset.unit !== "5") return;
+    const timer = document.getElementById("floatingTimer");
+    const settings = document.getElementById("settingsButton");
+    const bar = settings && settings.closest(".control-bar");
+    if (!timer || !settings || !bar || timer.parentElement === bar) return;
+    bar.insertBefore(timer, settings);
+  }
+
+  function fitDisplayText() {
+    const element = document.getElementById("displayText");
+    if (!element || element.hidden || !element.parentElement) return;
+
+    element.style.removeProperty("font-size");
+    const available = Math.max(0, element.parentElement.clientWidth - 4);
+    if (!available) return;
+
+    const base = parseFloat(getComputedStyle(element).fontSize);
+    if (!Number.isFinite(base)) return;
+
+    if (element.scrollWidth <= available) return;
+
+    let low = Math.max(38, base * 0.52);
+    let high = base;
+
+    for (let i = 0; i < 9; i += 1) {
+      const mid = (low + high) / 2;
+      element.style.fontSize = mid + "px";
+      if (element.scrollWidth > available) high = mid;
+      else low = mid;
+    }
+
+    element.style.fontSize = low + "px";
+  }
+
   function updateTimer() {
     const value = document.getElementById("timerValue");
     if (!value) return;
@@ -107,7 +142,10 @@
 
     updateTimer();
     updateGameFocus();
-    requestAnimationFrame(alignSideNavigation);
+    requestAnimationFrame(() => {
+      alignSideNavigation();
+      fitDisplayText();
+    });
   }
 
   function queueUpdate() {
@@ -127,6 +165,7 @@
     requestAnimationFrame(() => {
       window.scrollTo(0, 0);
       alignSideNavigation();
+      fitDisplayText();
     });
   }
 
@@ -194,9 +233,19 @@
     root.classList.toggle("is-ipad", isIPad);
 
     setViewportHeight();
+    placeTimerInControlBar();
     setupFullscreen();
     updateControls();
     setupObserver();
+
+    if (document.fonts && document.fonts.ready) {
+      document.fonts.ready.then(fitDisplayText);
+    }
+
+    if ("ResizeObserver" in window) {
+      const answerArea = document.getElementById("answerArea");
+      if (answerArea) new ResizeObserver(fitDisplayText).observe(answerArea);
+    }
 
     window.addEventListener("resize", setViewportHeight, { passive: true });
     window.addEventListener("orientationchange", () => {
