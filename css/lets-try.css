@@ -4075,7 +4075,7 @@ html[data-unit].game-focus .control-bar::before {
   html[data-unit].is-ipad:-webkit-full-screen,
   html[data-unit].is-ipad.is-fullscreen
 ).game-focus .site-header-inner {
-  padding-top: 88px;
+  padding-top: 48px;
 }
 
 :is(
@@ -4083,7 +4083,7 @@ html[data-unit].game-focus .control-bar::before {
   html[data-unit].is-ipad:-webkit-full-screen,
   html[data-unit].is-ipad.is-fullscreen
 ).game-focus .site-header::after {
-  top: 154px;
+  top: 114px;
 }
 
 :is(
@@ -4091,8 +4091,8 @@ html[data-unit].game-focus .control-bar::before {
   html[data-unit].is-ipad:-webkit-full-screen,
   html[data-unit].is-ipad.is-fullscreen
 ).game-focus .missing-answer-hints {
-  top: 166px;
-  height: calc(var(--viewport-height) - 166px - 82px);
+  top: 126px;
+  height: calc(var(--viewport-height) - 126px - 82px);
 }
 
 .ui-icon {
@@ -4319,4 +4319,10 @@ html[data-unit].game-focus .control-bar::before {
     width: 44px;
     height: 44px;
   }
+}
+
+
+/* Shared SVG controls replace the legacy emoji Game icon. */
+.game-menu-button[data-ui-icon]::before {
+  content: none !important;
 }
