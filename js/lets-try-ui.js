@@ -24,7 +24,7 @@
 
   function cleanLabel(value) {
     return String(value || "")
-      .replace(/[🎮⚙️↝]/gu, "")
+      .replace(/[\p{Extended_Pictographic}\uFE0F↝]/gu, "")
       .replace(/\s+/g, " ")
       .trim();
   }
