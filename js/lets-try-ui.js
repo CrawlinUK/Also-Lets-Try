@@ -137,7 +137,7 @@
     }
 
     iconLabel(document.getElementById("gameButton"), "game", "Game");
-    iconLabel(document.getElementById("settingsButton"), "settings", "Settings");
+    iconOnly(document.getElementById("settingsButton"), "settings", "Settings");
     iconLabel(document.getElementById("shuffleButton"), "shuffle", "Shuffle");
 
     updateTimer();
