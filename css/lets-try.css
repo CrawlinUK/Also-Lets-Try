@@ -3462,9 +3462,9 @@ html[data-unit="3"] .flashcard.word-only .number-word {
 
 
 /* ============================================================
-   UNIT 4 — SCOPED RULES / INTENTIONAL EXCEPTIONS
-   These were reviewed during the CSS audit and retained
-   because they are unit-specific or not safe to normalise.
+   UNITS 4–5 — SHARED PICTURE-UNIT RULES
+   These rules are the current basis for standard picture/text units.
+   Future normal units should inherit from the shared unit template/core.
    ============================================================ */
 
 /* Units 4–5 shared flashcard/game layout */
@@ -4325,4 +4325,204 @@ html[data-unit].game-focus .control-bar::before {
 /* Shared SVG controls replace the legacy emoji Game icon. */
 .game-menu-button[data-ui-icon]::before {
   content: none !important;
+}
+
+
+/* ============================================================
+   UNIT 5 — CURRENT SHARED-UI PROTOTYPE
+   These rules are being proven here before rolling into the unit template.
+   ============================================================ */
+
+html[data-unit="5"] .answer-area {
+  padding: 0 12px 4px;
+}
+
+html[data-unit="5"] .display-text {
+  max-width: 100%;
+  white-space: nowrap;
+}
+
+html[data-unit="5"] .settings-panel {
+  top: 8px;
+  right: 8px;
+  width: min(720px, 50vw);
+  max-height: calc(var(--viewport-height) - 16px);
+  padding: 10px 12px;
+  border-radius: 14px;
+}
+
+html[data-unit="5"] .settings-heading {
+  align-items: center;
+  gap: 8px;
+}
+
+html[data-unit="5"] .settings-heading h2 {
+  font-size: 24px;
+  line-height: 1;
+}
+
+html[data-unit="5"] .close-button {
+  width: 34px;
+  height: 34px;
+  font-size: 22px;
+}
+
+html[data-unit="5"] .setting-section {
+  margin-top: 10px;
+}
+
+html[data-unit="5"] .selection-section {
+  margin-top: 8px;
+}
+
+html[data-unit="5"] .setting-actions-top {
+  grid-template-columns: 1fr 1fr;
+  margin: 0 0 7px;
+  gap: 6px;
+}
+
+html[data-unit="5"] .setting-actions-top button {
+  min-height: 34px;
+  border: 1px solid var(--line);
+  background: #f7faf8;
+}
+
+html[data-unit="5"] .message:empty {
+  display: none;
+}
+
+html[data-unit="5"] .message {
+  margin: 4px 0;
+  font-size: 13px;
+}
+
+html[data-unit="5"] .category-word-groups {
+  display: grid;
+  gap: 7px;
+}
+
+html[data-unit="5"] .category-word-group {
+  display: grid;
+  gap: 3px;
+}
+
+html[data-unit="5"] .category-option {
+  min-height: 31px;
+  padding: 3px 8px;
+  text-align: left;
+  background: #ffffff;
+  border: 1px solid var(--line);
+  border-radius: 7px;
+  font-size: 15px;
+  font-weight: 900;
+}
+
+html[data-unit="5"] .category-option.all-selected {
+  color: #145e42;
+  background: #eaf8f1;
+  border-color: #28a36a;
+}
+
+html[data-unit="5"] .category-option.partial-selected {
+  color: #7a4712;
+  background: #fff1df;
+  border-color: #e49a45;
+}
+
+html[data-unit="5"] .category-option.none-selected {
+  color: var(--ink);
+  background: #ffffff;
+  border-color: var(--line);
+  box-shadow: none;
+}
+
+html[data-unit="5"] .category-card-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 2px 4px;
+}
+
+html[data-unit="5"] .card-option {
+  min-height: 28px;
+  padding: 2px 5px;
+  border-width: 1px;
+  border-radius: 5px;
+  font-size: 14px;
+  line-height: 1.1;
+}
+
+html[data-unit="5"] .setting-section h3 {
+  margin-bottom: 5px;
+  font-size: 16px;
+}
+
+html[data-unit="5"] .segmented span {
+  padding: 5px 6px;
+}
+
+html[data-unit="5"] .balance-labels {
+  margin-bottom: 3px;
+  font-size: 14px;
+}
+
+html[data-unit="5"] .control-bar .floating-timer {
+  position: static;
+  width: 100%;
+  min-height: 64px;
+  display: grid;
+  grid-template-columns: 38px minmax(42px, 1fr) 38px;
+  grid-template-areas: "down value up";
+  gap: 4px;
+  padding: 6px 8px;
+  border: 1px solid var(--line);
+  border-radius: 15px;
+  background: var(--surface);
+  box-shadow: 0 5px 12px rgba(20, 40, 35, .12);
+}
+
+html[data-unit="5"] .control-bar .floating-timer .timer-value {
+  grid-area: value;
+}
+
+html[data-unit="5"] .control-bar .floating-timer .timer-value::before {
+  content: attr(data-seconds) "s";
+  font-size: 25px;
+  line-height: 1;
+}
+
+html[data-unit="5"] .control-bar .floating-timer .timer-value::after {
+  display: none;
+}
+
+html[data-unit="5"] .control-bar .floating-timer.timer-control button {
+  width: 34px;
+  height: 34px;
+  font-size: 20px;
+}
+
+html[data-unit="5"] .control-bar:has(#floatingTimer:not([hidden])) {
+  grid-template-columns:
+    minmax(120px, .75fr)
+    minmax(150px, 1fr)
+    minmax(140px, .9fr)
+    minmax(130px, .75fr)
+    minmax(130px, .8fr);
+}
+
+html[data-unit="5"] .control-bar:not(:has(#floatingTimer:not([hidden]))) {
+  grid-template-columns:
+    minmax(130px, .75fr)
+    minmax(150px, 1fr)
+    minmax(150px, 1fr)
+    minmax(150px, 1fr);
+}
+
+@media (max-width: 900px) {
+  html[data-unit="5"] .settings-panel {
+    width: min(680px, 58vw);
+  }
+
+  html[data-unit="5"] .category-card-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
 }
