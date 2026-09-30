@@ -3,8 +3,14 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Let’s Try! Unit Template</title>
+  <title>Let’s Try! Tools — What do you like?</title>
 
+  <link rel="preconnect" href="https://crawlinuk.web.fc2.com" crossorigin>
+  <link rel="preload"
+        href="https://crawlinuk.web.fc2.com/schoolapps/font/HandwritingWeCan-Medium.otf"
+        as="font"
+        type="font/otf"
+        crossorigin>
   <link rel="stylesheet" href="../css/lets-try.css">
 </head>
 
@@ -14,8 +20,8 @@
 
     <div class="site-title">
       <span class="unit-word">Unit</span>
-      <span class="unit-number" id="unitNumber">X</span>
-      <span class="unit-name" id="unitName">UNIT TITLE</span>
+      <span class="unit-number" id="unitNumber">5</span>
+      <span class="unit-name" id="unitName">What do you like?</span>
     </div>
 
     <div class="game-title" id="gameTitle" aria-live="polite"></div>
@@ -28,7 +34,7 @@
           <div class="picture-frame" id="pictureFrame">
             <div class="card-picture" id="cardPicture" role="img"></div>
           </div>
-          <div class="display-text" id="displayText">PLACEHOLDER</div>
+          <div class="display-text" id="displayText"></div>
         </div>
 
         <div class="game-area" id="gameArea" hidden></div>
@@ -634,6 +640,7 @@
         else if (count <= 8) columns = 4;
         else if (count === 9) columns = 3;
         else if (count <= 20) columns = 5;
+        else if (count === 21) columns = 7;
         else if (count <= 32) columns = 8;
         else columns = 9;
 
