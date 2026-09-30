@@ -4514,7 +4514,7 @@ html[data-unit="5"] .control-bar:not(:has(#floatingTimer:not([hidden]))) {
     minmax(130px, .75fr)
     minmax(150px, 1fr)
     minmax(150px, 1fr)
-    minmax(150px, 1fr);
+    68px;
 }
 
 @media (max-width: 900px) {
@@ -4525,4 +4525,16 @@ html[data-unit="5"] .control-bar:not(:has(#floatingTimer:not([hidden]))) {
   html[data-unit="5"] .category-card-grid {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
+}
+
+
+html[data-unit="5"] .settings-icon-button {
+  min-width: 0;
+  padding-left: 10px;
+  padding-right: 10px;
+}
+
+html[data-unit="5"] .settings-icon-button .ui-icon {
+  width: 28px;
+  height: 28px;
 }
