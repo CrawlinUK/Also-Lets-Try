@@ -53,6 +53,18 @@
     mutating = false;
   }
 
+  function alignSideNavigation() {
+    const flashcard = document.querySelector(".flashcard");
+    if (!flashcard) return;
+    const rect = flashcard.getBoundingClientRect();
+    ["previousButton", "nextButton"].forEach((id) => {
+      const button = document.getElementById(id);
+      if (!button || button.hidden) return;
+      button.style.top = rect.top + "px";
+      button.style.height = rect.height + "px";
+    });
+  }
+
   function updateTimer() {
     const value = document.getElementById("timerValue");
     if (!value) return;
@@ -95,6 +107,7 @@
 
     updateTimer();
     updateGameFocus();
+    requestAnimationFrame(alignSideNavigation);
   }
 
   function queueUpdate() {
@@ -111,7 +124,10 @@
     const height = viewport ? viewport.height : window.innerHeight;
     root.style.setProperty("--viewport-height", Math.round(height) + "px");
     root.classList.toggle("is-landscape", window.innerWidth >= window.innerHeight);
-    requestAnimationFrame(() => window.scrollTo(0, 0));
+    requestAnimationFrame(() => {
+      window.scrollTo(0, 0);
+      alignSideNavigation();
+    });
   }
 
   function setupFullscreen() {
