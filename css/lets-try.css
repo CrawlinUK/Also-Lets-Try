@@ -3930,3 +3930,261 @@ html[data-unit="3"] .flashcard.word-only .number-word {
   border-color: #28a36a;
   box-shadow: inset 0 0 0 1px rgba(40, 163, 106, .22);
 }
+
+
+/* ============================================================
+   SHARED CLASSROOM APP SHELL
+   Tablet-safe viewport, focus mode, SVG controls and compact timer.
+   ============================================================ */
+
+html[data-unit] {
+  --header-height: 78px;
+  --viewport-height: 100dvh;
+}
+
+html[data-unit],
+html[data-unit] body {
+  height: 100%;
+  overscroll-behavior: none;
+}
+
+html[data-unit] body {
+  height: var(--viewport-height);
+  max-height: var(--viewport-height);
+  overflow: hidden;
+}
+
+html[data-unit] .site-header {
+  height: var(--header-height);
+}
+
+html[data-unit] .app {
+  height: calc(var(--viewport-height) - var(--header-height));
+  min-height: 0;
+}
+
+html[data-unit].game-focus {
+  --header-height: 58px;
+}
+
+html[data-unit].game-focus .site-header {
+  height: var(--header-height);
+  min-height: var(--header-height);
+  padding-top: 6px;
+  padding-bottom: 6px;
+  gap: 10px;
+}
+
+html[data-unit].game-focus .site-title {
+  display: none;
+}
+
+html[data-unit].game-focus .game-title {
+  position: static !important;
+  flex: 1;
+  min-width: 0;
+  max-width: none !important;
+  inset: auto !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 58px 0 0 !important;
+  overflow: hidden;
+  transform: none !important;
+  font-size: clamp(24px, 2.8vw, 38px);
+  line-height: 1;
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+.ui-icon {
+  display: inline-grid;
+  place-items: center;
+  width: 1.15em;
+  height: 1.15em;
+  flex: 0 0 auto;
+}
+
+.ui-icon svg {
+  width: 100%;
+  height: 100%;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.ui-icon svg .fill {
+  fill: currentColor;
+  stroke: none;
+}
+
+.menu-button {
+  display: grid;
+  place-items: center;
+}
+
+.menu-button .ui-icon {
+  width: 30px;
+  height: 30px;
+}
+
+.side-nav {
+  display: grid;
+  place-items: center;
+}
+
+.side-nav .ui-icon {
+  width: 52px;
+  height: 52px;
+}
+
+.floating-auto .ui-icon {
+  width: 34px;
+  height: 34px;
+}
+
+.control .ui-icon,
+.game-menu-button .ui-icon {
+  width: 1.1em;
+  height: 1.1em;
+}
+
+#gameButton,
+#settingsButton,
+#shuffleButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.floating-timer {
+  display: grid;
+  grid-template-columns: 42px 42px;
+  grid-template-areas:
+    "value value"
+    "down up";
+  align-items: center;
+  justify-items: center;
+  gap: 3px 6px;
+  padding: 8px 9px;
+  border-radius: 20px;
+}
+
+.floating-timer .timer-value {
+  grid-area: value;
+  min-width: 0;
+  display: grid;
+  justify-items: center;
+  line-height: 1;
+  font-size: 0;
+}
+
+.floating-timer .timer-value::before {
+  content: attr(data-seconds);
+  font-size: 29px;
+  font-weight: 900;
+  line-height: .9;
+}
+
+.floating-timer .timer-value::after {
+  content: "seconds";
+  margin-top: 3px;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.floating-timer button:first-of-type {
+  grid-area: down;
+}
+
+.floating-timer button:last-of-type {
+  grid-area: up;
+}
+
+.floating-timer.timer-control button {
+  width: 40px;
+  height: 36px;
+  font-size: 22px;
+}
+
+.fullscreen-button {
+  position: fixed;
+  z-index: 40;
+  right: 18px;
+  bottom: 18px;
+  width: 56px;
+  height: 56px;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  color: var(--ink);
+  background: rgba(255,255,255,.96);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  box-shadow: 0 5px 14px rgba(31,47,40,.16);
+}
+
+.fullscreen-button .ui-icon {
+  width: 28px;
+  height: 28px;
+}
+
+.fullscreen-button:hover,
+.fullscreen-button:focus-visible {
+  background: #eef4f6;
+}
+
+@media (max-width: 850px) {
+  html[data-unit] {
+    --header-height: 72px;
+  }
+
+  html[data-unit].game-focus {
+    --header-height: 54px;
+  }
+
+  html[data-unit] .side-nav .ui-icon {
+    width: 42px;
+    height: 42px;
+  }
+
+  .fullscreen-button {
+    right: 12px;
+    bottom: 12px;
+    width: 50px;
+    height: 50px;
+    border-radius: 14px;
+  }
+}
+
+@media (max-width: 650px) {
+  html[data-unit] {
+    --header-height: 60px;
+  }
+
+  html[data-unit].game-focus {
+    --header-height: 50px;
+  }
+
+  html[data-unit].game-focus .game-title {
+    padding-right: 46px !important;
+    font-size: 22px;
+  }
+
+  .menu-button .ui-icon {
+    width: 26px;
+    height: 26px;
+  }
+
+  .fullscreen-button {
+    right: 8px;
+    bottom: 8px;
+    width: 44px;
+    height: 44px;
+  }
+}
