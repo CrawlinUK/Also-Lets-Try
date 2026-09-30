@@ -173,7 +173,14 @@
       function applyVisual(element, card) {
         const visual = card && card.visual ? card.visual : {};
         const textVisual = visual.type === "text";
+        const aspectRatio = visual.aspectRatio || UNIT_CONFIG.pictureAspectRatio || "1 / 1";
+        const ratioParts = String(aspectRatio).split("/").map((part) => Number(part.trim()));
+        const ratioValue = ratioParts.length === 2 && ratioParts[0] > 0 && ratioParts[1] > 0
+          ? ratioParts[0] / ratioParts[1]
+          : Number(aspectRatio) || 1;
 
+        element.style.aspectRatio = aspectRatio;
+        element.style.setProperty("--visual-ratio", String(ratioValue));
         element.classList.toggle("text-visual", textVisual);
         element.textContent = textVisual ? String(visual.text ?? card?.alternate ?? card?.word ?? "") : "";
 
