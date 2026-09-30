@@ -3958,6 +3958,15 @@ html[data-unit] .site-header {
   height: var(--header-height);
 }
 
+html[data-unit] .site-header-inner {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  min-width: 0;
+}
+
 html[data-unit] .app {
   height: calc(var(--viewport-height) - var(--header-height));
   min-height: 0;
@@ -3981,6 +3990,13 @@ html[data-unit].game-focus .site-header {
   background: transparent;
   border: 0;
   pointer-events: none;
+}
+
+html[data-unit].game-focus .site-header-inner {
+  width: 100%;
+  height: 100%;
+  display: block;
+  position: relative;
 }
 
 html[data-unit].game-focus .site-header::after {
@@ -4031,27 +4047,52 @@ html[data-unit].game-focus .control-bar::before {
   right: -82px;
 }
 
-html[data-unit].is-ipad.game-focus.is-fullscreen .menu-button {
-  margin-top: 70px;
-}
-
-html[data-unit].is-ipad.game-focus.is-fullscreen .site-header::after {
-  top: 136px;
-}
-
 /* iPad Safari owns the fullscreen close control in the top-left.
-   On normal flashcards, move Home to the far right instead of underneath it. */
-html[data-unit].is-ipad.is-fullscreen:not(.game-focus) .site-header .menu-button {
+   Use both the standards and WebKit fullscreen pseudo-classes, with our
+   JS class as a fallback, so the offset follows Safari's real fullscreen state. */
+:is(
+  html[data-unit].is-ipad:fullscreen,
+  html[data-unit].is-ipad:-webkit-full-screen,
+  html[data-unit].is-ipad.is-fullscreen
+):not(.game-focus) .site-header-inner {
+  padding-left: 88px;
+}
+
+:is(
+  html[data-unit].is-ipad:fullscreen,
+  html[data-unit].is-ipad:-webkit-full-screen,
+  html[data-unit].is-ipad.is-fullscreen
+):not(.game-focus) .site-header .menu-button {
   order: 3;
   margin-left: auto;
   margin-right: 0;
 }
 
-/* In game focus the Home button is intentionally lowered to clear Safari's X.
-   Keep the teacher-only Missing answers below that reserved area. */
-html[data-unit].is-ipad.is-fullscreen.game-focus .missing-answer-hints {
-  top: 148px;
-  height: calc(var(--viewport-height) - 148px - 82px);
+/* Game fullscreen: reserve Safari's top-left exit-control zone for the whole
+   header rail, then start teacher answers beneath the Home control. */
+:is(
+  html[data-unit].is-ipad:fullscreen,
+  html[data-unit].is-ipad:-webkit-full-screen,
+  html[data-unit].is-ipad.is-fullscreen
+).game-focus .site-header-inner {
+  padding-top: 88px;
+}
+
+:is(
+  html[data-unit].is-ipad:fullscreen,
+  html[data-unit].is-ipad:-webkit-full-screen,
+  html[data-unit].is-ipad.is-fullscreen
+).game-focus .site-header::after {
+  top: 154px;
+}
+
+:is(
+  html[data-unit].is-ipad:fullscreen,
+  html[data-unit].is-ipad:-webkit-full-screen,
+  html[data-unit].is-ipad.is-fullscreen
+).game-focus .missing-answer-hints {
+  top: 166px;
+  height: calc(var(--viewport-height) - 166px - 82px);
 }
 
 .ui-icon {
