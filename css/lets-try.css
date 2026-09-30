@@ -3584,7 +3584,7 @@ html.shared-unit-template .game-picture {
       height: auto;
       max-width: 94%;
       max-height: 94%;
-      aspect-ratio: 1 / 1;
+      aspect-ratio: var(--visual-ratio, 1);
       background-size: contain;
       filter: drop-shadow(0 5px 7px rgba(25, 38, 33, .18));
     }
@@ -3597,10 +3597,11 @@ html.shared-unit-template .game-picture {
 
       html.shared-unit-template .game-tile .game-picture,
       html.shared-unit-template .left-right-choice .game-picture {
-        width: min(94cqw, 94cqh);
-        height: min(94cqw, 94cqh);
-        max-width: none;
-        max-height: none;
+        width: min(94cqw, calc(94cqh * var(--visual-ratio, 1)));
+        height: auto;
+        max-width: 94cqw;
+        max-height: 94cqh;
+        aspect-ratio: var(--visual-ratio, 1);
       }
     }
 
