@@ -4031,12 +4031,27 @@ html[data-unit].game-focus .control-bar::before {
   right: -82px;
 }
 
-html[data-unit].game-focus.is-fullscreen .menu-button {
+html[data-unit].is-ipad.game-focus.is-fullscreen .menu-button {
   margin-top: 70px;
 }
 
-html[data-unit].game-focus.is-fullscreen .site-header::after {
+html[data-unit].is-ipad.game-focus.is-fullscreen .site-header::after {
   top: 136px;
+}
+
+/* iPad Safari owns the fullscreen close control in the top-left.
+   On normal flashcards, move Home to the far right instead of underneath it. */
+html[data-unit].is-ipad.is-fullscreen:not(.game-focus) .site-header .menu-button {
+  order: 3;
+  margin-left: auto;
+  margin-right: 0;
+}
+
+/* In game focus the Home button is intentionally lowered to clear Safari's X.
+   Keep the teacher-only Missing answers below that reserved area. */
+html[data-unit].is-ipad.is-fullscreen.game-focus .missing-answer-hints {
+  top: 148px;
+  height: calc(var(--viewport-height) - 148px - 82px);
 }
 
 .ui-icon {
