@@ -18,7 +18,7 @@
     word: entry.greeting,
     sentence: entry.country,
     alternate: entry.greeting,
-    optionLabel: entry.country,
+    optionLabel: entry.greeting,
     teacherAnswer: entry.country,
     textbook: defaults.has(entry.id),
     visual: {
