@@ -4575,3 +4575,34 @@ html.shared-unit-template[data-unit="3"] .game-picture.text-visual {
 html.shared-unit-template[data-unit="3"] .left-right-choice .game-picture.text-visual {
   font-size: clamp(70px, 10vw, 150px);
 }
+
+
+/* ============================================================
+   SHARED TEMPLATE — FULLSCREEN FLASHCARD SPACE
+   Use more of the projected/tablet display without changing game focus.
+   ============================================================ */
+html.shared-unit-template.is-fullscreen:not(.game-focus) {
+  --header-height: 64px;
+}
+
+html.shared-unit-template.is-fullscreen:not(.game-focus) .site-header {
+  min-height: 64px;
+}
+
+html.shared-unit-template.is-fullscreen:not(.game-focus) .app {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  gap: 8px;
+}
+
+html.shared-unit-template.is-fullscreen:not(.game-focus) .flashcard {
+  padding: 6px;
+}
+
+html.shared-unit-template.is-fullscreen:not(.game-focus) .picture-frame {
+  width: calc(min(56vh, 50vw, 640px) * var(--picture-scale));
+}
+
+html.shared-unit-template.is-fullscreen:not(.game-focus) .flashcard.picture-only .picture-frame {
+  width: calc(min(70vh, 66vw, 780px) * var(--picture-scale));
+}
