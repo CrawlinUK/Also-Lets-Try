@@ -2,6 +2,139 @@
    Card wording and visuals are preserved from the previous Unit 4 app. */
 (function () {
   "use strict";
+
+    const PLACEHOLDER_IMAGE = "";
+
+    /*
+      Unit 4 Colors
+      -------------
+      The colour pictures are generated from ONE canvas sprite at runtime.
+      This avoids adding thirteen separate image files/data URLs to an already
+      large unit. The irregular shapes are deliberately paint-splodge-like.
+    */
+    const COLOR_CARD_DATA = [
+      { id: "red-color",         word: "red",         fill: "#E53935", textbook: true  },
+      { id: "pink-color",        word: "pink",        fill: "#F28AB2", textbook: true  },
+      { id: "yellow-color",      word: "yellow",      fill: "#FFD928", textbook: true  },
+      { id: "blue-color",        word: "blue",        fill: "#27A7DF", textbook: true  },
+      { id: "light-blue-color",  word: "light blue",  fill: "#8DDCF4", textbook: false },
+      { id: "green-color",       word: "green",       fill: "#2DAA4F", textbook: true  },
+      { id: "light-green-color", word: "light green", fill: "#A9D96A", textbook: false },
+      { id: "orange-color",      word: "orange",      fill: "#F5A51B", textbook: true  },
+      { id: "purple-color",      word: "purple",      fill: "#A65AA6", textbook: true  },
+      { id: "black-color",       word: "black",       fill: "#111111", textbook: true  },
+      { id: "white-color",       word: "white",       fill: "#F8F8F4", textbook: true  },
+      { id: "brown-color",       word: "brown",       fill: "#A94D09", textbook: true  },
+      { id: "gray-color",        word: "gray",        fill: "#9FA4A8", textbook: false }
+    ];
+
+    function createPaintSplodgeSprite(items) {
+      const columns = 4;
+      const rows = 4;
+      const cell = 256;
+      const canvas = document.createElement("canvas");
+      canvas.width = columns * cell;
+      canvas.height = rows * cell;
+      const ctx = canvas.getContext("2d");
+      if (!ctx) return PLACEHOLDER_IMAGE;
+
+      function seededRandom(seedText) {
+        let seed = 2166136261 >>> 0;
+        for (const ch of seedText) {
+          seed ^= ch.charCodeAt(0);
+          seed = Math.imul(seed, 16777619) >>> 0;
+        }
+        return () => {
+          seed = (Math.imul(seed, 1664525) + 1013904223) >>> 0;
+          return seed / 4294967296;
+        };
+      }
+
+      function drawSplodge(cx, cy, fill, id) {
+        const rand = seededRandom(id);
+        const points = [];
+        const baseRadius = 72;
+
+        for (let point = 0; point < 22; point += 1) {
+          const angle = (Math.PI * 2 * point) / 22;
+          const radius = baseRadius * (0.80 + rand() * 0.38);
+          points.push({
+            x: cx + Math.cos(angle) * radius,
+            y: cy + Math.sin(angle) * radius * (0.82 + rand() * 0.20)
+          });
+        }
+
+        ctx.save();
+        ctx.shadowColor = "rgba(0,0,0,.14)";
+        ctx.shadowBlur = 8;
+        ctx.shadowOffsetY = 4;
+        ctx.beginPath();
+
+        points.forEach((current, index) => {
+          const next = points[(index + 1) % points.length];
+          const midX = (current.x + next.x) / 2;
+          const midY = (current.y + next.y) / 2;
+          if (index === 0) ctx.moveTo(midX, midY);
+          else ctx.quadraticCurveTo(current.x, current.y, midX, midY);
+        });
+
+        ctx.closePath();
+        ctx.fillStyle = fill;
+        ctx.fill();
+
+        if (id === "white-color") {
+          ctx.shadowColor = "transparent";
+          ctx.lineWidth = 2;
+          ctx.strokeStyle = "#AEB5BA";
+          ctx.stroke();
+        }
+        ctx.restore();
+
+        ctx.save();
+        ctx.globalAlpha = id === "white-color" ? .38 : .18;
+        ctx.fillStyle = "#FFFFFF";
+        ctx.beginPath();
+        ctx.ellipse(cx - 22, cy - 24, 35, 18, -0.42, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+      }
+
+      items.forEach((item, index) => {
+        const column = index % columns;
+        const row = Math.floor(index / columns);
+        drawSplodge(
+          column * cell + cell / 2,
+          row * cell + cell / 2,
+          item.fill,
+          item.id
+        );
+      });
+
+      return canvas.toDataURL("image/png");
+    }
+
+    const COLOR_SPRITE = createPaintSplodgeSprite(COLOR_CARD_DATA);
+    const COLOR_SPRITE_POSITIONS = ["0%", "33.333%", "66.667%", "100%"];
+
+    function makeColorCard(item, index) {
+      const column = index % 4;
+      const row = Math.floor(index / 4);
+      return {
+        id: item.id,
+        word: item.word,
+        sentence: `I like ${item.word}.`,
+        alternate: item.word,
+        textbook: item.textbook,
+        visual: {
+          src: COLOR_SPRITE,
+          size: "400% 400%",
+          position: `${COLOR_SPRITE_POSITIONS[column]} ${COLOR_SPRITE_POSITIONS[row]}`,
+          flip: false,
+          cropTop: 0
+        }
+      };
+    }
+
   const UNIT_CONFIG = {
       unitNumber: "4",
       unitTitle: "I like blue.",
