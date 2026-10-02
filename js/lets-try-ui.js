@@ -2,11 +2,18 @@
   "use strict";
 
   const root = document.documentElement;
+  const currentScriptUrl = document.currentScript && document.currentScript.src
+    ? new URL(document.currentScript.src)
+    : new URL("js/lets-try-ui.js", location.href);
+  const uiAsset = (name) => new URL("../images/ui/" + name, currentScriptUrl).href;
+  const IMAGE_ICONS = {
+    home: uiAsset("AlsoHomeSweet.svg"),
+    back: uiAsset("AlsoBackArrow.svg")
+  };
   let queued = false;
   let mutating = false;
 
   const ICONS = {
-    home: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3.5 10.5 12 3l8.5 7.5"/><path d="M5.5 9.5V21h13V9.5"/><path d="M9.5 21v-7h5v7"/></svg>',
     previous: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m15 5-7 7 7 7"/></svg>',
     next: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg>',
     play: '<svg viewBox="0 0 24 24" aria-hidden="true"><path class="fill" d="m8 5 11 7-11 7z"/></svg>',
@@ -19,6 +26,9 @@
   };
 
   function icon(name) {
+    if (IMAGE_ICONS[name]) {
+      return '<span class="ui-icon"><img src="' + IMAGE_ICONS[name] + '" alt="" aria-hidden="true"></span>';
+    }
     return '<span class="ui-icon">' + ICONS[name] + '</span>';
   }
 
@@ -65,15 +75,6 @@
     });
   }
 
-  function placeTimerInControlBar() {
-    if (root.dataset.unit !== "5") return;
-    const timer = document.getElementById("floatingTimer");
-    const settings = document.getElementById("settingsButton");
-    const bar = settings && settings.closest(".control-bar");
-    if (!timer || !settings || !bar || timer.parentElement === bar) return;
-    bar.insertBefore(timer, settings);
-  }
-
   function fitDisplayText() {
     const element = document.getElementById("displayText");
     if (!element || element.hidden || !element.parentElement) return;
@@ -100,6 +101,28 @@
     element.style.fontSize = low + "px";
   }
 
+  function fitGuessWord() {
+    const element = document.querySelector(".guess-main-word");
+    if (!element || !element.parentElement) return;
+
+    element.style.removeProperty("font-size");
+    const available = Math.max(0, element.parentElement.clientWidth - 28);
+    if (!available) return;
+
+    const base = parseFloat(getComputedStyle(element).fontSize);
+    if (!Number.isFinite(base) || element.scrollWidth <= available) return;
+
+    let low = Math.max(28, base * .46);
+    let high = base;
+    for (let i = 0; i < 9; i += 1) {
+      const mid = (low + high) / 2;
+      element.style.fontSize = mid + "px";
+      if (element.scrollWidth > available) high = mid;
+      else low = mid;
+    }
+    element.style.fontSize = low + "px";
+  }
+
   function updateTimer() {
     const value = document.getElementById("timerValue");
     if (!value) return;
@@ -114,11 +137,13 @@
     const title = document.getElementById("gameTitle") || document.getElementById("mainPrompt");
     const active = Boolean(title && title.textContent.trim());
     root.classList.toggle("game-focus", active);
+    return active;
   }
 
   function updateControls() {
+    const gameActive = updateGameFocus();
     const menu = document.getElementById("menuButton");
-    iconOnly(menu, "home", "Home");
+    iconOnly(menu, gameActive ? "back" : "home", gameActive ? "Back to flashcards" : "Home");
 
     const previous = document.getElementById("previousButton");
     if (previous && !previous.classList.contains("game-action")) {
@@ -126,7 +151,13 @@
     }
 
     const next = document.getElementById("nextButton");
-    if (next && !next.classList.contains("game-action")) {
+    if (next && next.classList.contains("game-action")) {
+      if (next.dataset.gameAction === "next") {
+        iconOnly(next, "next", "Next Guess word");
+      } else {
+        delete next.dataset.uiIcon;
+      }
+    } else if (next) {
       iconOnly(next, "next", "Next card");
     }
 
@@ -141,10 +172,10 @@
     iconLabel(document.getElementById("shuffleButton"), "shuffle", "Shuffle");
 
     updateTimer();
-    updateGameFocus();
     requestAnimationFrame(() => {
       alignSideNavigation();
       fitDisplayText();
+      fitGuessWord();
     });
   }
 
@@ -166,12 +197,14 @@
       window.scrollTo(0, 0);
       alignSideNavigation();
       fitDisplayText();
+      fitGuessWord();
     });
   }
 
   function setupFullscreen() {
     const app = document.getElementById("appScreen");
-    if (!app || document.querySelector(".fullscreen-button")) return;
+    const bar = document.querySelector(".control-bar");
+    if (!app || !bar || document.querySelector(".fullscreen-button")) return;
 
     const target = document.documentElement;
     const request = target.requestFullscreen || target.webkitRequestFullscreen;
@@ -180,7 +213,7 @@
 
     const button = document.createElement("button");
     button.type = "button";
-    button.className = "fullscreen-button";
+    button.className = "control quiet fullscreen-button";
     button.setAttribute("aria-label", "Enter fullscreen");
     button.title = "Enter fullscreen";
 
@@ -211,7 +244,7 @@
 
     document.addEventListener("fullscreenchange", render);
     document.addEventListener("webkitfullscreenchange", render);
-    document.body.append(button);
+    bar.append(button);
     render();
   }
 
@@ -233,18 +266,22 @@
     root.classList.toggle("is-ipad", isIPad);
 
     setViewportHeight();
-    placeTimerInControlBar();
     setupFullscreen();
     updateControls();
     setupObserver();
 
     if (document.fonts && document.fonts.ready) {
-      document.fonts.ready.then(fitDisplayText);
+      document.fonts.ready.then(() => {
+        fitDisplayText();
+        fitGuessWord();
+      });
     }
 
     if ("ResizeObserver" in window) {
       const answerArea = document.getElementById("answerArea");
+      const gameArea = document.getElementById("gameArea");
       if (answerArea) new ResizeObserver(fitDisplayText).observe(answerArea);
+      if (gameArea) new ResizeObserver(fitGuessWord).observe(gameArea);
     }
 
     window.addEventListener("resize", setViewportHeight, { passive: true });
