@@ -9,10 +9,90 @@
         as="font"
         type="font/otf"
         crossorigin>
-  <link rel="stylesheet" href="../css/lets-try.css?v=20261002-1334-number-baseline">
-  <script src="../js/lets-try-unit-loader.js?v=20261002-1334-number-baseline" defer></script>
+  <style>
+    #loadingScreen {
+      position: fixed;
+      z-index: 9999;
+      inset: 0;
+      display: grid;
+      place-items: center;
+      background: #f8fbfa;
+      opacity: 1;
+      transition: opacity .24s ease;
+    }
+    #loadingScreen.loading-complete {
+      opacity: 0;
+      pointer-events: none;
+    }
+    .loading-panel {
+      display: grid;
+      justify-items: center;
+      gap: 16px;
+      color: #263238;
+      font-family: Arial, sans-serif;
+    }
+    .loading-cogs {
+      position: relative;
+      width: 108px;
+      height: 78px;
+    }
+    .loading-cog {
+      position: absolute;
+      display: grid;
+      place-items: center;
+      width: 66px;
+      height: 66px;
+      font-size: 66px;
+      line-height: 1;
+      color: #00ada9;
+      transform-origin: center;
+      animation: lets-try-cog-clockwise 2.2s linear infinite;
+    }
+    .loading-cog:first-child {
+      left: 0;
+      top: 0;
+    }
+    .loading-cog:last-child {
+      right: 0;
+      bottom: 0;
+      width: 48px;
+      height: 48px;
+      font-size: 48px;
+      color: #56666a;
+      animation-name: lets-try-cog-counterclockwise;
+      animation-duration: 1.75s;
+    }
+    #loadingLabel {
+      font-size: 18px;
+      font-weight: 700;
+      letter-spacing: .02em;
+    }
+    #loadingScreen.loading-error .loading-cog {
+      animation-play-state: paused;
+    }
+    @keyframes lets-try-cog-clockwise {
+      to { transform: rotate(360deg); }
+    }
+    @keyframes lets-try-cog-counterclockwise {
+      to { transform: rotate(-360deg); }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .loading-cog { animation-duration: 6s; }
+    }
+  </style>
+  <link rel="stylesheet" href="../css/lets-try.css?v=20261002-1405-loading">
+  <script src="../js/lets-try-unit-loader.js?v=20261002-1405-loading" defer></script>
 </head>
 <body>
+  <div id="loadingScreen" role="status" aria-live="polite" aria-label="Loading">
+    <div class="loading-panel">
+      <div class="loading-cogs" aria-hidden="true">
+        <div class="loading-cog">⚙</div>
+        <div class="loading-cog">⚙</div>
+      </div>
+      <div id="loadingLabel">Loading…</div>
+    </div>
+  </div>
   <div id="letsTryApp"></div>
   <noscript>This classroom app requires JavaScript.</noscript>
 </body>
