@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="svgCanvas" xmlns="http://www.w3.org/2000/svg" width="800" height="800" viewBox="0 0 800 800">
+  <g id="artwork"><path d="M 440.00 60.00 L 60.00 60.00 L 60.00 740.00 L 740.00 740.00 L 740.00 360.00" fill="none" stroke="#000000" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/><path d="M 200.00 600.00 L 750.00 50.00" fill="none" stroke="#000000" stroke-width="5" stroke-linejoin="round" stroke-linecap="round"/><path d="M 500.00 100.00 L 750.00 50.00 L 700.00 300.00" fill="none" stroke="#000000" stroke-width="5" stroke-linejoin="round" stroke-linecap="round"/></g>
+</svg>
