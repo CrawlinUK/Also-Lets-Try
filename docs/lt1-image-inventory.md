@@ -10,10 +10,10 @@ The shared source of truth for vocabulary and image mappings is:
 |---|---|---|
 | `images/flags.png` | Unit 1 greetings / countries | Mapped |
 | `images/emotions.jpg` | Unit 2 feelings | Mapped |
-| `images/sports.png` | Unit 4 sports | Mapped |
+| `images/sports.png` | Sports sprite sheet | 7 named cells mapped; 5 labels still to identify |
 | `images/foods.png` | Unit 4 food | Mapped |
-| `images/fruit.png` | Unit 4 fruit | Mapped |
-| `images/veg.png` | Unit 4 vegetables | Mapped |
+| `images/fruit.png` | Fruit + sausage sprite sheet | Mapped (all 12 cells) |
+| `images/veg.png` | Vegetable sprite sheet | Mapped (all 9 cells) |
 | `images/stationary.png` | Stationery sprite sheet | Uploaded; mapping still to reconstruct |
 | `images/sports_original.png` | Original/reference sports sheet | Reference only |
 
