@@ -15,7 +15,7 @@
       if (!appHost) {
         throw new Error("Shared unit app host was not found.");
       }
-      appHost.innerHTML = "<header class=\"site-header\">\n    <div class=\"site-header-inner\">\n      <button class=\"menu-button\" id=\"menuButton\" type=\"button\" aria-label=\"Return to unit menu\">☰</button>\n\n      <div class=\"site-title\">\n        <span class=\"unit-word\">Unit</span>\n        <span class=\"unit-number\" id=\"unitNumber\"></span>\n        <span class=\"unit-name\" id=\"unitName\"></span>\n      </div>\n\n      <div class=\"game-title\" id=\"gameTitle\" aria-live=\"polite\"></div>\n    </div>\n  </header>\n\n  <main class=\"app\" id=\"appScreen\">\n    <section class=\"flashcard\" id=\"flashcard\" aria-live=\"polite\">\n      <div class=\"flashcard-stage\">\n        <div class=\"answer-area\" id=\"answerArea\">\n          <div class=\"picture-frame\" id=\"pictureFrame\">\n            <div class=\"card-picture\" id=\"cardPicture\" role=\"img\"></div>\n          </div>\n          <div class=\"display-text\" id=\"displayText\"></div>\n        </div>\n\n        <div class=\"game-area\" id=\"gameArea\" hidden></div>\n      </div>\n\n      <button class=\"floating-auto\" id=\"autoButton\" type=\"button\"\n              aria-label=\"Start automatic flashcards\" title=\"Start automatic flashcards\">▶</button>\n    </section>\n\n    <button class=\"side-nav side-previous\" id=\"previousButton\" type=\"button\" aria-label=\"Previous card\">◀</button>\n    <button class=\"side-nav side-next\" id=\"nextButton\" type=\"button\" aria-label=\"Next card\">▶</button>\n    <aside class=\"missing-answer-hints\" id=\"missingAnswerHints\" aria-label=\"Teacher Missing Game answers\" hidden></aside>\n\n    <nav class=\"control-bar\" aria-label=\"Flashcard controls\">\n      <div class=\"card-counter\">\n        <strong id=\"counter\">1 / 1</strong>\n        <span id=\"modeLabel\">Flashcard mode</span>\n      </div>\n\n      <button class=\"control shuffle\" id=\"shuffleButton\" type=\"button\">↝ Shuffle</button>\n\n      <div class=\"game-menu-wrap\">\n        <button class=\"control quiet game-menu-button\" id=\"gameButton\" type=\"button\"\n                aria-haspopup=\"true\" aria-expanded=\"false\">Game</button>\n        <div class=\"game-menu\" id=\"gameMenu\" hidden></div>\n      </div>\n\n      <div class=\"floating-timer timer-control\" id=\"floatingTimer\" aria-label=\"Automatic timer\">\n        <button id=\"timerDownButton\" type=\"button\" aria-label=\"Decrease timer\">−</button>\n        <span class=\"timer-value\" id=\"timerValue\">3 sec</span>\n        <button id=\"timerUpButton\" type=\"button\" aria-label=\"Increase timer\">+</button>\n      </div>\n\n      <button class=\"control quiet settings-icon-button\" id=\"settingsButton\" type=\"button\" aria-label=\"Settings\">Settings</button>\n    </nav>\n\n    <div class=\"keyboard-help collapsed\" id=\"keyboardHelp\">\n      <div class=\"keyboard-help-text\">\n        ← / → = previous / next<br>\n        Space / Enter = next<br>\n        A = start / stop auto<br>\n        R = shuffle<br>\n        G = games<br>\n        ↑ / ↓ = timer up / down<br>\n        Esc = close menus / help\n      </div>\n      <div class=\"keyboard-help-icon\">!</div>\n    </div>\n  </main>\n\n  <div class=\"scrim\" id=\"scrim\"></div>\n\n  <aside class=\"settings-panel\" id=\"settingsPanel\" aria-label=\"Settings\">\n    <div class=\"settings-heading\">\n      <h2>Settings</h2>\n      <button class=\"close-button\" id=\"closeSettingsButton\" type=\"button\" aria-label=\"Close settings\">×</button>\n    </div>\n\n    <section class=\"setting-section display-mode-section\">\n      <h3>Display mode</h3>\n      <div class=\"segmented display-mode-options\">\n        <label>\n          <input type=\"radio\" name=\"displayMode\" value=\"pictureText\" checked>\n          <span id=\"pictureTextLabel\">Picture + text</span>\n        </label>\n        <label>\n          <input type=\"radio\" name=\"displayMode\" value=\"picture\">\n          <span id=\"pictureOnlyLabel\">Picture only</span>\n        </label>\n        <label class=\"picture-sentence-option\" id=\"pictureSentenceOption\">\n          <input type=\"radio\" name=\"displayMode\" value=\"pictureSentence\">\n          <span id=\"pictureSentenceLabel\">Picture + sentence</span>\n        </label>\n        <label>\n          <input type=\"radio\" name=\"displayMode\" value=\"text\">\n          <span id=\"textOnlyLabel\">Text only</span>\n        </label>\n      </div>\n    </section>\n\n    <div class=\"settings-preview\" id=\"settingsPreview\" aria-label=\"Display preview\">\n      <div class=\"settings-preview-picture\" id=\"settingsPreviewPicture\" role=\"img\"></div>\n      <div class=\"settings-preview-text\" id=\"settingsPreviewText\"></div>\n    </div>\n\n    <section class=\"setting-section selection-section\">\n      <div class=\"setting-actions setting-actions-top\">\n        <button id=\"selectAllButton\" type=\"button\">Select all</button>\n        <button id=\"resetButton\" type=\"button\">Reset</button>\n      </div>\n      <p class=\"message\" id=\"message\"></p>\n      <div class=\"category-word-groups\" id=\"cardOptionGrid\"></div>\n    </section>\n\n    <section class=\"setting-section secondary-setting-section\">\n      <h3>Image / text size</h3>\n      <div class=\"balance-labels\" aria-hidden=\"true\">\n        <span id=\"balancePictureLabel\">Image</span>\n        <span id=\"balanceTextLabel\">Text</span>\n      </div>\n      <div class=\"balance-slider\">\n        <span>◀</span>\n        <input id=\"sizeBalanceRange\" type=\"range\" min=\"0\" max=\"100\" value=\"50\" step=\"5\"\n               aria-label=\"Image and text size balance\">\n        <span>▶</span>\n      </div>\n    </section>\n\n    <section class=\"setting-section secondary-setting-section\">\n      <h3>Missing Game teacher hint answer size</h3>\n      <div class=\"missing-answer-size-row\">\n        <input id=\"missingAnswerSizeRange\" type=\"range\" min=\"8\" max=\"24\" value=\"10\" step=\"1\"\n               aria-label=\"Missing Game teacher hint answer size\">\n        <output class=\"missing-answer-size-value\" id=\"missingAnswerSizeValue\" for=\"missingAnswerSizeRange\">10 px</output>\n      </div>\n    </section>\n  </aside>";
+      appHost.innerHTML = "<header class=\"site-header\">\n    <div class=\"site-header-inner\">\n      <button class=\"menu-button\" id=\"menuButton\" type=\"button\" aria-label=\"Return to unit menu\">☰</button>\n\n      <div class=\"site-title\">\n        <span class=\"unit-word\">Unit</span>\n        <span class=\"unit-number\" id=\"unitNumber\"></span>\n        <span class=\"unit-name\" id=\"unitName\"></span>\n      </div>\n\n      <div class=\"game-title\" id=\"gameTitle\" aria-live=\"polite\"></div>\n    </div>\n  </header>\n\n  <main class=\"app\" id=\"appScreen\">\n    <section class=\"flashcard\" id=\"flashcard\" aria-live=\"polite\">\n      <div class=\"flashcard-stage\">\n        <div class=\"answer-area\" id=\"answerArea\">\n          <div class=\"picture-frame\" id=\"pictureFrame\">\n            <div class=\"card-picture\" id=\"cardPicture\" role=\"img\"></div>\n          </div>\n          <div class=\"display-text\" id=\"displayText\"></div>\n        </div>\n\n        <div class=\"game-area\" id=\"gameArea\" hidden></div>\n      </div>\n\n      <button class=\"floating-auto\" id=\"autoButton\" type=\"button\"\n              aria-label=\"Start automatic flashcards\" title=\"Start automatic flashcards\">▶</button>\n    </section>\n\n    <button class=\"side-nav side-previous\" id=\"previousButton\" type=\"button\" aria-label=\"Previous card\">◀</button>\n    <button class=\"side-nav side-next\" id=\"nextButton\" type=\"button\" aria-label=\"Next card\">▶</button>\n    <aside class=\"missing-answer-hints\" id=\"missingAnswerHints\" aria-label=\"Teacher Missing Game answers\" hidden></aside>\n    <aside class=\"guess-word-list\" id=\"guessWordList\" aria-label=\"Guess game word list\" hidden></aside>\n\n    <nav class=\"control-bar\" aria-label=\"Flashcard controls\">\n      <div class=\"card-counter\">\n        <strong id=\"counter\">1 / 1</strong>\n        <span id=\"modeLabel\">Flashcard mode</span>\n      </div>\n\n      <button class=\"control shuffle\" id=\"shuffleButton\" type=\"button\">↝ Shuffle</button>\n\n      <div class=\"game-menu-wrap\">\n        <button class=\"control quiet game-menu-button\" id=\"gameButton\" type=\"button\"\n                aria-haspopup=\"true\" aria-expanded=\"false\">Game</button>\n        <div class=\"game-menu\" id=\"gameMenu\" hidden></div>\n      </div>\n\n      <div class=\"floating-timer timer-control\" id=\"floatingTimer\" aria-label=\"Automatic timer\">\n        <button id=\"timerDownButton\" type=\"button\" aria-label=\"Decrease timer\">−</button>\n        <span class=\"timer-value\" id=\"timerValue\">3 sec</span>\n        <button id=\"timerUpButton\" type=\"button\" aria-label=\"Increase timer\">+</button>\n      </div>\n\n      <button class=\"control quiet settings-icon-button\" id=\"settingsButton\" type=\"button\" aria-label=\"Settings\">Settings</button>\n    </nav>\n\n    <div class=\"keyboard-help collapsed\" id=\"keyboardHelp\">\n      <div class=\"keyboard-help-text\">\n        ← / → = previous / next<br>\n        Space / Enter = next<br>\n        A = start / stop auto<br>\n        R = shuffle<br>\n        G = games<br>\n        ↑ / ↓ = timer up / down<br>\n        Esc = close menus / help\n      </div>\n      <div class=\"keyboard-help-icon\">!</div>\n    </div>\n  </main>\n\n  <div class=\"scrim\" id=\"scrim\"></div>\n\n  <div class=\"guess-setup\" id=\"guessSetup\" role=\"dialog\" aria-modal=\"true\" aria-labelledby=\"guessSetupTitle\" hidden>\n    <div class=\"guess-setup-card\">\n      <button class=\"guess-setup-close\" id=\"guessSetupClose\" type=\"button\" aria-label=\"Close Guess setup\">×</button>\n      <h2 id=\"guessSetupTitle\">Guess</h2>\n      <section class=\"guess-category-section\" id=\"guessCategorySection\">\n        <p>Please choose a category</p>\n        <div class=\"guess-category-options\" id=\"guessCategoryOptions\"></div>\n      </section>\n      <section class=\"guess-mode-section\">\n        <p>Choose a screen mode</p>\n        <div class=\"guess-mode-options\">\n          <button type=\"button\" data-guess-mode=\"showWord\">Show Word</button>\n          <button type=\"button\" data-guess-mode=\"hideWord\">Hide Word<small>All words will be listed on the left.</small></button>\n        </div>\n      </section>\n    </div>\n  </div>\n\n  <aside class=\"settings-panel\" id=\"settingsPanel\" aria-label=\"Settings\">\n    <div class=\"settings-heading\">\n      <h2>Settings</h2>\n      <button class=\"close-button\" id=\"closeSettingsButton\" type=\"button\" aria-label=\"Close settings\">×</button>\n    </div>\n\n    <section class=\"setting-section display-mode-section\">\n      <h3>Display mode</h3>\n      <div class=\"segmented display-mode-options\">\n        <label>\n          <input type=\"radio\" name=\"displayMode\" value=\"pictureText\" checked>\n          <span id=\"pictureTextLabel\">Picture + text</span>\n        </label>\n        <label>\n          <input type=\"radio\" name=\"displayMode\" value=\"picture\">\n          <span id=\"pictureOnlyLabel\">Picture only</span>\n        </label>\n        <label class=\"picture-sentence-option\" id=\"pictureSentenceOption\">\n          <input type=\"radio\" name=\"displayMode\" value=\"pictureSentence\">\n          <span id=\"pictureSentenceLabel\">Picture + sentence</span>\n        </label>\n        <label>\n          <input type=\"radio\" name=\"displayMode\" value=\"text\">\n          <span id=\"textOnlyLabel\">Text only</span>\n        </label>\n      </div>\n    </section>\n\n    <div class=\"settings-preview\" id=\"settingsPreview\" aria-label=\"Display preview\">\n      <div class=\"settings-preview-picture\" id=\"settingsPreviewPicture\" role=\"img\"></div>\n      <div class=\"settings-preview-text\" id=\"settingsPreviewText\"></div>\n    </div>\n\n    <section class=\"setting-section selection-section\">\n      <div class=\"setting-actions setting-actions-top\">\n        <button id=\"selectAllButton\" type=\"button\">Select all</button>\n        <button id=\"resetButton\" type=\"button\">Reset</button>\n      </div>\n      <p class=\"message\" id=\"message\"></p>\n      <div class=\"category-word-groups\" id=\"cardOptionGrid\"></div>\n    </section>\n\n    <section class=\"setting-section secondary-setting-section\">\n      <h3>Image / text size</h3>\n      <div class=\"balance-labels\" aria-hidden=\"true\">\n        <span id=\"balancePictureLabel\">Image</span>\n        <span id=\"balanceTextLabel\">Text</span>\n      </div>\n      <div class=\"balance-slider\">\n        <span>◀</span>\n        <input id=\"sizeBalanceRange\" type=\"range\" min=\"0\" max=\"100\" value=\"50\" step=\"5\"\n               aria-label=\"Image and text size balance\">\n        <span>▶</span>\n      </div>\n    </section>\n\n    <section class=\"setting-section secondary-setting-section\">\n      <h3>Missing Game teacher hint answer size</h3>\n      <div class=\"missing-answer-size-row\">\n        <input id=\"missingAnswerSizeRange\" type=\"range\" min=\"8\" max=\"24\" value=\"10\" step=\"1\"\n               aria-label=\"Missing Game teacher hint answer size\">\n        <output class=\"missing-answer-size-value\" id=\"missingAnswerSizeValue\" for=\"missingAnswerSizeRange\">10 px</output>\n      </div>\n    </section>\n  </aside>";
 
       const $ = (id) => document.getElementById(id);
       const cardsById = new Map(UNIT_CONFIG.cards.map((card) => [card.id, card]));
@@ -65,6 +65,11 @@
         message: $("message"),
         sizeBalanceRange: $("sizeBalanceRange"),
         missingAnswerHints: $("missingAnswerHints"),
+        guessWordList: $("guessWordList"),
+        guessSetup: $("guessSetup"),
+        guessSetupClose: $("guessSetupClose"),
+        guessCategorySection: $("guessCategorySection"),
+        guessCategoryOptions: $("guessCategoryOptions"),
         missingAnswerSizeRange: $("missingAnswerSizeRange"),
         missingAnswerSizeValue: $("missingAnswerSizeValue"),
         pictureSentenceOption: $("pictureSentenceOption"),
@@ -95,6 +100,11 @@
         hiddenMissingIds: new Set(),
         keywordOrder: [],
         keywordSelectedIds: new Set(),
+        guessCategoryId: null,
+        guessMode: "showWord",
+        guessDeck: [],
+        guessPosition: 0,
+        guessRevealed: false,
         leftRightTarget: null,
         leftRightLeft: null,
         leftRightRight: null,
@@ -147,7 +157,7 @@
         [
           ["missing", "Missing game"],
           ["keyword", "Keyword game"],
-          ["leftRight", "Left or Right"]
+          ["guess", "Guess"]
         ].forEach(([id, label]) => {
           if (builtInGameEnabled(id)) {
             fragment.append(makeGameMenuButton(label, { game: id }));
@@ -460,6 +470,10 @@
         state.hiddenMissingIds.clear();
         state.keywordOrder = [];
         state.keywordSelectedIds.clear();
+        state.guessCategoryId = null;
+        state.guessDeck = [];
+        state.guessPosition = 0;
+        state.guessRevealed = false;
         state.leftRightTarget = null;
         state.leftRightLeft = null;
         state.leftRightRight = null;
@@ -490,8 +504,8 @@
           return;
         }
 
-        if (state.gameMode === "leftRight") {
-          renderLeftRight();
+        if (state.gameMode === "guess") {
+          renderGuess();
           return;
         }
 
@@ -499,7 +513,10 @@
       }
 
       function showFlashcardLayout() {
+        document.documentElement.classList.remove("guess-focus");
         elements.missingAnswerHints.hidden = true;
+        elements.guessWordList.hidden = true;
+        elements.shuffleButton.hidden = false;
         elements.answerArea.hidden = false;
         elements.gameArea.hidden = true;
         elements.floatingTimer.hidden = false;
@@ -516,6 +533,9 @@
       }
 
       function showGridGameLayout() {
+        document.documentElement.classList.remove("guess-focus");
+        elements.guessWordList.hidden = true;
+        elements.shuffleButton.hidden = false;
         stopAuto();
         elements.answerArea.hidden = true;
         elements.gameArea.hidden = false;
@@ -530,7 +550,7 @@
         showFlashcardLayout();
 
         const card = currentCard();
-        const effectiveMode = state.gameMode === "guess" ? "picture" : state.displayMode;
+        const effectiveMode = state.displayMode;
 
         elements.flashcard.classList.toggle("picture-only", effectiveMode === "picture");
         elements.flashcard.classList.toggle("text-only", effectiveMode === "text");
@@ -547,7 +567,7 @@
         elements.cardPicture.setAttribute("aria-label", card.word);
         elements.displayText.textContent = cardText(card);
         elements.counter.textContent = `${state.position + 1} / ${state.deck.length}`;
-        elements.modeLabel.textContent = state.gameMode === "guess" ? "Guess mode" : "Flashcard mode";
+        elements.modeLabel.textContent = "Flashcard mode";
         elements.shuffleButton.textContent = "↝ Shuffle";
         updateTimerDisplay();
         requestAnimationFrame(alignSideNavigation);
@@ -594,6 +614,193 @@
           return row;
         }));
         elements.missingAnswerHints.hidden = state.gameMode !== "missing" || lines.length === 0;
+      }
+
+      function guessCardsForCategory(categoryId) {
+        return selectedCards().filter((card) => card.category === categoryId);
+      }
+
+      function updateGuessSetupState() {
+        const enabled = Boolean(state.guessCategoryId);
+        elements.guessSetup.querySelectorAll("[data-guess-mode]").forEach((button) => {
+          button.disabled = !enabled;
+        });
+
+        elements.guessCategoryOptions.querySelectorAll("[data-guess-category]").forEach((button) => {
+          button.classList.toggle("selected", button.dataset.guessCategory === state.guessCategoryId);
+          button.setAttribute("aria-pressed", String(button.dataset.guessCategory === state.guessCategoryId));
+        });
+      }
+
+      function closeGuessSetup() {
+        elements.guessSetup.hidden = true;
+        if (!elements.settingsPanel.classList.contains("open")) {
+          elements.scrim.classList.remove("open");
+        }
+      }
+
+      function openGuessSetup() {
+        stopAuto();
+        closeGameMenu();
+
+        const categories = activeCategoryIds();
+        if (!categories.length) {
+          elements.message.textContent = "Select at least one word first.";
+          openSettings();
+          return;
+        }
+
+        state.guessCategoryId = categories.length === 1 ? categories[0] : null;
+        elements.guessCategorySection.hidden = categories.length <= 1;
+
+        const buttons = categories.map((categoryId) => {
+          const category = LETS_TRY_DATA.getCategory(categoryId);
+          const button = document.createElement("button");
+          button.type = "button";
+          button.dataset.guessCategory = categoryId;
+          button.textContent = category ? category.label : categoryId;
+          button.setAttribute("aria-pressed", "false");
+          return button;
+        });
+        elements.guessCategoryOptions.replaceChildren(...buttons);
+
+        updateGuessSetupState();
+        elements.guessSetup.hidden = false;
+        elements.scrim.classList.add("open");
+      }
+
+      function startGuess(mode) {
+        if (!state.guessCategoryId) return;
+
+        const cards = guessCardsForCategory(state.guessCategoryId);
+        if (!cards.length) return;
+
+        state.guessMode = mode;
+        state.guessDeck = cards;
+        state.guessPosition = 0;
+        state.guessRevealed = false;
+        state.gameMode = "guess";
+        closeGuessSetup();
+        render();
+      }
+
+      function setGuessCard(index) {
+        if (!state.guessDeck.length) return;
+        state.guessPosition = (index + state.guessDeck.length) % state.guessDeck.length;
+        state.guessRevealed = false;
+        renderGuess();
+      }
+
+      function nextGuessCard() {
+        setGuessCard(state.guessPosition + 1);
+      }
+
+      function randomGuessCard() {
+        if (!state.guessDeck.length) return;
+        if (state.guessDeck.length === 1) {
+          setGuessCard(0);
+          return;
+        }
+
+        let next = state.guessPosition;
+        while (next === state.guessPosition) {
+          next = Math.floor(Math.random() * state.guessDeck.length);
+        }
+        setGuessCard(next);
+      }
+
+      function renderGuessWordList() {
+        const wordButtons = state.guessDeck.map((card, index) => {
+          const button = document.createElement("button");
+          button.type = "button";
+          button.className = "guess-word-button";
+          button.textContent = card.word;
+          button.classList.toggle("current", index === state.guessPosition);
+          button.setAttribute("aria-current", index === state.guessPosition ? "true" : "false");
+          button.addEventListener("click", () => setGuessCard(index));
+          return button;
+        });
+
+        const randomButton = document.createElement("button");
+        randomButton.type = "button";
+        randomButton.className = "guess-random-button";
+        randomButton.textContent = "↝";
+        randomButton.title = "Random word";
+        randomButton.setAttribute("aria-label", "Random word");
+        randomButton.addEventListener("click", randomGuessCard);
+
+        const words = document.createElement("div");
+        words.className = "guess-word-buttons";
+        words.append(...wordButtons);
+
+        elements.guessWordList.replaceChildren(words, randomButton);
+        elements.guessWordList.hidden = false;
+      }
+
+      function renderGuess() {
+        stopAuto();
+        document.documentElement.classList.add("guess-focus");
+        elements.missingAnswerHints.hidden = true;
+        elements.answerArea.hidden = true;
+        elements.gameArea.hidden = false;
+        elements.floatingTimer.hidden = true;
+        elements.autoButton.hidden = true;
+        elements.previousButton.hidden = true;
+        elements.nextButton.hidden = false;
+        elements.nextButton.classList.add("game-action");
+        elements.nextButton.textContent = "NEXT";
+        elements.nextButton.setAttribute("aria-label", "Next Guess word");
+        elements.shuffleButton.hidden = true;
+        elements.gameTitle.textContent = "Guess";
+
+        const card = state.guessDeck[state.guessPosition] || null;
+        if (!card) {
+          returnToFlashcards();
+          return;
+        }
+
+        renderGuessWordList();
+
+        const stage = document.createElement("div");
+        stage.className = "guess-stage";
+        stage.classList.toggle("hide-word", state.guessMode === "hideWord");
+
+        if (state.guessMode === "showWord") {
+          const word = document.createElement("div");
+          word.className = "guess-main-word";
+          word.textContent = card.word;
+          stage.append(word);
+        }
+
+        const reveal = document.createElement("button");
+        reveal.type = "button";
+        reveal.className = "guess-reveal-area";
+        reveal.setAttribute("aria-label", state.guessRevealed ? "Hide picture" : "Show picture");
+
+        if (state.guessRevealed) {
+          const picture = document.createElement("div");
+          picture.className = "guess-picture";
+          applyVisual(picture, card);
+          picture.setAttribute("role", "img");
+          picture.setAttribute("aria-label", card.word);
+          reveal.append(picture);
+        } else {
+          const prompt = document.createElement("span");
+          prompt.className = "guess-tap-prompt";
+          prompt.textContent = "Tap here to show";
+          reveal.append(prompt);
+        }
+
+        reveal.addEventListener("click", () => {
+          state.guessRevealed = !state.guessRevealed;
+          renderGuess();
+        });
+
+        stage.append(reveal);
+        elements.gameArea.replaceChildren(stage);
+        elements.counter.textContent = `${state.guessPosition + 1} / ${state.guessDeck.length}`;
+        elements.modeLabel.textContent = state.guessMode === "showWord" ? "Guess — Show Word" : "Guess — Hide Word";
+        requestAnimationFrame(alignSideNavigation);
       }
 
       function renderMissing() {
@@ -821,6 +1028,11 @@
           return;
         }
 
+        if (mode === "guess") {
+          openGuessSetup();
+          return;
+        }
+
         state.gameMode = mode;
 
         if (mode === "missing") {
@@ -833,13 +1045,6 @@
         if (mode === "keyword") {
           state.keywordOrder = selectedCards().map((card) => card.id);
           state.keywordSelectedIds.clear();
-        }
-
-        if (mode === "leftRight") {
-          state.leftRightTarget = null;
-          if (!chooseLeftRightQuestion()) {
-            state.gameMode = "flashcards";
-          }
         }
 
         render();
@@ -899,8 +1104,8 @@
           return;
         }
 
-        if (state.gameMode === "leftRight") {
-          nextLeftRightQuestion();
+        if (state.gameMode === "guess") {
+          randomGuessCard();
           return;
         }
 
@@ -934,7 +1139,7 @@
       }
 
       function startAuto() {
-        if (state.gameMode !== "flashcards" && state.gameMode !== "guess") return;
+        if (state.gameMode !== "flashcards") return;
 
         state.countdown = state.autoSeconds;
         elements.autoButton.classList.add("active");
@@ -992,6 +1197,7 @@
 
       function closePanels() {
         elements.settingsPanel.classList.remove("open");
+        elements.guessSetup.hidden = true;
         elements.scrim.classList.remove("open");
         closeGameMenu();
       }
@@ -1024,7 +1230,8 @@
         elements.keyboardHelp.classList.add("collapsed");
         if (state.gameMode === "missing") hideOneMore();
         else if (state.gameMode === "keyword") selectRandomKeyword();
-        else if (state.gameMode === "flashcards" || state.gameMode === "guess") {
+        else if (state.gameMode === "guess") nextGuessCard();
+        else if (state.gameMode === "flashcards") {
           stopAuto();
           nextCard();
         }
@@ -1058,6 +1265,21 @@
           window.open(LETS_TRY_DATA.getExtraGamesPageUrl(), "_blank", "noopener,noreferrer");
         }
       });
+
+      elements.guessCategoryOptions.addEventListener("click", (event) => {
+        const button = event.target.closest("[data-guess-category]");
+        if (!button) return;
+        state.guessCategoryId = button.dataset.guessCategory;
+        updateGuessSetupState();
+      });
+
+      elements.guessSetup.addEventListener("click", (event) => {
+        const button = event.target.closest("[data-guess-mode]");
+        if (!button || button.disabled) return;
+        startGuess(button.dataset.guessMode);
+      });
+
+      elements.guessSetupClose.addEventListener("click", closeGuessSetup);
 
       elements.settingsButton.addEventListener("click", openSettings);
       elements.closeSettingsButton.addEventListener("click", closePanels);
@@ -1129,7 +1351,17 @@
           return;
         }
 
-        if (elements.settingsPanel.classList.contains("open")) return;
+        if (elements.settingsPanel.classList.contains("open") || !elements.guessSetup.hidden) return;
+
+        if (state.gameMode === "guess") {
+          if (event.key === "ArrowRight" || event.code === "Space" || event.key === "Enter") {
+            event.preventDefault();
+            nextGuessCard();
+          } else if (event.key.toLowerCase() === "r") {
+            randomGuessCard();
+          }
+          return;
+        }
 
         if (state.gameMode === "leftRight") {
           if (event.key === "ArrowLeft") {
