@@ -117,7 +117,7 @@
     sports: {
       label: "Sports",
       expectedImageSheetCount: 12,
-      status: "partial-name-map",
+      status: "five-cells-unidentified",
       items: [
         item("baseball", ["1-4"]),
         item("dodgeball", ["1-4"]),
@@ -127,7 +127,7 @@
         item("table-tennis", ["1-5"]),
         item("volleyball", ["1-5"])
       ],
-      note: "sports.png contains 12 pictures. Seven names are mapped; five category-only cells still need identification."
+      note: "sports.png contains 12 pictures. Seven names are verified; the final five image labels still need identification before they can safely become vocabulary cards."
     },
 
     food: {
@@ -361,7 +361,7 @@
         grid: "3x4",
         physicalCells: 12,
         logicalCategories: ["fruit","food"],
-        status: "partial-cell-map",
+        status: "mapped",
         note: "11 fruit + sausage. Sausage belongs to Food."
       },
 
@@ -370,7 +370,7 @@
         grid: "3x3",
         physicalCells: 9,
         logicalCategories: ["vegetables"],
-        status: "partial-cell-map"
+        status: "mapped"
       },
 
       sports: {
@@ -431,7 +431,12 @@
         onion: "0% 0%",
         "green-pepper": "50% 0%",
         cucumber: "100% 0%",
-        carrot: "0% 50%"
+        carrot: "0% 50%",
+        mushroom: "50% 50%",
+        potato: "100% 50%",
+        tomato: "0% 100%",
+        cabbage: "50% 100%",
+        corn: "100% 100%"
       },
 
       fruit: {
