@@ -1014,7 +1014,7 @@
         state.countdownTimer = null;
         state.countdown = state.autoSeconds;
         elements.autoButton.classList.remove("active");
-        elements.autoButton.textContent = "▶";
+        elements.autoButton.textContent = "";
         elements.autoButton.setAttribute("aria-label", "Start automatic flashcards");
         elements.autoButton.title = "Start automatic flashcards";
         updateTimerDisplay();
@@ -1025,7 +1025,7 @@
 
         state.countdown = state.autoSeconds;
         elements.autoButton.classList.add("active");
-        elements.autoButton.textContent = "■";
+        elements.autoButton.textContent = "";
         elements.autoButton.setAttribute("aria-label", "Stop automatic flashcards");
         elements.autoButton.title = "Stop automatic flashcards";
         updateTimerDisplay();
