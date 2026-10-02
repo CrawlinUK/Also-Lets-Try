@@ -1,0 +1,771 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<title>Number Roller</title>
+<style>
+  * {
+    box-sizing: border-box;
+  }
+
+  html, body {
+    margin: 0;
+    width: 100%;
+    height: 100%;
+    font-family: Arial, sans-serif;
+    overflow: hidden;
+    background: white;
+    color: black;
+  }
+
+  body {
+    min-height: 100dvh;
+  }
+
+  #screen {
+    width: 100vw;
+    height: 100dvh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    cursor: pointer;
+    user-select: none;
+    background: white;
+  }
+
+  #displayArea {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 320px;
+    min-height: 320px;
+    position: relative;
+    z-index: 2;
+    pointer-events: none;
+  }
+
+  #numberDisplay {
+    font-size: clamp(140px, 34vw, 420px);
+    font-weight: bold;
+    color: black;
+    line-height: 1;
+  }
+
+  #dotsDisplay {
+    display: none;
+    grid-template-columns: repeat(2, 130px);
+    gap: 34px;
+  }
+
+  .fiveGroup {
+    width: 130px;
+    height: 130px;
+    position: relative;
+  }
+
+  .dot {
+    width: 28px;
+    height: 28px;
+    background: black;
+    border-radius: 50%;
+    position: absolute;
+  }
+
+  .pos1 {
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+  }
+
+  .pos2 {
+    left: 18%;
+    top: 18%;
+  }
+
+  .pos3 {
+    right: 18%;
+    bottom: 18%;
+  }
+
+  .pos4 {
+    right: 18%;
+    top: 18%;
+  }
+
+  .pos5 {
+    left: 18%;
+    bottom: 18%;
+  }
+
+  #timerPanel {
+    position: absolute;
+    right: 20px;
+    top: 20px;
+    width: 118px;
+    padding: 10px;
+    border-radius: 18px;
+    background: rgba(0,0,0,0.07);
+    color: black;
+    text-align: center;
+    opacity: 0.7;
+    cursor: default;
+    z-index: 5;
+  }
+
+  #timerDisplay {
+    font-size: 38px;
+    font-weight: bold;
+    line-height: 1;
+  }
+
+  #timerLabel {
+    font-size: 13px;
+    margin-top: 3px;
+    opacity: 0.75;
+  }
+
+  #timerControls {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 9px;
+  }
+
+  button {
+    border: none;
+    font-weight: bold;
+    cursor: pointer;
+    touch-action: manipulation;
+  }
+
+  button:active {
+    transform: scale(0.94);
+  }
+
+  .timerBtn {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    font-size: 26px;
+    background: rgba(0,0,0,0.11);
+    color: black;
+  }
+
+  .timerBtn:active {
+    background: rgba(0,0,0,0.22);
+  }
+
+  .sideBtn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 76px;
+    height: 118px;
+    border-radius: 28px;
+    font-size: 52px;
+    opacity: 0.42;
+    z-index: 4;
+    background: rgba(0,0,0,0.11);
+    color: black;
+  }
+
+  .sideBtn:active {
+    transform: translateY(-50%) scale(0.94);
+    background: rgba(0,0,0,0.22);
+  }
+
+  #previousBtn {
+    left: 18px;
+  }
+
+  #nextBtn {
+    right: 18px;
+  }
+
+  .mainRoundBtn {
+    position: absolute;
+    bottom: 28px;
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    z-index: 5;
+    opacity: 0.78;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  #startStopBtn {
+    left: 30%;
+    transform: translateX(-50%);
+    background: rgba(38, 166, 91, 0.85);
+  }
+
+  #startStopBtn:active {
+    transform: translateX(-50%) scale(0.94);
+  }
+
+  #randomBtn {
+    left: 70%;
+    transform: translateX(-50%);
+    background: rgba(0,0,0,0.11);
+    color: black;
+    font-size: 34px;
+  }
+
+  #randomBtn:active {
+    transform: translateX(-50%) scale(0.94);
+    background: rgba(0,0,0,0.22);
+  }
+
+  #playIcon {
+    width: 0;
+    height: 0;
+    border-top: 18px solid transparent;
+    border-bottom: 18px solid transparent;
+    border-left: 28px solid white;
+    margin-left: 6px;
+  }
+
+  #stopIcon {
+    width: 30px;
+    height: 30px;
+    background: white;
+    display: none;
+  }
+
+  #startStopBtn.stopping {
+    background: rgba(220, 53, 69, 0.88);
+  }
+
+  #startStopBtn.stopping #playIcon {
+    display: none;
+  }
+
+  #startStopBtn.stopping #stopIcon {
+    display: block;
+  }
+
+  #modeToggleBtn {
+    position: absolute;
+    right: 24px;
+    bottom: 24px;
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    font-size: 20px;
+    opacity: 0.68;
+    z-index: 5;
+    background: rgba(0,0,0,0.11);
+    color: black;
+  }
+
+  #modeToggleBtn:active {
+    transform: scale(0.94);
+    background: rgba(0,0,0,0.22);
+  }
+
+  #helpBox {
+    position: absolute;
+    left: 20px;
+    bottom: 18px;
+    width: 245px;
+    min-height: 116px;
+    padding: 10px 14px;
+    border-radius: 14px;
+    background: rgba(0,0,0,0.12);
+    font-size: 16px;
+    opacity: 0.75;
+    line-height: 1.5;
+    color: #555;
+    z-index: 6;
+    cursor: pointer;
+    overflow: hidden;
+    transition:
+      width 0.35s ease,
+      min-height 0.35s ease,
+      height 0.35s ease,
+      padding 0.35s ease,
+      border-radius 0.35s ease,
+      opacity 0.35s ease,
+      background 0.35s ease;
+  }
+
+  #helpBox.collapsed {
+    width: 46px;
+    height: 46px;
+    min-height: 46px;
+    padding: 0;
+    border-radius: 50%;
+    opacity: 0.55;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  #helpText {
+    transition: opacity 0.2s ease;
+    white-space: nowrap;
+  }
+
+  #helpIcon {
+    display: none;
+    font-size: 28px;
+    font-weight: bold;
+    color: #555;
+  }
+
+  #helpBox.collapsed #helpText {
+    opacity: 0;
+    display: none;
+  }
+
+  #helpBox.collapsed #helpIcon {
+    display: block;
+  }
+
+  @media (max-width: 700px) {
+    #displayArea {
+      min-width: 220px;
+      min-height: 220px;
+    }
+
+    #numberDisplay {
+      font-size: clamp(130px, 48vw, 310px);
+    }
+
+    #dotsDisplay {
+      grid-template-columns: repeat(2, 90px);
+      gap: 24px;
+    }
+
+    .fiveGroup {
+      width: 90px;
+      height: 90px;
+    }
+
+    .dot {
+      width: 20px;
+      height: 20px;
+    }
+
+    #timerPanel {
+      right: 12px;
+      top: 12px;
+      width: 110px;
+      padding: 9px;
+    }
+
+    #timerDisplay {
+      font-size: 34px;
+    }
+
+    .timerBtn {
+      width: 40px;
+      height: 40px;
+      font-size: 25px;
+    }
+
+    .sideBtn {
+      width: 64px;
+      height: 104px;
+      font-size: 42px;
+      border-radius: 24px;
+      opacity: 0.38;
+    }
+
+    #previousBtn {
+      left: 10px;
+    }
+
+    #nextBtn {
+      right: 10px;
+    }
+
+    .mainRoundBtn {
+      bottom: 18px;
+      width: 62px;
+      height: 62px;
+    }
+
+    #playIcon {
+      border-top-width: 15px;
+      border-bottom-width: 15px;
+      border-left-width: 24px;
+      margin-left: 5px;
+    }
+
+    #stopIcon {
+      width: 26px;
+      height: 26px;
+    }
+
+    #randomBtn {
+      font-size: 30px;
+    }
+
+    #modeToggleBtn {
+      right: 14px;
+      bottom: 14px;
+      width: 62px;
+      height: 62px;
+      font-size: 18px;
+    }
+
+    #helpBox {
+      left: 10px;
+      bottom: 10px;
+      width: 210px;
+      min-height: 100px;
+      font-size: 13px;
+      padding: 8px 10px;
+      line-height: 1.4;
+      opacity: 0.7;
+    }
+
+    #helpBox.collapsed {
+      width: 42px;
+      height: 42px;
+      min-height: 42px;
+      padding: 0;
+    }
+  }
+</style>
+</head>
+<body>
+
+<div id="screen">
+  <div id="displayArea">
+    <div id="numberDisplay" style="display: none;">1</div>
+    <div id="dotsDisplay" style="display: grid;"><div class="fiveGroup"><div class="dot pos1"></div></div></div>
+  </div>
+
+  <div id="timerPanel">
+    <div id="timerDisplay">2</div>
+    <div id="timerLabel">seconds</div>
+    <div id="timerControls">
+      <button class="timerBtn" id="timerDownBtn">−</button>
+      <button class="timerBtn" id="timerUpBtn">+</button>
+    </div>
+  </div>
+
+  <button class="sideBtn" id="previousBtn">←</button>
+  <button class="sideBtn" id="nextBtn">→</button>
+
+  <button class="mainRoundBtn" id="startStopBtn" title="Start / stop counting">
+    <span id="playIcon"></span>
+    <span id="stopIcon"></span>
+  </button>
+
+  <button class="mainRoundBtn" id="randomBtn" title="Random number">?</button>
+
+  <button id="modeToggleBtn">123</button>
+
+  <div id="helpBox" class="collapsed">
+    <div id="helpText">
+      Space = start / stop roll<br>
+      Enter = random number<br>
+      ← / → = previous / next number<br>
+      ↑ / ↓ = timer up / down
+    </div>
+    <div id="helpIcon">!</div>
+  </div>
+</div>
+
+<script>
+  const numbers = Array.from({ length: 14 }, (_, i) => i + 1);
+
+  let currentIndex = 0;
+  let isRolling = false;
+  let rollSeconds = 3;
+  let secondsLeft = rollSeconds;
+  let countdownInterval = null;
+  let displayMode = "number";
+
+  const screen = document.getElementById("screen");
+  const numberDisplay = document.getElementById("numberDisplay");
+  const dotsDisplay = document.getElementById("dotsDisplay");
+  const timerDisplay = document.getElementById("timerDisplay");
+
+  const previousBtn = document.getElementById("previousBtn");
+  const nextBtn = document.getElementById("nextBtn");
+  const startStopBtn = document.getElementById("startStopBtn");
+  const randomBtn = document.getElementById("randomBtn");
+  const timerDownBtn = document.getElementById("timerDownBtn");
+  const timerUpBtn = document.getElementById("timerUpBtn");
+  const modeToggleBtn = document.getElementById("modeToggleBtn");
+  const helpBox = document.getElementById("helpBox");
+
+  function closeHelpOnUse() {
+    helpBox.classList.add("collapsed");
+  }
+
+  function applyNumber(index) {
+    numberDisplay.textContent = numbers[index];
+    drawDots(numbers[index]);
+  }
+
+  function drawDots(number) {
+    dotsDisplay.innerHTML = "";
+
+    let remaining = number;
+
+    while (remaining > 0) {
+      const groupAmount = Math.min(remaining, 5);
+      const group = document.createElement("div");
+      group.className = "fiveGroup";
+
+      const positionsByAmount = {
+        1: [1],
+        2: [2, 3],
+        3: [2, 1, 3],
+        4: [2, 4, 5, 3],
+        5: [2, 4, 1, 5, 3]
+      };
+
+      positionsByAmount[groupAmount].forEach(pos => {
+        const dot = document.createElement("div");
+        dot.className = "dot pos" + pos;
+        group.appendChild(dot);
+      });
+
+      dotsDisplay.appendChild(group);
+      remaining -= 5;
+    }
+  }
+
+  function updateDisplayMode() {
+    if (displayMode === "number") {
+      numberDisplay.style.display = "block";
+      dotsDisplay.style.display = "none";
+      modeToggleBtn.textContent = "Dots";
+    } else {
+      numberDisplay.style.display = "none";
+      dotsDisplay.style.display = "grid";
+      modeToggleBtn.textContent = "123";
+    }
+  }
+
+  function toggleDisplayMode() {
+    displayMode = displayMode === "number" ? "dots" : "number";
+    updateDisplayMode();
+  }
+
+  function updateTimerDisplay() {
+    timerDisplay.textContent = secondsLeft;
+  }
+
+  function updateStartStopButton() {
+    startStopBtn.classList.toggle("stopping", isRolling);
+  }
+
+  function nextNumber() {
+    currentIndex++;
+
+    if (currentIndex >= numbers.length) {
+      currentIndex = 0;
+    }
+
+    applyNumber(currentIndex);
+  }
+
+  function previousNumber() {
+    currentIndex--;
+
+    if (currentIndex < 0) {
+      currentIndex = numbers.length - 1;
+    }
+
+    applyNumber(currentIndex);
+  }
+
+  function startRoll() {
+    if (isRolling) return;
+
+    isRolling = true;
+    updateStartStopButton();
+
+    secondsLeft = rollSeconds;
+    updateTimerDisplay();
+
+    countdownInterval = setInterval(() => {
+      secondsLeft--;
+
+      if (secondsLeft <= 0) {
+        nextNumber();
+        secondsLeft = rollSeconds;
+      }
+
+      updateTimerDisplay();
+    }, 1000);
+  }
+
+  function stopRoll() {
+    isRolling = false;
+    updateStartStopButton();
+
+    if (countdownInterval) {
+      clearInterval(countdownInterval);
+      countdownInterval = null;
+    }
+
+    secondsLeft = rollSeconds;
+    updateTimerDisplay();
+  }
+
+  function toggleRoll() {
+    if (isRolling) {
+      stopRoll();
+    } else {
+      startRoll();
+    }
+  }
+
+  function randomNumberExceptCurrent() {
+    if (isRolling) {
+      stopRoll();
+    }
+
+    let newIndex;
+
+    do {
+      newIndex = Math.floor(Math.random() * numbers.length);
+    } while (newIndex === currentIndex);
+
+    currentIndex = newIndex;
+    applyNumber(currentIndex);
+
+    secondsLeft = rollSeconds;
+    updateTimerDisplay();
+  }
+
+  function changeRollSeconds(amount) {
+    rollSeconds += amount;
+
+    if (rollSeconds < 1) rollSeconds = 1;
+    if (rollSeconds > 5) rollSeconds = 5;
+
+    secondsLeft = rollSeconds;
+    updateTimerDisplay();
+  }
+
+  function manualStep(direction) {
+    if (isRolling) {
+      stopRoll();
+    }
+
+    if (direction === "next") {
+      nextNumber();
+    }
+
+    if (direction === "previous") {
+      previousNumber();
+    }
+
+    secondsLeft = rollSeconds;
+    updateTimerDisplay();
+  }
+
+  screen.addEventListener("click", () => {
+    closeHelpOnUse();
+    toggleRoll();
+  });
+
+  previousBtn.addEventListener("click", (event) => {
+    event.stopPropagation();
+    closeHelpOnUse();
+    manualStep("previous");
+  });
+
+  nextBtn.addEventListener("click", (event) => {
+    event.stopPropagation();
+    closeHelpOnUse();
+    manualStep("next");
+  });
+
+  startStopBtn.addEventListener("click", (event) => {
+    event.stopPropagation();
+    closeHelpOnUse();
+    toggleRoll();
+  });
+
+  randomBtn.addEventListener("click", (event) => {
+    event.stopPropagation();
+    closeHelpOnUse();
+    randomNumberExceptCurrent();
+  });
+
+  timerDownBtn.addEventListener("click", (event) => {
+    event.stopPropagation();
+    closeHelpOnUse();
+    changeRollSeconds(-1);
+  });
+
+  timerUpBtn.addEventListener("click", (event) => {
+    event.stopPropagation();
+    closeHelpOnUse();
+    changeRollSeconds(1);
+  });
+
+  modeToggleBtn.addEventListener("click", (event) => {
+    event.stopPropagation();
+    closeHelpOnUse();
+    toggleDisplayMode();
+  });
+
+  helpBox.addEventListener("click", (event) => {
+    event.stopPropagation();
+    helpBox.classList.toggle("collapsed");
+  });
+
+  document.addEventListener("keydown", (event) => {
+    if (event.code === "Space") {
+      event.preventDefault();
+      closeHelpOnUse();
+      toggleRoll();
+    }
+
+    if (event.code === "Enter") {
+      event.preventDefault();
+      closeHelpOnUse();
+      randomNumberExceptCurrent();
+    }
+
+    if (event.code === "ArrowRight") {
+      event.preventDefault();
+      closeHelpOnUse();
+      manualStep("next");
+    }
+
+    if (event.code === "ArrowLeft") {
+      event.preventDefault();
+      closeHelpOnUse();
+      manualStep("previous");
+    }
+
+    if (event.code === "ArrowUp") {
+      event.preventDefault();
+      closeHelpOnUse();
+      changeRollSeconds(1);
+    }
+
+    if (event.code === "ArrowDown") {
+      event.preventDefault();
+      closeHelpOnUse();
+      changeRollSeconds(-1);
+    }
+
+    if (event.code === "KeyD") {
+      event.preventDefault();
+      closeHelpOnUse();
+      toggleDisplayMode();
+    }
+  });
+
+  applyNumber(currentIndex);
+  updateDisplayMode();
+  updateTimerDisplay();
+  updateStartStopButton();
+</script>
+</body>
+</html>
