@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Colour–Shape Roller — v6 (single‑group)</title>
+  <style>
+    :root{--bg:#0f1220;--bg2:#1a1f36;--fg:#eaf0f8;--muted:#9fb0c5;--ok:#22c55e;--stop:#ef4444}
+    *{box-sizing:border-box}
+    html,body{height:100%;margin:0}
+    body{display:grid;grid-template-rows:1fr auto;place-items:center;background:radial-gradient(1100px 800px at 50% 35%,var(--bg2),var(--bg));color:var(--fg);font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial}
+    .stage{display:grid;place-items:center;padding:2vmin}
+    .shape-wrap{width:min(90vmin,92vw);height:min(90vmin,82vh);display:grid;place-items:center}
+    svg{width:100%;height:100%;display:block}
+
+    .controls{position:fixed;left:50%;bottom:16px;transform:translateX(-50%);display:flex;align-items:center;gap:12px}
+    .btn{padding:11px 18px;border-radius:999px;border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.06);color:var(--fg);font-size:clamp(14px,1.9vmin,18px);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
+    .status{display:flex;align-items:center;gap:8px;color:var(--muted);font-size:clamp(12px,1.8vmin,16px)}
+    .dot{width:10px;height:10px;border-radius:50%}
+    .dot.run{background:var(--ok)}
+    .dot.stop{background:var(--stop)}
+  </style>
+</head>
+<body>
+  <main class="stage">
+    <div class="shape-wrap" id="shape-wrap" aria-label="Rolling coloured shape(s)" role="img">
+      <svg id="svg" viewBox="0 0 1000 1000" aria-hidden="true"><g transform="translate(24, 24) scale(0.464)"><rect x="100" y="100" width="800" height="800" rx="24" ry="24" fill="#eab308" stroke="rgba(255,255,255,0.12)" stroke-width="12"></rect></g><g transform="translate(488, 24) scale(0.464)"><rect x="100" y="100" width="800" height="800" rx="24" ry="24" fill="#eab308" stroke="rgba(255,255,255,0.12)" stroke-width="12"></rect></g><g transform="translate(24, 488) scale(0.464)"><rect x="100" y="100" width="800" height="800" rx="24" ry="24" fill="#eab308" stroke="rgba(255,255,255,0.12)" stroke-width="12"></rect></g></svg>
+    </div>
+  </main>
+
+  <div class="controls">
+    <button id="toggle" class="btn" type="button">Start (Space)</button>
+    <div class="status"><span id="dot" class="dot stop" aria-hidden="true"></span><span id="status-text">Stopped</span></div>
+  </div>
+
+<script>
+(() => {
+  // === Config ===============================================================
+  const SHAPES=["square","circle","triangle","star","heart","diamond","rectangle"];
+  const COLOURS=[
+    {name:"red",value:"#ef4444"},{name:"blue",value:"#3b82f6"},{name:"green",value:"#22c55e"},
+    {name:"yellow",value:"#eab308"},{name:"orange",value:"#fb923c"},{name:"purple",value:"#a855f7"}
+  ];
+  const TARGET_RATE=4;   // changes per second when rolling
+  const DECEL_MS=3000;   // slow-to-stop duration
+  const ACCEL_MS=250;    // quick ramp-up (kept for parity)
+
+  // Build deck of all colour/shape combos
+  const baseCombos=[]; for(const c of COLOURS) for(const s of SHAPES) baseCombos.push({shape:s,colour:c});
+  let deck=shuffle(baseCombos.slice());
+
+  // === DOM =================================================================
+  const svg=document.getElementById('svg');
+  const wrap=document.getElementById('shape-wrap');
+  const toggleBtn=document.getElementById('toggle');
+  const dot=document.getElementById('dot');
+  const statusText=document.getElementById('status-text');
+
+  // === State ================================================================
+  let currentRate=0,targetRate=0;   // changes/sec
+  let easingFrom=0,easingStart=0,easingEnd=0,isTransitioning=false;
+  let timeToNext=Infinity,lastTs=0,animating=false;
+
+  // First render — ensure screen isn't empty
+  applyScene(generateScene());
+
+  // Input
+  window.addEventListener('keydown',e=>{ if(e.code==='Space'){ e.preventDefault(); toggle(); }});
+  toggleBtn.addEventListener('click',toggle);
+
+  function toggle(){
+    if (targetRate>0 || currentRate>0.2){ // stopping
+      beginRateTransition(currentRate,0,DECEL_MS);
+      toggleBtn.textContent='Start (Space)'; setStoppedUI();
+    } else { // starting
+      beginRateTransition(currentRate,TARGET_RATE,ACCEL_MS);
+      timeToNext=0; // start immediately
+      toggleBtn.textContent='Stop (Space)'; setRunningUI();
+    }
+  }
+
+  function beginRateTransition(from,to,duration){
+    easingFrom=from; targetRate=to; easingStart=performance.now(); easingEnd=easingStart+Math.max(1,duration);
+    isTransitioning=true; if(!animating) startLoop();
+  }
+
+  function startLoop(){ animating=true; lastTs=performance.now(); requestAnimationFrame(tick); }
+
+  function tick(ts){
+    const dt=ts-lastTs; lastTs=ts;
+
+    // Easing (accel/decel)
+    if(isTransitioning){
+      const t=Math.min(1,(ts-easingStart)/(easingEnd-easingStart));
+      currentRate=easingFrom+(targetRate-easingFrom)*(1-Math.pow(1-t,3));
+      if(t>=1) isTransitioning=false;
+    }
+
+    const minRate=0.0001; const rate=Math.max(currentRate,0);
+    const interval=rate>minRate?1000/rate:Infinity;
+
+    // Immediate cadence when starting from rest or speeding up
+    if (isFinite(interval)){
+      if (!isFinite(timeToNext)) timeToNext=0;        // from rest → go now
+      else timeToNext=Math.min(timeToNext, interval*0.25); // clamp to brisk cadence
+    }
+
+    // Drive changes
+    timeToNext-=(isFinite(interval)?dt:0);
+    while(timeToNext<=0){ applyScene(generateScene()); timeToNext+=interval; }
+
+    // Park when fully stopped
+    if(rate<=minRate && !isTransitioning){ animating=false; timeToNext=Infinity; pulseStopped(); return; }
+
+    requestAnimationFrame(tick);
+  }
+
+  // === Scene: ONE group (colour+shape) with 1–5 copies =====================
+  function generateScene(){
+    const combo = nextCombo();        // pick ONE (colour,shape)
+    const count = randInt(1,5);       // number of copies to show
+    return { combo, count };
+  }
+
+  function applyScene(scene){
+    const { combo, count } = scene;
+    svg.replaceChildren();
+
+    if (count <= 1){
+      // Single big shape (full page)
+      const el = createShape(combo.shape);
+      el.setAttribute('fill', combo.colour.value);
+      el.setAttribute('stroke','rgba(255,255,255,0.12)');
+      el.setAttribute('stroke-width','12');
+      svg.appendChild(el);
+      return;
+    }
+
+    // Multiple copies of the SAME combo in a responsive grid
+    const cols = Math.ceil(Math.sqrt(count));
+    const rows = Math.ceil(count / cols);
+    const viewW = 1000, viewH = 1000;
+    const pad = 24; // inner padding
+    const cellW = (viewW - pad*(cols+1)) / cols;
+    const cellH = (viewH - pad*(rows+1)) / rows;
+    const cell = Math.min(cellW, cellH);
+    const scale = cell / 1000; // shapes designed for 0..1000 viewBox
+
+    for (let i=0; i<count; i++){
+      const r = Math.floor(i / cols);
+      const c = i % cols;
+      const cx = pad + c*cellW + cellW/2;
+      const cy = pad + r*cellH + cellH/2;
+
+      const g = elem('g');
+      g.setAttribute('transform', `translate(${cx - 500*scale}, ${cy - 500*scale}) scale(${scale})`);
+      const shapeEl = createShape(combo.shape);
+      shapeEl.setAttribute('fill', combo.colour.value);
+      shapeEl.setAttribute('stroke','rgba(255,255,255,0.12)');
+      shapeEl.setAttribute('stroke-width','12');
+      g.appendChild(shapeEl);
+      svg.appendChild(g);
+    }
+  }
+
+  // === SVG primitives =======================================================
+  function elem(n){ return document.createElementNS('http://www.w3.org/2000/svg',n); }
+  function createShape(name){
+    switch(name){
+      case 'square': return rect(100,100,800,800);
+      case 'rectangle': return rect(50,200,900,600);
+      case 'circle': { const c=elem('circle'); c.setAttribute('cx','500'); c.setAttribute('cy','500'); c.setAttribute('r','400'); return c; }
+      case 'triangle': return polygon([[500,120],[120,880],[880,880]]);
+      case 'diamond': return polygon([[500,60],[940,500],[500,940],[60,500]]);
+      case 'star': return star(500,500,420,170,-90);
+      case 'heart': return heart(500,560,360);
+      default: return rect(200,200,600,600);
+    }
+  }
+  function rect(x,y,w,h){ const r=elem('rect'); r.setAttribute('x',x); r.setAttribute('y',y); r.setAttribute('width',w); r.setAttribute('height',h); r.setAttribute('rx','24'); r.setAttribute('ry','24'); return r; }
+  function polygon(points){ const p=elem('polygon'); p.setAttribute('points', points.map(([x,y])=>`${x},${y}`).join(' ')); p.setAttribute('stroke-linejoin','round'); p.setAttribute('stroke-linecap','round'); return p; }
+  function star(cx,cy,rOuter,rInner,rot=0){ const pts=[]; const toRad=(deg)=>deg*Math.PI/180; for(let i=0;i<10;i++){ const a=toRad(rot)+i*Math.PI/5; const rr=(i%2===0)?rOuter:rInner; pts.push([cx+rr*Math.cos(a), cy+rr*Math.sin(a)]); } return polygon(pts); }
+  function heart(cx,cy,size){ const s=size/500; const d=[`M ${cx} ${cy+280*s}`,`C ${cx-300*s} ${cy+60*s}, ${cx-430*s} ${cy-160*s}, ${cx-250*s} ${cy-280*s}`,`C ${cx-70*s} ${cy-400*s}, ${cx} ${cy-260*s}, ${cx} ${cy-180*s}`,`C ${cx} ${cy-260*s}, ${cx+70*s} ${cy-400*s}, ${cx+250*s} ${cy-280*s}`,`C ${cx+430*s} ${cy-160*s}, ${cx+300*s} ${cy+60*s}, ${cx} ${cy+280*s} Z`].join(' '); const p=elem('path'); p.setAttribute('d',d); p.setAttribute('stroke-linejoin','round'); p.setAttribute('stroke-linecap','round'); return p; }
+
+  // === Cues & helpers =======================================================
+  function pulseStopped(){
+    setStoppedUI();
+    setTimeout(()=>{ pulseOnce(); setTimeout(()=>pulseOnce(), 600); }, 1000); // two pulses after 1s
+  }
+  function pulseOnce(){ wrap.animate([{transform:'scale(1)'},{transform:'scale(0.92)'},{transform:'scale(1)'}],{duration:480,easing:'cubic-bezier(.22,.61,.36,1)'}); }
+
+  function setRunningUI(){ dot.classList.remove('stop'); dot.classList.add('run'); statusText.textContent='Rolling'; }
+  function setStoppedUI(){ dot.classList.remove('run'); dot.classList.add('stop'); statusText.textContent='Stopped'; }
+
+  function shuffle(a){ for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; }
+  function nextCombo(){ if(deck.length===0) deck=shuffle(baseCombos.slice()); return deck.pop(); }
+  function randInt(min,max){ return Math.floor(Math.random()*(max-min+1))+min; }
+
+  // Focus so Space works immediately
+  window.addEventListener('load',()=>toggleBtn.focus({preventScroll:true}));
+})();
+</script>
+</body>
+</html>
