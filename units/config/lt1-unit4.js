@@ -656,6 +656,7 @@
     return id
       .replace("kiwi-fruit", "kiwi fruit")
       .replace("green-pepper", "green pepper")
+      .replace("table-tennis", "table tennis")
       .replace(/-/g, " ");
   }
 
@@ -693,6 +694,16 @@
 
   const sharedSheets = LETS_TRY_DATA.assets.sheets;
   const sharedCells = LETS_TRY_DATA.assets.knownCells;
+
+  LETS_TRY_DATA.getCategory("sports").items.forEach((entry) => {
+    addSpriteCard({
+      id: entry.id,
+      category: "sports",
+      sheet: sharedSheets.sports.file,
+      size: "400% 300%",
+      position: sharedCells.sports[entry.id]
+    });
+  });
 
   LETS_TRY_DATA.getCategory("vegetables").items.forEach((entry) => {
     addSpriteCard({
