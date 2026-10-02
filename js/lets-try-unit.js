@@ -15,7 +15,7 @@
       if (!appHost) {
         throw new Error("Shared unit app host was not found.");
       }
-      appHost.innerHTML = "<header class=\"site-header\">\n    <div class=\"site-header-inner\">\n      <button class=\"menu-button\" id=\"menuButton\" type=\"button\" aria-label=\"Return to unit menu\">☰</button>\n\n      <div class=\"site-title\">\n        <span class=\"unit-word\">Unit</span>\n        <span class=\"unit-number\" id=\"unitNumber\"></span>\n        <span class=\"unit-name\" id=\"unitName\"></span>\n      </div>\n\n      <div class=\"game-title\" id=\"gameTitle\" aria-live=\"polite\"></div>\n    </div>\n  </header>\n\n  <main class=\"app\" id=\"appScreen\">\n    <section class=\"flashcard\" id=\"flashcard\" aria-live=\"polite\">\n      <div class=\"flashcard-stage\">\n        <div class=\"answer-area\" id=\"answerArea\">\n          <div class=\"picture-frame\" id=\"pictureFrame\">\n            <div class=\"card-picture\" id=\"cardPicture\" role=\"img\"></div>\n          </div>\n          <div class=\"display-text\" id=\"displayText\"></div>\n        </div>\n\n        <div class=\"game-area\" id=\"gameArea\" hidden></div>\n      </div>\n\n      <button class=\"floating-auto\" id=\"autoButton\" type=\"button\"\n              aria-label=\"Start automatic flashcards\" title=\"Start automatic flashcards\">▶</button>\n    </section>\n\n    <button class=\"side-nav side-previous\" id=\"previousButton\" type=\"button\" aria-label=\"Previous card\">◀</button>\n    <button class=\"side-nav side-next\" id=\"nextButton\" type=\"button\" aria-label=\"Next card\">▶</button>\n    <aside class=\"missing-answer-hints\" id=\"missingAnswerHints\" aria-label=\"Teacher Missing Game answers\" hidden></aside>\n\n    <nav class=\"control-bar\" aria-label=\"Flashcard controls\">\n      <div class=\"card-counter\">\n        <strong id=\"counter\">1 / 1</strong>\n        <span id=\"modeLabel\">Flashcard mode</span>\n      </div>\n\n      <button class=\"control shuffle\" id=\"shuffleButton\" type=\"button\">↝ Shuffle</button>\n\n      <div class=\"game-menu-wrap\">\n        <button class=\"control quiet game-menu-button\" id=\"gameButton\" type=\"button\"\n                aria-haspopup=\"true\" aria-expanded=\"false\">Game</button>\n        <div class=\"game-menu\" id=\"gameMenu\" hidden></div>\n      </div>\n\n      <div class=\"floating-timer timer-control\" id=\"floatingTimer\" aria-label=\"Automatic timer\">\n        <button id=\"timerDownButton\" type=\"button\" aria-label=\"Decrease timer\">−</button>\n        <span class=\"timer-value\" id=\"timerValue\">3 sec</span>\n        <button id=\"timerUpButton\" type=\"button\" aria-label=\"Increase timer\">+</button>\n      </div>\n\n      <button class=\"control quiet settings-icon-button\" id=\"settingsButton\" type=\"button\" aria-label=\"Settings\">Settings</button>\n    </nav>\n\n    <div class=\"keyboard-help collapsed\" id=\"keyboardHelp\">\n      <div class=\"keyboard-help-text\">\n        ← / → = previous / next<br>\n        Space / Enter = next<br>\n        A = start / stop auto<br>\n        R = shuffle<br>\n        G = games<br>\n        ↑ / ↓ = timer up / down<br>\n        Esc = close menus / help\n      </div>\n      <div class=\"keyboard-help-icon\">!</div>\n    </div>\n  </main>\n\n  <div class=\"scrim\" id=\"scrim\"></div>\n\n  <aside class=\"settings-panel\" id=\"settingsPanel\" aria-label=\"Settings\">\n    <div class=\"settings-heading\">\n      <h2>Settings</h2>\n      <button class=\"close-button\" id=\"closeSettingsButton\" type=\"button\" aria-label=\"Close settings\">×</button>\n    </div>\n\n    <section class=\"setting-section selection-section\">\n      <div class=\"setting-actions setting-actions-top\">\n        <button id=\"selectAllButton\" type=\"button\">Select all</button>\n        <button id=\"resetButton\" type=\"button\">Reset</button>\n      </div>\n      <p class=\"message\" id=\"message\"></p>\n      <div class=\"category-word-groups\" id=\"cardOptionGrid\"></div>\n    </section>\n\n    <section class=\"setting-section\" id=\"textDisplaySection\">\n      <h3>Text to display</h3>\n      <div class=\"segmented\">\n        <label>\n          <input type=\"radio\" name=\"textDisplay\" value=\"word\" checked>\n          <span id=\"wordLabel\">Word</span>\n        </label>\n        <label>\n          <input type=\"radio\" name=\"textDisplay\" value=\"sentence\">\n          <span id=\"sentenceLabel\">Sentence</span>\n        </label>\n        <label>\n          <input type=\"radio\" name=\"textDisplay\" value=\"alternate\">\n          <span id=\"alternateLabel\">Alternate</span>\n        </label>\n      </div>\n    </section>\n\n    <section class=\"setting-section\">\n      <h3>Display mode</h3>\n      <div class=\"segmented\">\n        <label>\n          <input type=\"radio\" name=\"displayMode\" value=\"pictureText\" checked>\n          <span id=\"pictureTextLabel\">Picture + text</span>\n        </label>\n        <label>\n          <input type=\"radio\" name=\"displayMode\" value=\"picture\">\n          <span id=\"pictureOnlyLabel\">Picture only</span>\n        </label>\n        <label>\n          <input type=\"radio\" name=\"displayMode\" value=\"text\">\n          <span id=\"textOnlyLabel\">Text only</span>\n        </label>\n      </div>\n    </section>\n\n    <section class=\"setting-section\">\n      <h3>Size</h3>\n      <div class=\"balance-labels\" aria-hidden=\"true\">\n        <span id=\"balancePictureLabel\">Image</span>\n        <span id=\"balanceTextLabel\">Text</span>\n      </div>\n      <div class=\"balance-slider\">\n        <span>◀</span>\n        <input id=\"sizeBalanceRange\" type=\"range\" min=\"0\" max=\"100\" value=\"50\" step=\"5\"\n               aria-label=\"Image and text size balance\">\n        <span>▶</span>\n      </div>\n    </section>\n    <section class=\"setting-section\">\n      <h3>Missing Game teacher hint answer size</h3>\n      <div class=\"missing-answer-size-row\">\n        <input id=\"missingAnswerSizeRange\" type=\"range\" min=\"8\" max=\"24\" value=\"10\" step=\"1\"\n               aria-label=\"Missing Game teacher hint answer size\">\n        <output class=\"missing-answer-size-value\" id=\"missingAnswerSizeValue\" for=\"missingAnswerSizeRange\">10 px</output>\n      </div>\n    </section>\n  </aside>";
+      appHost.innerHTML = "<header class=\"site-header\">\n    <div class=\"site-header-inner\">\n      <button class=\"menu-button\" id=\"menuButton\" type=\"button\" aria-label=\"Return to unit menu\">☰</button>\n\n      <div class=\"site-title\">\n        <span class=\"unit-word\">Unit</span>\n        <span class=\"unit-number\" id=\"unitNumber\"></span>\n        <span class=\"unit-name\" id=\"unitName\"></span>\n      </div>\n\n      <div class=\"game-title\" id=\"gameTitle\" aria-live=\"polite\"></div>\n    </div>\n  </header>\n\n  <main class=\"app\" id=\"appScreen\">\n    <section class=\"flashcard\" id=\"flashcard\" aria-live=\"polite\">\n      <div class=\"flashcard-stage\">\n        <div class=\"answer-area\" id=\"answerArea\">\n          <div class=\"picture-frame\" id=\"pictureFrame\">\n            <div class=\"card-picture\" id=\"cardPicture\" role=\"img\"></div>\n          </div>\n          <div class=\"display-text\" id=\"displayText\"></div>\n        </div>\n\n        <div class=\"game-area\" id=\"gameArea\" hidden></div>\n      </div>\n\n      <button class=\"floating-auto\" id=\"autoButton\" type=\"button\"\n              aria-label=\"Start automatic flashcards\" title=\"Start automatic flashcards\">▶</button>\n    </section>\n\n    <button class=\"side-nav side-previous\" id=\"previousButton\" type=\"button\" aria-label=\"Previous card\">◀</button>\n    <button class=\"side-nav side-next\" id=\"nextButton\" type=\"button\" aria-label=\"Next card\">▶</button>\n    <aside class=\"missing-answer-hints\" id=\"missingAnswerHints\" aria-label=\"Teacher Missing Game answers\" hidden></aside>\n\n    <nav class=\"control-bar\" aria-label=\"Flashcard controls\">\n      <div class=\"card-counter\">\n        <strong id=\"counter\">1 / 1</strong>\n        <span id=\"modeLabel\">Flashcard mode</span>\n      </div>\n\n      <button class=\"control shuffle\" id=\"shuffleButton\" type=\"button\">↝ Shuffle</button>\n\n      <div class=\"game-menu-wrap\">\n        <button class=\"control quiet game-menu-button\" id=\"gameButton\" type=\"button\"\n                aria-haspopup=\"true\" aria-expanded=\"false\">Game</button>\n        <div class=\"game-menu\" id=\"gameMenu\" hidden></div>\n      </div>\n\n      <div class=\"floating-timer timer-control\" id=\"floatingTimer\" aria-label=\"Automatic timer\">\n        <button id=\"timerDownButton\" type=\"button\" aria-label=\"Decrease timer\">−</button>\n        <span class=\"timer-value\" id=\"timerValue\">3 sec</span>\n        <button id=\"timerUpButton\" type=\"button\" aria-label=\"Increase timer\">+</button>\n      </div>\n\n      <button class=\"control quiet settings-icon-button\" id=\"settingsButton\" type=\"button\" aria-label=\"Settings\">Settings</button>\n    </nav>\n\n    <div class=\"keyboard-help collapsed\" id=\"keyboardHelp\">\n      <div class=\"keyboard-help-text\">\n        ← / → = previous / next<br>\n        Space / Enter = next<br>\n        A = start / stop auto<br>\n        R = shuffle<br>\n        G = games<br>\n        ↑ / ↓ = timer up / down<br>\n        Esc = close menus / help\n      </div>\n      <div class=\"keyboard-help-icon\">!</div>\n    </div>\n  </main>\n\n  <div class=\"scrim\" id=\"scrim\"></div>\n\n  <aside class=\"settings-panel\" id=\"settingsPanel\" aria-label=\"Settings\">\n    <div class=\"settings-heading\">\n      <h2>Settings</h2>\n      <button class=\"close-button\" id=\"closeSettingsButton\" type=\"button\" aria-label=\"Close settings\">×</button>\n    </div>\n\n    <section class=\"setting-section display-mode-section\">\n      <h3>Display mode</h3>\n      <div class=\"segmented display-mode-options\">\n        <label>\n          <input type=\"radio\" name=\"displayMode\" value=\"pictureText\" checked>\n          <span id=\"pictureTextLabel\">Picture + text</span>\n        </label>\n        <label>\n          <input type=\"radio\" name=\"displayMode\" value=\"picture\">\n          <span id=\"pictureOnlyLabel\">Picture only</span>\n        </label>\n        <label>\n          <input type=\"radio\" name=\"displayMode\" value=\"text\">\n          <span id=\"textOnlyLabel\">Text only</span>\n        </label>\n      </div>\n    </section>\n\n    <div class=\"settings-preview\" id=\"settingsPreview\" aria-label=\"Display preview\">\n      <div class=\"settings-preview-picture\" id=\"settingsPreviewPicture\" role=\"img\"></div>\n      <div class=\"settings-preview-text\" id=\"settingsPreviewText\"></div>\n    </div>\n\n    <section class=\"setting-section selection-section\">\n      <div class=\"setting-actions setting-actions-top\">\n        <button id=\"selectAllButton\" type=\"button\">Select all</button>\n        <button id=\"resetButton\" type=\"button\">Reset</button>\n      </div>\n      <p class=\"message\" id=\"message\"></p>\n      <div class=\"category-word-groups\" id=\"cardOptionGrid\"></div>\n    </section>\n\n    <section class=\"setting-section\" id=\"textDisplaySection\">\n      <h3>Text to display</h3>\n      <div class=\"segmented\">\n        <label>\n          <input type=\"radio\" name=\"textDisplay\" value=\"word\" checked>\n          <span id=\"wordLabel\">Word</span>\n        </label>\n        <label>\n          <input type=\"radio\" name=\"textDisplay\" value=\"sentence\">\n          <span id=\"sentenceLabel\">Sentence</span>\n        </label>\n        <label>\n          <input type=\"radio\" name=\"textDisplay\" value=\"alternate\">\n          <span id=\"alternateLabel\">Alternate</span>\n        </label>\n      </div>\n    </section>\n\n    <section class=\"setting-section secondary-setting-section\">\n      <h3>Image / text size</h3>\n      <div class=\"balance-labels\" aria-hidden=\"true\">\n        <span id=\"balancePictureLabel\">Image</span>\n        <span id=\"balanceTextLabel\">Text</span>\n      </div>\n      <div class=\"balance-slider\">\n        <span>◀</span>\n        <input id=\"sizeBalanceRange\" type=\"range\" min=\"0\" max=\"100\" value=\"50\" step=\"5\"\n               aria-label=\"Image and text size balance\">\n        <span>▶</span>\n      </div>\n    </section>\n\n    <section class=\"setting-section secondary-setting-section\">\n      <h3>Missing Game teacher hint answer size</h3>\n      <div class=\"missing-answer-size-row\">\n        <input id=\"missingAnswerSizeRange\" type=\"range\" min=\"8\" max=\"24\" value=\"10\" step=\"1\"\n               aria-label=\"Missing Game teacher hint answer size\">\n        <output class=\"missing-answer-size-value\" id=\"missingAnswerSizeValue\" for=\"missingAnswerSizeRange\">10 px</output>\n      </div>\n    </section>\n  </aside>";
 
       const $ = (id) => document.getElementById(id);
       const cardsById = new Map(UNIT_CONFIG.cards.map((card) => [card.id, card]));
@@ -56,6 +56,9 @@
         scrim: $("scrim"),
         settingsPanel: $("settingsPanel"),
         closeSettingsButton: $("closeSettingsButton"),
+        settingsPreview: $("settingsPreview"),
+        settingsPreviewPicture: $("settingsPreviewPicture"),
+        settingsPreviewText: $("settingsPreviewText"),
         cardOptionGrid: $("cardOptionGrid"),
         selectAllButton: $("selectAllButton"),
         resetButton: $("resetButton"),
@@ -275,6 +278,35 @@
         return card.word;
       }
 
+      function updateSettingsPreview() {
+        if (!elements.settingsPreview) return;
+
+        const card = currentCard() || selectedCards()[0] || UNIT_CONFIG.cards[0] || null;
+        const showPicture = state.displayMode !== "text";
+        const showText = state.displayMode !== "picture";
+
+        elements.settingsPreview.classList.toggle("picture-only", showPicture && !showText);
+        elements.settingsPreview.classList.toggle("text-only", showText && !showPicture);
+        elements.settingsPreviewPicture.hidden = !showPicture;
+        elements.settingsPreviewText.hidden = !showText;
+
+        if (!card) {
+          elements.settingsPreviewPicture.removeAttribute("style");
+          elements.settingsPreviewPicture.removeAttribute("aria-label");
+          elements.settingsPreviewText.textContent = "No cards";
+          return;
+        }
+
+        if (showPicture) {
+          applyVisual(elements.settingsPreviewPicture, card);
+          elements.settingsPreviewPicture.setAttribute("aria-label", card.word);
+        }
+
+        if (showText) {
+          elements.settingsPreviewText.textContent = cardText(card);
+        }
+      }
+
       function leftRightText(card) {
         return cardText(card);
       }
@@ -286,11 +318,6 @@
         const allSelected = ids.every((id) => state.selectedIds.has(id));
 
         if (allSelected) {
-          const remaining = [...state.selectedIds].filter((id) => !ids.includes(id));
-          if (!remaining.length) {
-            elements.message.textContent = "At least one card must stay selected.";
-            return;
-          }
           ids.forEach((id) => state.selectedIds.delete(id));
         } else {
           ids.forEach((id) => state.selectedIds.add(id));
@@ -366,15 +393,22 @@
           button.setAttribute("aria-pressed", String(selected));
         });
         syncCategoryOptions();
+
+        const allSelected =
+          UNIT_CONFIG.cards.length > 0 &&
+          state.selectedIds.size === UNIT_CONFIG.cards.length;
+        elements.selectAllButton.textContent = allSelected ? "Clear all" : "Select all";
+        elements.selectAllButton.setAttribute(
+          "aria-label",
+          allSelected ? "Clear all selected words" : "Select all words"
+        );
+
+        updateSettingsPreview();
         buildGameMenu();
       }
 
       function toggleCard(id) {
         if (state.selectedIds.has(id)) {
-          if (state.selectedIds.size === 1) {
-            elements.message.textContent = "At least one card must stay selected.";
-            return;
-          }
           state.selectedIds.delete(id);
         } else {
           state.selectedIds.add(id);
@@ -416,6 +450,7 @@
       function render() {
         closeGameMenu();
         updateSizing();
+        updateSettingsPreview();
 
         if (state.gameMode === "missing") {
           renderMissing();
@@ -922,6 +957,7 @@
 
       function openSettings() {
         stopAuto();
+        updateSettingsPreview();
         elements.settingsPanel.classList.add("open");
         elements.scrim.classList.add("open");
       }
@@ -1009,7 +1045,15 @@
       });
 
       elements.selectAllButton.addEventListener("click", () => {
-        state.selectedIds = new Set(UNIT_CONFIG.cards.map((card) => card.id));
+        const allSelected =
+          UNIT_CONFIG.cards.length > 0 &&
+          state.selectedIds.size === UNIT_CONFIG.cards.length;
+
+        state.selectedIds = allSelected
+          ? new Set()
+          : new Set(UNIT_CONFIG.cards.map((card) => card.id));
+
+        elements.message.textContent = "";
         syncCardOptions();
         rebuildDeck();
       });
