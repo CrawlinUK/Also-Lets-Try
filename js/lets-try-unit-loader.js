@@ -19,7 +19,7 @@
     return new Promise((resolve, reject) => {
       const script = document.createElement("script");
       const url = new URL(relativePath, projectRoot);
-      url.searchParams.set("v", "20261002-0816");
+      url.searchParams.set("v", "20261002-0935");
       script.src = url.href;
       script.async = false;
       script.onload = resolve;
@@ -33,6 +33,7 @@
       await loadScript("js/lets-try-data.js");
       await loadScript(`units/config/${book}-unit${unit}.js`);
       await loadScript("js/lets-try-unit.js");
+      await loadScript("js/lets-try-ui.js");
     } catch (error) {
       console.error(error);
       const output = document.getElementById("displayText");
