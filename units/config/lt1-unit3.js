@@ -8,8 +8,17 @@
     17:"seventeen",18:"eighteen",19:"nineteen",20:"twenty",
     30:"thirty",40:"forty",50:"fifty",60:"sixty",70:"seventy",80:"eighty",90:"ninety",100:"one hundred"
   };
+
+  function numberColour(value) {
+    if (value <= 10) return "#FFDE23";
+    if (value <= 12) return "#F37536";
+    if (value <= 19) return "#EE3338";
+    return "#0178BE";
+  }
+
   const textbook = new Set(Array.from({length:20},(_,index)=>index+1));
   const values = [...textbook,30,40,50,60,70,80,90,100];
+  const digitBase = LETS_TRY_DATA.assetUrl("images/numbers/");
 
   const cards = values.map((value) => ({
     id: String(value),
@@ -21,8 +30,10 @@
     teacherAnswer: numberWords[value],
     textbook: textbook.has(value),
     visual: {
-      type: "text",
-      text: String(value)
+      type: "number-svg",
+      text: String(value),
+      digitBase,
+      colour: numberColour(value)
     }
   }));
 
@@ -36,10 +47,7 @@
     unitNumberColour: "#F06AA0",
     menuFile: "../lets_try_1.html",
     defaultPrompt: "",
-    wordLabel: "Word",
     sentenceLabel: "Word",
-    alternateLabel: "Number",
-    showTextDisplaySettings: false,
     showPictureSentenceMode: false,
     displayModeLabels: {
       pictureText: "Number + word",
