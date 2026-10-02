@@ -11,6 +11,12 @@
         || [...new Set(UNIT_CONFIG.cards.map((card) => card.category).filter(Boolean))];
       const PLACEHOLDER_IMAGE = "";
 
+      const appHost = document.getElementById("letsTryApp");
+      if (!appHost) {
+        throw new Error("Shared unit app host was not found.");
+      }
+      appHost.innerHTML = "<header class=\"site-header\">\n    <div class=\"site-header-inner\">\n      <button class=\"menu-button\" id=\"menuButton\" type=\"button\" aria-label=\"Return to unit menu\">☰</button>\n\n      <div class=\"site-title\">\n        <span class=\"unit-word\">Unit</span>\n        <span class=\"unit-number\" id=\"unitNumber\"></span>\n        <span class=\"unit-name\" id=\"unitName\"></span>\n      </div>\n\n      <div class=\"game-title\" id=\"gameTitle\" aria-live=\"polite\"></div>\n    </div>\n  </header>\n\n  <main class=\"app\" id=\"appScreen\">\n    <section class=\"flashcard\" id=\"flashcard\" aria-live=\"polite\">\n      <div class=\"flashcard-stage\">\n        <div class=\"answer-area\" id=\"answerArea\">\n          <div class=\"picture-frame\" id=\"pictureFrame\">\n            <div class=\"card-picture\" id=\"cardPicture\" role=\"img\"></div>\n          </div>\n          <div class=\"display-text\" id=\"displayText\"></div>\n        </div>\n\n        <div class=\"game-area\" id=\"gameArea\" hidden></div>\n      </div>\n\n      <button class=\"floating-auto\" id=\"autoButton\" type=\"button\"\n              aria-label=\"Start automatic flashcards\" title=\"Start automatic flashcards\">▶</button>\n    </section>\n\n    <button class=\"side-nav side-previous\" id=\"previousButton\" type=\"button\" aria-label=\"Previous card\">◀</button>\n    <button class=\"side-nav side-next\" id=\"nextButton\" type=\"button\" aria-label=\"Next card\">▶</button>\n    <aside class=\"missing-answer-hints\" id=\"missingAnswerHints\" aria-label=\"Teacher Missing Game answers\" hidden></aside>\n\n    <nav class=\"control-bar\" aria-label=\"Flashcard controls\">\n      <div class=\"card-counter\">\n        <strong id=\"counter\">1 / 1</strong>\n        <span id=\"modeLabel\">Flashcard mode</span>\n      </div>\n\n      <button class=\"control shuffle\" id=\"shuffleButton\" type=\"button\">↝ Shuffle</button>\n\n      <div class=\"game-menu-wrap\">\n        <button class=\"control quiet game-menu-button\" id=\"gameButton\" type=\"button\"\n                aria-haspopup=\"true\" aria-expanded=\"false\">Game</button>\n        <div class=\"game-menu\" id=\"gameMenu\" hidden></div>\n      </div>\n\n      <div class=\"floating-timer timer-control\" id=\"floatingTimer\" aria-label=\"Automatic timer\">\n        <button id=\"timerDownButton\" type=\"button\" aria-label=\"Decrease timer\">−</button>\n        <span class=\"timer-value\" id=\"timerValue\">3 sec</span>\n        <button id=\"timerUpButton\" type=\"button\" aria-label=\"Increase timer\">+</button>\n      </div>\n\n      <button class=\"control quiet settings-icon-button\" id=\"settingsButton\" type=\"button\" aria-label=\"Settings\">Settings</button>\n    </nav>\n\n    <div class=\"keyboard-help collapsed\" id=\"keyboardHelp\">\n      <div class=\"keyboard-help-text\">\n        ← / → = previous / next<br>\n        Space / Enter = next<br>\n        A = start / stop auto<br>\n        R = shuffle<br>\n        G = games<br>\n        ↑ / ↓ = timer up / down<br>\n        Esc = close menus\n      </div>\n      <div class=\"keyboard-help-icon\">!</div>\n    </div>\n  </main>\n\n  <div class=\"scrim\" id=\"scrim\"></div>\n\n  <aside class=\"settings-panel\" id=\"settingsPanel\" aria-label=\"Settings\">\n    <div class=\"settings-heading\">\n      <h2>Settings</h2>\n      <button class=\"close-button\" id=\"closeSettingsButton\" type=\"button\" aria-label=\"Close settings\">×</button>\n    </div>\n\n    <section class=\"setting-section selection-section\">\n      <div class=\"setting-actions setting-actions-top\">\n        <button id=\"selectAllButton\" type=\"button\">Select all</button>\n        <button id=\"resetButton\" type=\"button\">Reset</button>\n      </div>\n      <p class=\"message\" id=\"message\"></p>\n      <div class=\"category-word-groups\" id=\"cardOptionGrid\"></div>\n    </section>\n\n    <section class=\"setting-section\" id=\"textDisplaySection\">\n      <h3>Text to display</h3>\n      <div class=\"segmented\">\n        <label>\n          <input type=\"radio\" name=\"textDisplay\" value=\"word\" checked>\n          <span id=\"wordLabel\">Word</span>\n        </label>\n        <label>\n          <input type=\"radio\" name=\"textDisplay\" value=\"sentence\">\n          <span id=\"sentenceLabel\">Sentence</span>\n        </label>\n        <label>\n          <input type=\"radio\" name=\"textDisplay\" value=\"alternate\">\n          <span id=\"alternateLabel\">Alternate</span>\n        </label>\n      </div>\n    </section>\n\n    <section class=\"setting-section\">\n      <h3>Display mode</h3>\n      <div class=\"segmented\">\n        <label>\n          <input type=\"radio\" name=\"displayMode\" value=\"pictureText\" checked>\n          <span id=\"pictureTextLabel\">Picture + text</span>\n        </label>\n        <label>\n          <input type=\"radio\" name=\"displayMode\" value=\"picture\">\n          <span id=\"pictureOnlyLabel\">Picture only</span>\n        </label>\n        <label>\n          <input type=\"radio\" name=\"displayMode\" value=\"text\">\n          <span id=\"textOnlyLabel\">Text only</span>\n        </label>\n      </div>\n    </section>\n\n    <section class=\"setting-section\">\n      <h3>Size</h3>\n      <div class=\"balance-labels\" aria-hidden=\"true\">\n        <span id=\"balancePictureLabel\">Image</span>\n        <span id=\"balanceTextLabel\">Text</span>\n      </div>\n      <div class=\"balance-slider\">\n        <span>◀</span>\n        <input id=\"sizeBalanceRange\" type=\"range\" min=\"0\" max=\"100\" value=\"50\" step=\"5\"\n               aria-label=\"Image and text size balance\">\n        <span>▶</span>\n      </div>\n    </section>\n    <section class=\"setting-section\">\n      <h3>Missing Game answer size</h3>\n      <div class=\"missing-answer-size-row\">\n        <input id=\"missingAnswerSizeRange\" type=\"range\" min=\"8\" max=\"24\" value=\"10\" step=\"1\"\n               aria-label=\"Missing Game answer size\">\n        <output class=\"missing-answer-size-value\" id=\"missingAnswerSizeValue\" for=\"missingAnswerSizeRange\">10 px</output>\n      </div>\n    </section>\n  </aside>";
+
       const $ = (id) => document.getElementById(id);
       const cardsById = new Map(UNIT_CONFIG.cards.map((card) => [card.id, card]));
       const CATEGORY_IDS = Object.fromEntries(
@@ -112,6 +118,80 @@
         return state.deck[state.position] || null;
       }
 
+      function activeCategoryIds() {
+        return [...new Set(
+          selectedCards()
+            .map((card) => card.category)
+            .filter(Boolean)
+        )];
+      }
+
+      function builtInGameEnabled(gameId) {
+        return !UNIT_CONFIG.games || UNIT_CONFIG.games[gameId] !== false;
+      }
+
+      function makeGameMenuButton(label, attributes = {}) {
+        const button = document.createElement("button");
+        button.type = "button";
+        button.textContent = label;
+        Object.entries(attributes).forEach(([name, value]) => {
+          button.dataset[name] = value;
+        });
+        return button;
+      }
+
+      function buildGameMenu() {
+        const fragment = document.createDocumentFragment();
+
+        [
+          ["missing", "Missing game"],
+          ["keyword", "Keyword game"],
+          ["leftRight", "Left or Right"]
+        ].forEach(([id, label]) => {
+          if (builtInGameEnabled(id)) {
+            fragment.append(makeGameMenuButton(label, { game: id }));
+          }
+        });
+
+        const relevantExtras = LETS_TRY_DATA.getExtraGamesForCategories(activeCategoryIds());
+        relevantExtras.forEach((game) => {
+          const button = makeGameMenuButton(game.name + " ↗", { extraGame: game.id });
+          button.classList.add("extra-game-button");
+          fragment.append(button);
+        });
+
+        const allExtras = LETS_TRY_DATA.getAllExtraGames();
+        if (allExtras.length) {
+          const additionalButton = makeGameMenuButton("Additional games", { action: "additionalGames" });
+          additionalButton.classList.add("additional-games-button");
+          additionalButton.setAttribute("aria-expanded", "false");
+          fragment.append(additionalButton);
+
+          const additionalList = document.createElement("div");
+          additionalList.className = "additional-games-list";
+          additionalList.dataset.additionalGamesList = "";
+          additionalList.hidden = true;
+
+          allExtras.forEach((game) => {
+            const button = makeGameMenuButton(game.name + " ↗", { extraGame: game.id });
+            button.classList.add("extra-game-button");
+            additionalList.append(button);
+          });
+
+          fragment.append(additionalList);
+        }
+
+        fragment.append(makeGameMenuButton("Back to flashcards", { game: "flashcards" }));
+        elements.gameMenu.replaceChildren(fragment);
+      }
+
+      function openExtraGame(gameId) {
+        const game = LETS_TRY_DATA.getExtraGame(gameId);
+        if (!game) return;
+        closeGameMenu();
+        window.open(game.url, "_blank", "noopener,noreferrer");
+      }
+
 
       function preloadAllCardImages() {
         const sources = [...new Set(UNIT_CONFIG.cards.map((card) => card.visual && card.visual.src).filter(Boolean))];
@@ -166,6 +246,7 @@
         );
         state.countdown = state.autoSeconds;
 
+        buildGameMenu();
         buildCardOptions();
         rebuildDeck();
       }
@@ -300,6 +381,7 @@
           button.setAttribute("aria-pressed", String(selected));
         });
         syncCategoryOptions();
+        buildGameMenu();
       }
 
       function toggleCard(id) {
@@ -867,6 +949,7 @@
 
       function toggleGameMenu() {
         const willOpen = elements.gameMenu.hidden;
+        if (willOpen) buildGameMenu();
         elements.gameMenu.hidden = !willOpen;
         elements.gameButton.setAttribute("aria-expanded", String(willOpen));
       }
@@ -874,6 +957,10 @@
       function closeGameMenu() {
         elements.gameMenu.hidden = true;
         elements.gameButton.setAttribute("aria-expanded", "false");
+        const additionalList = elements.gameMenu.querySelector("[data-additional-games-list]");
+        const additionalButton = elements.gameMenu.querySelector('[data-action="additionalGames"]');
+        if (additionalList) additionalList.hidden = true;
+        if (additionalButton) additionalButton.setAttribute("aria-expanded", "false");
       }
 
       elements.menuButton.addEventListener("click", () => {
@@ -907,8 +994,26 @@
         toggleGameMenu();
       });
 
-      elements.gameMenu.querySelectorAll("[data-game]").forEach((button) => {
-        button.addEventListener("click", () => setGameMode(button.dataset.game));
+      elements.gameMenu.addEventListener("click", (event) => {
+        const button = event.target.closest("button");
+        if (!button || !elements.gameMenu.contains(button)) return;
+
+        if (button.dataset.game) {
+          setGameMode(button.dataset.game);
+          return;
+        }
+
+        if (button.dataset.extraGame) {
+          openExtraGame(button.dataset.extraGame);
+          return;
+        }
+
+        if (button.dataset.action === "additionalGames") {
+          const list = elements.gameMenu.querySelector("[data-additional-games-list]");
+          if (!list) return;
+          list.hidden = !list.hidden;
+          button.setAttribute("aria-expanded", String(!list.hidden));
+        }
       });
 
       elements.settingsButton.addEventListener("click", openSettings);
