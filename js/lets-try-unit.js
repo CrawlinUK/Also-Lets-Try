@@ -283,7 +283,10 @@
             svg.style.color = visual.colour || "#FFDE23";
 
             const use = document.createElementNS("http://www.w3.org/2000/svg", "use");
-            use.setAttribute("href", `${visual.digitBase}${digit}.svg#artwork`);
+            const digitUrl = new URL(`${digit}.svg`, visual.digitBase);
+            if (visual.digitVersion) digitUrl.searchParams.set("v", visual.digitVersion);
+            digitUrl.hash = "artwork";
+            use.setAttribute("href", digitUrl.href);
             svg.append(use);
             element.append(svg);
           });
