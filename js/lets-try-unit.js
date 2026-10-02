@@ -160,25 +160,10 @@
           fragment.append(button);
         });
 
-        const allExtras = LETS_TRY_DATA.getAllExtraGames();
-        if (allExtras.length) {
-          const additionalButton = makeGameMenuButton("Additional games", { action: "additionalGames" });
-          additionalButton.classList.add("additional-games-button");
-          additionalButton.setAttribute("aria-expanded", "false");
-          fragment.append(additionalButton);
-
-          const additionalList = document.createElement("div");
-          additionalList.className = "additional-games-list";
-          additionalList.dataset.additionalGamesList = "";
-          additionalList.hidden = true;
-
-          allExtras.forEach((game) => {
-            const button = makeGameMenuButton(game.name + " ↗", { extraGame: game.id });
-            button.classList.add("extra-game-button");
-            additionalList.append(button);
-          });
-
-          fragment.append(additionalList);
+        if (LETS_TRY_DATA.getAllExtraGames().length) {
+          const offTopicButton = makeGameMenuButton("Off topic games ↗", { action: "offTopicGames" });
+          offTopicButton.classList.add("off-topic-games-button");
+          fragment.append(offTopicButton);
         }
 
         fragment.append(makeGameMenuButton("Back to flashcards", { game: "flashcards" }));
@@ -957,10 +942,6 @@
       function closeGameMenu() {
         elements.gameMenu.hidden = true;
         elements.gameButton.setAttribute("aria-expanded", "false");
-        const additionalList = elements.gameMenu.querySelector("[data-additional-games-list]");
-        const additionalButton = elements.gameMenu.querySelector('[data-action="additionalGames"]');
-        if (additionalList) additionalList.hidden = true;
-        if (additionalButton) additionalButton.setAttribute("aria-expanded", "false");
       }
 
       elements.menuButton.addEventListener("click", () => {
@@ -1008,11 +989,9 @@
           return;
         }
 
-        if (button.dataset.action === "additionalGames") {
-          const list = elements.gameMenu.querySelector("[data-additional-games-list]");
-          if (!list) return;
-          list.hidden = !list.hidden;
-          button.setAttribute("aria-expanded", String(!list.hidden));
+        if (button.dataset.action === "offTopicGames") {
+          closeGameMenu();
+          window.open(LETS_TRY_DATA.getExtraGamesPageUrl(), "_blank", "noopener,noreferrer");
         }
       });
 
