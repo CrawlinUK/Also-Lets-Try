@@ -40,6 +40,7 @@
     sentenceLabel: "Word",
     alternateLabel: "Number",
     showTextDisplaySettings: false,
+    showPictureSentenceMode: false,
     displayModeLabels: {
       pictureText: "Number + word",
       picture: "Number only",
