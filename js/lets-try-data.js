@@ -37,7 +37,7 @@
       label: "World greetings",
       items: [
         item("finland", ["1-1"], { country: "Finland", greeting: "Terve" }),
-        item("china", ["1-1", "2-1"], { country: "China", greeting: "Nǐ hǎo" }),
+        item("china", ["1-1", "2-1"], { country: "China", greeting: "Nihao" }),
         item("germany", ["1-1"], { country: "Germany", greeting: "Guten Tag" }),
         item("japan", ["1-1", "2-1"], { country: "Japan", greeting: "Konnichiwa" }),
         item("kenya", ["1-1", "2-1"], { country: "Kenya", greeting: "Jambo" }),
