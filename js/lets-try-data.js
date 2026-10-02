@@ -117,7 +117,7 @@
     sports: {
       label: "Sports",
       expectedImageSheetCount: 12,
-      status: "five-cells-unidentified",
+      status: "mapped",
       items: [
         item("baseball", ["1-4"]),
         item("dodgeball", ["1-4"]),
@@ -125,9 +125,14 @@
         item("basketball", ["1-4"]),
         item("swimming", ["1-4"]),
         item("table-tennis", ["1-5"]),
-        item("volleyball", ["1-5"])
+        item("volleyball", ["1-5"]),
+        item("tennis"),
+        item("badminton"),
+        item("gymnastics"),
+        item("cricket"),
+        item("rugby")
       ],
-      note: "sports.png contains 12 pictures. Seven names are verified; the final five image labels still need identification before they can safely become vocabulary cards."
+      note: "sports.png contains 12 pictures, mapped left-to-right and top-to-bottom."
     },
 
     food: {
@@ -378,7 +383,7 @@
         grid: "4x3",
         physicalCells: 12,
         logicalCategories: ["sports"],
-        status: "partial-cell-map"
+        status: "mapped"
       },
 
       sportsOriginal: {
@@ -424,7 +429,12 @@
         basketball: "100% 0%",
         swimming: "0% 50%",
         "table-tennis": "33.333% 50%",
-        volleyball: "66.667% 50%"
+        volleyball: "66.667% 50%",
+        tennis: "100% 50%",
+        badminton: "0% 100%",
+        gymnastics: "33.333% 100%",
+        cricket: "66.667% 100%",
+        rugby: "100% 100%"
       },
 
       vegetables: {
