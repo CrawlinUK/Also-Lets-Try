@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Alphabet Board — Shuffle, Reset, Hide</title>
+<style>
+    :root{--bg:#0f1220;--bg2:#1a1f36;--fg:#eaf0f8;--muted:#9fb0c5;--glass:rgba(255,255,255,.06);--glassStroke:rgba(255,255,255,.18)}
+    *{box-sizing:border-box}
+    html,body{height:100%;margin:0}
+    body{display:grid;grid-template-rows:auto 1fr auto;gap:14px;background:radial-gradient(1100px 800px at 50% 35%,var(--bg2),var(--bg));color:var(--fg);font-family:'Comic Neue', ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial}
+
+    header{display:flex;justify-content:center;padding:10px 12px}
+    .controls{display:flex;gap:10px;flex-wrap:wrap}
+    button{padding:10px 16px;border-radius:999px;border:1px solid var(--glassStroke);background:var(--glass);color:var(--fg);font-weight:700;font-size:16px;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);cursor:pointer}
+    button:active{transform:translateY(1px)}
+
+    .board-wrap{display:grid;place-items:center;padding:12px}
+    .board{width:min(1200px,95vw);display:grid;gap:8px}
+    @media (min-width: 1100px){.board{grid-template-columns:repeat(7,1fr)}}
+    @media (max-width: 1099.98px){.board{grid-template-columns:repeat(6,1fr)}}
+    @media (max-width: 900px){.board{grid-template-columns:repeat(5,1fr)}}
+    @media (max-width: 700px){.board{grid-template-columns:repeat(4,1fr)}}
+
+    .tile{aspect-ratio:1/1;display:grid;place-items:center;border:1px solid var(--glassStroke);background:var(--glass);border-radius:18px;user-select:none;transition:transform .08s ease}
+    .tile:active{transform:scale(.98)}
+    .letter{font-size:clamp(48px,10vmin,110px);font-weight:700;line-height:1;}
+
+    .letter.hidden{visibility:hidden;opacity:0;}
+
+    footer{display:flex;flex-direction:column;align-items:center;color:var(--muted);padding:8px 0 14px}
+    .hint{font-size:.9rem;margin-top:4px;opacity:.9}
+    .sr{position:absolute;left:-9999px}
+  </style>
+</head>
+<body>
+  <header>
+    <div class="controls" role="group" aria-label="Alphabet controls">
+      <button id="toggleCase" type="button">a / A</button>
+      <button id="shuffle" type="button" aria-describedby="tip">Randomise Letters</button>
+      <button id="randomHide" type="button">Random Hide</button>
+      <button id="reset" type="button">Reset</button>
+    </div>
+  </header>
+
+  <main class="board-wrap">
+    <div id="board" class="board" aria-live="polite" aria-label="Alphabet board"><button class="tile" type="button" aria-label="Letter A"><span class="letter">A</span></button><button class="tile" type="button" aria-label="Letter B"><span class="letter">B</span></button><button class="tile" type="button" aria-label="Letter C"><span class="letter">C</span></button><button class="tile" type="button" aria-label="Letter D"><span class="letter">D</span></button><button class="tile" type="button" aria-label="Letter E"><span class="letter">E</span></button><button class="tile" type="button" aria-label="Letter F"><span class="letter">F</span></button><button class="tile" type="button" aria-label="Letter G"><span class="letter">G</span></button><button class="tile" type="button" aria-label="Letter H"><span class="letter">H</span></button><button class="tile" type="button" aria-label="Letter I"><span class="letter">I</span></button><button class="tile" type="button" aria-label="Letter J"><span class="letter">J</span></button><button class="tile" type="button" aria-label="Letter K"><span class="letter">K</span></button><button class="tile" type="button" aria-label="Letter L"><span class="letter">L</span></button><button class="tile" type="button" aria-label="Letter M"><span class="letter">M</span></button><button class="tile" type="button" aria-label="Letter N"><span class="letter">N</span></button><button class="tile" type="button" aria-label="Letter O"><span class="letter">O</span></button><button class="tile" type="button" aria-label="Letter P"><span class="letter">P</span></button><button class="tile" type="button" aria-label="Letter Q"><span class="letter">Q</span></button><button class="tile" type="button" aria-label="Letter R"><span class="letter">R</span></button><button class="tile" type="button" aria-label="Letter S"><span class="letter">S</span></button><button class="tile" type="button" aria-label="Letter T"><span class="letter">T</span></button><button class="tile" type="button" aria-label="Letter U"><span class="letter">U</span></button><button class="tile" type="button" aria-label="Letter V"><span class="letter">V</span></button><button class="tile" type="button" aria-label="Letter W"><span class="letter">W</span></button><button class="tile" type="button" aria-label="Letter X"><span class="letter">X</span></button><button class="tile" type="button" aria-label="Letter Y"><span class="letter">Y</span></button><button class="tile" type="button" aria-label="Letter Z"><span class="letter">Z</span></button></div>
+    <p id="tip" class="sr">Click a letter to hide or show it. Random Hide will hide one random letter. Reset will restore A–Z and make all letters visible.</p>
+  </main>
+
+  <footer>
+    <div>Click tiles to hide/show letters. Use Random Hide for a surprise, Reset to bring them back.</div>
+    <div id="hints" class="hint" aria-live="polite">Hidden: none</div>
+  </footer>
+
+<script>
+(() => {
+  const A2Z = [...'ABCDEFGHIJKLMNOPQRSTUVWXYZ'];
+  const hintWords = {
+    A: 'bat',
+    B: 'able',
+    C: 'ace',
+    D: 'odd',
+    E: 'bed',
+    F: 'off',
+    G: 'ago',
+    H: 'aha',
+    I: 'six',
+    J: 'ajar',
+    K: 'akin',
+    L: 'ply',
+    M: 'imp',
+    N: 'one',
+    O: 'top',
+    P: 'ape',
+    Q: 'aqua',
+    R: 'are',
+    S: 'ask',
+    T: 'ate',
+    U: 'cup',
+    V: 'ever',
+    W: 'owl',
+    X: 'axe',
+    Y: 'aye',
+    Z: 'czar'
+  };
+
+  const board = document.getElementById('board');
+  const shuffleBtn = document.getElementById('shuffle');
+  const resetBtn = document.getElementById('reset');
+  const randomHideBtn = document.getElementById('randomHide');
+  const hintsEl = document.getElementById('hints');
+  const toggleCaseBtn = document.getElementById('toggleCase');
+  let isLower = false;
+
+  let order = A2Z.slice();
+  const hidden = new Set();
+
+  render();
+
+  shuffleBtn.addEventListener('click', () => {
+    order = shuffle(order.slice());
+    render(true);
+  });
+
+  toggleCaseBtn.addEventListener('click', () => {
+    isLower = !isLower;
+    applyCase();
+  });
+
+  resetBtn.addEventListener('click', () => {
+    order = A2Z.slice();
+    hidden.clear();
+    render();
+  });
+
+  randomHideBtn.addEventListener('click', () => {
+    const visibleIndices = [];
+    order.forEach((_, idx) => {
+      if (!hidden.has(idx)) visibleIndices.push(idx);
+    });
+    if (!visibleIndices.length) return;
+
+    const randIdx = visibleIndices[Math.floor(Math.random() * visibleIndices.length)];
+    hidden.add(randIdx);
+
+    const tile = board.children[randIdx];
+    if (tile) {
+      const span = tile.querySelector('.letter');
+      if (span) span.classList.add('hidden');
+    }
+
+    updateHints();
+  });
+
+  function render(preserveHidden = false){
+    board.replaceChildren();
+    order.forEach((ch, idx) => {
+      const tile = document.createElement('button');
+      tile.className = 'tile';
+      tile.type = 'button';
+      tile.setAttribute('aria-label', `Letter ${ch}`);
+
+      const span = document.createElement('span');
+      span.className = 'letter';
+      span.textContent = ch;
+
+      if (hidden.has(idx)) {
+        span.classList.add('hidden');
+      }
+
+      tile.appendChild(span);
+
+      tile.addEventListener('click', () => {
+        const isHidden = hidden.has(idx);
+        if (isHidden) {
+          hidden.delete(idx);
+          span.classList.remove('hidden');
+        } else {
+          hidden.add(idx);
+          span.classList.add('hidden');
+        }
+        updateHints();
+      });
+
+      board.appendChild(tile);
+    });
+
+    updateHints();
+  }
+
+  function applyCase(){
+    const tiles = board.children;
+    for (let i = 0; i < tiles.length; i++) {
+      const span = tiles[i].querySelector('.letter');
+      if (!span) continue;
+      span.textContent = isLower ? order[i].toLowerCase() : order[i].toUpperCase();
+    }
+  }
+
+  function updateHints(){
+    if (!hintsEl) return;
+    if (!hidden.size) {
+      hintsEl.textContent = 'Hidden: none';
+      return;
+    }
+    const indices = Array.from(hidden).sort((a, b) => a - b);
+    const parts = indices.map(idx => {
+      const letter = order[idx];
+      const word = hintWords[letter] || '?';
+      return `${idx + 1}: ${word}`;
+    });
+    hintsEl.textContent = 'Hidden (position: word): ' + parts.join('   ');
+  }
+
+  function shuffle(arr){
+    for (let i = arr.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+    return arr;
+  }
+})();
+</script>
+</body>
+</html>
