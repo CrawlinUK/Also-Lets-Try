@@ -4768,3 +4768,24 @@ html.shared-unit-template .secondary-setting-section {
     right: 6px;
   }
 }
+
+
+/* ============================================================
+   SHARED SETTINGS — FOUR DISPLAY MODES
+   These replace the old separate "Text to display" controls.
+   ============================================================ */
+html.shared-unit-template .display-mode-options {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+html.shared-unit-template .display-mode-options span {
+  min-height: 48px;
+}
+
+html.shared-unit-template .display-mode-options label[hidden] {
+  display: none;
+}
+
+html.shared-unit-template[data-unit="3"] .display-mode-options {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
