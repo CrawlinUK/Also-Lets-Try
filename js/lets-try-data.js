@@ -508,7 +508,7 @@
       colourShapeRoller: Object.freeze({
         name: "Colour & Shape Roller",
         path: "games/colour-shape-roller.html",
-        categories: Object.freeze(["colours", "shapes"]),
+        categories: Object.freeze(["shapes"]),
         description: "Roll a random colour-and-shape combination."
       }),
       numberColourShapeRoller: Object.freeze({
@@ -523,7 +523,7 @@
     byCategory: Object.freeze({
       alphabet: Object.freeze(["alphabetBoard"]),
       numbers: Object.freeze(["numberRoller"]),
-      colours: Object.freeze(["colourShapeRoller"]),
+      colours: Object.freeze([]),
       shapes: Object.freeze(["colourShapeRoller"])
     })
   });
