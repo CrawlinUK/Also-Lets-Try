@@ -476,6 +476,58 @@
     }
   };
 
+  const EXTRA_GAMES = Object.freeze({
+    registry: Object.freeze({
+      alphabetBoard: Object.freeze({
+        name: "Alphabet Board",
+        path: "games/alphabet-board.html"
+      }),
+      numberRoller: Object.freeze({
+        name: "Number Roller",
+        path: "games/number-roller.html"
+      }),
+      colourShapeRoller: Object.freeze({
+        name: "Colour & Shape Roller",
+        path: "games/colour-shape-roller.html"
+      }),
+      numberColourShapeRoller: Object.freeze({
+        name: "Number, Colour & Shape Roller",
+        path: "games/number-colour-shape-roller.html",
+        additionalOnly: true
+      })
+    }),
+
+    byCategory: Object.freeze({
+      alphabet: Object.freeze(["alphabetBoard"]),
+      numbers: Object.freeze(["numberRoller"]),
+      colours: Object.freeze(["colourShapeRoller"]),
+      shapes: Object.freeze(["colourShapeRoller"])
+    })
+  });
+
+  function getExtraGame(id) {
+    const game = EXTRA_GAMES.registry[id];
+    return game
+      ? { id, ...game, url: assetUrl(game.path) }
+      : null;
+  }
+
+  function getExtraGamesForCategories(categoryIds = []) {
+    const ids = [];
+    categoryIds.forEach((categoryId) => {
+      (EXTRA_GAMES.byCategory[categoryId] || []).forEach((gameId) => {
+        if (!ids.includes(gameId)) ids.push(gameId);
+      });
+    });
+    return ids.map(getExtraGame).filter(Boolean);
+  }
+
+  function getAllExtraGames() {
+    return Object.keys(EXTRA_GAMES.registry)
+      .map(getExtraGame)
+      .filter(Boolean);
+  }
+
   const BOOKS = {
     lt1: {
       label: "Let’s Try! 1",
@@ -565,17 +617,21 @@
   }
 
   global.LETS_TRY_DATA = Object.freeze({
-    version: 3,
+    version: 4,
     assetUrl,
     categories: CATEGORIES,
     assets: ASSETS,
     books: BOOKS,
+    extraGames: EXTRA_GAMES,
     getCategory,
     getItem,
     getUnit,
     getUnitKey,
     getUnitCategoryIds,
     getUnitDefaults,
-    getUnitAvailableWords
+    getUnitAvailableWords,
+    getExtraGame,
+    getExtraGamesForCategories,
+    getAllExtraGames
   });
 })(window);
