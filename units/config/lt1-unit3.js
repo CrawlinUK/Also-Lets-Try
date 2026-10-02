@@ -33,6 +33,7 @@
       type: "number-svg",
       text: String(value),
       digitBase,
+      digitVersion: window.LETS_TRY_NUMBER_SVG_VERSION || "",
       colour: numberColour(value)
     }
   }));
