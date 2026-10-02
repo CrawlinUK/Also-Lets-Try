@@ -4823,3 +4823,238 @@ html.shared-unit-template[data-unit="3"] .game-picture.number-svg-visual {
 html.shared-unit-template[data-unit="3"] .settings-preview-picture.number-svg-visual {
   padding: 2%;
 }
+
+
+/* ============================================================
+   SHARED GUESS GAME
+   Teacher-led reveal game with category/mode setup and word rail.
+   ============================================================ */
+html.shared-unit-template .guess-setup[hidden],
+html.shared-unit-template .guess-word-list[hidden] {
+  display: none !important;
+}
+
+html.shared-unit-template .guess-setup {
+  position: fixed;
+  z-index: 35;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: 20px;
+  pointer-events: none;
+}
+
+html.shared-unit-template .guess-setup-card {
+  position: relative;
+  width: min(560px, calc(100vw - 36px));
+  padding: 22px;
+  pointer-events: auto;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  box-shadow: 0 22px 70px rgba(18, 30, 24, .28);
+}
+
+html.shared-unit-template .guess-setup-card h2 {
+  margin: 0 0 16px;
+  font-size: 31px;
+  text-align: center;
+}
+
+html.shared-unit-template .guess-setup-close {
+  position: absolute;
+  top: 9px;
+  right: 10px;
+  width: 34px;
+  height: 34px;
+  border: 0;
+  border-radius: 50%;
+  background: var(--soft);
+  font-size: 23px;
+  font-weight: 900;
+}
+
+html.shared-unit-template .guess-category-section p,
+html.shared-unit-template .guess-mode-section p {
+  margin: 10px 0 7px;
+  font-size: 18px;
+  font-weight: 900;
+  text-align: center;
+}
+
+html.shared-unit-template .guess-category-options {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 7px;
+}
+
+html.shared-unit-template .guess-category-options button,
+html.shared-unit-template .guess-mode-options button {
+  min-height: 46px;
+  padding: 7px 10px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: #ffffff;
+  font: inherit;
+  font-weight: 900;
+}
+
+html.shared-unit-template .guess-category-options button.selected {
+  color: #145e42;
+  background: #eaf8f1;
+  border-color: #28a36a;
+}
+
+html.shared-unit-template .guess-mode-options {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+html.shared-unit-template .guess-mode-options button:disabled {
+  opacity: .35;
+}
+
+html.shared-unit-template .guess-mode-options small {
+  display: block;
+  margin-top: 3px;
+  color: var(--muted);
+  font-family: Arial, sans-serif;
+  font-size: 10px;
+  font-weight: 600;
+  line-height: 1.15;
+}
+
+html.shared-unit-template .guess-word-list {
+  position: fixed;
+  z-index: 18;
+  left: 6px;
+  top: 78px;
+  bottom: 82px;
+  width: 82px;
+  display: grid;
+  grid-template-rows: minmax(0, 1fr) auto;
+  gap: 5px;
+  padding: 4px;
+  overflow: hidden;
+  pointer-events: auto;
+}
+
+html.shared-unit-template .guess-word-buttons {
+  min-height: 0;
+  overflow-y: auto;
+  scrollbar-width: thin;
+}
+
+html.shared-unit-template .guess-word-button {
+  width: 100%;
+  min-height: 22px;
+  margin: 0 0 2px;
+  padding: 2px 3px;
+  overflow: hidden;
+  color: rgba(23, 25, 29, .68);
+  background: rgba(255,255,255,.72);
+  border: 1px solid rgba(160,170,174,.42);
+  border-radius: 5px;
+  font-family: Arial, sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1.05;
+  text-align: left;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+html.shared-unit-template .guess-word-button.current {
+  color: var(--ink);
+  background: #fff8cf;
+  border-color: var(--unit-colour);
+  box-shadow: inset 3px 0 0 var(--unit-colour);
+}
+
+html.shared-unit-template .guess-random-button {
+  width: 100%;
+  min-height: 30px;
+  border: 1px solid var(--line);
+  border-radius: 7px;
+  background: #ffffff;
+  font-size: 20px;
+  font-weight: 900;
+}
+
+html.shared-unit-template.guess-focus .shuffle {
+  display: none !important;
+}
+
+html.shared-unit-template.guess-focus .control-bar:not(:has(#floatingTimer:not([hidden]))) {
+  grid-template-columns: minmax(130px, .75fr) minmax(170px, 1fr) 68px;
+}
+
+html.shared-unit-template .guess-stage {
+  width: 100%;
+  height: 100%;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  place-items: center;
+  gap: 4px;
+  padding: 4px 8px;
+}
+
+html.shared-unit-template .guess-stage.hide-word {
+  grid-template-rows: minmax(0, 1fr);
+}
+
+html.shared-unit-template .guess-main-word {
+  max-width: 100%;
+  overflow: hidden;
+  font-size: clamp(42px, 6vw, 88px);
+  font-weight: 900;
+  line-height: 1;
+  text-align: center;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+html.shared-unit-template .guess-reveal-area {
+  width: min(92%, 980px);
+  height: 100%;
+  min-height: 0;
+  display: grid;
+  place-items: center;
+  padding: 8px;
+  background: transparent;
+  border: 0;
+  border-radius: 18px;
+}
+
+html.shared-unit-template .guess-reveal-area:focus-visible {
+  outline: 3px solid var(--unit-colour);
+  outline-offset: -3px;
+}
+
+html.shared-unit-template .guess-tap-prompt {
+  color: rgba(23,25,29,.25);
+  font-size: clamp(27px, 3vw, 44px);
+  font-weight: 900;
+}
+
+html.shared-unit-template .guess-picture {
+  width: min(64vh, 60vw, 720px);
+  height: min(64vh, 60vw, 720px);
+  max-width: 96%;
+  max-height: 96%;
+  background-repeat: no-repeat;
+  background-color: #ffffff;
+}
+
+html.shared-unit-template .guess-picture.number-svg-visual {
+  padding: 2%;
+}
+
+:is(
+  html[data-unit].is-ipad:fullscreen,
+  html[data-unit].is-ipad:-webkit-full-screen,
+  html[data-unit].is-ipad.is-fullscreen
+).game-focus .guess-word-list {
+  top: 126px;
+}
