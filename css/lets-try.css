@@ -4620,3 +4620,151 @@ html.shared-unit-template .game-menu .extra-game-button {
 html.shared-unit-template .game-menu .off-topic-games-button {
   border-top: 1px solid var(--line);
 }
+
+
+/* ============================================================
+   SHARED SETTINGS — COMPACT ORDERED PANEL
+   Display mode → live preview → selection → secondary controls.
+   ============================================================ */
+html.shared-unit-template .settings-panel {
+  width: min(590px, 50vw);
+  padding: 8px 10px 10px;
+}
+
+html.shared-unit-template .settings-heading {
+  min-height: 32px;
+}
+
+html.shared-unit-template .settings-heading h2 {
+  font-size: 22px;
+}
+
+html.shared-unit-template .display-mode-section {
+  margin-top: 4px;
+}
+
+html.shared-unit-template .display-mode-options {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+html.shared-unit-template .display-mode-options span {
+  min-height: 42px;
+  padding: 3px 6px;
+}
+
+html.shared-unit-template .settings-preview {
+  width: 100%;
+  min-height: 150px;
+  max-height: 230px;
+  margin: 5px 0 4px;
+  padding: 4px;
+  display: grid;
+  grid-template-rows: minmax(90px, 1fr) auto;
+  align-items: center;
+  justify-items: center;
+  overflow: hidden;
+  background: #ffffff;
+  border-radius: 8px;
+}
+
+html.shared-unit-template .settings-preview-picture {
+  width: min(190px, 36vw);
+  height: min(155px, 22vh);
+  max-width: 100%;
+  max-height: 100%;
+  background-repeat: no-repeat;
+  background-color: #ffffff;
+}
+
+html.shared-unit-template .settings-preview-picture.text-visual {
+  font-size: clamp(58px, 9vw, 110px);
+}
+
+html.shared-unit-template .settings-preview-text {
+  max-width: 100%;
+  padding: 0 4px 2px;
+  overflow: hidden;
+  font-size: clamp(25px, 3vw, 38px);
+  font-weight: 900;
+  line-height: 1.05;
+  text-align: center;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+html.shared-unit-template .settings-preview.picture-only {
+  grid-template-rows: 1fr;
+}
+
+html.shared-unit-template .settings-preview.picture-only .settings-preview-picture {
+  width: min(220px, 38vw);
+  height: min(190px, 26vh);
+}
+
+html.shared-unit-template .settings-preview.text-only {
+  min-height: 105px;
+  grid-template-rows: 1fr;
+}
+
+html.shared-unit-template .settings-preview.text-only .settings-preview-text {
+  font-size: clamp(32px, 4vw, 48px);
+}
+
+html.shared-unit-template .selection-section {
+  margin-top: 2px;
+}
+
+html.shared-unit-template .setting-actions-top {
+  margin-bottom: 5px;
+}
+
+html.shared-unit-template .setting-actions-top button {
+  min-height: 32px;
+  padding: 2px 8px;
+}
+
+html.shared-unit-template .category-word-groups {
+  gap: 6px;
+}
+
+html.shared-unit-template .category-word-group {
+  gap: 2px;
+}
+
+html.shared-unit-template .category-option {
+  min-height: 29px;
+  padding: 2px 7px;
+}
+
+html.shared-unit-template .category-card-grid {
+  gap: 2px 4px;
+}
+
+html.shared-unit-template .card-option {
+  min-height: 27px;
+  padding: 1px 5px;
+}
+
+html.shared-unit-template .secondary-setting-section {
+  margin-top: 12px;
+  padding-top: 8px;
+  border-top: 1px solid var(--line);
+}
+
+@media (max-width: 900px) {
+  html.shared-unit-template .settings-panel {
+    width: min(590px, 62vw);
+  }
+
+  html.shared-unit-template .settings-preview {
+    min-height: 135px;
+    max-height: 205px;
+  }
+}
+
+@media (max-width: 650px) {
+  html.shared-unit-template .settings-panel {
+    width: calc(100vw - 12px);
+    right: 6px;
+  }
+}
