@@ -4606,3 +4606,40 @@ html.shared-unit-template.is-fullscreen:not(.game-focus) .picture-frame {
 html.shared-unit-template.is-fullscreen:not(.game-focus) .flashcard.picture-only .picture-frame {
   width: calc(min(70vh, 66vw, 780px) * var(--picture-scale));
 }
+
+
+/* ============================================================
+   SHARED GAME MENU — CATEGORY-DRIVEN EXTRAS
+   Relevant extras are derived from selected categories.
+   ============================================================ */
+html.shared-unit-template .game-menu .extra-game-button {
+  position: relative;
+  padding-right: 34px;
+}
+
+html.shared-unit-template .game-menu .additional-games-button {
+  border-top: 1px solid var(--line);
+}
+
+html.shared-unit-template .additional-games-list {
+  display: grid;
+  gap: 2px;
+  padding: 4px 6px 7px 14px;
+  background: #f7faf8;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+}
+
+html.shared-unit-template .additional-games-list[hidden] {
+  display: none;
+}
+
+html.shared-unit-template .additional-games-list button {
+  min-height: 38px;
+  padding: 5px 9px;
+  text-align: left;
+  background: #ffffff;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  font-size: .92em;
+}
