@@ -650,6 +650,78 @@
     teacherAnswer: card.word
   }));
 
+  const existingIds = new Set(UNIT_CONFIG.cards.map((card) => card.id));
+
+  function humanLabel(id) {
+    return id
+      .replace("kiwi-fruit", "kiwi fruit")
+      .replace("green-pepper", "green pepper")
+      .replace(/-/g, " ");
+  }
+
+  const sentenceOverrides = {
+    apple: "I like apples.",
+    strawberry: "I like strawberries.",
+    cherry: "I like cherries.",
+    tomato: "I like tomatoes.",
+    potato: "I like potatoes.",
+    sausage: "I like sausages.",
+    "green-pepper": "I like green peppers."
+  };
+
+  function addSpriteCard({ id, category, sheet, size, position }) {
+    if (!position || existingIds.has(id)) return;
+    const word = humanLabel(id);
+    UNIT_CONFIG.cards.push({
+      id,
+      category,
+      word,
+      sentence: sentenceOverrides[id] || `I like ${word}.`,
+      alternate: word,
+      teacherAnswer: word,
+      textbook: false,
+      visual: {
+        src: LETS_TRY_DATA.assetUrl(sheet),
+        size,
+        position,
+        flip: false,
+        cropTop: 0
+      }
+    });
+    existingIds.add(id);
+  }
+
+  const sharedSheets = LETS_TRY_DATA.assets.sheets;
+  const sharedCells = LETS_TRY_DATA.assets.knownCells;
+
+  LETS_TRY_DATA.getCategory("vegetables").items.forEach((entry) => {
+    addSpriteCard({
+      id: entry.id,
+      category: "vegetables",
+      sheet: sharedSheets.vegetables.file,
+      size: "300% 300%",
+      position: sharedCells.vegetables[entry.id]
+    });
+  });
+
+  LETS_TRY_DATA.getCategory("fruit").items.forEach((entry) => {
+    addSpriteCard({
+      id: entry.id,
+      category: "fruit",
+      sheet: sharedSheets.fruit.file,
+      size: "300% 400%",
+      position: sharedCells.fruit[entry.id]
+    });
+  });
+
+  addSpriteCard({
+    id: "sausage",
+    category: "food",
+    sheet: sharedSheets.fruit.file,
+    size: "300% 400%",
+    position: sharedCells.fruit.sausage
+  });
+
   window.LETS_TRY_UNIT_CATEGORY_IDS = ["colours","sports","food","vegetables","fruit"];
   window.LETS_TRY_UNIT_CONFIG = UNIT_CONFIG;
 })();
