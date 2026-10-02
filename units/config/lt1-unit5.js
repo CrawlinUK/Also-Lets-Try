@@ -16,6 +16,11 @@ const UNIT_BOOK_ID = "lt1";
       swimming: ["swimming", "I like swimming."],
       "table-tennis": ["table tennis", "I like table tennis."],
       volleyball: ["volleyball", "I like volleyball."],
+      tennis: ["tennis", "I like tennis."],
+      badminton: ["badminton", "I like badminton."],
+      gymnastics: ["gymnastics", "I like gymnastics."],
+      cricket: ["cricket", "I like cricket."],
+      rugby: ["rugby", "I like rugby."],
 
       "ice-cream": ["ice cream", "I like ice cream."],
       pudding: ["pudding", "I like pudding."],
