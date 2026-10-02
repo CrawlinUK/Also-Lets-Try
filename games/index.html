@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Also - English Web Games for ESL</title>
+  <link rel="preload" href="../font/HandwritingWeCan-Medium.otf" as="font" type="font/otf" crossorigin>
+  <style>
+    @font-face {
+      font-family: "HandwritingWeCan";
+      src: url("../font/HandwritingWeCan-Medium.otf") format("opentype");
+      font-display: swap;
+    }
+
+    :root {
+      --ink: #17191d;
+      --muted: #657078;
+      --line: #dce4e8;
+      --page: #f5f8f6;
+      --surface: #ffffff;
+      --accent: #00ada9;
+      --shadow: 0 10px 28px rgba(31, 47, 40, .11);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100dvh;
+      background: var(--page);
+      color: var(--ink);
+      font-family: "HandwritingWeCan", "Century Gothic", "Tw Cen MT", sans-serif;
+    }
+
+    header {
+      display: flex;
+      align-items: center;
+      min-height: 72px;
+      padding: 10px 24px;
+      background: var(--surface);
+      border-bottom: 3px solid var(--accent);
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(30px, 4vw, 52px);
+      line-height: 1;
+    }
+
+    main {
+      width: min(1100px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 28px 0 40px;
+    }
+
+    .intro {
+      margin: 0 0 20px;
+      color: var(--muted);
+      font-family: system-ui, sans-serif;
+      font-size: 16px;
+    }
+
+    .games {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 14px;
+    }
+
+    .game-card {
+      display: grid;
+      gap: 9px;
+      min-height: 150px;
+      padding: 18px;
+      color: inherit;
+      text-decoration: none;
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      box-shadow: var(--shadow);
+    }
+
+    .game-card:hover,
+    .game-card:focus-visible {
+      border-color: var(--accent);
+      outline: none;
+      transform: translateY(-1px);
+    }
+
+    .game-card strong {
+      font-size: 26px;
+      line-height: 1.05;
+    }
+
+    .game-card p {
+      margin: 0;
+      color: var(--muted);
+      font-family: system-ui, sans-serif;
+      font-size: 15px;
+      line-height: 1.35;
+    }
+
+    .tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+      align-self: end;
+    }
+
+    .tag {
+      padding: 3px 7px;
+      background: #eef5f4;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      color: #42545b;
+      font-family: system-ui, sans-serif;
+      font-size: 12px;
+      text-transform: capitalize;
+    }
+  </style>
+  <script src="../js/lets-try-data.js?v=20261002-0942" defer></script>
+  <script defer>
+    window.addEventListener("DOMContentLoaded", () => {
+      const list = document.getElementById("games");
+      const games = window.LETS_TRY_DATA ? LETS_TRY_DATA.getAllExtraGames() : [];
+
+      games.forEach((game) => {
+        const card = document.createElement("a");
+        card.className = "game-card";
+        card.href = game.url;
+        card.target = "_blank";
+        card.rel = "noopener noreferrer";
+
+        const title = document.createElement("strong");
+        title.textContent = game.name;
+
+        const description = document.createElement("p");
+        description.textContent = game.description || "";
+
+        const tags = document.createElement("div");
+        tags.className = "tags";
+        (game.categories || []).forEach((category) => {
+          const tag = document.createElement("span");
+          tag.className = "tag";
+          tag.textContent = category;
+          tags.append(tag);
+        });
+
+        card.append(title, description, tags);
+        list.append(card);
+      });
+    });
+  </script>
+</head>
+<body>
+  <header>
+    <h1>Also - English Web Games for ESL</h1>
+  </header>
+  <main>
+    <p class="intro">Extra classroom games for English practice. Each game opens in a new tab.</p>
+    <section class="games" id="games" aria-label="English web games"></section>
+  </main>
+</body>
+</html>
