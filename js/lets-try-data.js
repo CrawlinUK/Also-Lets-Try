@@ -480,19 +480,27 @@
     registry: Object.freeze({
       alphabetBoard: Object.freeze({
         name: "Alphabet Board",
-        path: "games/alphabet-board.html"
+        path: "games/alphabet-board.html",
+        categories: Object.freeze(["alphabet"]),
+        description: "Shuffle, hide and reveal letters for alphabet practice."
       }),
       numberRoller: Object.freeze({
         name: "Number Roller",
-        path: "games/number-roller.html"
+        path: "games/number-roller.html",
+        categories: Object.freeze(["numbers"]),
+        description: "Roll through numbers, switch to dot groups, or choose a random number."
       }),
       colourShapeRoller: Object.freeze({
         name: "Colour & Shape Roller",
-        path: "games/colour-shape-roller.html"
+        path: "games/colour-shape-roller.html",
+        categories: Object.freeze(["colours", "shapes"]),
+        description: "Roll a random colour-and-shape combination."
       }),
       numberColourShapeRoller: Object.freeze({
         name: "Number, Colour & Shape Roller",
         path: "games/number-colour-shape-roller.html",
+        categories: Object.freeze(["numbers", "colours", "shapes"]),
+        description: "Roll one colour-and-shape combination with one to five matching shapes.",
         additionalOnly: true
       })
     }),
@@ -526,6 +534,10 @@
     return Object.keys(EXTRA_GAMES.registry)
       .map(getExtraGame)
       .filter(Boolean);
+  }
+
+  function getExtraGamesPageUrl() {
+    return assetUrl("games/index.html");
   }
 
   const BOOKS = {
@@ -632,6 +644,7 @@
     getUnitAvailableWords,
     getExtraGame,
     getExtraGamesForCategories,
-    getAllExtraGames
+    getAllExtraGames,
+    getExtraGamesPageUrl
   });
 })(window);
