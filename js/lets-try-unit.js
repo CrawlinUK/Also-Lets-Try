@@ -241,15 +241,45 @@
       function applyVisual(element, card) {
         const visual = card && card.visual ? card.visual : {};
         const textVisual = visual.type === "text";
+        const numberVisual = visual.type === "number-svg";
         const aspectRatio = visual.aspectRatio || UNIT_CONFIG.pictureAspectRatio || "1 / 1";
         const ratioParts = String(aspectRatio).split("/").map((part) => Number(part.trim()));
         const ratioValue = ratioParts.length === 2 && ratioParts[0] > 0 && ratioParts[1] > 0
           ? ratioParts[0] / ratioParts[1]
           : Number(aspectRatio) || 1;
 
+        element.replaceChildren();
         element.style.aspectRatio = aspectRatio;
         element.style.setProperty("--visual-ratio", String(ratioValue));
         element.classList.toggle("text-visual", textVisual);
+        element.classList.toggle("number-svg-visual", numberVisual);
+
+        if (numberVisual) {
+          const digits = Array.from(String(visual.text || card?.id || ""));
+          element.style.setProperty("--number-digit-count", String(Math.max(1, digits.length)));
+          element.style.backgroundImage = "none";
+          element.style.backgroundSize = "";
+          element.style.backgroundPosition = "";
+          element.style.transform = "none";
+          element.style.clipPath = "none";
+
+          digits.forEach((digit) => {
+            if (!/\d/.test(digit)) return;
+            const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+            svg.classList.add("number-svg-digit");
+            svg.setAttribute("viewBox", "210 150 380 500");
+            svg.setAttribute("preserveAspectRatio", "xMidYMid meet");
+            svg.setAttribute("aria-hidden", "true");
+            svg.style.color = visual.colour || "#FFDE23";
+
+            const use = document.createElementNS("http://www.w3.org/2000/svg", "use");
+            use.setAttribute("href", `${visual.digitBase}${digit}.svg#artwork`);
+            svg.append(use);
+            element.append(svg);
+          });
+          return;
+        }
+
         element.textContent = textVisual ? String(visual.text ?? card?.alternate ?? card?.word ?? "") : "";
 
         if (textVisual) {
