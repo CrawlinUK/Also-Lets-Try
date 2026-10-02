@@ -8,7 +8,8 @@
   const uiAsset = (name) => new URL("../images/ui/" + name, currentScriptUrl).href;
   const IMAGE_ICONS = {
     home: uiAsset("AlsoHomeSweet.svg"),
-    back: uiAsset("AlsoBackArrow.svg")
+    back: uiAsset("AlsoBackArrow.svg"),
+    settings: uiAsset("AlsoCogSettings.svg")
   };
   let queued = false;
   let mutating = false;
@@ -19,7 +20,6 @@
     play: '<svg viewBox="0 0 24 24" aria-hidden="true"><path class="fill" d="m8 5 11 7-11 7z"/></svg>',
     stop: '<svg viewBox="0 0 24 24" aria-hidden="true"><rect class="fill" x="7" y="7" width="10" height="10" rx="1"/></svg>',
     game: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7.5 8.5h9c2.2 0 3.9 1.6 4.4 4l.8 4.1c.4 2.2-2.1 3.6-3.6 2l-2.3-2.5H8.2l-2.3 2.5c-1.5 1.6-4 .2-3.6-2l.8-4.1c.5-2.4 2.2-4 4.4-4Z"/><path d="M7 11v4M5 13h4"/><circle class="fill" cx="16.5" cy="12" r="1"/><circle class="fill" cx="18.5" cy="14" r="1"/></svg>',
-    settings: '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M12 2.8v2.1M12 19.1v2.1M2.8 12h2.1M19.1 12h2.1M5.5 5.5 7 7M17 17l1.5 1.5M18.5 5.5 17 7M7 17l-1.5 1.5"/><circle cx="12" cy="12" r="7.2"/></svg>',
     shuffle: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h2.5c5.5 0 5.5 10 11 10H20"/><path d="m17 14 3 3-3 3"/><path d="M4 17h2.5c2 0 3.2-1.3 4.3-3"/><path d="M14.5 8c.8-.6 1.7-1 3-1H20"/><path d="m17 4 3 3-3 3"/></svg>',
     fullscreen: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 4H4v4M16 4h4v4M4 16v4h4M20 16v4h-4"/></svg>',
     exitFullscreen: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9h5V4M20 9h-5V4M4 15h5v5M20 15h-5v5"/></svg>'
