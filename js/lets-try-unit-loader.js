@@ -19,7 +19,7 @@
     return new Promise((resolve, reject) => {
       const script = document.createElement("script");
       const url = new URL(relativePath, projectRoot);
-      url.searchParams.set("v", "20261002-1124");
+      url.searchParams.set("v", "20261002-1248");
       script.src = url.href;
       script.async = false;
       script.onload = resolve;
