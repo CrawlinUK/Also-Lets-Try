@@ -177,32 +177,6 @@ input {
   font-size: calc(var(--display-size) * var(--text-scale));
 }
 
-.answer-mark {
-  position: absolute;
-  z-index: 4;
-  inset: 0;
-  display: none;
-  place-items: center;
-  color: #e32636;
-  font-family: Arial, sans-serif;
-  font-size: min(34vh, 25vw, 340px);
-  font-weight: 900;
-  line-height: 1;
-  pointer-events: none;
-  text-shadow: -4px -4px 0 rgba(255, 255, 255, .92), 4px -4px 0 rgba(255, 255, 255, .92), -4px 4px 0 rgba(255, 255, 255, .92), 4px 4px 0 rgba(255, 255, 255, .92);
-}
-
-.answer-mark.show {
-  display: grid;
-}
-
-.answer-mark.correct::before {
-  content: "○";
-}
-
-.answer-mark.wrong::before {
-  content: "×";
-}
 
 
 .floating-auto {
