@@ -283,7 +283,10 @@
             const contentWidth = glyphs.reduce((sum, glyph) => sum + glyph.bounds.width, 0)
               + NUMBER_DIGIT_GAP * Math.max(0, glyphs.length - 1);
             const canvasWidth = Math.max(NUMBER_MULTI_SLOT_WIDTH * glyphs.length, contentWidth);
-            let cursor = (canvasWidth - contentWidth) / 2;
+            const anchorWidth = glyphs.length === 2
+              ? glyphs[0].bounds.width + NUMBER_DIGIT_GAP + NUMBER_DIGIT_BOUNDS["0"].width
+              : contentWidth;
+            let cursor = (canvasWidth - anchorWidth) / 2;
 
             const run = document.createElementNS("http://www.w3.org/2000/svg", "svg");
             run.classList.add("number-svg-run");
