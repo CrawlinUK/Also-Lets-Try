@@ -229,6 +229,23 @@
         rebuildDeck();
       }
 
+      const NUMBER_DIGIT_BOUNDS = Object.freeze({
+        "0": { x: 263.321, width: 273.358 },
+        "1": { x: 286.000, width: 168.000 },
+        "2": { x: 265.882, width: 263.514 },
+        "3": { x: 266.000, width: 273.500 },
+        "4": { x: 230.395, width: 294.209 },
+        "5": { x: 247.428, width: 281.645 },
+        "6": { x: 257.406, width: 276.694 },
+        "7": { x: 271.000, width: 258.000 },
+        "8": { x: 265.598, width: 248.805 },
+        "9": { x: 257.406, width: 276.694 }
+      });
+      const NUMBER_DIGIT_GAP = 50;
+      const NUMBER_SOURCE_Y = 150;
+      const NUMBER_SOURCE_HEIGHT = 500;
+      const NUMBER_MULTI_SLOT_WIDTH = 380 / 1.16;
+
       function applyVisual(element, card) {
         const visual = card && card.visual ? card.visual : {};
         const textVisual = visual.type === "text";
@@ -256,8 +273,54 @@
           element.style.transform = "none";
           element.style.clipPath = "none";
 
-          digits.forEach((digit) => {
-            if (!/\d/.test(digit)) return;
+          const validDigits = digits.filter((digit) => /\d/.test(digit));
+
+          if (validDigits.length > 1) {
+            const glyphs = validDigits.map((digit) => ({
+              digit,
+              bounds: NUMBER_DIGIT_BOUNDS[digit] || { x: 210, width: 380 }
+            }));
+            const contentWidth = glyphs.reduce((sum, glyph) => sum + glyph.bounds.width, 0)
+              + NUMBER_DIGIT_GAP * Math.max(0, glyphs.length - 1);
+            const canvasWidth = Math.max(NUMBER_MULTI_SLOT_WIDTH * glyphs.length, contentWidth);
+            let cursor = (canvasWidth - contentWidth) / 2;
+
+            const run = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+            run.classList.add("number-svg-run");
+            run.setAttribute("viewBox", `0 0 ${canvasWidth} ${NUMBER_SOURCE_HEIGHT}`);
+            run.setAttribute("preserveAspectRatio", "xMidYMid meet");
+            run.setAttribute("aria-hidden", "true");
+
+            glyphs.forEach(({ digit, bounds }) => {
+              const glyph = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+              glyph.classList.add("number-svg-glyph");
+              glyph.setAttribute("x", String(cursor));
+              glyph.setAttribute("y", "0");
+              glyph.setAttribute("width", String(bounds.width));
+              glyph.setAttribute("height", String(NUMBER_SOURCE_HEIGHT));
+              glyph.setAttribute(
+                "viewBox",
+                `${bounds.x} ${NUMBER_SOURCE_Y} ${bounds.width} ${NUMBER_SOURCE_HEIGHT}`
+              );
+              glyph.setAttribute("preserveAspectRatio", "xMidYMid meet");
+              glyph.style.color = visual.colour || "#FFDE23";
+
+              const use = document.createElementNS("http://www.w3.org/2000/svg", "use");
+              const digitUrl = new URL(`${digit}.svg`, visual.digitBase);
+              if (visual.digitVersion) digitUrl.searchParams.set("v", visual.digitVersion);
+              digitUrl.hash = "artwork";
+              use.setAttribute("href", digitUrl.href);
+              glyph.append(use);
+              run.append(glyph);
+
+              cursor += bounds.width + NUMBER_DIGIT_GAP;
+            });
+
+            element.append(run);
+            return;
+          }
+
+          validDigits.forEach((digit) => {
             const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
             svg.classList.add("number-svg-digit");
             svg.setAttribute("viewBox", "210 150 380 500");
