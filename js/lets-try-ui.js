@@ -5,7 +5,13 @@
   const currentScriptUrl = document.currentScript && document.currentScript.src
     ? new URL(document.currentScript.src)
     : new URL("js/lets-try-ui.js", location.href);
-  const uiAsset = (name) => new URL("../images/ui/" + name, currentScriptUrl).href;
+  const uiAsset = (name) => {
+    const url = new URL("../images/ui/" + name, currentScriptUrl);
+    if (window.LETS_TRY_ASSET_VERSION) {
+      url.searchParams.set("v", window.LETS_TRY_ASSET_VERSION);
+    }
+    return url.href;
+  };
   const IMAGE_ICONS = {
     home: uiAsset("AlsoHomeSweet.svg"),
     back: uiAsset("AlsoBackArrow.svg"),
