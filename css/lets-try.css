@@ -1964,11 +1964,11 @@ html.shared-unit-template .game-picture.number-svg-visual.number-multi-digit .nu
 }
 
 html.shared-unit-template .game-picture.number-svg-visual.number-multi-digit .number-svg-digit:first-child {
-  transform: translateX(7%) scale(1.16);
+  transform: translateX(13.6%) scale(1.16);
 }
 
 html.shared-unit-template .game-picture.number-svg-visual.number-multi-digit .number-svg-digit:last-child {
-  transform: translateX(-7%) scale(1.16);
+  transform: translateX(-13.6%) scale(1.16);
 }
 
 html.shared-unit-template[data-unit="3"] .card-picture.number-svg-visual {
