@@ -47,20 +47,22 @@ Examples:
 - `images/veg.png` — 9 vegetables
 - `images/sports.png` — 12 sports pictures; seven names currently mapped
 - `images/stationary.png` — 12 stationery pictures
+- `images/Adjectives.png` — 8 describing-word pictures in a 4 × 2 sheet; mapped
+- `images/BodyParts.png` — 8 body-part pictures in a 4 × 2 sheet; mapped
+- `images/animals.jpg` — 17 animal pictures; exact grid/cell order still to verify
+- `images/days.png` — 7 day icons + 1 empty cell in a 4 × 2 sheet; mapped
 - `images/sports_original.png` — reference copy
 
 ## Book 1 / Book 2 source artwork still to integrate
 
+Animals, body parts, describing words and days now have shared image sheets in GitHub. The animal sheet still needs its exact grid/cell order verified before it is wired into units.
+
 Exact picture-only source files already exist in `AllImages.zip` for:
 
-- animals
 - tree
-- body parts
-- describing words
 - weather
 - clothes
 - play activities
-- days
 - daily-time cards
 - most school places
 - most daily-routine cards
