@@ -6,7 +6,7 @@
     ? new URL(document.currentScript.src)
     : new URL("js/lets-try-unit-loader.js", location.href);
   const projectRoot = new URL("../", current);
-  const ASSET_VERSION = "20261005-1243-stable-tens";
+  const ASSET_VERSION = "20261005-1325-preload-cache";
 
   const params = new URLSearchParams(location.search);
   const book = (params.get("book") || "lt1").toLowerCase();
@@ -16,7 +16,34 @@
   document.documentElement.dataset.book = book;
   document.documentElement.dataset.unit = unit;
 
+  window.LETS_TRY_ASSET_VERSION = ASSET_VERSION;
   window.LETS_TRY_NUMBER_SVG_VERSION = ASSET_VERSION;
+
+  function registerAssetCache() {
+    if (!("serviceWorker" in navigator) || location.protocol !== "https:") return;
+    const workerUrl = new URL("sw.js", projectRoot);
+    workerUrl.searchParams.set("v", ASSET_VERSION);
+    navigator.serviceWorker.register(workerUrl.href, {
+      scope: projectRoot.pathname,
+      updateViaCache: "none"
+    }).catch((error) => {
+      console.warn("Asset cache registration warning:", error);
+    });
+  }
+
+  registerAssetCache();
+
+  function versionAssetUrl(value) {
+    try {
+      const url = new URL(value, location.href);
+      if (url.origin === location.origin) {
+        url.searchParams.set("v", ASSET_VERSION);
+      }
+      return url.href;
+    } catch (error) {
+      return value;
+    }
+  }
 
   function numberSvgUrl(digit) {
     const url = new URL(`images/numbers/${digit}.svg`, projectRoot);
@@ -30,14 +57,55 @@
         fetch(numberSvgUrl(digit), { cache: "force-cache" })
           .then((response) => {
             if (!response.ok) throw new Error(`Unable to preload digit ${digit}`);
-            return response.arrayBuffer();
+            return response.text();
           })
+          .then((source) => ({ digit, source }))
           .catch((error) => {
             console.warn(error);
-            return null;
+            return { digit, source: "" };
           })
       )
     );
+  }
+
+  function installNumberSprite(items) {
+    if (!Array.isArray(items) || document.getElementById("letsTryNumberSprite")) return;
+
+    const ns = "http://www.w3.org/2000/svg";
+    const sprite = document.createElementNS(ns, "svg");
+    sprite.id = "letsTryNumberSprite";
+    sprite.setAttribute("aria-hidden", "true");
+    sprite.setAttribute("width", "0");
+    sprite.setAttribute("height", "0");
+    sprite.style.position = "absolute";
+    sprite.style.width = "0";
+    sprite.style.height = "0";
+    sprite.style.overflow = "hidden";
+
+    const defs = document.createElementNS(ns, "defs");
+    const parser = new DOMParser();
+
+    items.forEach(({ digit, source }) => {
+      if (!source) return;
+      const parsed = parser.parseFromString(source, "image/svg+xml");
+      const artwork = parsed.getElementById("artwork");
+      if (!artwork) return;
+
+      const group = document.createElementNS(ns, "g");
+      group.id = `number-digit-${digit}`;
+      Array.from(artwork.attributes).forEach((attribute) => {
+        if (attribute.name !== "id") {
+          group.setAttribute(attribute.name, attribute.value);
+        }
+      });
+      Array.from(artwork.childNodes).forEach((node) => {
+        group.append(document.importNode(node, true));
+      });
+      defs.append(group);
+    });
+
+    sprite.append(defs);
+    document.body.append(sprite);
   }
 
   function preloadPicture(url) {
@@ -79,7 +147,12 @@
 
     const urls = [...new Set(
       config.cards
-        .map((card) => card && card.visual && card.visual.src)
+        .map((card) => {
+          const visual = card && card.visual;
+          if (!visual || !visual.src) return null;
+          visual.src = versionAssetUrl(visual.src);
+          return visual.src;
+        })
         .filter(Boolean)
     )];
 
@@ -145,6 +218,10 @@
       }
 
       await Promise.all(preloadTasks);
+
+      if (numberSvgPreloadPromise) {
+        installNumberSprite(await numberSvgPreloadPromise);
+      }
 
       await loadScript("js/lets-try-unit.js");
       await loadScript("js/lets-try-ui.js");
