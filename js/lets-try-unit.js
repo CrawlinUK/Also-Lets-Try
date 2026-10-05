@@ -246,6 +246,16 @@
       const NUMBER_SOURCE_HEIGHT = 500;
       const NUMBER_MULTI_SLOT_WIDTH = 380 / 1.16;
 
+      function numberUseHref(digit, visual) {
+        const localId = `number-digit-${digit}`;
+        if (document.getElementById(localId)) return `#${localId}`;
+
+        const digitUrl = new URL(`${digit}.svg`, visual.digitBase);
+        if (visual.digitVersion) digitUrl.searchParams.set("v", visual.digitVersion);
+        digitUrl.hash = "artwork";
+        return digitUrl.href;
+      }
+
       function applyVisual(element, card) {
         const visual = card && card.visual ? card.visual : {};
         const textVisual = visual.type === "text";
@@ -309,10 +319,7 @@
               glyph.style.color = visual.colour || "#FFDE23";
 
               const use = document.createElementNS("http://www.w3.org/2000/svg", "use");
-              const digitUrl = new URL(`${digit}.svg`, visual.digitBase);
-              if (visual.digitVersion) digitUrl.searchParams.set("v", visual.digitVersion);
-              digitUrl.hash = "artwork";
-              use.setAttribute("href", digitUrl.href);
+              use.setAttribute("href", numberUseHref(digit, visual));
               glyph.append(use);
               run.append(glyph);
 
@@ -332,10 +339,7 @@
             svg.style.color = visual.colour || "#FFDE23";
 
             const use = document.createElementNS("http://www.w3.org/2000/svg", "use");
-            const digitUrl = new URL(`${digit}.svg`, visual.digitBase);
-            if (visual.digitVersion) digitUrl.searchParams.set("v", visual.digitVersion);
-            digitUrl.hash = "artwork";
-            use.setAttribute("href", digitUrl.href);
+            use.setAttribute("href", numberUseHref(digit, visual));
             svg.append(use);
             element.append(svg);
           });
