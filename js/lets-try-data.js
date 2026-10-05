@@ -347,7 +347,7 @@
       },
 
       emotions: {
-        file: "images/emotions.jpg",
+        file: "images/emotions.png",
         grid: "4x2",
         logicalCategories: ["feelings"],
         status: "mapped"
