@@ -399,6 +399,41 @@
         logicalCategories: ["stationery"],
         status: "cell-map-to-verify",
         note: "Filename is intentionally stationary.png because that is the uploaded asset name."
+      },
+
+      adjectives: {
+        file: "images/Adjectives.png",
+        grid: "4x2",
+        physicalCells: 8,
+        logicalCategories: ["describingWords"],
+        status: "mapped",
+        note: "Row-major order: long, short, big, small, scary, furry, round, shiny."
+      },
+
+      bodyParts: {
+        file: "images/BodyParts.png",
+        grid: "4x2",
+        physicalCells: 8,
+        logicalCategories: ["bodyParts"],
+        status: "mapped",
+        note: "Row-major order: head, shoulders, knees, toes, ears, eyes, mouth, nose."
+      },
+
+      animals: {
+        file: "images/animals.jpg",
+        physicalCells: 17,
+        logicalCategories: ["animals"],
+        status: "cell-map-to-verify",
+        note: "New animal sheet uploaded; exact grid and cell order still to verify before unit wiring."
+      },
+
+      days: {
+        file: "images/days.png",
+        grid: "4x2",
+        physicalCells: 8,
+        logicalCategories: ["days"],
+        status: "mapped",
+        note: "Seven day icons in Monday-Sunday order with one empty final cell."
       }
     },
 
@@ -480,6 +515,38 @@
         jam: "0% 100%",
         noodle: "33.333% 100%",
         "rice-ball": "66.667% 100%"
+      },
+
+      adjectives: {
+        long: "0% 0%",
+        short: "33.333% 0%",
+        big: "66.667% 0%",
+        small: "100% 0%",
+        scary: "0% 100%",
+        furry: "33.333% 100%",
+        round: "66.667% 100%",
+        shiny: "100% 100%"
+      },
+
+      bodyParts: {
+        head: "0% 0%",
+        shoulders: "33.333% 0%",
+        knees: "66.667% 0%",
+        toes: "100% 0%",
+        ears: "0% 100%",
+        eyes: "33.333% 100%",
+        mouth: "66.667% 100%",
+        nose: "100% 100%"
+      },
+
+      days: {
+        Monday: "0% 0%",
+        Tuesday: "33.333% 0%",
+        Wednesday: "66.667% 0%",
+        Thursday: "100% 0%",
+        Friday: "0% 100%",
+        Saturday: "33.333% 100%",
+        Sunday: "66.667% 100%"
       }
     },
 
@@ -644,7 +711,7 @@
   }
 
   global.LETS_TRY_DATA = Object.freeze({
-    version: 4,
+    version: 5,
     assetUrl,
     categories: CATEGORIES,
     assets: ASSETS,
