@@ -36,7 +36,7 @@ Examples:
 - flags are stored in one shared SVG sprite
 - numbers and alphabet are text, not bitmap images
 - colours are generated in CSS
-- shapes should be generated as SVG/vector shapes
+- shapes use the seven individual SVG files in `images/shapes/`
 
 ## Existing shared image assets
 
@@ -47,6 +47,7 @@ Examples:
 - `images/veg.png` — 9 vegetables
 - `images/sports.png` — 12 sports pictures; seven names currently mapped
 - `images/stationary.png` — 12 stationery pictures
+- `images/shapes/` — circle, triangle, square, rectangle, heart, diamond and star SVGs; mapped to the Shapes category
 - `images/Adjectives.png` — 8 describing-word pictures in a 4 × 2 sheet; mapped
 - `images/BodyParts.png` — 8 body-part pictures in a 4 × 2 sheet; mapped
 - `images/animals.jpg` — 17 animal pictures; exact grid/cell order still to verify
