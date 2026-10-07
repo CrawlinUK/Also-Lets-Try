@@ -550,11 +550,22 @@
       }
     },
 
+    vectors: {
+      shapes: {
+        circle: "images/shapes/circle.svg",
+        triangle: "images/shapes/triangle.svg",
+        square: "images/shapes/square.svg",
+        rectangle: "images/shapes/rectangle.svg",
+        heart: "images/shapes/heart.svg",
+        diamond: "images/shapes/diamond.svg",
+        star: "images/shapes/star.svg"
+      }
+    },
+
     generated: {
       numbers: "text",
       alphabet: "text",
-      colours: "paint-splodge/vector",
-      shapes: "vector-capable"
+      colours: "paint-splodge/vector"
     }
   };
 
@@ -711,7 +722,7 @@
   }
 
   global.LETS_TRY_DATA = Object.freeze({
-    version: 5,
+    version: 6,
     assetUrl,
     categories: CATEGORIES,
     assets: ASSETS,
