@@ -25,6 +25,7 @@
       visual: {
         type: "text",
         text: letter,
+        alphabetLetter: letter,
         aspectRatio: "1 / 1"
       }
     };
@@ -51,6 +52,8 @@
     defaultDisplayMode: "picture",
     displayModes: ["picture"],
     showPictureSentenceMode: false,
+    letterColourControl: true,
+    defaultLetterColourMode: "plain",
     displayModeLabels: {
       picture: "Lowercase letter"
     },
