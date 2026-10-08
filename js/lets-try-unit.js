@@ -88,7 +88,7 @@
         selectedIds: new Set(initialIds),
         deck: [],
         position: 0,
-        displayMode: "pictureText",
+        displayMode: UNIT_CONFIG.defaultDisplayMode || "pictureText",
         gameMode: "flashcards",
         sizeBalance: 50,
         missingAnswerSize: 10,
@@ -195,6 +195,21 @@
         elements.unitNumber.textContent = UNIT_CONFIG.unitNumber;
         elements.unitName.textContent = UNIT_CONFIG.unitTitle;
         const displayLabels = UNIT_CONFIG.displayModeLabels || {};
+        const configuredDisplayModes =
+          Array.isArray(UNIT_CONFIG.displayModes) && UNIT_CONFIG.displayModes.length
+            ? UNIT_CONFIG.displayModes
+            : ["pictureText", "picture", "pictureSentence", "text"];
+        const allowedDisplayModes = new Set(configuredDisplayModes);
+        const displayModeSection = document.querySelector(".display-mode-section");
+        document.querySelectorAll('input[name="displayMode"]').forEach((radio) => {
+          const label = radio.closest("label");
+          if (label) label.hidden = !allowedDisplayModes.has(radio.value);
+          radio.checked = radio.value === state.displayMode;
+        });
+        if (displayModeSection) {
+          displayModeSection.hidden = configuredDisplayModes.length <= 1;
+        }
+
         const pictureTextLabel = $("pictureTextLabel");
         const pictureOnlyLabel = $("pictureOnlyLabel");
         const textOnlyLabel = $("textOnlyLabel");
@@ -1267,11 +1282,14 @@
       elements.resetButton.addEventListener("click", () => {
         stopAuto();
         state.selectedIds = new Set(initialIds);
-        state.displayMode = "pictureText";
+        state.displayMode = UNIT_CONFIG.defaultDisplayMode || "pictureText";
         state.sizeBalance = 50;
         state.autoSeconds = UNIT_CONFIG.autoSeconds;
         state.countdown = state.autoSeconds;
-        document.querySelector('input[name="displayMode"][value="pictureText"]').checked = true;
+        const resetDisplayMode = document.querySelector(
+          `input[name="displayMode"][value="${state.displayMode}"]`
+        );
+        if (resetDisplayMode) resetDisplayMode.checked = true;
         elements.sizeBalanceRange.value = "50";
         elements.missingAnswerSizeRange.value = "10";
         state.missingAnswerSize = 10;
