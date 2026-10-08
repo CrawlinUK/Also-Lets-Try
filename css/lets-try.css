@@ -2273,3 +2273,163 @@ html.shared-unit-template .guess-picture.number-svg-visual {
     grid-template-columns: minmax(110px, 1fr) minmax(130px, 1fr) 56px 56px;
   }
 }
+
+
+/* ============================================================
+   SHAPE PRACTICE — UNIT 7
+   ============================================================ */
+
+html.shared-unit-template .shape-practice-section {
+  margin-top: 8px;
+}
+
+html.shared-unit-template .shape-practice-options {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+html.shared-unit-template .shape-practice-tower {
+  --shape-choice-size: clamp(24px, 4vh, 38px);
+  position: absolute;
+  z-index: 9;
+  top: 50%;
+  transform: translateY(-50%);
+  display: grid;
+  justify-items: center;
+  gap: clamp(2px, .45vh, 5px);
+  padding: 7px 6px;
+  border: 1px solid rgba(23, 25, 29, .10);
+  border-radius: 999px;
+  background: rgba(248, 251, 250, .82);
+  box-shadow: 0 4px 16px rgba(31, 47, 40, .10);
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+}
+
+html.shared-unit-template .shape-practice-tower[hidden] {
+  display: none;
+}
+
+html.shared-unit-template .shape-number-tower {
+  left: 18px;
+}
+
+html.shared-unit-template .shape-colour-tower {
+  right: 18px;
+}
+
+html.shared-unit-template .shape-practice-tower button {
+  width: var(--shape-choice-size);
+  height: var(--shape-choice-size);
+  min-width: 0;
+  padding: 0;
+  border: 2px solid rgba(23, 25, 29, .16);
+  border-radius: 50%;
+  background: #ffffff;
+  box-shadow: none;
+}
+
+html.shared-unit-template .shape-number-choice {
+  color: var(--ink);
+  font: 900 clamp(13px, 2vh, 20px)/1 "HandwritingWeCan", "Century Gothic", sans-serif;
+}
+
+html.shared-unit-template .shape-number-choice.selected {
+  outline: 3px solid #F5A51B;
+  outline-offset: 2px;
+}
+
+html.shared-unit-template .shape-colour-choice {
+  background: var(--swatch-colour, #ffffff) !important;
+}
+
+html.shared-unit-template .shape-colour-choice.light-swatch {
+  border-color: #8d969b;
+}
+
+html.shared-unit-template .shape-colour-choice.shape-colour-default {
+  background:
+    conic-gradient(
+      #E53935 0 14%,
+      #F5A51B 14% 28%,
+      #FFD928 28% 42%,
+      #2DAA4F 42% 57%,
+      #27A7DF 57% 71%,
+      #A65AA6 71% 86%,
+      #F28AB2 86% 100%
+    ) !important;
+}
+
+html.shared-unit-template .shape-colour-choice.selected {
+  outline: 3px solid #2684ff;
+  outline-offset: 2px;
+}
+
+html.shared-unit-template .shape-practice-visual {
+  padding: 5%;
+  display: flex;
+  flex-wrap: wrap;
+  align-content: center;
+  justify-content: center;
+  gap: 3%;
+  background: #ffffff !important;
+}
+
+html.shared-unit-template .shape-practice-copy {
+  flex: 0 0 42%;
+  height: 42%;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  mask-position: center;
+  -webkit-mask-size: contain;
+  mask-size: contain;
+}
+
+html.shared-unit-template .shape-practice-visual[data-shape-count="1"] .shape-practice-copy {
+  flex-basis: 88%;
+  height: 88%;
+}
+
+html.shared-unit-template .shape-practice-visual[data-shape-count="2"] .shape-practice-copy {
+  flex-basis: 42%;
+  height: 68%;
+}
+
+html.shared-unit-template .shape-practice-visual[data-shape-count="3"] .shape-practice-copy,
+html.shared-unit-template .shape-practice-visual[data-shape-count="4"] .shape-practice-copy {
+  flex-basis: 42%;
+  height: 42%;
+}
+
+html.shared-unit-template .shape-practice-visual[data-shape-count="5"] .shape-practice-copy {
+  flex-basis: 29%;
+  height: 36%;
+}
+
+html.shared-unit-template .shape-practice-copy.white-artwork {
+  filter:
+    drop-shadow(1px 0 0 #8d969b)
+    drop-shadow(-1px 0 0 #8d969b)
+    drop-shadow(0 1px 0 #8d969b)
+    drop-shadow(0 -1px 0 #8d969b);
+}
+
+html.shared-unit-template[data-unit="7"] .answer-area {
+  padding-left: 92px;
+  padding-right: 92px;
+}
+
+html.shared-unit-template[data-unit="7"] .settings-preview-picture.shape-practice-visual {
+  padding: 5%;
+}
+
+@media (max-height: 700px) {
+  html.shared-unit-template .shape-practice-tower {
+    --shape-choice-size: clamp(22px, 3.7vh, 30px);
+    gap: 2px;
+    padding: 5px 4px;
+  }
+}
