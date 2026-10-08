@@ -98,19 +98,19 @@
     colours: {
       label: "Colours",
       items: [
-        item("red", ["1-4"]),
-        item("pink", ["1-4"]),
-        item("yellow", ["1-4"]),
-        item("blue", ["1-4"]),
-        item("green", ["1-4"]),
-        item("orange", ["1-4"]),
-        item("purple", ["1-4"]),
-        item("black", ["1-4"]),
-        item("white", ["1-4"]),
-        item("brown", ["1-4"]),
-        item("light-blue"),
-        item("light-green"),
-        item("gray")
+        item("red", ["1-4"], { hex: "#E53935" }),
+        item("pink", ["1-4"], { hex: "#F28AB2" }),
+        item("yellow", ["1-4"], { hex: "#FFD928" }),
+        item("blue", ["1-4"], { hex: "#27A7DF" }),
+        item("green", ["1-4"], { hex: "#2DAA4F" }),
+        item("orange", ["1-4"], { hex: "#F5A51B" }),
+        item("purple", ["1-4"], { hex: "#A65AA6" }),
+        item("black", ["1-4"], { hex: "#111111" }),
+        item("white", ["1-4"], { hex: "#F8F8F4" }),
+        item("brown", ["1-4"], { hex: "#A94D09" }),
+        item("light-blue", [], { hex: "#8DDCF4" }),
+        item("light-green", [], { hex: "#A9D96A" }),
+        item("gray", [], { hex: "#9FA4A8" })
       ]
     },
 
@@ -643,6 +643,11 @@
     })
   });
 
+  function getColourValue(id) {
+    const entry = getItem("colours", id);
+    return entry && entry.hex ? entry.hex : null;
+  }
+
   function getExtraGame(id) {
     const game = EXTRA_GAMES.registry[id];
     return game
@@ -680,7 +685,7 @@
         4: { title: "I like blue." },
         5: { title: "What do you like?" },
         6: { title: "ALPHABET" },
-        7: { title: "This is for you.", reviewCategories: ["colours"] },
+        7: { title: "This is for you." },
         8: { title: "What’s this?" },
         9: { title: "Who are you?", reviewCategories: ["colours", "shapes", "numbers"] }
       }
@@ -759,7 +764,7 @@
   }
 
   global.LETS_TRY_DATA = Object.freeze({
-    version: 8,
+    version: 9,
     assetUrl,
     categories: CATEGORIES,
     assets: ASSETS,
@@ -775,6 +780,7 @@
     getUnitAvailableWords,
     getAlphabetColourName,
     getAlphabetColour,
+    getColourValue,
     getExtraGame,
     getExtraGamesForCategories,
     getAllExtraGames,
