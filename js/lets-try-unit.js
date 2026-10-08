@@ -526,13 +526,14 @@
         element.classList.toggle("shape-practice-visual", shapeVisual);
 
         if (shapeVisual) {
-          const usePracticeModifiers = state.gameMode === "flashcards" && isShapePracticeCard(card);
+          const isShapeCard = isShapePracticeCard(card);
+          const usePracticeModifiers = state.gameMode === "flashcards" && isShapeCard;
           const count = usePracticeModifiers && state.shapeNumberEnabled ? state.shapeCount : 1;
           const defaultColourName =
             (visual.defaultColourName
               || (SHAPE_PRACTICE && SHAPE_PRACTICE.defaultColours && SHAPE_PRACTICE.defaultColours[card.id])
               || "");
-          const colourName = usePracticeModifiers ? shapeColourName(card) : defaultColourName;
+          const colourName = isShapeCard ? shapeColourName(card) : defaultColourName;
           const useDefaultArtwork = colourName === defaultColourName;
           const colourValue = colourName && typeof LETS_TRY_DATA.getColourValue === "function"
             ? LETS_TRY_DATA.getColourValue(colourName)
