@@ -348,6 +348,7 @@
     <div id="songMessage"><span id="finishStar">★</span><span id="songText">3</span></div>
   </div>
 
+<script src="../js/lets-try-data.js?v=20261008-1305-alphabet-colours"></script>
 <script>
 (() => {
   const A2Z = [...'ABCDEFGHIJKLMNOPQRSTUVWXYZ'];
@@ -394,7 +395,7 @@
   toggleCaseBtn.addEventListener('click', () => {
     if (songIsRunning) return;
     isLower = !isLower;
-    applyCase();
+    render();
   });
 
   resetBtn.addEventListener('click', () => {
@@ -430,7 +431,7 @@
     if (songIsRunning) return;
     isColour = !isColour;
     colourModeBtn.classList.toggle('active', isColour);
-    applyLetterColours();
+    render();
   });
 
   doubleSpeedBtn.addEventListener('click', () => {
@@ -461,7 +462,13 @@
 
       const span = document.createElement('span');
       span.className = 'letter';
-      span.textContent = displayChar(ch);
+      const shown = displayChar(ch);
+      span.textContent = shown;
+
+      if (isColour && window.LETS_TRY_DATA && typeof LETS_TRY_DATA.getAlphabetColour === 'function') {
+        const colour = LETS_TRY_DATA.getAlphabetColour(shown);
+        if (colour) span.style.color = colour;
+      }
 
       if (hidden.has(idx)) span.classList.add('hidden');
 
@@ -483,47 +490,9 @@
       board.appendChild(tile);
     });
 
-    applyCase();
-    updateHints();
-  }
-
-  function applyCase() {
-    const tiles = board.children;
-    for (let i = 0; i < tiles.length; i++) {
-      const span = tiles[i].querySelector('.letter');
-      if (!span) continue;
-      span.textContent = displayChar(order[i]);
-    }
     lowerChoice.classList.toggle('selected', isLower);
     upperChoice.classList.toggle('selected', !isLower);
-    applyLetterColours();
-  }
-
-  function applyLetterColours() {
-    const capitalColours = {
-      orange: 'AHJK', blue: 'BCDEGPTVZ', red: 'FLMNSX', yellow: 'IY', pink: 'QUW', brown: 'OR'
-    };
-    const lowerColours = {
-      red: 'aeiou', blue: 'bdgjlmnrvwyz', orange: 'cfhkpqstx'
-    };
-    const palette = {
-      orange: '#ff7a00', blue: '#2684ff', red: '#ef3340', yellow: '#ffd400', pink: '#ff66b3', brown: '#b07a45'
-    };
-
-    [...board.children].forEach((tile, i) => {
-      const span = tile.querySelector('.letter');
-      if (!span) return;
-      span.style.color = '';
-      if (!isColour) return;
-      const shown = displayChar(order[i]);
-      const groups = isLower ? lowerColours : capitalColours;
-      for (const [name, letters] of Object.entries(groups)) {
-        if (letters.includes(shown)) {
-          span.style.color = palette[name];
-          break;
-        }
-      }
-    });
+    updateHints();
   }
 
   function updateTileHidden(idx, shouldHide) {
