@@ -569,6 +569,43 @@
     }
   };
 
+  const ALPHABET_COLOURS = Object.freeze({
+    palette: Object.freeze({
+      orange: "#ff7a00",
+      blue: "#2684ff",
+      red: "#ef3340",
+      yellow: "#ffd400",
+      pink: "#ff66b3",
+      brown: "#b07a45"
+    }),
+    uppercase: Object.freeze({
+      A: "orange", H: "orange", J: "orange", K: "orange",
+      B: "blue", C: "blue", D: "blue", E: "blue", G: "blue", P: "blue", T: "blue", V: "blue", Z: "blue",
+      F: "red", L: "red", M: "red", N: "red", S: "red", X: "red",
+      I: "yellow", Y: "yellow",
+      Q: "pink", U: "pink", W: "pink",
+      O: "brown", R: "brown"
+    }),
+    lowercase: Object.freeze({
+      a: "red", e: "red", i: "red", o: "red", u: "red",
+      b: "blue", d: "blue", g: "blue", j: "blue", l: "blue", m: "blue", n: "blue", r: "blue", v: "blue", w: "blue", y: "blue", z: "blue",
+      c: "orange", f: "orange", h: "orange", k: "orange", p: "orange", q: "orange", s: "orange", t: "orange", x: "orange"
+    })
+  });
+
+  function getAlphabetColourName(letter) {
+    const value = String(letter || "");
+    const map = value === value.toLowerCase() && value !== value.toUpperCase()
+      ? ALPHABET_COLOURS.lowercase
+      : ALPHABET_COLOURS.uppercase;
+    return map[value] || null;
+  }
+
+  function getAlphabetColour(letter) {
+    const name = getAlphabetColourName(letter);
+    return name ? ALPHABET_COLOURS.palette[name] || null : null;
+  }
+
   const EXTRA_GAMES = Object.freeze({
     registry: Object.freeze({
       alphabetBoard: Object.freeze({
@@ -722,11 +759,12 @@
   }
 
   global.LETS_TRY_DATA = Object.freeze({
-    version: 6,
+    version: 7,
     assetUrl,
     categories: CATEGORIES,
     assets: ASSETS,
     books: BOOKS,
+    alphabetColours: ALPHABET_COLOURS,
     extraGames: EXTRA_GAMES,
     getCategory,
     getItem,
@@ -735,6 +773,8 @@
     getUnitCategoryIds,
     getUnitDefaults,
     getUnitAvailableWords,
+    getAlphabetColourName,
+    getAlphabetColour,
     getExtraGame,
     getExtraGamesForCategories,
     getAllExtraGames,
