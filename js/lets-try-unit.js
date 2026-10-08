@@ -10,6 +10,14 @@
       const UNIT_CATEGORY_IDS = window.LETS_TRY_UNIT_CATEGORY_IDS
         || [...new Set(UNIT_CONFIG.cards.map((card) => card.category).filter(Boolean))];
       const PLACEHOLDER_IMAGE = "";
+      const SHAPE_PRACTICE = UNIT_CONFIG.shapePractice || null;
+      const SHAPE_NUMBER_WORDS = Object.freeze({
+        1: "one",
+        2: "two",
+        3: "three",
+        4: "four",
+        5: "five"
+      });
 
       const appHost = document.getElementById("letsTryApp");
       if (!appHost) {
@@ -35,6 +43,39 @@
             </div>
           </section>`
         );
+      }
+
+      if (SHAPE_PRACTICE) {
+        const displayModeSectionNode = document.querySelector(".display-mode-section");
+        if (displayModeSectionNode) {
+          displayModeSectionNode.insertAdjacentHTML(
+            "afterend",
+            `<section class="setting-section shape-practice-section" id="shapePracticeSection">
+              <h3>Shape phrase</h3>
+              <div class="segmented shape-practice-options">
+                <label>
+                  <input type="checkbox" id="shapeNumberToggle">
+                  <span>Number</span>
+                </label>
+                <label>
+                  <input type="checkbox" id="shapeColourToggle">
+                  <span>Colour</span>
+                </label>
+              </div>
+            </section>`
+          );
+        }
+
+        const flashcardNode = document.getElementById("flashcard");
+        if (flashcardNode) {
+          flashcardNode.insertAdjacentHTML(
+            "beforeend",
+            `<aside class="shape-practice-tower shape-number-tower" id="shapeNumberTower"
+                    aria-label="Number of shapes" hidden></aside>
+             <aside class="shape-practice-tower shape-colour-tower" id="shapeColourTower"
+                    aria-label="Shape colour" hidden></aside>`
+          );
+        }
       }
 
       const $ = (id) => document.getElementById(id);
@@ -94,7 +135,12 @@
         missingAnswerSizeValue: $("missingAnswerSizeValue"),
         pictureSentenceOption: $("pictureSentenceOption"),
         pictureSentenceLabel: $("pictureSentenceLabel"),
-        letterColourSection: $("letterColourSection")
+        letterColourSection: $("letterColourSection"),
+        shapePracticeSection: $("shapePracticeSection"),
+        shapeNumberToggle: $("shapeNumberToggle"),
+        shapeColourToggle: $("shapeColourToggle"),
+        shapeNumberTower: $("shapeNumberTower"),
+        shapeColourTower: $("shapeColourTower")
       };
 
       const textbookIds = UNIT_CONFIG.cards
@@ -111,6 +157,10 @@
         position: 0,
         displayMode: UNIT_CONFIG.defaultDisplayMode || "pictureText",
         letterColourMode: UNIT_CONFIG.defaultLetterColourMode || "plain",
+        shapeNumberEnabled: false,
+        shapeColourPhraseEnabled: false,
+        shapeCount: 1,
+        shapeColourChoice: "default",
         gameMode: "flashcards",
         sizeBalance: 50,
         missingAnswerSize: 10,
@@ -128,6 +178,125 @@
         guessPosition: 0,
         guessRevealed: false
       };
+
+      function isShapePracticeCard(card) {
+        return Boolean(SHAPE_PRACTICE && card && card.category === "shapes");
+      }
+
+      function shapeColourName(card) {
+        if (!isShapePracticeCard(card)) return "";
+        if (state.shapeColourChoice !== "default") return state.shapeColourChoice;
+        return (
+          (card.visual && card.visual.defaultColourName)
+          || (SHAPE_PRACTICE.defaultColours && SHAPE_PRACTICE.defaultColours[card.id])
+          || ""
+        );
+      }
+
+      function shapePracticeText(card) {
+        if (!isShapePracticeCard(card)) return card ? card.word : "";
+
+        const parts = [];
+        const count = state.shapeNumberEnabled ? state.shapeCount : 1;
+
+        if (state.shapeNumberEnabled) {
+          parts.push(SHAPE_NUMBER_WORDS[count] || String(count));
+        }
+        if (state.shapeColourPhraseEnabled) {
+          const colourName = shapeColourName(card);
+          if (colourName) parts.push(colourName.replace(/-/g, " "));
+        }
+
+        const noun = count === 1 ? card.word : `${card.word}s`;
+        parts.push(noun);
+        return parts.join(" ");
+      }
+
+      function buildShapePracticeControls() {
+        if (!SHAPE_PRACTICE || !elements.shapeNumberTower || !elements.shapeColourTower) return;
+
+        const counts = Array.isArray(SHAPE_PRACTICE.counts) && SHAPE_PRACTICE.counts.length
+          ? SHAPE_PRACTICE.counts
+          : [1, 2, 3, 4, 5];
+
+        const numberButtons = counts.map((count) => {
+          const button = document.createElement("button");
+          button.type = "button";
+          button.className = "shape-number-choice";
+          button.dataset.shapeCount = String(count);
+          button.textContent = String(count);
+          button.setAttribute("aria-label", `${count} shape${count === 1 ? "" : "s"}`);
+          button.addEventListener("click", () => {
+            state.shapeCount = count;
+            render();
+          });
+          return button;
+        });
+        elements.shapeNumberTower.replaceChildren(...numberButtons);
+
+        const colourButtons = [];
+        const defaultButton = document.createElement("button");
+        defaultButton.type = "button";
+        defaultButton.className = "shape-colour-choice shape-colour-default";
+        defaultButton.dataset.shapeColour = "default";
+        defaultButton.title = "Default colour";
+        defaultButton.setAttribute("aria-label", "Default shape colour");
+        defaultButton.addEventListener("click", () => {
+          state.shapeColourChoice = "default";
+          render();
+        });
+        colourButtons.push(defaultButton);
+
+        const colourCategoryId = SHAPE_PRACTICE.colourCategoryId || "colours";
+        const colourCategory = LETS_TRY_DATA.getCategory(colourCategoryId);
+        (colourCategory ? colourCategory.items : []).forEach((entry) => {
+          if (!entry.hex) return;
+          const button = document.createElement("button");
+          button.type = "button";
+          button.className = "shape-colour-choice";
+          button.dataset.shapeColour = entry.id;
+          button.style.setProperty("--swatch-colour", entry.hex);
+          button.title = entry.id.replace(/-/g, " ");
+          button.setAttribute("aria-label", `Use ${entry.id.replace(/-/g, " ")}`);
+          if (entry.id === "white") button.classList.add("light-swatch");
+          button.addEventListener("click", () => {
+            state.shapeColourChoice = entry.id;
+            render();
+          });
+          colourButtons.push(button);
+        });
+        elements.shapeColourTower.replaceChildren(...colourButtons);
+      }
+
+      function syncShapePracticeControls(card = currentCard()) {
+        if (!SHAPE_PRACTICE) return;
+
+        if (elements.shapeNumberToggle) {
+          elements.shapeNumberToggle.checked = state.shapeNumberEnabled;
+        }
+        if (elements.shapeColourToggle) {
+          elements.shapeColourToggle.checked = state.shapeColourPhraseEnabled;
+        }
+
+        const showTowers = state.gameMode === "flashcards" && isShapePracticeCard(card);
+        if (elements.shapeNumberTower) {
+          elements.shapeNumberTower.hidden = !showTowers || !state.shapeNumberEnabled;
+          elements.shapeNumberTower.querySelectorAll("[data-shape-count]").forEach((button) => {
+            const selected = Number(button.dataset.shapeCount) === state.shapeCount;
+            button.classList.toggle("selected", selected);
+            button.setAttribute("aria-pressed", String(selected));
+          });
+        }
+
+        if (elements.shapeColourTower) {
+          elements.shapeColourTower.hidden = !showTowers;
+          elements.shapeColourTower.querySelectorAll("[data-shape-colour]").forEach((button) => {
+            const selected = button.dataset.shapeColour === state.shapeColourChoice;
+            button.classList.toggle("selected", selected);
+            button.setAttribute("aria-pressed", String(selected));
+          });
+        }
+      }
 
       function shuffled(items) {
         const result = [...items];
@@ -268,6 +437,9 @@
         );
         state.countdown = state.autoSeconds;
 
+        buildShapePracticeControls();
+        syncShapePracticeControls();
+
         buildGameMenu();
         buildCardOptions();
         rebuildDeck();
@@ -304,6 +476,7 @@
         const visual = card && card.visual ? card.visual : {};
         const textVisual = visual.type === "text";
         const numberVisual = visual.type === "number-svg";
+        const shapeVisual = visual.type === "shape-svg";
         const aspectRatio = visual.aspectRatio || UNIT_CONFIG.pictureAspectRatio || "1 / 1";
         const ratioParts = String(aspectRatio).split("/").map((part) => Number(part.trim()));
         const ratioValue = ratioParts.length === 2 && ratioParts[0] > 0 && ratioParts[1] > 0
@@ -315,6 +488,48 @@
         element.style.setProperty("--visual-ratio", String(ratioValue));
         element.classList.toggle("text-visual", textVisual);
         element.classList.toggle("number-svg-visual", numberVisual);
+        element.classList.toggle("shape-practice-visual", shapeVisual);
+
+        if (shapeVisual) {
+          const usePracticeModifiers = state.gameMode === "flashcards" && isShapePracticeCard(card);
+          const count = usePracticeModifiers && state.shapeNumberEnabled ? state.shapeCount : 1;
+          const colourChoice = usePracticeModifiers ? state.shapeColourChoice : "default";
+          const colourName = colourChoice === "default"
+            ? ((visual.defaultColourName || (SHAPE_PRACTICE && SHAPE_PRACTICE.defaultColours && SHAPE_PRACTICE.defaultColours[card.id])) || "")
+            : colourChoice;
+          const colourValue = colourName && typeof LETS_TRY_DATA.getColourValue === "function"
+            ? LETS_TRY_DATA.getColourValue(colourName)
+            : null;
+
+          element.style.backgroundImage = "none";
+          element.style.backgroundSize = "";
+          element.style.backgroundPosition = "";
+          element.style.transform = "none";
+          element.style.clipPath = "none";
+          element.style.color = "";
+          element.dataset.shapeCount = String(count);
+
+          const copies = [];
+          for (let index = 0; index < count; index += 1) {
+            const copy = document.createElement("div");
+            copy.className = "shape-practice-copy";
+
+            if (colourChoice === "default") {
+              copy.classList.add("default-artwork");
+              copy.style.backgroundImage = `url("${visual.src || PLACEHOLDER_IMAGE}")`;
+            } else {
+              copy.classList.add("recoloured-artwork");
+              copy.style.backgroundColor = colourValue || "#999999";
+              copy.style.maskImage = `url("${visual.src || PLACEHOLDER_IMAGE}")`;
+              copy.style.webkitMaskImage = `url("${visual.src || PLACEHOLDER_IMAGE}")`;
+              if (colourName === "white") copy.classList.add("white-artwork");
+            }
+
+            copies.push(copy);
+          }
+          element.replaceChildren(...copies);
+          return;
+        }
 
         if (numberVisual) {
           const digits = Array.from(String(visual.text || card?.id || ""));
@@ -421,6 +636,7 @@
 
       function cardText(card) {
         if (!card) return "SELECT A CARD";
+        if (isShapePracticeCard(card)) return shapePracticeText(card);
         if (state.displayMode === "pictureSentence") return card.sentence || card.word;
         return card.word;
       }
@@ -635,6 +851,7 @@
 
       function showGridGameLayout() {
         document.documentElement.classList.remove("guess-focus");
+        syncShapePracticeControls(null);
         elements.guessWordList.hidden = true;
         elements.shuffleButton.hidden = false;
         stopAuto();
@@ -664,8 +881,9 @@
           return;
         }
 
+        syncShapePracticeControls(card);
         applyVisual(elements.cardPicture, card);
-        elements.cardPicture.setAttribute("aria-label", card.word);
+        elements.cardPicture.setAttribute("aria-label", cardText(card));
         elements.displayText.textContent = cardText(card);
         elements.counter.textContent = `${state.position + 1} / ${state.deck.length}`;
         elements.modeLabel.textContent = "Flashcard mode";
@@ -1321,6 +1539,10 @@
         state.selectedIds = new Set(initialIds);
         state.displayMode = UNIT_CONFIG.defaultDisplayMode || "pictureText";
         state.letterColourMode = UNIT_CONFIG.defaultLetterColourMode || "plain";
+        state.shapeNumberEnabled = false;
+        state.shapeColourPhraseEnabled = false;
+        state.shapeCount = 1;
+        state.shapeColourChoice = "default";
         state.sizeBalance = 50;
         state.autoSeconds = UNIT_CONFIG.autoSeconds;
         state.countdown = state.autoSeconds;
@@ -1332,6 +1554,7 @@
           `input[name="letterColourMode"][value="${state.letterColourMode}"]`
         );
         if (resetLetterColourMode) resetLetterColourMode.checked = true;
+        syncShapePracticeControls();
         elements.sizeBalanceRange.value = "50";
         elements.missingAnswerSizeRange.value = "10";
         state.missingAnswerSize = 10;
@@ -1356,6 +1579,21 @@
           render();
         });
       });
+
+      if (elements.shapeNumberToggle) {
+        elements.shapeNumberToggle.addEventListener("change", () => {
+          state.shapeNumberEnabled = elements.shapeNumberToggle.checked;
+          if (!state.shapeNumberEnabled) state.shapeCount = 1;
+          render();
+        });
+      }
+
+      if (elements.shapeColourToggle) {
+        elements.shapeColourToggle.addEventListener("change", () => {
+          state.shapeColourPhraseEnabled = elements.shapeColourToggle.checked;
+          render();
+        });
+      }
 
       elements.sizeBalanceRange.addEventListener("input", () => {
         state.sizeBalance = Number(elements.sizeBalanceRange.value);
