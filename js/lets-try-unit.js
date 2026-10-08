@@ -73,7 +73,8 @@
         missingAnswerSizeRange: $("missingAnswerSizeRange"),
         missingAnswerSizeValue: $("missingAnswerSizeValue"),
         pictureSentenceOption: $("pictureSentenceOption"),
-        pictureSentenceLabel: $("pictureSentenceLabel")
+        pictureSentenceLabel: $("pictureSentenceLabel"),
+        letterColourSection: $("letterColourSection")
       };
 
       const textbookIds = UNIT_CONFIG.cards
@@ -89,6 +90,7 @@
         deck: [],
         position: 0,
         displayMode: UNIT_CONFIG.defaultDisplayMode || "pictureText",
+        letterColourMode: UNIT_CONFIG.defaultLetterColourMode || "plain",
         gameMode: "flashcards",
         sizeBalance: 50,
         missingAnswerSize: 10,
@@ -208,6 +210,13 @@
         });
         if (displayModeSection) {
           displayModeSection.hidden = configuredDisplayModes.length <= 1;
+        }
+
+        if (elements.letterColourSection) {
+          elements.letterColourSection.hidden = !UNIT_CONFIG.letterColourControl;
+          elements.letterColourSection.querySelectorAll('input[name="letterColourMode"]').forEach((radio) => {
+            radio.checked = radio.value === state.letterColourMode;
+          });
         }
 
         const pictureTextLabel = $("pictureTextLabel");
@@ -365,6 +374,14 @@
         element.textContent = textVisual ? String(visual.text ?? card?.alternate ?? card?.word ?? "") : "";
 
         if (textVisual) {
+          element.style.color = "";
+          if (
+            state.letterColourMode === "colour"
+            && visual.alphabetLetter
+            && typeof LETS_TRY_DATA.getAlphabetColour === "function"
+          ) {
+            element.style.color = LETS_TRY_DATA.getAlphabetColour(visual.alphabetLetter) || "";
+          }
           element.style.backgroundImage = "none";
           element.style.backgroundSize = "";
           element.style.backgroundPosition = "";
@@ -1283,6 +1300,7 @@
         stopAuto();
         state.selectedIds = new Set(initialIds);
         state.displayMode = UNIT_CONFIG.defaultDisplayMode || "pictureText";
+        state.letterColourMode = UNIT_CONFIG.defaultLetterColourMode || "plain";
         state.sizeBalance = 50;
         state.autoSeconds = UNIT_CONFIG.autoSeconds;
         state.countdown = state.autoSeconds;
@@ -1290,6 +1308,10 @@
           `input[name="displayMode"][value="${state.displayMode}"]`
         );
         if (resetDisplayMode) resetDisplayMode.checked = true;
+        const resetLetterColourMode = document.querySelector(
+          `input[name="letterColourMode"][value="${state.letterColourMode}"]`
+        );
+        if (resetLetterColourMode) resetLetterColourMode.checked = true;
         elements.sizeBalanceRange.value = "50";
         elements.missingAnswerSizeRange.value = "10";
         state.missingAnswerSize = 10;
@@ -1304,6 +1326,13 @@
           stopAuto();
           state.displayMode = radio.value;
           state.gameMode = "flashcards";
+          render();
+        });
+      });
+
+      document.querySelectorAll('input[name="letterColourMode"]').forEach((radio) => {
+        radio.addEventListener("change", () => {
+          state.letterColourMode = radio.value;
           render();
         });
       });
