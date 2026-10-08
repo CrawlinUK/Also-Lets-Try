@@ -46,23 +46,27 @@
       }
 
       if (SHAPE_PRACTICE) {
-        const displayModeSectionNode = document.querySelector(".display-mode-section");
-        if (displayModeSectionNode) {
-          displayModeSectionNode.insertAdjacentHTML(
-            "afterend",
-            `<section class="setting-section shape-practice-section" id="shapePracticeSection">
-              <h3>Shape phrase</h3>
-              <div class="segmented shape-practice-options">
-                <label>
-                  <input type="checkbox" id="shapeNumberToggle">
-                  <span>Number</span>
-                </label>
-                <label>
-                  <input type="checkbox" id="shapeColourToggle">
-                  <span>Colour</span>
-                </label>
-              </div>
-            </section>`
+        const displayOptionsNode = document.querySelector(".display-mode-options");
+        if (displayOptionsNode) {
+          displayOptionsNode.classList.add("shape-practice-display-options");
+
+          const pictureTextLabel = displayOptionsNode.querySelector('input[value="pictureText"]')?.closest("label");
+          const pictureLabel = displayOptionsNode.querySelector('input[value="picture"]')?.closest("label");
+          const textLabel = displayOptionsNode.querySelector('input[value="text"]')?.closest("label");
+          if (pictureTextLabel) pictureTextLabel.classList.add("shape-display-half");
+          if (pictureLabel) pictureLabel.classList.add("shape-display-half");
+          if (textLabel) textLabel.classList.add("shape-display-half");
+
+          displayOptionsNode.insertAdjacentHTML(
+            "beforeend",
+            `<label class="shape-practice-setting shape-number-setting">
+              <input type="checkbox" id="shapeNumberToggle">
+              <span>Number</span>
+            </label>
+            <label class="shape-practice-setting shape-colour-setting">
+              <input type="checkbox" id="shapeColourToggle">
+              <span>Colour</span>
+            </label>`
           );
         }
 
@@ -519,10 +523,28 @@
               copy.style.backgroundImage = `url("${visual.src || PLACEHOLDER_IMAGE}")`;
             } else {
               copy.classList.add("recoloured-artwork");
-              copy.style.backgroundColor = colourValue || "#999999";
-              copy.style.maskImage = `url("${visual.src || PLACEHOLDER_IMAGE}")`;
-              copy.style.webkitMaskImage = `url("${visual.src || PLACEHOLDER_IMAGE}")`;
-              if (colourName === "white") copy.classList.add("white-artwork");
+              const maskUrl = `url("${visual.src || PLACEHOLDER_IMAGE}")`;
+
+              function makeMaskLayer(className, backgroundColour) {
+                const layer = document.createElement("span");
+                layer.className = `shape-practice-mask-layer ${className}`;
+                layer.style.backgroundColor = backgroundColour;
+                layer.style.maskImage = maskUrl;
+                layer.style.webkitMaskImage = maskUrl;
+                return layer;
+              }
+
+              if (colourName === "white") {
+                copy.classList.add("white-artwork");
+                copy.append(
+                  makeMaskLayer("shape-practice-white-outline", "#7f8a90"),
+                  makeMaskLayer("shape-practice-fill-layer", colourValue || "#F8F8F4")
+                );
+              } else {
+                copy.append(
+                  makeMaskLayer("shape-practice-fill-layer", colourValue || "#999999")
+                );
+              }
             }
 
             copies.push(copy);
