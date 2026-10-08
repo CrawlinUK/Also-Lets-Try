@@ -1706,6 +1706,24 @@ html.shared-unit-template[data-unit="3"] .game-picture.text-visual {
   font-size: clamp(42px, 7vw, 110px);
 }
 
+/* Unit 6 alphabet cards are generated text, using the same handwriting font
+   as the Alphabet Board. Keep the single letter large in flashcards and
+   readable when all 26 letters are shown in grid games. */
+html.shared-unit-template[data-unit="6"] .card-picture.text-visual {
+  font-size: clamp(150px, 30vw, 380px);
+  font-weight: 500;
+}
+
+html.shared-unit-template[data-unit="6"] .game-picture.text-visual {
+  font-size: clamp(38px, 6.2vw, 96px);
+  font-weight: 500;
+}
+
+html.shared-unit-template[data-unit="6"] .settings-preview-picture.text-visual {
+  font-size: clamp(72px, 12vw, 145px);
+  font-weight: 500;
+}
+
 
 
 
