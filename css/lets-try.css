@@ -893,17 +893,21 @@ html.shared-unit-template .category-option:focus-visible {
 
     html.shared-unit-template .segmented {
       grid-template-columns: repeat(3, 1fr);
+      gap: 1px;
       border: 1px solid #cbd8df;
       border-radius: 11px;
+      background: #cbd8df;
     }
 
     html.shared-unit-template .segmented label {
       position: relative;
+      background: var(--surface);
     }
 
     html.shared-unit-template .segmented span {
       padding: 8px;
-      border-right: 1px solid #cbd8df;
+      border: 0;
+      background: var(--surface);
       cursor: pointer;
     }
 
@@ -2279,12 +2283,16 @@ html.shared-unit-template .guess-picture.number-svg-visual {
    SHAPE PRACTICE — UNIT 7
    ============================================================ */
 
-html.shared-unit-template .shape-practice-section {
-  margin-top: 8px;
+html.shared-unit-template .shape-practice-display-options {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
 }
 
-html.shared-unit-template .shape-practice-options {
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+html.shared-unit-template .shape-practice-display-options > .shape-display-half {
+  grid-column: span 2;
+}
+
+html.shared-unit-template .shape-practice-display-options > .shape-practice-setting {
+  grid-column: span 1;
 }
 
 html.shared-unit-template .shape-practice-tower {
@@ -2375,17 +2383,33 @@ html.shared-unit-template .shape-practice-visual {
 }
 
 html.shared-unit-template .shape-practice-copy {
+  position: relative;
   flex: 0 0 42%;
   height: 42%;
   background-repeat: no-repeat;
   background-position: center;
   background-size: contain;
+}
+
+html.shared-unit-template .shape-practice-mask-layer {
+  position: absolute;
+  inset: 0;
+  display: block;
   -webkit-mask-repeat: no-repeat;
   mask-repeat: no-repeat;
   -webkit-mask-position: center;
   mask-position: center;
   -webkit-mask-size: contain;
   mask-size: contain;
+}
+
+html.shared-unit-template .shape-practice-white-outline {
+  background: #7f8a90;
+}
+
+html.shared-unit-template .white-artwork .shape-practice-fill-layer {
+  transform: scale(.965);
+  transform-origin: center;
 }
 
 html.shared-unit-template .shape-practice-visual[data-shape-count="1"] .shape-practice-copy {
@@ -2407,14 +2431,6 @@ html.shared-unit-template .shape-practice-visual[data-shape-count="4"] .shape-pr
 html.shared-unit-template .shape-practice-visual[data-shape-count="5"] .shape-practice-copy {
   flex-basis: 29%;
   height: 36%;
-}
-
-html.shared-unit-template .shape-practice-copy.white-artwork {
-  filter:
-    drop-shadow(1px 0 0 #8d969b)
-    drop-shadow(-1px 0 0 #8d969b)
-    drop-shadow(0 1px 0 #8d969b)
-    drop-shadow(0 -1px 0 #8d969b);
 }
 
 html.shared-unit-template[data-unit="7"] .answer-area {
