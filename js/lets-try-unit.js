@@ -155,6 +155,48 @@
         ? textbookIds
         : UNIT_CONFIG.cards.slice(0, 1).map((card) => card.id);
 
+      const TEACHER_PREFERENCES_KEY = "alsoLetsTry.teacherPreferences.v1";
+
+      function clampNumber(value, minimum, maximum, fallback) {
+        const number = Number(value);
+        return Number.isFinite(number)
+          ? Math.max(minimum, Math.min(maximum, number))
+          : fallback;
+      }
+
+      function readTeacherPreferences() {
+        const defaults = {
+          sizeBalance: 50,
+          missingAnswerSize: 10
+        };
+
+        try {
+          const stored = JSON.parse(window.localStorage.getItem(TEACHER_PREFERENCES_KEY) || "{}");
+          return {
+            sizeBalance: clampNumber(stored.sizeBalance, 0, 100, defaults.sizeBalance),
+            missingAnswerSize: clampNumber(stored.missingAnswerSize, 8, 24, defaults.missingAnswerSize)
+          };
+        } catch {
+          return defaults;
+        }
+      }
+
+      function saveTeacherPreferences() {
+        try {
+          window.localStorage.setItem(
+            TEACHER_PREFERENCES_KEY,
+            JSON.stringify({
+              sizeBalance: state.sizeBalance,
+              missingAnswerSize: state.missingAnswerSize
+            })
+          );
+        } catch {
+          // Keep working normally if storage is unavailable.
+        }
+      }
+
+      const teacherPreferences = readTeacherPreferences();
+
       const state = {
         selectedIds: new Set(initialIds),
         deck: [],
@@ -168,8 +210,8 @@
           ? { ...(SHAPE_PRACTICE.defaultColours || {}) }
           : {},
         gameMode: "flashcards",
-        sizeBalance: 50,
-        missingAnswerSize: 10,
+        sizeBalance: teacherPreferences.sizeBalance,
+        missingAnswerSize: teacherPreferences.missingAnswerSize,
         autoSeconds: UNIT_CONFIG.autoSeconds,
         countdown: UNIT_CONFIG.autoSeconds,
         autoTimer: null,
@@ -471,6 +513,14 @@
           Math.min(UNIT_CONFIG.autoSecondsMaximum, UNIT_CONFIG.autoSeconds)
         );
         state.countdown = state.autoSeconds;
+
+        elements.sizeBalanceRange.value = String(state.sizeBalance);
+        elements.missingAnswerSizeRange.value = String(state.missingAnswerSize);
+        elements.missingAnswerSizeValue.textContent = `${state.missingAnswerSize} px`;
+        document.documentElement.style.setProperty(
+          "--missing-answer-size",
+          `${state.missingAnswerSize}px`
+        );
 
         buildShapePracticeControls();
         syncShapePracticeControls();
@@ -1143,11 +1193,11 @@
         stage.className = "guess-stage";
         stage.classList.toggle("hide-word", state.guessMode === "hideWord");
 
+        let shownWord = null;
         if (state.guessMode === "showWord") {
-          const word = document.createElement("div");
-          word.className = "guess-main-word";
-          word.textContent = card.word;
-          stage.append(word);
+          shownWord = document.createElement("div");
+          shownWord.className = "guess-main-word";
+          shownWord.textContent = card.word;
         }
 
         const reveal = document.createElement("button");
@@ -1175,6 +1225,7 @@
         });
 
         stage.append(reveal);
+        if (shownWord) stage.append(shownWord);
         elements.gameArea.replaceChildren(stage);
         elements.counter.textContent = `${state.guessPosition + 1} / ${state.guessDeck.length}`;
         elements.modeLabel.textContent = state.guessMode === "showWord" ? "Guess — Show Word" : "Guess — Hide Word";
@@ -1603,7 +1654,6 @@
         state.shapeColours = SHAPE_PRACTICE
           ? { ...(SHAPE_PRACTICE.defaultColours || {}) }
           : {};
-        state.sizeBalance = 50;
         state.autoSeconds = UNIT_CONFIG.autoSeconds;
         state.countdown = state.autoSeconds;
         const resetDisplayMode = document.querySelector(
@@ -1615,11 +1665,13 @@
         );
         if (resetLetterColourMode) resetLetterColourMode.checked = true;
         syncShapePracticeControls();
-        elements.sizeBalanceRange.value = "50";
-        elements.missingAnswerSizeRange.value = "10";
-        state.missingAnswerSize = 10;
-        document.documentElement.style.setProperty("--missing-answer-size", "10px");
-        elements.missingAnswerSizeValue.textContent = "10 px";
+        elements.sizeBalanceRange.value = String(state.sizeBalance);
+        elements.missingAnswerSizeRange.value = String(state.missingAnswerSize);
+        document.documentElement.style.setProperty(
+          "--missing-answer-size",
+          `${state.missingAnswerSize}px`
+        );
+        elements.missingAnswerSizeValue.textContent = `${state.missingAnswerSize} px`;
         syncCardOptions();
         rebuildDeck();
       });
@@ -1657,12 +1709,14 @@
 
       elements.sizeBalanceRange.addEventListener("input", () => {
         state.sizeBalance = Number(elements.sizeBalanceRange.value);
+        saveTeacherPreferences();
         render();
       });
       elements.missingAnswerSizeRange.addEventListener("input", () => {
         state.missingAnswerSize = Number(elements.missingAnswerSizeRange.value);
         document.documentElement.style.setProperty("--missing-answer-size", `${state.missingAnswerSize}px`);
         elements.missingAnswerSizeValue.textContent = `${state.missingAnswerSize} px`;
+        saveTeacherPreferences();
       });
 
       document.addEventListener("keydown", (event) => {
