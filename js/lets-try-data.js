@@ -680,7 +680,7 @@
         4: { title: "I like blue." },
         5: { title: "What do you like?" },
         6: { title: "ALPHABET" },
-        7: { title: "This is for you." },
+        7: { title: "This is for you.", reviewCategories: ["colours"] },
         8: { title: "What’s this?" },
         9: { title: "Who are you?", reviewCategories: ["colours", "shapes", "numbers"] }
       }
@@ -759,7 +759,7 @@
   }
 
   global.LETS_TRY_DATA = Object.freeze({
-    version: 7,
+    version: 8,
     assetUrl,
     categories: CATEGORIES,
     assets: ASSETS,
