@@ -76,7 +76,11 @@
     shapePractice: {
       colourCategoryId: "colours",
       counts: [1, 2, 3, 4, 5],
-      defaultColours: DEFAULT_SHAPE_COLOURS
+      defaultColours: DEFAULT_SHAPE_COLOURS,
+      colourOrder: [
+        "green", "black", "blue", "yellow", "purple", "pink", "red", "white",
+        "orange", "brown", "light-blue", "light-green", "gray"
+      ]
     },
 
     autoSeconds: 3,
