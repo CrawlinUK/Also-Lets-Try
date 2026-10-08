@@ -2323,6 +2323,7 @@ html.shared-unit-template .shape-number-tower {
 
 html.shared-unit-template .shape-colour-tower {
   right: 18px;
+  top: 41%;
 }
 
 html.shared-unit-template .shape-practice-tower button {
@@ -2355,6 +2356,17 @@ html.shared-unit-template .shape-colour-choice.light-swatch {
 }
 
 html.shared-unit-template .shape-colour-choice.shape-colour-random {
+  position: relative;
+  overflow: hidden;
+  background: #ffffff !important;
+  border-color: #9aa4aa;
+}
+
+html.shared-unit-template .shape-colour-choice.shape-colour-random::before {
+  content: "";
+  position: absolute;
+  inset: 3px;
+  border-radius: 50%;
   background:
     conic-gradient(
       #E53935 0 14%,
@@ -2364,7 +2376,7 @@ html.shared-unit-template .shape-colour-choice.shape-colour-random {
       #27A7DF 57% 71%,
       #A65AA6 71% 86%,
       #F28AB2 86% 100%
-    ) !important;
+    );
 }
 
 html.shared-unit-template .shape-colour-choice.selected {
