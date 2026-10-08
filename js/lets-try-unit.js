@@ -164,7 +164,9 @@
         shapeNumberEnabled: false,
         shapeColourPhraseEnabled: false,
         shapeCount: 1,
-        shapeColourChoice: "default",
+        shapeColours: SHAPE_PRACTICE
+          ? { ...(SHAPE_PRACTICE.defaultColours || {}) }
+          : {},
         gameMode: "flashcards",
         sizeBalance: 50,
         missingAnswerSize: 10,
@@ -189,12 +191,42 @@
 
       function shapeColourName(card) {
         if (!isShapePracticeCard(card)) return "";
-        if (state.shapeColourChoice !== "default") return state.shapeColourChoice;
         return (
-          (card.visual && card.visual.defaultColourName)
+          state.shapeColours[card.id]
+          || (card.visual && card.visual.defaultColourName)
           || (SHAPE_PRACTICE.defaultColours && SHAPE_PRACTICE.defaultColours[card.id])
           || ""
         );
+      }
+
+      function shapeColourEntries() {
+        if (!SHAPE_PRACTICE) return [];
+        const colourCategoryId = SHAPE_PRACTICE.colourCategoryId || "colours";
+        const colourCategory = LETS_TRY_DATA.getCategory(colourCategoryId);
+        const entries = (colourCategory ? colourCategory.items : []).filter((entry) => entry.hex);
+        const byId = new Map(entries.map((entry) => [entry.id, entry]));
+        const requestedOrder = Array.isArray(SHAPE_PRACTICE.colourOrder)
+          ? SHAPE_PRACTICE.colourOrder
+          : [];
+
+        const ordered = requestedOrder
+          .map((id) => byId.get(id))
+          .filter(Boolean);
+        const used = new Set(ordered.map((entry) => entry.id));
+        const remaining = entries.filter((entry) => !used.has(entry.id));
+        return [...ordered, ...remaining];
+      }
+
+      function randomiseShapeColours() {
+        if (!SHAPE_PRACTICE) return;
+        const shapeCards = UNIT_CONFIG.cards.filter((card) => card.category === "shapes");
+        const colourIds = shuffled(shapeColourEntries().map((entry) => entry.id));
+
+        shapeCards.forEach((card, index) => {
+          if (colourIds[index]) {
+            state.shapeColours[card.id] = colourIds[index];
+          }
+        });
       }
 
       function shapePracticeText(card) {
@@ -239,32 +271,30 @@
         elements.shapeNumberTower.replaceChildren(...numberButtons);
 
         const colourButtons = [];
-        const defaultButton = document.createElement("button");
-        defaultButton.type = "button";
-        defaultButton.className = "shape-colour-choice shape-colour-default";
-        defaultButton.dataset.shapeColour = "default";
-        defaultButton.title = "Default colour";
-        defaultButton.setAttribute("aria-label", "Default shape colour");
-        defaultButton.addEventListener("click", () => {
-          state.shapeColourChoice = "default";
+        const randomButton = document.createElement("button");
+        randomButton.type = "button";
+        randomButton.className = "shape-colour-choice shape-colour-random";
+        randomButton.title = "Random colours";
+        randomButton.setAttribute("aria-label", "Randomise all shape colours");
+        randomButton.addEventListener("click", () => {
+          randomiseShapeColours();
           render();
         });
-        colourButtons.push(defaultButton);
+        colourButtons.push(randomButton);
 
-        const colourCategoryId = SHAPE_PRACTICE.colourCategoryId || "colours";
-        const colourCategory = LETS_TRY_DATA.getCategory(colourCategoryId);
-        (colourCategory ? colourCategory.items : []).forEach((entry) => {
-          if (!entry.hex) return;
+        shapeColourEntries().forEach((entry) => {
           const button = document.createElement("button");
           button.type = "button";
           button.className = "shape-colour-choice";
           button.dataset.shapeColour = entry.id;
           button.style.setProperty("--swatch-colour", entry.hex);
           button.title = entry.id.replace(/-/g, " ");
-          button.setAttribute("aria-label", `Use ${entry.id.replace(/-/g, " ")}`);
+          button.setAttribute("aria-label", `Use ${entry.id.replace(/-/g, " ")} for this shape`);
           if (entry.id === "white") button.classList.add("light-swatch");
           button.addEventListener("click", () => {
-            state.shapeColourChoice = entry.id;
+            const card = currentCard();
+            if (!isShapePracticeCard(card)) return;
+            state.shapeColours[card.id] = entry.id;
             render();
           });
           colourButtons.push(button);
@@ -294,8 +324,9 @@
 
         if (elements.shapeColourTower) {
           elements.shapeColourTower.hidden = !showTowers;
+          const selectedColour = isShapePracticeCard(card) ? shapeColourName(card) : "";
           elements.shapeColourTower.querySelectorAll("[data-shape-colour]").forEach((button) => {
-            const selected = button.dataset.shapeColour === state.shapeColourChoice;
+            const selected = button.dataset.shapeColour === selectedColour;
             button.classList.toggle("selected", selected);
             button.setAttribute("aria-pressed", String(selected));
           });
@@ -497,10 +528,12 @@
         if (shapeVisual) {
           const usePracticeModifiers = state.gameMode === "flashcards" && isShapePracticeCard(card);
           const count = usePracticeModifiers && state.shapeNumberEnabled ? state.shapeCount : 1;
-          const colourChoice = usePracticeModifiers ? state.shapeColourChoice : "default";
-          const colourName = colourChoice === "default"
-            ? ((visual.defaultColourName || (SHAPE_PRACTICE && SHAPE_PRACTICE.defaultColours && SHAPE_PRACTICE.defaultColours[card.id])) || "")
-            : colourChoice;
+          const defaultColourName =
+            (visual.defaultColourName
+              || (SHAPE_PRACTICE && SHAPE_PRACTICE.defaultColours && SHAPE_PRACTICE.defaultColours[card.id])
+              || "");
+          const colourName = usePracticeModifiers ? shapeColourName(card) : defaultColourName;
+          const useDefaultArtwork = colourName === defaultColourName;
           const colourValue = colourName && typeof LETS_TRY_DATA.getColourValue === "function"
             ? LETS_TRY_DATA.getColourValue(colourName)
             : null;
@@ -518,7 +551,7 @@
             const copy = document.createElement("div");
             copy.className = "shape-practice-copy";
 
-            if (colourChoice === "default") {
+            if (useDefaultArtwork) {
               copy.classList.add("default-artwork");
               copy.style.backgroundImage = `url("${visual.src || PLACEHOLDER_IMAGE}")`;
             } else {
@@ -1566,7 +1599,9 @@
         state.shapeNumberEnabled = false;
         state.shapeColourPhraseEnabled = false;
         state.shapeCount = 1;
-        state.shapeColourChoice = "default";
+        state.shapeColours = SHAPE_PRACTICE
+          ? { ...(SHAPE_PRACTICE.defaultColours || {}) }
+          : {};
         state.sizeBalance = 50;
         state.autoSeconds = UNIT_CONFIG.autoSeconds;
         state.countdown = state.autoSeconds;
