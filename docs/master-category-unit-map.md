@@ -35,7 +35,7 @@ Examples:
 - sausage belongs to Food but is physically stored in `fruit.png`
 - flags are stored in one shared SVG sprite
 - numbers and alphabet are text, not bitmap images
-- colours are generated in CSS
+- colours have shared hex values in the Colours category; colour splodges are generated where needed
 - shapes use the seven individual SVG files in `images/shapes/`
 
 ## Existing shared image assets
@@ -81,4 +81,4 @@ Close reusable sources exist for all four:
 
 ## LT1 Unit 7
 
-LT1 Unit 7 uses Shapes as its default category and Colours as a companion/review category. The seven shape SVGs are selected by default; colours remain available through Settings.
+LT1 Unit 7 uses the seven Shapes as its flashcard deck. Number (1–5) and colour are live shape modifiers rather than separate flashcards. The colour tower uses the shared Colours category, including brown, orange, gray, light blue and light green.
