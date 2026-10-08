@@ -81,4 +81,4 @@ Close reusable sources exist for all four:
 
 ## LT1 Unit 7
 
-LT1 Unit 7 uses the seven Shapes as its flashcard deck. Number (1–5) and colour are live shape modifiers rather than separate flashcards. The colour tower uses the shared Colours category, including brown, orange, gray, light blue and light green.
+LT1 Unit 7 uses the seven Shapes as its flashcard deck. Number (1–5) and colour are live shape modifiers rather than separate flashcards. Each shape remembers its own colour assignment; the rainbow control randomises all seven to different colours. The colour tower uses the shared Colours category, including brown, orange, gray, light blue and light green. Five copies use a domino-five layout.
