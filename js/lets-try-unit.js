@@ -874,6 +874,7 @@
         elements.flashcard.classList.toggle("text-only", effectiveMode === "text");
 
         if (!card) {
+          syncShapePracticeControls(null);
           elements.cardPicture.removeAttribute("style");
           elements.displayText.textContent = "NO CARDS AVAILABLE";
           elements.counter.textContent = "0 / 0";
@@ -1057,6 +1058,7 @@
       }
 
       function renderGuess() {
+        syncShapePracticeControls(null);
         stopAuto();
         document.documentElement.classList.add("guess-focus");
         elements.missingAnswerHints.hidden = true;
