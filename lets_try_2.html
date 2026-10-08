@@ -115,7 +115,7 @@ main{
   <button class="unit u3 disabled" disabled><strong>Unit 3</strong><span>I like Mondays.</span></button>
   <button class="unit u4 disabled" disabled><strong>Unit 4</strong><span>What time is it?</span></button>
   <button class="unit u5 disabled" disabled><strong>Unit 5</strong><span>Do you have a pen?</span></button>
-  <button class="unit u6 disabled" disabled><strong>Unit 6</strong><span>Alphabet</span></button>
+  <button class="unit u6" id="unit6"><strong>Unit 6</strong><span>Alphabet</span></button>
   <button class="unit u7 disabled" disabled><strong>Unit 7</strong><span>What do you want?</span></button>
   <button class="unit u8 disabled" disabled><strong>Unit 8</strong><span>This is my favorite place.</span></button>
   <button class="unit u9 disabled" disabled><strong>Unit 9</strong><span>This is my day.</span></button>
@@ -123,6 +123,7 @@ main{
 </main>
 <script>
 document.getElementById("back").addEventListener("click",()=>location.href="index.html");
+document.getElementById("unit6").addEventListener("click",()=>location.href="units/unit.html?book=lt2&unit=6");
 </script>
 </body>
 </html>
