@@ -1,69 +1,332 @@
 <!DOCTYPE html>
-<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-  
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Alphabet Board — Shuffle, Reset, Hide</title>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Alphabet Board — Shuffle, Reset, Hide, Song</title>
 <style>
-    :root{--bg:#0f1220;--bg2:#1a1f36;--fg:#eaf0f8;--muted:#9fb0c5;--glass:rgba(255,255,255,.06);--glassStroke:rgba(255,255,255,.18)}
-    *{box-sizing:border-box}
-    html,body{height:100%;margin:0}
-    body{display:grid;grid-template-rows:auto minmax(0,1fr) auto;gap:14px;overflow:hidden;background:radial-gradient(1100px 800px at 50% 35%,var(--bg2),var(--bg));color:var(--fg);font-family:'Comic Neue', ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial}
+  :root {
+    --bg: #0f1220;
+    --bg2: #1a1f36;
+    --fg: #eaf0f8;
+    --muted: #9fb0c5;
+    --glass: rgba(255,255,255,.06);
+    --glassStroke: rgba(255,255,255,.18);
+    --tileGlow: rgba(255,255,255,.38);
+    --songAccent: #ffd54a;
+  }
 
-    header{display:flex;justify-content:center;padding:10px 12px}
-    .controls{display:flex;gap:10px;flex-wrap:wrap}
-    button{padding:10px 16px;border-radius:999px;border:1px solid var(--glassStroke);background:var(--glass);color:var(--fg);font-weight:700;font-size:16px;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);cursor:pointer}
-    button:active{transform:translateY(1px)}
+  body.bright {
+    --bg: #ffffff;
+    --bg2: #f4f7fb;
+    --fg: #111827;
+    --muted: #516070;
+    --glass: rgba(0,0,0,.055);
+    --glassStroke: rgba(0,0,0,.16);
+    --tileGlow: rgba(0,0,0,.2);
+    --songAccent: #ffb300;
+  }
 
-    .board-wrap{min-height:0;display:grid;place-items:center;padding:12px}
-    .board{width:min(1200px,95vw);max-height:100%;display:grid;gap:8px}
-    @media (min-width: 1100px){.board{grid-template-columns:repeat(7,1fr)}}
-    @media (max-width: 1099.98px){.board{grid-template-columns:repeat(6,1fr)}}
-    @media (max-width: 900px){.board{grid-template-columns:repeat(5,1fr)}}
-    @media (max-width: 700px){.board{grid-template-columns:repeat(4,1fr)}}
+  * { box-sizing: border-box; }
+  html, body { height: 100%; margin: 0; }
 
-    .tile{aspect-ratio:1/1;min-width:0;min-height:0;display:grid;place-items:center;border:1px solid var(--glassStroke);background:var(--glass);border-radius:18px;user-select:none;transition:transform .08s ease}
-    .tile:active{transform:scale(.98)}
-    .letter{font-size:clamp(48px,10vmin,110px);font-weight:700;line-height:1;}
+  body {
+    display: grid;
+    grid-template-rows: auto minmax(0, 1fr) auto;
+    gap: 14px;
+    background: radial-gradient(1100px 800px at 50% 35%, var(--bg2), var(--bg));
+    color: var(--fg);
+    font-family: 'Comic Neue', ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+    overflow: hidden;
+    transition: background .25s ease, color .25s ease;
+  }
+
+  #fc2_footer { display: none !important; }
+
+  header {
+    display: flex;
+    justify-content: center;
+    padding: 10px 12px 0;
+    position: relative;
+    z-index: 2;
+  }
+
+  .controls {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .control-group {
+    display: flex;
+    gap: 8px;
+    padding: 5px;
+    border: 1px solid var(--glassStroke);
+    border-radius: 999px;
+    background: rgba(127,127,127,.05);
+  }
+
+  .case-choice { opacity: .42; }
+  .case-choice.selected {
+    opacity: 1;
+    color: var(--songAccent);
+    text-shadow: 0 0 8px var(--songAccent);
+  }
+
+  #brightMode .bulb { filter: grayscale(1); opacity: .55; }
+  #brightMode.active .bulb {
+    filter: none;
+    opacity: 1;
+    text-shadow: 0 0 10px #ffd54a;
+  }
+
+  button {
+    padding: 10px 16px;
+    border-radius: 999px;
+    border: 1px solid var(--glassStroke);
+    background: var(--glass);
+    color: var(--fg);
+    font-weight: 700;
+    font-size: 16px;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    cursor: pointer;
+    touch-action: manipulation;
+  }
+
+  button:active { transform: translateY(1px); }
+  button.active { outline: 3px solid var(--songAccent); }
+
+  #doubleSpeed.active::before,
+  #doubleSpeed.active::after {
+    content: "👹";
+    display: inline-block;
+    margin: 0 6px;
+    transform: translateY(1px);
+  }
+  button:disabled { opacity: .45; cursor: not-allowed; }
+
+  .board-wrap {
+    display: grid;
+    place-items: center;
+    padding: 8px 12px;
+    min-height: 0;
+  }
+
+  .board {
+    width: min(1200px, 95vw);
+    max-height: 100%;
+    display: grid;
+    gap: 8px;
+  }
+
+  @media (min-width: 1100px) { .board { grid-template-columns: repeat(7, 1fr); } }
+  @media (max-width: 1099.98px) { .board { grid-template-columns: repeat(6, 1fr); } }
+  @media (max-width: 900px) { .board { grid-template-columns: repeat(5, 1fr); } }
+  @media (max-width: 700px) { .board { grid-template-columns: repeat(4, 1fr); } }
+
+  .tile {
+    aspect-ratio: 1 / 1;
+    min-width: 0;
+    min-height: 0;
+    display: grid;
+    place-items: center;
+    border: 1px solid var(--glassStroke);
+    background: var(--glass);
+    border-radius: 18px;
+    user-select: none;
+    transition: transform .08s ease, background .18s ease, box-shadow .18s ease, border-color .18s ease;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .tile:active { transform: scale(.98); }
+
+  .letter {
+    font-size: clamp(48px, 10vmin, 110px);
+    font-weight: 700;
+    line-height: 1;
+    transition: opacity .15s ease, visibility .15s ease;
+  }
+
+  .letter.hidden { visibility: hidden; opacity: 0; }
+
+  .tile.song-active {
+    background: var(--songAccent);
+    color: #111;
+    border-color: rgba(255,255,255,.8);
+    box-shadow: 0 0 0 5px var(--tileGlow), 0 0 28px var(--songAccent);
+    animation: songPulse .48s ease both;
+    z-index: 1;
+  }
+
+  .tile.song-active .letter {
+    visibility: visible;
+    opacity: 1;
+  }
+
+  @keyframes songPulse {
+    0% { transform: scale(1) rotate(0deg); }
+    25% { transform: scale(1.14) rotate(-3deg); }
+    55% { transform: scale(1.08) rotate(3deg); }
+    100% { transform: scale(1) rotate(0deg); }
+  }
+
+  footer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    color: var(--muted);
+    padding: 0 8px 10px;
+    text-align: center;
+    position: relative;
+    z-index: 2;
+  }
+
+  .hint { font-size: .9rem; margin-top: 4px; opacity: .9; }
+  .sr { position: absolute; left: -9999px; }
+
+  #songOverlay {
+    position: fixed;
+    inset: 0;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 20;
+    background: rgba(0,0,0,.18);
+    color: white;
+    text-shadow: 0 4px 18px rgba(0,0,0,.45);
+    pointer-events: none;
+  }
+
+  body.bright #songOverlay {
+    background: rgba(255,255,255,.22);
+    color: #111827;
+    text-shadow: 0 4px 18px rgba(255,255,255,.55);
+  }
+
+  #songOverlay.show { display: flex; }
+
+  #songMessage {
+    font-size: clamp(72px, 18vw, 220px);
+    font-weight: 900;
+    letter-spacing: .04em;
+    animation: overlayPop .35s ease both;
+  }
+
+  #songOverlay.finished #songMessage {
+    font-size: clamp(50px, 11vw, 130px);
+  }
+
+  #finishStar {
+    display: none;
+    font-size: clamp(70px, 13vw, 160px);
+    margin-right: .25em;
+    animation: starSpin 1s ease-in-out infinite;
+  }
+
+  #songOverlay.finished #finishStar { display: inline-block; }
+
+  @keyframes overlayPop {
+    from { transform: scale(.72); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+  }
+
+  @keyframes starSpin {
+    from { transform: rotate(0deg) scale(1); }
+    50% { transform: rotate(180deg) scale(1.18); }
+    to { transform: rotate(360deg) scale(1); }
+  }
 
 
-    /* Tablet landscape: keep all 26 letters visible above the browser chrome.
-       Seven columns gives four rows instead of the old six-column/five-row layout. */
-    @media (min-width: 800px) and (max-height: 900px) and (orientation: landscape){
-      body{gap:8px}
-      header{padding:8px 12px 4px}
-      .board-wrap{padding:6px 12px}
-      .board{
-        height:100%;
-        width:min(1200px,96vw);
-        grid-template-columns:repeat(7,minmax(0,1fr));
-        grid-template-rows:repeat(4,minmax(0,1fr));
-        gap:7px;
-      }
-      .tile{aspect-ratio:auto;border-radius:15px}
-      .letter{font-size:clamp(44px,8.2vmin,92px)}
-      footer{padding:4px 0 8px;font-size:.82rem}
-      .hint{font-size:.78rem}
+  /* Tablet landscape: keep the full 26-letter board and all newer controls
+     visible at once. Seven columns gives four rows, and those rows share the
+     actual remaining viewport height instead of forcing square tiles below it. */
+  @media (min-width: 800px) and (max-height: 900px) and (orientation: landscape) {
+    body { gap: 6px; }
+    header { padding: 6px 8px 0; }
+
+    .controls {
+      gap: 6px;
+      flex-wrap: nowrap;
     }
 
-    .letter.hidden{visibility:hidden;opacity:0;}
+    .control-group {
+      gap: 4px;
+      padding: 3px;
+    }
 
-    footer{display:flex;flex-direction:column;align-items:center;color:var(--muted);padding:8px 0 14px}
-    .hint{font-size:.9rem;margin-top:4px;opacity:.9}
-    .sr{position:absolute;left:-9999px}
-  </style>
+    button {
+      padding: 7px 10px;
+      font-size: 13px;
+    }
+
+    .board-wrap {
+      padding: 4px 10px;
+    }
+
+    .board {
+      width: min(1200px, 96vw);
+      height: 100%;
+      grid-template-columns: repeat(7, minmax(0, 1fr));
+      grid-template-rows: repeat(4, minmax(0, 1fr));
+      gap: 6px;
+    }
+
+    .tile {
+      aspect-ratio: auto;
+      border-radius: 15px;
+    }
+
+    .letter {
+      font-size: clamp(42px, 8vmin, 88px);
+    }
+
+    footer {
+      padding: 0 6px 4px;
+      font-size: .78rem;
+      line-height: 1.1;
+    }
+
+    .hint {
+      margin-top: 2px;
+      font-size: .74rem;
+    }
+  }
+
+  @media (max-height: 720px) {
+    body { gap: 8px; }
+    header { padding-top: 6px; }
+    button { padding: 8px 13px; font-size: 14px; }
+    footer { font-size: .86rem; padding-bottom: 6px; }
+    .hint { font-size: .82rem; }
+  }
+</style>
 </head>
 <body>
   <header>
     <div class="controls" role="group" aria-label="Alphabet controls">
-      <button id="toggleCase" type="button">a / A</button>
-      <button id="shuffle" type="button" aria-describedby="tip">Randomise Letters</button>
-      <button id="randomHide" type="button">Random Hide</button>
-      <button id="reset" type="button">Reset</button>
+      <div class="control-group">
+        <button id="toggleCase" type="button"><span id="lowerChoice" class="case-choice">a</span> / <span id="upperChoice" class="case-choice selected">A</span></button>
+        <button id="shuffle" type="button" aria-describedby="tip">Randomise Letters</button>
+        <button id="randomHide" type="button">Random Hide</button>
+        <button id="reset" type="button">Reset</button>
+      </div>
+      <div class="control-group">
+        <button id="songMode" type="button">Song</button>
+        <button id="doubleSpeed" type="button">Double Speed</button>
+      </div>
+      <div class="control-group">
+        <button id="brightMode" type="button"><span class="bulb">💡</span> Bright Mode</button>
+        <button id="colourMode" type="button">Colour</button>
+      </div>
     </div>
   </header>
 
   <main class="board-wrap">
-    <div id="board" class="board" aria-live="polite" aria-label="Alphabet board"><button class="tile" type="button" aria-label="Letter A"><span class="letter">A</span></button><button class="tile" type="button" aria-label="Letter B"><span class="letter">B</span></button><button class="tile" type="button" aria-label="Letter C"><span class="letter">C</span></button><button class="tile" type="button" aria-label="Letter D"><span class="letter">D</span></button><button class="tile" type="button" aria-label="Letter E"><span class="letter">E</span></button><button class="tile" type="button" aria-label="Letter F"><span class="letter">F</span></button><button class="tile" type="button" aria-label="Letter G"><span class="letter">G</span></button><button class="tile" type="button" aria-label="Letter H"><span class="letter">H</span></button><button class="tile" type="button" aria-label="Letter I"><span class="letter">I</span></button><button class="tile" type="button" aria-label="Letter J"><span class="letter">J</span></button><button class="tile" type="button" aria-label="Letter K"><span class="letter">K</span></button><button class="tile" type="button" aria-label="Letter L"><span class="letter">L</span></button><button class="tile" type="button" aria-label="Letter M"><span class="letter">M</span></button><button class="tile" type="button" aria-label="Letter N"><span class="letter">N</span></button><button class="tile" type="button" aria-label="Letter O"><span class="letter">O</span></button><button class="tile" type="button" aria-label="Letter P"><span class="letter">P</span></button><button class="tile" type="button" aria-label="Letter Q"><span class="letter">Q</span></button><button class="tile" type="button" aria-label="Letter R"><span class="letter">R</span></button><button class="tile" type="button" aria-label="Letter S"><span class="letter">S</span></button><button class="tile" type="button" aria-label="Letter T"><span class="letter">T</span></button><button class="tile" type="button" aria-label="Letter U"><span class="letter">U</span></button><button class="tile" type="button" aria-label="Letter V"><span class="letter">V</span></button><button class="tile" type="button" aria-label="Letter W"><span class="letter">W</span></button><button class="tile" type="button" aria-label="Letter X"><span class="letter">X</span></button><button class="tile" type="button" aria-label="Letter Y"><span class="letter">Y</span></button><button class="tile" type="button" aria-label="Letter Z"><span class="letter">Z</span></button></div>
+    <div id="board" class="board" aria-live="polite" aria-label="Alphabet board"></div>
     <p id="tip" class="sr">Click a letter to hide or show it. Random Hide will hide one random letter. Reset will restore A–Z and make all letters visible.</p>
   </main>
 
@@ -72,36 +335,18 @@
     <div id="hints" class="hint" aria-live="polite">Hidden: none</div>
   </footer>
 
+  <div id="songOverlay" aria-hidden="true">
+    <div id="songMessage"><span id="finishStar">★</span><span id="songText">3</span></div>
+  </div>
+
 <script>
 (() => {
   const A2Z = [...'ABCDEFGHIJKLMNOPQRSTUVWXYZ'];
   const hintWords = {
-    A: 'bat',
-    B: 'able',
-    C: 'ace',
-    D: 'odd',
-    E: 'bed',
-    F: 'off',
-    G: 'ago',
-    H: 'aha',
-    I: 'six',
-    J: 'ajar',
-    K: 'akin',
-    L: 'ply',
-    M: 'imp',
-    N: 'one',
-    O: 'top',
-    P: 'ape',
-    Q: 'aqua',
-    R: 'are',
-    S: 'ask',
-    T: 'ate',
-    U: 'cup',
-    V: 'ever',
-    W: 'owl',
-    X: 'axe',
-    Y: 'aye',
-    Z: 'czar'
+    A: 'bat', B: 'able', C: 'ace', D: 'odd', E: 'bed', F: 'off', G: 'ago',
+    H: 'aha', I: 'six', J: 'ajar', K: 'akin', L: 'ply', M: 'imp', N: 'one',
+    O: 'top', P: 'ape', Q: 'aqua', R: 'are', S: 'ask', T: 'ate', U: 'cup',
+    V: 'ever', W: 'owl', X: 'axe', Y: 'aye', Z: 'czar'
   };
 
   const board = document.getElementById('board');
@@ -110,7 +355,21 @@
   const randomHideBtn = document.getElementById('randomHide');
   const hintsEl = document.getElementById('hints');
   const toggleCaseBtn = document.getElementById('toggleCase');
+  const brightModeBtn = document.getElementById('brightMode');
+  const songModeBtn = document.getElementById('songMode');
+  const doubleSpeedBtn = document.getElementById('doubleSpeed');
+  const colourModeBtn = document.getElementById('colourMode');
+  const lowerChoice = document.getElementById('lowerChoice');
+  const upperChoice = document.getElementById('upperChoice');
+  const songOverlay = document.getElementById('songOverlay');
+  const songText = document.getElementById('songText');
+
   let isLower = false;
+  let isBright = false;
+  let isDoubleSpeed = false;
+  let isColour = false;
+  let songIsRunning = false;
+  let songToken = 0;
 
   let order = A2Z.slice();
   const hidden = new Set();
@@ -118,22 +377,27 @@
   render();
 
   shuffleBtn.addEventListener('click', () => {
+    if (songIsRunning) return;
     order = shuffle(order.slice());
     render(true);
   });
 
   toggleCaseBtn.addEventListener('click', () => {
+    if (songIsRunning) return;
     isLower = !isLower;
     applyCase();
   });
 
   resetBtn.addEventListener('click', () => {
+    if (songIsRunning) stopSong();
     order = A2Z.slice();
     hidden.clear();
     render();
   });
 
   randomHideBtn.addEventListener('click', () => {
+    if (songIsRunning) return;
+
     const visibleIndices = [];
     order.forEach((_, idx) => {
       if (!hidden.has(idx)) visibleIndices.push(idx);
@@ -142,35 +406,60 @@
 
     const randIdx = visibleIndices[Math.floor(Math.random() * visibleIndices.length)];
     hidden.add(randIdx);
-
-    const tile = board.children[randIdx];
-    if (tile) {
-      const span = tile.querySelector('.letter');
-      if (span) span.classList.add('hidden');
-    }
-
+    updateTileHidden(randIdx, true);
     updateHints();
   });
 
-  function render(preserveHidden = false){
+  brightModeBtn.addEventListener('click', () => {
+    isBright = !isBright;
+    document.body.classList.toggle('bright', isBright);
+    brightModeBtn.classList.toggle('active', isBright);
+    brightModeBtn.innerHTML = `<span class="bulb">💡</span> ${isBright ? 'Dark Mode' : 'Bright Mode'}`;
+  });
+
+  colourModeBtn.addEventListener('click', () => {
+    if (songIsRunning) return;
+    isColour = !isColour;
+    colourModeBtn.classList.toggle('active', isColour);
+    applyLetterColours();
+  });
+
+  doubleSpeedBtn.addEventListener('click', () => {
+    if (songIsRunning) return;
+    isDoubleSpeed = !isDoubleSpeed;
+    doubleSpeedBtn.classList.toggle('active', isDoubleSpeed);
+    doubleSpeedBtn.textContent = 'Double Speed';
+  });
+
+  songModeBtn.addEventListener('click', () => {
+    if (songIsRunning) return;
+    runSongMode();
+  });
+
+  function displayChar(ch) {
+    return isLower ? ch.toLowerCase() : ch.toUpperCase();
+  }
+
+  function render() {
     board.replaceChildren();
+
     order.forEach((ch, idx) => {
       const tile = document.createElement('button');
       tile.className = 'tile';
       tile.type = 'button';
+      tile.dataset.letter = ch;
       tile.setAttribute('aria-label', `Letter ${ch}`);
 
       const span = document.createElement('span');
       span.className = 'letter';
-      span.textContent = ch;
+      span.textContent = displayChar(ch);
 
-      if (hidden.has(idx)) {
-        span.classList.add('hidden');
-      }
+      if (hidden.has(idx)) span.classList.add('hidden');
 
       tile.appendChild(span);
 
       tile.addEventListener('click', () => {
+        if (songIsRunning) return;
         const isHidden = hidden.has(idx);
         if (isHidden) {
           hidden.delete(idx);
@@ -185,24 +474,64 @@
       board.appendChild(tile);
     });
 
+    applyCase();
     updateHints();
   }
 
-  function applyCase(){
+  function applyCase() {
     const tiles = board.children;
     for (let i = 0; i < tiles.length; i++) {
       const span = tiles[i].querySelector('.letter');
       if (!span) continue;
-      span.textContent = isLower ? order[i].toLowerCase() : order[i].toUpperCase();
+      span.textContent = displayChar(order[i]);
     }
+    lowerChoice.classList.toggle('selected', isLower);
+    upperChoice.classList.toggle('selected', !isLower);
+    applyLetterColours();
   }
 
-  function updateHints(){
+  function applyLetterColours() {
+    const capitalColours = {
+      orange: 'AHJK', blue: 'BCDEGPTVZ', red: 'FLMNSX', yellow: 'IY', pink: 'QUW', brown: 'OR'
+    };
+    const lowerColours = {
+      red: 'aeiou', blue: 'bdgjlmnrvwyz', orange: 'cfhkpqstx'
+    };
+    const palette = {
+      orange: '#ff7a00', blue: '#2684ff', red: '#ef3340', yellow: '#ffd400', pink: '#ff66b3', brown: '#b07a45'
+    };
+
+    [...board.children].forEach((tile, i) => {
+      const span = tile.querySelector('.letter');
+      if (!span) return;
+      span.style.color = '';
+      if (!isColour) return;
+      const shown = displayChar(order[i]);
+      const groups = isLower ? lowerColours : capitalColours;
+      for (const [name, letters] of Object.entries(groups)) {
+        if (letters.includes(shown)) {
+          span.style.color = palette[name];
+          break;
+        }
+      }
+    });
+  }
+
+  function updateTileHidden(idx, shouldHide) {
+    const tile = board.children[idx];
+    if (!tile) return;
+    const span = tile.querySelector('.letter');
+    if (!span) return;
+    span.classList.toggle('hidden', shouldHide);
+  }
+
+  function updateHints() {
     if (!hintsEl) return;
     if (!hidden.size) {
       hintsEl.textContent = 'Hidden: none';
       return;
     }
+
     const indices = Array.from(hidden).sort((a, b) => a - b);
     const parts = indices.map(idx => {
       const letter = order[idx];
@@ -212,12 +541,124 @@
     hintsEl.textContent = 'Hidden (position: word): ' + parts.join('   ');
   }
 
-  function shuffle(arr){
+  function shuffle(arr) {
     for (let i = arr.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
       [arr[i], arr[j]] = [arr[j], arr[i]];
     }
     return arr;
+  }
+
+  function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+  }
+
+  function setControlsDisabled(disabled) {
+    [shuffleBtn, resetBtn, randomHideBtn, toggleCaseBtn, brightModeBtn, colourModeBtn, doubleSpeedBtn, songModeBtn].forEach(btn => {
+      btn.disabled = disabled;
+    });
+    songModeBtn.disabled = disabled;
+  }
+
+  async function runSongMode() {
+    songIsRunning = true;
+    songToken++;
+    const token = songToken;
+    const speed = isDoubleSpeed ? 0.5 : 1;
+
+    setControlsDisabled(true);
+    songModeBtn.textContent = 'Singing...';
+
+    try {
+      await showCountdown(token, speed);
+      if (token !== songToken) return;
+
+      songOverlay.classList.remove('show', 'finished');
+
+      // Timing target from classroom retiming:
+      // A-B-C-D-E-F-G---H-I-J-K-L-M-N---O-P-Q-R-S-T-U---V-W-----X-Y-Z-
+      // The pause after W stays as it was, because that matched the rhythm well.
+      // A-G, H-N, and O-U use normal beats, then a longer grouping pause.
+      const normalBeat = 650;
+      const groupPause = 1500;
+      const wLongBeat = 2000;
+      const finalHold = 800;
+      const timingsAfterLetter = {
+        G: groupPause,
+        N: groupPause,
+        U: groupPause,
+        W: wLongBeat,
+        Z: finalHold
+      };
+
+      for (const letter of A2Z) {
+        if (token !== songToken) return;
+        pulseLetter(letter);
+        const wait = timingsAfterLetter[letter] ?? normalBeat;
+        await sleep(wait * speed);
+      }
+
+      if (token !== songToken) return;
+      await showFinished(token, speed);
+    } finally {
+      if (token === songToken) {
+        finishSongState();
+      }
+    }
+  }
+
+  async function showCountdown(token, speed) {
+    songOverlay.classList.add('show');
+    songOverlay.classList.remove('finished');
+
+    for (const item of ['3', '2', '1', 'GO!']) {
+      if (token !== songToken) return;
+      songText.textContent = item;
+      restartOverlayAnimation();
+      await sleep(1250 * speed);
+    }
+  }
+
+  async function showFinished(token, speed) {
+    if (token !== songToken) return;
+    songText.textContent = 'FINISHED';
+    songOverlay.classList.add('show', 'finished');
+    restartOverlayAnimation();
+    await sleep(1700 * speed);
+    songOverlay.classList.remove('show', 'finished');
+  }
+
+  function restartOverlayAnimation() {
+    const message = document.getElementById('songMessage');
+    message.style.animation = 'none';
+    message.offsetHeight;
+    message.style.animation = '';
+  }
+
+  function pulseLetter(letter) {
+    const tile = board.querySelector(`[data-letter="${letter}"]`);
+    if (!tile) return;
+
+    tile.classList.remove('song-active');
+    tile.offsetHeight;
+    tile.classList.add('song-active');
+
+    setTimeout(() => {
+      tile.classList.remove('song-active');
+    }, isDoubleSpeed ? 260 : 520);
+  }
+
+  function stopSong() {
+    songToken++;
+    finishSongState();
+  }
+
+  function finishSongState() {
+    songIsRunning = false;
+    setControlsDisabled(false);
+    songModeBtn.textContent = 'Song';
+    songOverlay.classList.remove('show', 'finished');
+    board.querySelectorAll('.song-active').forEach(tile => tile.classList.remove('song-active'));
   }
 })();
 </script>
