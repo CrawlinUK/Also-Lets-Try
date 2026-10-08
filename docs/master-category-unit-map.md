@@ -77,3 +77,8 @@ Exact source images still need resolving for:
 
 Close reusable sources exist for all four:
 `schoolnurse`, `wakeuptime`, `breakfast` / `breakfasttime`, and `dreamtime`.
+
+
+## LT1 Unit 7
+
+LT1 Unit 7 uses Shapes as its default category and Colours as a companion/review category. The seven shape SVGs are selected by default; colours remain available through Settings.
