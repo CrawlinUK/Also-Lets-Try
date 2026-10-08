@@ -5,6 +5,14 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Alphabet Board — Shuffle, Reset, Hide, Song</title>
 <style>
+  @font-face {
+    font-family: "HandwritingWeCan";
+    src: url("../font/HandwritingWeCan-Medium.otf") format("opentype");
+    font-style: normal;
+    font-weight: 500;
+    font-display: swap;
+  }
+
   :root {
     --bg: #0f1220;
     --bg2: #1a1f36;
@@ -145,8 +153,9 @@
   .tile:active { transform: scale(.98); }
 
   .letter {
+    font-family: "HandwritingWeCan", "Comic Sans MS", sans-serif;
     font-size: clamp(48px, 10vmin, 110px);
-    font-weight: 700;
+    font-weight: 500;
     line-height: 1;
     transition: opacity .15s ease, visibility .15s ease;
   }
