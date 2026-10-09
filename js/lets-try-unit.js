@@ -23,7 +23,7 @@
       if (!appHost) {
         throw new Error("Shared unit app host was not found.");
       }
-      appHost.innerHTML = "<header class=\"site-header\">\n    <div class=\"site-header-inner\">\n      <button class=\"menu-button\" id=\"menuButton\" type=\"button\" aria-label=\"Return to unit menu\"></button>\n\n      <div class=\"site-title\">\n        <span class=\"unit-word\">Unit</span>\n        <span class=\"unit-number\" id=\"unitNumber\"></span>\n        <span class=\"unit-name\" id=\"unitName\"></span>\n      </div>\n\n      <div class=\"game-title\" id=\"gameTitle\" aria-live=\"polite\"></div>\n    </div>\n  </header>\n\n  <main class=\"app\" id=\"appScreen\">\n    <section class=\"flashcard\" id=\"flashcard\" aria-live=\"polite\">\n      <div class=\"flashcard-stage\">\n        <div class=\"answer-area\" id=\"answerArea\">\n          <div class=\"picture-frame\" id=\"pictureFrame\">\n            <div class=\"card-picture\" id=\"cardPicture\" role=\"img\"></div>\n          </div>\n          <div class=\"display-text\" id=\"displayText\"></div>\n        </div>\n\n        <div class=\"game-area\" id=\"gameArea\" hidden></div>\n      </div>\n\n      <button class=\"floating-auto\" id=\"autoButton\" type=\"button\"\n              aria-label=\"Start automatic flashcards\" title=\"Start automatic flashcards\"></button>\n    </section>\n\n    <button class=\"side-nav side-previous\" id=\"previousButton\" type=\"button\" aria-label=\"Previous card\"></button>\n    <button class=\"side-nav side-next\" id=\"nextButton\" type=\"button\" aria-label=\"Next card\"></button>\n    <aside class=\"missing-answer-hints\" id=\"missingAnswerHints\" aria-label=\"Teacher Missing Game answers\" hidden></aside>\n    <aside class=\"guess-word-list\" id=\"guessWordList\" aria-label=\"Guess game word list\" hidden></aside>\n\n    <nav class=\"control-bar\" aria-label=\"Flashcard controls\">\n      <div class=\"card-counter\">\n        <strong id=\"counter\">1 / 1</strong>\n        <span id=\"modeLabel\">Flashcard mode</span>\n      </div>\n\n      <button class=\"control shuffle\" id=\"shuffleButton\" type=\"button\">Shuffle</button>\n\n      <div class=\"game-menu-wrap\">\n        <button class=\"control quiet game-menu-button\" id=\"gameButton\" type=\"button\"\n                aria-haspopup=\"true\" aria-expanded=\"false\">Game</button>\n        <div class=\"game-menu\" id=\"gameMenu\" hidden></div>\n      </div>\n\n      <div class=\"floating-timer timer-control\" id=\"floatingTimer\" aria-label=\"Automatic timer\">\n        <button id=\"timerDownButton\" type=\"button\" aria-label=\"Decrease timer\">−</button>\n        <span class=\"timer-value\" id=\"timerValue\">3 sec</span>\n        <button id=\"timerUpButton\" type=\"button\" aria-label=\"Increase timer\">+</button>\n      </div>\n\n      <button class=\"control quiet settings-icon-button\" id=\"settingsButton\" type=\"button\" aria-label=\"Settings\">Settings</button>\n    </nav>\n\n    <div class=\"keyboard-help collapsed\" id=\"keyboardHelp\">\n      <div class=\"keyboard-help-text\">\n        ← / → = previous / next<br>\n        Space / Enter = next<br>\n        A = start / stop auto<br>\n        R = shuffle<br>\n        G = games<br>\n        ↑ / ↓ = timer up / down<br>\n        Esc = close menus / help\n      </div>\n      <div class=\"keyboard-help-icon\">!</div>\n    </div>\n  </main>\n\n  <div class=\"scrim\" id=\"scrim\"></div>\n\n  <div class=\"guess-setup\" id=\"guessSetup\" role=\"dialog\" aria-modal=\"true\" aria-labelledby=\"guessSetupTitle\" hidden>\n    <div class=\"guess-setup-card\">\n      <button class=\"guess-setup-close\" id=\"guessSetupClose\" type=\"button\" aria-label=\"Close Guess setup\">×</button>\n      <h2 id=\"guessSetupTitle\">Guess</h2>\n      <section class=\"guess-category-section\" id=\"guessCategorySection\">\n        <p>Please choose a category</p>\n        <div class=\"guess-category-options\" id=\"guessCategoryOptions\"></div>\n      </section>\n      <section class=\"guess-mode-section\">\n        <p>Choose a screen mode</p>\n        <div class=\"guess-mode-options\">\n          <button type=\"button\" data-guess-mode=\"showWord\">Show Word</button>\n          <button type=\"button\" data-guess-mode=\"hideWord\">Hide Word<small>All words will be listed on the left.</small></button>\n        </div>\n      </section>\n    </div>\n  </div>\n\n  <aside class=\"settings-panel\" id=\"settingsPanel\" aria-label=\"Settings\">\n    <div class=\"settings-heading\">\n      <h2>Settings</h2>\n      <button class=\"close-button\" id=\"closeSettingsButton\" type=\"button\" aria-label=\"Close settings\">×</button>\n    </div>\n\n    <section class=\"setting-section display-mode-section\">\n      <h3>Display mode</h3>\n      <div class=\"segmented display-mode-options\">\n        <label>\n          <input type=\"radio\" name=\"displayMode\" value=\"pictureText\" checked>\n          <span id=\"pictureTextLabel\">Picture + text</span>\n        </label>\n        <label>\n          <input type=\"radio\" name=\"displayMode\" value=\"picture\">\n          <span id=\"pictureOnlyLabel\">Picture only</span>\n        </label>\n        <label class=\"picture-sentence-option\" id=\"pictureSentenceOption\">\n          <input type=\"radio\" name=\"displayMode\" value=\"pictureSentence\">\n          <span id=\"pictureSentenceLabel\">Picture + sentence</span>\n        </label>\n        <label>\n          <input type=\"radio\" name=\"displayMode\" value=\"text\">\n          <span id=\"textOnlyLabel\">Text only</span>\n        </label>\n      </div>\n    </section>\n\n    <div class=\"settings-preview\" id=\"settingsPreview\" aria-label=\"Display preview\">\n      <div class=\"settings-preview-picture\" id=\"settingsPreviewPicture\" role=\"img\"></div>\n      <div class=\"settings-preview-text\" id=\"settingsPreviewText\"></div>\n    </div>\n\n    <section class=\"setting-section selection-section\">\n      <div class=\"setting-actions setting-actions-top\">\n        <button id=\"selectAllButton\" type=\"button\">Select all</button>\n        <button id=\"resetButton\" type=\"button\">Reset</button>\n      </div>\n      <p class=\"message\" id=\"message\"></p>\n      <div class=\"category-word-groups\" id=\"cardOptionGrid\"></div>\n    </section>\n\n    <section class=\"setting-section secondary-setting-section\">\n      <h3>Image / text size</h3>\n      <div class=\"balance-labels\" aria-hidden=\"true\">\n        <span id=\"balancePictureLabel\">Image</span>\n        <span id=\"balanceTextLabel\">Text</span>\n      </div>\n      <div class=\"balance-slider\">\n        <span>◀</span>\n        <input id=\"sizeBalanceRange\" type=\"range\" min=\"0\" max=\"100\" value=\"50\" step=\"5\"\n               aria-label=\"Image and text size balance\">\n        <span>▶</span>\n      </div>\n    </section>\n\n    <section class=\"setting-section secondary-setting-section\">\n      <h3>Missing Game teacher hint answer size</h3>\n      <div class=\"missing-answer-size-row\">\n        <input id=\"missingAnswerSizeRange\" type=\"range\" min=\"8\" max=\"24\" value=\"10\" step=\"1\"\n               aria-label=\"Missing Game teacher hint answer size\">\n        <output class=\"missing-answer-size-value\" id=\"missingAnswerSizeValue\" for=\"missingAnswerSizeRange\">10 px</output>\n      </div>\n    </section>\n  </aside>";
+      appHost.innerHTML = "<header class=\"site-header\">\n    <div class=\"site-header-inner\">\n      <button class=\"menu-button\" id=\"menuButton\" type=\"button\" aria-label=\"Return to unit menu\"></button>\n\n      <div class=\"site-title\">\n        <span class=\"unit-word\">Unit</span>\n        <span class=\"unit-number\" id=\"unitNumber\"></span>\n        <span class=\"unit-name\" id=\"unitName\"></span>\n      </div>\n\n      <div class=\"game-title\" id=\"gameTitle\" aria-live=\"polite\"></div>\n    </div>\n  </header>\n\n  <main class=\"app\" id=\"appScreen\">\n    <section class=\"flashcard\" id=\"flashcard\" aria-live=\"polite\">\n      <div class=\"flashcard-stage\">\n        <div class=\"answer-area\" id=\"answerArea\">\n          <div class=\"picture-frame\" id=\"pictureFrame\">\n            <div class=\"card-picture\" id=\"cardPicture\" role=\"img\"></div>\n          </div>\n          <div class=\"display-text\" id=\"displayText\"></div>\n        </div>\n\n        <div class=\"game-area\" id=\"gameArea\" hidden></div>\n      </div>\n\n      <button class=\"floating-auto\" id=\"autoButton\" type=\"button\"\n              aria-label=\"Start automatic flashcards\" title=\"Start automatic flashcards\"></button>\n    </section>\n\n    <button class=\"side-nav side-previous\" id=\"previousButton\" type=\"button\" aria-label=\"Previous card\"></button>\n    <button class=\"side-nav side-next\" id=\"nextButton\" type=\"button\" aria-label=\"Next card\"></button>\n    <aside class=\"missing-answer-hints\" id=\"missingAnswerHints\" aria-label=\"Teacher Missing Game answers\" hidden></aside>\n    <aside class=\"guess-word-list\" id=\"guessWordList\" aria-label=\"Guess game word list\" hidden></aside>\n\n    <nav class=\"control-bar\" aria-label=\"Flashcard controls\">\n      <div class=\"card-counter\">\n        <strong id=\"counter\">1 / 1</strong>\n        <span id=\"modeLabel\">Flashcard mode</span>\n      </div>\n\n      <button class=\"control shuffle\" id=\"shuffleButton\" type=\"button\">Shuffle</button>\n\n      <div class=\"game-menu-wrap\">\n        <button class=\"control quiet game-menu-button\" id=\"gameButton\" type=\"button\"\n                aria-haspopup=\"true\" aria-expanded=\"false\">Game</button>\n        <div class=\"game-menu\" id=\"gameMenu\" hidden></div>\n      </div>\n\n      <div class=\"floating-timer timer-control\" id=\"floatingTimer\" aria-label=\"Automatic timer\">\n        <button id=\"timerDownButton\" type=\"button\" aria-label=\"Decrease timer\">−</button>\n        <span class=\"timer-value\" id=\"timerValue\">3 sec</span>\n        <button id=\"timerUpButton\" type=\"button\" aria-label=\"Increase timer\">+</button>\n      </div>\n\n      <button class=\"control quiet settings-icon-button\" id=\"settingsButton\" type=\"button\" aria-label=\"Settings\">Settings</button>\n    </nav>\n\n    <div class=\"keyboard-help collapsed\" id=\"keyboardHelp\">\n      <div class=\"keyboard-help-text\">\n        ← / → = previous / next<br>\n        Space / Enter = next<br>\n        A = start / stop auto<br>\n        R = shuffle<br>\n        G = games<br>\n        ↑ / ↓ = timer up / down<br>\n        Esc = close menus / help\n      </div>\n      <div class=\"keyboard-help-icon\">!</div>\n    </div>\n  </main>\n\n  <div class=\"image-diagnostic-toolbar\" id=\"imageDiagnosticToolbar\" hidden>\n    <strong class=\"image-diagnostic-card-label\" id=\"imageDiagnosticCardLabel\">Image diagnosis</strong>\n    <label class=\"image-diagnostic-zoom-control\">\n      <span>Zoom</span>\n      <input id=\"imageDiagnosticZoomRange\" type=\"range\" min=\"25\" max=\"400\" value=\"100\" step=\"1\" aria-label=\"Diagnostic image zoom\">\n      <span class=\"image-diagnostic-number-wrap\">\n        <input id=\"imageDiagnosticZoomNumber\" type=\"number\" min=\"25\" max=\"400\" value=\"100\" step=\"0.1\" inputmode=\"decimal\" aria-label=\"Diagnostic image zoom percent\">\n        <span>%</span>\n      </span>\n    </label>\n  </div>\n\n  <div class=\"scrim\" id=\"scrim\"></div>\n\n  <div class=\"guess-setup\" id=\"guessSetup\" role=\"dialog\" aria-modal=\"true\" aria-labelledby=\"guessSetupTitle\" hidden>\n    <div class=\"guess-setup-card\">\n      <button class=\"guess-setup-close\" id=\"guessSetupClose\" type=\"button\" aria-label=\"Close Guess setup\">×</button>\n      <h2 id=\"guessSetupTitle\">Guess</h2>\n      <section class=\"guess-category-section\" id=\"guessCategorySection\">\n        <p>Please choose a category</p>\n        <div class=\"guess-category-options\" id=\"guessCategoryOptions\"></div>\n      </section>\n      <section class=\"guess-mode-section\">\n        <p>Choose a screen mode</p>\n        <div class=\"guess-mode-options\">\n          <button type=\"button\" data-guess-mode=\"showWord\">Show Word</button>\n          <button type=\"button\" data-guess-mode=\"hideWord\">Hide Word<small>All words will be listed on the left.</small></button>\n        </div>\n      </section>\n    </div>\n  </div>\n\n  <aside class=\"settings-panel\" id=\"settingsPanel\" aria-label=\"Settings\">\n    <div class=\"settings-heading\">\n      <h2>Settings</h2>\n      <button class=\"close-button\" id=\"closeSettingsButton\" type=\"button\" aria-label=\"Close settings\">×</button>\n    </div>\n\n    <section class=\"setting-section display-mode-section\">\n      <h3>Display mode</h3>\n      <div class=\"segmented display-mode-options\">\n        <label>\n          <input type=\"radio\" name=\"displayMode\" value=\"pictureText\" checked>\n          <span id=\"pictureTextLabel\">Picture + text</span>\n        </label>\n        <label>\n          <input type=\"radio\" name=\"displayMode\" value=\"picture\">\n          <span id=\"pictureOnlyLabel\">Picture only</span>\n        </label>\n        <label class=\"picture-sentence-option\" id=\"pictureSentenceOption\">\n          <input type=\"radio\" name=\"displayMode\" value=\"pictureSentence\">\n          <span id=\"pictureSentenceLabel\">Picture + sentence</span>\n        </label>\n        <label>\n          <input type=\"radio\" name=\"displayMode\" value=\"text\">\n          <span id=\"textOnlyLabel\">Text only</span>\n        </label>\n      </div>\n    </section>\n\n    <div class=\"settings-preview\" id=\"settingsPreview\" aria-label=\"Display preview\">\n      <div class=\"settings-preview-picture\" id=\"settingsPreviewPicture\" role=\"img\"></div>\n      <div class=\"settings-preview-text\" id=\"settingsPreviewText\"></div>\n    </div>\n\n    <section class=\"setting-section selection-section\">\n      <div class=\"setting-actions setting-actions-top\">\n        <button id=\"selectAllButton\" type=\"button\">Select all</button>\n        <button id=\"resetButton\" type=\"button\">Reset</button>\n      </div>\n      <p class=\"message\" id=\"message\"></p>\n      <div class=\"category-word-groups\" id=\"cardOptionGrid\"></div>\n    </section>\n\n    <section class=\"setting-section secondary-setting-section\">\n      <h3>Image / text size</h3>\n      <div class=\"balance-labels\" aria-hidden=\"true\">\n        <span id=\"balancePictureLabel\">Image</span>\n        <span id=\"balanceTextLabel\">Text</span>\n      </div>\n      <div class=\"balance-slider\">\n        <span>◀</span>\n        <input id=\"sizeBalanceRange\" type=\"range\" min=\"0\" max=\"100\" value=\"50\" step=\"5\"\n               aria-label=\"Image and text size balance\">\n        <span>▶</span>\n      </div>\n    </section>\n\n    <section class=\"setting-section secondary-setting-section\">\n      <h3>Missing Game teacher hint answer size</h3>\n      <div class=\"missing-answer-size-row\">\n        <input id=\"missingAnswerSizeRange\" type=\"range\" min=\"8\" max=\"24\" value=\"10\" step=\"1\"\n               aria-label=\"Missing Game teacher hint answer size\">\n        <output class=\"missing-answer-size-value\" id=\"missingAnswerSizeValue\" for=\"missingAnswerSizeRange\">10 px</output>\n      </div>\n    </section>\n\n    <section class=\"setting-section secondary-setting-section image-diagnostic-setting\">\n      <h3>Image diagnosis</h3>\n      <div class=\"image-diagnostic-actions\">\n        <button id=\"imageDiagnosticToggle\" type=\"button\" aria-pressed=\"false\">Image diagnosis</button>\n        <button id=\"imageDiagnosticExport\" type=\"button\">Export changes</button>\n      </div>\n      <p class=\"image-diagnostic-note\">Temporary development tool — this diagnostic tool will be removed on release/completion.</p>\n    </section>\n  </aside>";
 
       const settingsPreviewNode = document.getElementById("settingsPreview");
       if (settingsPreviewNode) {
@@ -137,6 +137,12 @@
         guessCategoryOptions: $("guessCategoryOptions"),
         missingAnswerSizeRange: $("missingAnswerSizeRange"),
         missingAnswerSizeValue: $("missingAnswerSizeValue"),
+        imageDiagnosticToggle: $("imageDiagnosticToggle"),
+        imageDiagnosticExport: $("imageDiagnosticExport"),
+        imageDiagnosticToolbar: $("imageDiagnosticToolbar"),
+        imageDiagnosticCardLabel: $("imageDiagnosticCardLabel"),
+        imageDiagnosticZoomRange: $("imageDiagnosticZoomRange"),
+        imageDiagnosticZoomNumber: $("imageDiagnosticZoomNumber"),
         pictureSentenceOption: $("pictureSentenceOption"),
         pictureSentenceLabel: $("pictureSentenceLabel"),
         letterColourSection: $("letterColourSection"),
@@ -156,6 +162,10 @@
         : UNIT_CONFIG.cards.slice(0, 1).map((card) => card.id);
 
       const TEACHER_PREFERENCES_KEY = "alsoLetsTry.teacherPreferences.v1";
+      const IMAGE_DIAGNOSIS_STORAGE_KEY = "alsoLetsTry.imageDiagnosis.v1";
+      const IMAGE_DIAGNOSIS_MIN_ZOOM = 25;
+      const IMAGE_DIAGNOSIS_MAX_ZOOM = 400;
+      const imageDiagnosticAspectRatios = new Map();
 
       function clampNumber(value, minimum, maximum, fallback) {
         const number = Number(value);
@@ -195,6 +205,322 @@
         }
       }
 
+
+      function readImageDiagnosisAdjustments() {
+        try {
+          const value = JSON.parse(window.localStorage.getItem(IMAGE_DIAGNOSIS_STORAGE_KEY) || "{}");
+          return value && typeof value === "object" && !Array.isArray(value) ? value : {};
+        } catch {
+          return {};
+        }
+      }
+
+      function saveImageDiagnosisAdjustments() {
+        try {
+          window.localStorage.setItem(
+            IMAGE_DIAGNOSIS_STORAGE_KEY,
+            JSON.stringify(state.imageDiagnosticAdjustments)
+          );
+        } catch {
+          // Keep diagnosis working for this page if storage is unavailable.
+        }
+      }
+
+      function cleanDiagnosticSource(value) {
+        if (!value) return "";
+        try {
+          const url = new URL(value, location.href);
+          url.searchParams.delete("v");
+          return url.origin === location.origin
+            ? url.pathname.replace(/^\//, "")
+            : url.href;
+        } catch {
+          return String(value);
+        }
+      }
+
+      function diagnosticKey(card) {
+        if (!card) return "";
+        return `${UNIT_CONFIG.bookId || "lt1"}:${UNIT_CONFIG.unitNumber}:${card.id}`;
+      }
+
+      function isDiagnosticImageCard(card) {
+        const visual = card && card.visual;
+        return Boolean(
+          visual
+          && visual.src
+          && visual.type !== "text"
+          && visual.type !== "number-svg"
+          && visual.type !== "shape-svg"
+        );
+      }
+
+      function roundDiagnostic(value, digits = 3) {
+        const factor = 10 ** digits;
+        return Math.round(Number(value || 0) * factor) / factor;
+      }
+
+      function diagnosticAdjustment(card, create = false) {
+        if (!isDiagnosticImageCard(card)) return null;
+        const key = diagnosticKey(card);
+        let adjustment = state.imageDiagnosticAdjustments[key];
+
+        if (!adjustment && create) {
+          const visual = card.visual || {};
+          adjustment = {
+            bookId: UNIT_CONFIG.bookId || "lt1",
+            unitNumber: String(UNIT_CONFIG.unitNumber),
+            cardId: card.id,
+            category: card.category || "",
+            word: card.word || "",
+            source: cleanDiagnosticSource(visual.src),
+            baseSize: visual.size || "contain",
+            basePosition: visual.position || "center",
+            zoomPercent: 100,
+            offsetXPercent: 0,
+            offsetYPercent: 0
+          };
+          state.imageDiagnosticAdjustments[key] = adjustment;
+        }
+        return adjustment || null;
+      }
+
+      function diagnosticHasChange(adjustment) {
+        return Boolean(
+          adjustment
+          && (
+            Math.abs(Number(adjustment.zoomPercent || 100) - 100) > 0.0001
+            || Math.abs(Number(adjustment.offsetXPercent || 0)) > 0.0001
+            || Math.abs(Number(adjustment.offsetYPercent || 0)) > 0.0001
+          )
+        );
+      }
+
+      function normalisePositionToken(value, axis) {
+        const token = String(value || "").trim().toLowerCase();
+        if (/^-?\d+(?:\.\d+)?%$/.test(token)) return token;
+        if (axis === "x") {
+          if (token === "left") return "0%";
+          if (token === "right") return "100%";
+        } else {
+          if (token === "top") return "0%";
+          if (token === "bottom") return "100%";
+        }
+        return "50%";
+      }
+
+      function diagnosticPositionPair(value) {
+        const parts = String(value || "center").trim().split(/\s+/).filter(Boolean);
+        if (parts.length <= 1) {
+          const only = parts[0] || "center";
+          if (only === "top" || only === "bottom") {
+            return ["50%", normalisePositionToken(only, "y")];
+          }
+          return [normalisePositionToken(only, "x"), "50%"];
+        }
+        return [
+          normalisePositionToken(parts[0], "x"),
+          normalisePositionToken(parts[1], "y")
+        ];
+      }
+
+      function ensureDiagnosticAspectRatio(card) {
+        if (!card || !card.visual || !card.visual.src) return;
+        const source = card.visual.src;
+        if (imageDiagnosticAspectRatios.has(source)) return;
+
+        const image = new Image();
+        image.onload = () => {
+          if (image.naturalWidth > 0 && image.naturalHeight > 0) {
+            imageDiagnosticAspectRatios.set(source, image.naturalWidth / image.naturalHeight);
+            if (state.imageDiagnosticEnabled) {
+              document.querySelectorAll('[data-diagnostic-image="true"]').forEach((node) => {
+                const nodeCard = cardsById.get(node.dataset.diagnosticCardId);
+                if (nodeCard && nodeCard.visual && nodeCard.visual.src === source) {
+                  applyImageDiagnosticAdjustment(node, nodeCard);
+                }
+              });
+            }
+          }
+        };
+        image.src = source;
+      }
+
+      function diagnosticBackgroundSize(card, element, adjustment) {
+        const visual = card.visual || {};
+        const baseSize = String(visual.size || "contain").trim();
+        const zoom = clampNumber(
+          adjustment ? adjustment.zoomPercent : 100,
+          IMAGE_DIAGNOSIS_MIN_ZOOM,
+          IMAGE_DIAGNOSIS_MAX_ZOOM,
+          100
+        );
+        const factor = zoom / 100;
+
+        const pairMatch = baseSize.match(/^(-?\d+(?:\.\d+)?)%\s+(-?\d+(?:\.\d+)?)%$/);
+        if (pairMatch) {
+          return `${roundDiagnostic(Number(pairMatch[1]) * factor)}% ${roundDiagnostic(Number(pairMatch[2]) * factor)}%`;
+        }
+
+        const singleMatch = baseSize.match(/^(-?\d+(?:\.\d+)?)%$/);
+        if (singleMatch) {
+          return `${roundDiagnostic(Number(singleMatch[1]) * factor)}% auto`;
+        }
+
+        if (zoom === 100) return baseSize;
+
+        ensureDiagnosticAspectRatio(card);
+        const imageRatio = imageDiagnosticAspectRatios.get(visual.src);
+        const rect = element.getBoundingClientRect();
+        const boxRatio = rect.width > 0 && rect.height > 0 ? rect.width / rect.height : 1;
+
+        if (imageRatio && imageRatio < boxRatio) {
+          return `auto ${roundDiagnostic(zoom)}%`;
+        }
+        return `${roundDiagnostic(zoom)}% auto`;
+      }
+
+      function diagnosticBackgroundPosition(card, adjustment) {
+        const visual = card.visual || {};
+        const [baseX, baseY] = diagnosticPositionPair(visual.position || "center");
+        const offsetX = roundDiagnostic(adjustment ? adjustment.offsetXPercent : 0);
+        const offsetY = roundDiagnostic(adjustment ? adjustment.offsetYPercent : 0);
+        return `calc(${baseX} + ${offsetX}%) calc(${baseY} + ${offsetY}%)`;
+      }
+
+      function applyImageDiagnosticAdjustment(element, card) {
+        if (!element || !isDiagnosticImageCard(card)) return;
+        const visual = card.visual || {};
+        element.style.backgroundSize = visual.size || "contain";
+        element.style.backgroundPosition = visual.position || "center";
+
+        if (!state.imageDiagnosticEnabled) return;
+        const adjustment = diagnosticAdjustment(card, false);
+        if (!adjustment) return;
+
+        element.style.backgroundSize = diagnosticBackgroundSize(card, element, adjustment);
+        element.style.backgroundPosition = diagnosticBackgroundPosition(card, adjustment);
+      }
+
+      function diagnosticVisibleCard() {
+        const nodes = [...document.querySelectorAll('[data-diagnostic-image="true"]')]
+          .filter((node) => !node.hidden && node.getClientRects().length);
+
+        let node = nodes.find(
+          (candidate) => candidate.dataset.diagnosticKey === state.imageDiagnosticActiveKey
+        );
+        if (!node) node = nodes[0] || null;
+        if (!node) return null;
+
+        const card = cardsById.get(node.dataset.diagnosticCardId) || null;
+        if (card) state.imageDiagnosticActiveKey = diagnosticKey(card);
+        return card;
+      }
+
+      function syncImageDiagnosticToolbar() {
+        const toolbar = elements.imageDiagnosticToolbar;
+        if (!toolbar) return;
+
+        const settingsOpen = elements.settingsPanel.classList.contains("open");
+        if (!state.imageDiagnosticEnabled || settingsOpen) {
+          toolbar.hidden = true;
+          return;
+        }
+
+        const card = diagnosticVisibleCard();
+        if (!card) {
+          toolbar.hidden = true;
+          return;
+        }
+
+        const adjustment = diagnosticAdjustment(card, false);
+        const zoom = adjustment ? adjustment.zoomPercent : 100;
+        elements.imageDiagnosticCardLabel.textContent =
+          `${card.word || card.id} · drag image to position`;
+        elements.imageDiagnosticZoomRange.value = String(zoom);
+        elements.imageDiagnosticZoomNumber.value = String(roundDiagnostic(zoom, 1));
+        toolbar.hidden = false;
+      }
+
+      function syncImageDiagnosticExportButton() {
+        if (!elements.imageDiagnosticExport) return;
+        const changed = Object.values(state.imageDiagnosticAdjustments).some(diagnosticHasChange);
+        elements.imageDiagnosticExport.disabled = !changed;
+      }
+
+      function updateActiveDiagnosticZoom(rawValue) {
+        const card = diagnosticVisibleCard();
+        if (!card) return;
+
+        const zoom = clampNumber(
+          rawValue,
+          IMAGE_DIAGNOSIS_MIN_ZOOM,
+          IMAGE_DIAGNOSIS_MAX_ZOOM,
+          100
+        );
+        const adjustment = diagnosticAdjustment(card, true);
+        adjustment.zoomPercent = roundDiagnostic(zoom, 1);
+
+        if (!diagnosticHasChange(adjustment)) {
+          delete state.imageDiagnosticAdjustments[diagnosticKey(card)];
+        }
+
+        saveImageDiagnosisAdjustments();
+        document.querySelectorAll('[data-diagnostic-image="true"]').forEach((node) => {
+          if (node.dataset.diagnosticCardId === card.id) {
+            applyImageDiagnosticAdjustment(node, card);
+          }
+        });
+        syncImageDiagnosticToolbar();
+        syncImageDiagnosticExportButton();
+      }
+
+      function imageDiagnosisExportText() {
+        const changes = Object.values(state.imageDiagnosticAdjustments)
+          .filter(diagnosticHasChange)
+          .sort((a, b) =>
+            String(a.bookId).localeCompare(String(b.bookId))
+            || String(a.unitNumber).localeCompare(String(b.unitNumber), undefined, { numeric: true })
+            || String(a.cardId).localeCompare(String(b.cardId))
+          )
+          .map((entry) => ({
+            bookId: entry.bookId,
+            unitNumber: entry.unitNumber,
+            cardId: entry.cardId,
+            category: entry.category,
+            word: entry.word,
+            source: entry.source,
+            baseSize: entry.baseSize,
+            basePosition: entry.basePosition,
+            zoomPercent: roundDiagnostic(entry.zoomPercent, 1),
+            offsetXPercent: roundDiagnostic(entry.offsetXPercent),
+            offsetYPercent: roundDiagnostic(entry.offsetYPercent)
+          }));
+
+        return [
+          "Also Let’s Try — Image Diagnosis Export",
+          "Temporary development data. The diagnostic UI is intended to be removed on release/completion.",
+          `Generated: ${new Date().toISOString()}`,
+          "",
+          JSON.stringify({ version: 1, changes }, null, 2),
+          ""
+        ].join("\n");
+      }
+
+      function exportImageDiagnosis() {
+        const text = imageDiagnosisExportText();
+        const blob = new Blob([text], { type: "text/plain;charset=utf-8" });
+        const url = URL.createObjectURL(blob);
+        const anchor = document.createElement("a");
+        const stamp = new Date().toISOString().slice(0, 10);
+        anchor.href = url;
+        anchor.download = `also-lets-try-image-diagnosis-${stamp}.txt`;
+        document.body.append(anchor);
+        anchor.click();
+        anchor.remove();
+        window.setTimeout(() => URL.revokeObjectURL(url), 1000);
+      }
+
       const teacherPreferences = readTeacherPreferences();
 
       const state = {
@@ -224,7 +550,11 @@
         guessMode: "showWord",
         guessDeck: [],
         guessPosition: 0,
-        guessRevealed: false
+        guessRevealed: false,
+        imageDiagnosticEnabled: false,
+        imageDiagnosticAdjustments: readImageDiagnosisAdjustments(),
+        imageDiagnosticActiveKey: null,
+        imageDiagnosticDrag: null
       };
 
       function isShapePracticeCard(card) {
@@ -524,6 +854,7 @@
 
         buildShapePracticeControls();
         syncShapePracticeControls();
+        syncImageDiagnosticExportButton();
 
         buildGameMenu();
         buildCardOptions();
@@ -574,6 +905,9 @@
         element.classList.toggle("text-visual", textVisual);
         element.classList.toggle("number-svg-visual", numberVisual);
         element.classList.toggle("shape-practice-visual", shapeVisual);
+        element.dataset.diagnosticCardId = card && card.id ? card.id : "";
+        element.dataset.diagnosticKey = card ? diagnosticKey(card) : "";
+        element.dataset.diagnosticImage = isDiagnosticImageCard(card) ? "true" : "false";
 
         if (shapeVisual) {
           const isShapeCard = isShapePracticeCard(card);
@@ -738,6 +1072,7 @@
         element.style.clipPath = visual.cropTop
           ? `inset(${Number(visual.cropTop)}% 0 0 0)`
           : "none";
+        applyImageDiagnosticAdjustment(element, card);
       }
 
       function cardText(card) {
@@ -945,20 +1280,24 @@
 
         if (state.gameMode === "missing") {
           renderMissing();
+          syncImageDiagnosticToolbar();
           return;
         }
 
         if (state.gameMode === "keyword") {
           renderKeyword();
+          syncImageDiagnosticToolbar();
           return;
         }
 
         if (state.gameMode === "guess") {
           renderGuess();
+          syncImageDiagnosticToolbar();
           return;
         }
 
         renderFlashcards();
+        syncImageDiagnosticToolbar();
       }
 
       function showFlashcardLayout() {
@@ -1551,6 +1890,7 @@
         updateSettingsPreview();
         elements.settingsPanel.classList.add("open");
         elements.scrim.classList.add("open");
+        syncImageDiagnosticToolbar();
       }
 
       function closePanels() {
@@ -1558,6 +1898,7 @@
         elements.guessSetup.hidden = true;
         elements.scrim.classList.remove("open");
         closeGameMenu();
+        syncImageDiagnosticToolbar();
       }
 
       function toggleGameMenu() {
@@ -1644,6 +1985,120 @@
       elements.guessSetupClose.addEventListener("click", closeGuessSetup);
 
       elements.settingsButton.addEventListener("click", openSettings);
+
+      elements.imageDiagnosticToggle.addEventListener("click", () => {
+        state.imageDiagnosticEnabled = !state.imageDiagnosticEnabled;
+        document.documentElement.classList.toggle(
+          "image-diagnostic-active",
+          state.imageDiagnosticEnabled
+        );
+        elements.imageDiagnosticToggle.setAttribute(
+          "aria-pressed",
+          String(state.imageDiagnosticEnabled)
+        );
+        elements.imageDiagnosticToggle.classList.toggle(
+          "active",
+          state.imageDiagnosticEnabled
+        );
+        render();
+        syncImageDiagnosticExportButton();
+      });
+
+      elements.imageDiagnosticExport.addEventListener("click", exportImageDiagnosis);
+
+      elements.imageDiagnosticZoomRange.addEventListener("input", () => {
+        updateActiveDiagnosticZoom(elements.imageDiagnosticZoomRange.value);
+      });
+
+      elements.imageDiagnosticZoomNumber.addEventListener("input", () => {
+        const value = Number(elements.imageDiagnosticZoomNumber.value);
+        if (Number.isFinite(value)) updateActiveDiagnosticZoom(value);
+      });
+
+      document.addEventListener("pointerdown", (event) => {
+        if (
+          !state.imageDiagnosticEnabled
+          || elements.settingsPanel.classList.contains("open")
+        ) return;
+
+        const image = event.target.closest?.('[data-diagnostic-image="true"]');
+        if (!image) return;
+
+        const card = cardsById.get(image.dataset.diagnosticCardId);
+        if (!card || !isDiagnosticImageCard(card)) return;
+
+        event.preventDefault();
+        event.stopPropagation();
+
+        state.imageDiagnosticActiveKey = diagnosticKey(card);
+        const adjustment = diagnosticAdjustment(card, true);
+        const rect = image.getBoundingClientRect();
+
+        state.imageDiagnosticDrag = {
+          pointerId: event.pointerId,
+          element: image,
+          card,
+          startX: event.clientX,
+          startY: event.clientY,
+          width: Math.max(1, rect.width),
+          height: Math.max(1, rect.height),
+          offsetX: Number(adjustment.offsetXPercent || 0),
+          offsetY: Number(adjustment.offsetYPercent || 0)
+        };
+
+        image.classList.add("image-diagnostic-dragging");
+        try { image.setPointerCapture(event.pointerId); } catch {}
+        syncImageDiagnosticToolbar();
+      }, true);
+
+      document.addEventListener("pointermove", (event) => {
+        const drag = state.imageDiagnosticDrag;
+        if (!drag || event.pointerId !== drag.pointerId) return;
+
+        event.preventDefault();
+        const adjustment = diagnosticAdjustment(drag.card, true);
+        adjustment.offsetXPercent = roundDiagnostic(
+          drag.offsetX + ((event.clientX - drag.startX) / drag.width) * 100
+        );
+        adjustment.offsetYPercent = roundDiagnostic(
+          drag.offsetY + ((event.clientY - drag.startY) / drag.height) * 100
+        );
+        applyImageDiagnosticAdjustment(drag.element, drag.card);
+        syncImageDiagnosticExportButton();
+      }, true);
+
+      function finishImageDiagnosticDrag(event) {
+        const drag = state.imageDiagnosticDrag;
+        if (!drag || event.pointerId !== drag.pointerId) return;
+
+        event.preventDefault();
+        event.stopPropagation();
+        drag.element.classList.remove("image-diagnostic-dragging");
+
+        const adjustment = diagnosticAdjustment(drag.card, false);
+        if (adjustment && !diagnosticHasChange(adjustment)) {
+          delete state.imageDiagnosticAdjustments[diagnosticKey(drag.card)];
+        }
+
+        state.imageDiagnosticDrag = null;
+        saveImageDiagnosisAdjustments();
+        syncImageDiagnosticToolbar();
+        syncImageDiagnosticExportButton();
+      }
+
+      document.addEventListener("pointerup", finishImageDiagnosticDrag, true);
+      document.addEventListener("pointercancel", finishImageDiagnosticDrag, true);
+
+      document.addEventListener("click", (event) => {
+        if (
+          state.imageDiagnosticEnabled
+          && event.target.closest?.('[data-diagnostic-image="true"]')
+        ) {
+          event.preventDefault();
+          event.stopPropagation();
+        }
+      }, true);
+
       elements.closeSettingsButton.addEventListener("click", closePanels);
       elements.scrim.addEventListener("click", closePanels);
       elements.keyboardHelp.addEventListener("click", () => {
