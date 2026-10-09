@@ -121,10 +121,10 @@
       items: [
         item("baseball", ["1-4"]),
         item("dodgeball", ["1-4"]),
-        item("soccer", ["1-4"]),
+        item("soccer", ["1-4", "1-8"]),
         item("basketball", ["1-4"]),
         item("swimming", ["1-4"]),
-        item("table-tennis", ["1-5"]),
+        item("table-tennis", ["1-5", "1-8"]),
         item("volleyball", ["1-5"]),
         item("tennis"),
         item("badminton"),
@@ -140,19 +140,19 @@
       items: [
         item("ice-cream", ["1-4"]),
         item("pudding", ["1-4"]),
-        item("milk", ["1-4"]),
+        item("milk", ["1-4", "1-8"]),
         item("orange-juice", ["1-4"]),
         item("hamburger", ["1-5"]),
         item("pizza", ["1-5"]),
         item("spaghetti", ["1-5"]),
         item("sushi", ["1-5"]),
         item("steak", ["1-5"]),
-        item("salad", ["1-5"]),
+        item("salad", ["1-5", "1-8"]),
         item("cake", ["1-5"]),
         item("egg", ["1-5"]),
         item("jam", ["1-5"]),
         item("noodle", ["1-5"]),
-        item("rice-ball", ["1-5"]),
+        item("rice-ball", ["1-5", "1-8"]),
         item("sausage")
       ],
       note: "Sausage is logically Food although its current sprite cell is physically in fruit.png."
@@ -162,14 +162,14 @@
       label: "Fruit",
       expectedImageSheetCount: 12,
       items: [
-        item("apple", ["2-7"]),
-        item("strawberry", ["2-7"]),
-        item("grapes", ["1-5"]),
-        item("orange", ["1-5", "2-7"]),
-        item("pineapple", ["1-5", "2-7"]),
-        item("peach", ["1-5", "2-7"]),
+        item("apple", ["1-8", "2-7"]),
+        item("strawberry", ["1-8", "2-7"]),
+        item("grapes", ["1-5", "1-8"]),
+        item("orange", ["1-5", "1-8", "2-7"]),
+        item("pineapple", ["1-5", "1-8", "2-7"]),
+        item("peach", ["1-5", "1-8", "2-7"]),
         item("melon", ["1-5", "2-7"]),
-        item("banana", ["1-5", "2-7"]),
+        item("banana", ["1-5", "1-8", "2-7"]),
         item("kiwi-fruit", ["1-5", "2-7"]),
         item("lemon", ["1-5"]),
         item("cherry", ["2-7"])
@@ -181,11 +181,11 @@
       label: "Vegetables",
       expectedImageSheetCount: 9,
       items: [
-        item("onion", ["1-4", "2-7"]),
-        item("green-pepper", ["1-4", "2-7"]),
-        item("cucumber", ["1-4", "2-7"]),
-        item("carrot", ["1-4", "2-7"]),
-        item("tomato", ["2-7"]),
+        item("onion", ["1-4", "1-8", "2-7"]),
+        item("green-pepper", ["1-4", "1-8", "2-7"]),
+        item("cucumber", ["1-4", "1-8", "2-7"]),
+        item("carrot", ["1-4", "1-8", "2-7"]),
+        item("tomato", ["1-8", "2-7"]),
         item("cabbage", ["2-7"]),
         item("corn", ["2-7"]),
         item("mushroom", ["2-7"]),
@@ -225,13 +225,16 @@
     animals: {
       label: "Animals",
       items: [
-        item("cat", ["1-8"]), item("panda", ["1-8"]), item("bear", ["1-8"]),
+        item("cat", ["1-8"]), item("panda", ["1-8"]), item("bear"),
         item("spider", ["1-8"]), item("elephant", ["1-8"]),
-        item("mouse", ["1-9"]), item("cow", ["1-9"]), item("tiger", ["1-9"]),
-        item("rabbit", ["1-9"]), item("dragon", ["1-9"]), item("snake", ["1-9"]),
-        item("horse", ["1-9"]), item("sheep", ["1-9"]), item("monkey", ["1-9"]),
-        item("chicken", ["1-9"]), item("dog", ["1-9"]), item("wild-boar", ["1-9"])
-      ]
+        item("mouse", ["1-8", "1-9"]), item("cow", ["1-9"]), item("tiger", ["1-8", "1-9"]),
+        item("rabbit", ["1-8", "1-9"]), item("dragon", ["1-9"]), item("snake", ["1-9"]),
+        item("horse", ["1-9"]), item("sheep", ["1-9"]), item("monkey", ["1-8", "1-9"]),
+        item("chicken", ["1-9"]), item("dog", ["1-8", "1-9"]), item("wild-boar", ["1-9"]),
+        item("crow", ["1-8"]), item("moth", ["1-8"]), item("owl", ["1-8"]),
+        item("starfish", ["1-8"]), item("jellyfish", ["1-8"]), item("seahorse", ["1-8"])
+      ],
+      note: "Bear appears on the source word-card sheet but is not in the requested LT1 Unit 8 deck."
     },
 
     nature: {
@@ -421,10 +424,20 @@
 
       animals: {
         file: "images/animals.jpg",
+        grid: "4x5",
         physicalCells: 17,
         logicalCategories: ["animals"],
-        status: "cell-map-to-verify",
-        note: "New animal sheet uploaded; exact grid and cell order still to verify before unit wiring."
+        status: "mapped-for-known-cells",
+        note: "Existing 17-animal sheet; Unit 8 uses verified row-major positions for its required animals."
+      },
+
+      animalsExtra: {
+        file: "images/animals-extra.webp",
+        grid: "2x3",
+        physicalCells: 6,
+        logicalCategories: ["animals"],
+        status: "mapped",
+        note: "Row-major: crow in nest, moth, owl on branch, starfish, jellyfish, seahorse."
       },
 
       days: {
@@ -539,6 +552,35 @@
         nose: "100% 100%"
       },
 
+      animals: {
+        cat: "0% 0%",
+        panda: "33.333% 0%",
+        bear: "66.667% 0%",
+        spider: "100% 0%",
+        elephant: "0% 25%",
+        mouse: "33.333% 25%",
+        cow: "66.667% 25%",
+        tiger: "100% 25%",
+        rabbit: "0% 50%",
+        dragon: "33.333% 50%",
+        snake: "66.667% 50%",
+        horse: "100% 50%",
+        sheep: "0% 75%",
+        monkey: "33.333% 75%",
+        chicken: "66.667% 75%",
+        dog: "100% 75%",
+        "wild-boar": "0% 100%"
+      },
+
+      animalsExtra: {
+        crow: "0% 0%",
+        moth: "100% 0%",
+        owl: "0% 50%",
+        starfish: "100% 50%",
+        jellyfish: "0% 100%",
+        seahorse: "100% 100%"
+      },
+
       days: {
         Monday: "0% 0%",
         Tuesday: "33.333% 0%",
@@ -547,6 +589,12 @@
         Friday: "0% 100%",
         Saturday: "33.333% 100%",
         Sunday: "66.667% 100%"
+      }
+    },
+
+    images: {
+      nature: {
+        tree: "images/nature/tree.webp"
       }
     },
 
@@ -764,7 +812,7 @@
   }
 
   global.LETS_TRY_DATA = Object.freeze({
-    version: 9,
+    version: 10,
     assetUrl,
     categories: CATEGORIES,
     assets: ASSETS,
