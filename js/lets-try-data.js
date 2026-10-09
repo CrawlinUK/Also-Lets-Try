@@ -425,10 +425,10 @@
       animals: {
         file: "images/animals.jpg",
         grid: "4x5",
-        physicalCells: 17,
-        logicalCategories: ["animals"],
-        status: "mapped-for-known-cells",
-        note: "Existing 17-animal sheet; Unit 8 uses verified row-major positions for its required animals."
+        physicalCells: 20,
+        logicalCategories: ["animals", "shapes", "nature"],
+        status: "mapped",
+        note: "4x5 source sheet. Row 1: heart, diamond, star, cat; row 2: panda, bear, spider, tree; row 3: elephant, mouse, cow, tiger; row 4: rabbit, dragon, snake, horse; row 5: sheep, monkey, chicken, dog."
       },
 
       animalsExtra: {
@@ -553,23 +553,22 @@
       },
 
       animals: {
-        cat: "0% 0%",
-        panda: "33.333% 0%",
-        bear: "66.667% 0%",
-        spider: "100% 0%",
-        elephant: "0% 25%",
-        mouse: "33.333% 25%",
-        cow: "66.667% 25%",
-        tiger: "100% 25%",
-        rabbit: "0% 50%",
-        dragon: "33.333% 50%",
-        snake: "66.667% 50%",
-        horse: "100% 50%",
-        sheep: "0% 75%",
-        monkey: "33.333% 75%",
-        chicken: "66.667% 75%",
-        dog: "100% 75%",
-        "wild-boar": "0% 100%"
+        cat: "100% 0%",
+        panda: "0% 25%",
+        bear: "33.333% 25%",
+        spider: "66.667% 25%",
+        elephant: "0% 50%",
+        mouse: "33.333% 50%",
+        cow: "66.667% 50%",
+        tiger: "100% 50%",
+        rabbit: "0% 75%",
+        dragon: "33.333% 75%",
+        snake: "66.667% 75%",
+        horse: "100% 75%",
+        sheep: "0% 100%",
+        monkey: "33.333% 100%",
+        chicken: "66.667% 100%",
+        dog: "100% 100%"
       },
 
       animalsExtra: {
