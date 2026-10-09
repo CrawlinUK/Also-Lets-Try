@@ -424,11 +424,11 @@
 
       animals: {
         file: "images/animals.jpg",
-        grid: "4x5",
-        physicalCells: 20,
-        logicalCategories: ["animals", "shapes", "nature"],
+        grid: "6x3",
+        physicalCells: 18,
+        logicalCategories: ["animals"],
         status: "mapped",
-        note: "4x5 source sheet. Row 1: heart, diamond, star, cat; row 2: panda, bear, spider, tree; row 3: elephant, mouse, cow, tiger; row 4: rabbit, dragon, snake, horse; row 5: sheep, monkey, chicken, dog."
+        note: "6x3 source sheet. Row 1: cat, panda, bear, spider, elephant, fish; row 2: mouse, cow, tiger, rabbit, dragon, snake; row 3: horse, sheep, monkey, chicken, dog, wild-boar."
       },
 
       animalsExtra: {
@@ -553,22 +553,24 @@
       },
 
       animals: {
-        cat: "100% 0%",
-        panda: "0% 25%",
-        bear: "33.333% 25%",
-        spider: "66.667% 25%",
-        elephant: "0% 50%",
-        mouse: "33.333% 50%",
-        cow: "66.667% 50%",
-        tiger: "100% 50%",
-        rabbit: "0% 75%",
-        dragon: "33.333% 75%",
-        snake: "66.667% 75%",
-        horse: "100% 75%",
-        sheep: "0% 100%",
-        monkey: "33.333% 100%",
-        chicken: "66.667% 100%",
-        dog: "100% 100%"
+        cat: "0% 0%",
+        panda: "20% 0%",
+        bear: "40% 0%",
+        spider: "60% 0%",
+        elephant: "80% 0%",
+        fish: "100% 0%",
+        mouse: "0% 50%",
+        cow: "20% 50%",
+        tiger: "40% 50%",
+        rabbit: "60% 50%",
+        dragon: "80% 50%",
+        snake: "100% 50%",
+        horse: "0% 100%",
+        sheep: "20% 100%",
+        monkey: "40% 100%",
+        chicken: "60% 100%",
+        dog: "80% 100%",
+        "wild-boar": "100% 100%"
       },
 
       animalsExtra: {
@@ -811,7 +813,7 @@
   }
 
   global.LETS_TRY_DATA = Object.freeze({
-    version: 12,
+    version: 13,
     assetUrl,
     categories: CATEGORIES,
     assets: ASSETS,
