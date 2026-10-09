@@ -6,7 +6,7 @@
     ? new URL(document.currentScript.src)
     : new URL("js/lets-try-unit-loader.js", location.href);
   const projectRoot = new URL("../", current);
-  const ASSET_VERSION = "20261009-1540-webp-animal-order";
+  const ASSET_VERSION = "20261009-config-structure";
 
   const params = new URLSearchParams(location.search);
   const book = (params.get("book") || "lt1").toLowerCase();
@@ -197,7 +197,7 @@
   window.addEventListener("DOMContentLoaded", async () => {
     try {
       await loadScript("js/lets-try-data.js");
-      await loadScript(`units/config/${book}-unit${unit}.js`);
+      await loadScript(`config/units/${book}-unit${unit}.js`);
 
       const config = window.LETS_TRY_UNIT_CONFIG;
       const usesNumberSvgs = Boolean(

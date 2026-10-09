@@ -348,16 +348,15 @@
     <div id="songMessage"><span id="finishStar">★</span><span id="songText">3</span></div>
   </div>
 
-<script src="../js/lets-try-data.js?v=20261008-1305-alphabet-colours"></script>
+<script src="../config/games/alphabet-board.js?v=20261009-config-structure"></script>
+<script src="../js/lets-try-data.js?v=20261009-config-structure"></script>
 <script>
 (() => {
   const A2Z = [...'ABCDEFGHIJKLMNOPQRSTUVWXYZ'];
-  const hintWords = {
-    A: 'bat', B: 'able', C: 'ace', D: 'odd', E: 'bed', F: 'off', G: 'ago',
-    H: 'aha', I: 'six', J: 'ajar', K: 'akin', L: 'ply', M: 'imp', N: 'one',
-    O: 'top', P: 'ape', Q: 'aqua', R: 'are', S: 'ask', T: 'ate', U: 'cup',
-    V: 'ever', W: 'owl', X: 'axe', Y: 'aye', Z: 'czar'
-  };
+  const gameConfig = window.ALPHABET_BOARD_CONFIG;
+  if (!gameConfig) throw new Error('Alphabet Board configuration could not load.');
+  const hintWords = gameConfig.hintWords;
+  const songTiming = gameConfig.songTiming;
 
   const board = document.getElementById('board');
   const shuffleBtn = document.getElementById('shuffle');
@@ -542,7 +541,7 @@
     songIsRunning = true;
     songToken++;
     const token = songToken;
-    const speed = isDoubleSpeed ? 0.5 : 1;
+    const speed = isDoubleSpeed ? songTiming.doubleSpeedMultiplier : 1;
 
     setControlsDisabled(true);
     songModeBtn.textContent = 'Singing...';
@@ -557,22 +556,18 @@
       // A-B-C-D-E-F-G---H-I-J-K-L-M-N---O-P-Q-R-S-T-U---V-W-----X-Y-Z-
       // The pause after W stays as it was, because that matched the rhythm well.
       // A-G, H-N, and O-U use normal beats, then a longer grouping pause.
-      const normalBeat = 650;
-      const groupPause = 1500;
-      const wLongBeat = 2000;
-      const finalHold = 800;
       const timingsAfterLetter = {
-        G: groupPause,
-        N: groupPause,
-        U: groupPause,
-        W: wLongBeat,
-        Z: finalHold
+        G: songTiming.groupPause,
+        N: songTiming.groupPause,
+        U: songTiming.groupPause,
+        W: songTiming.wLongBeat,
+        Z: songTiming.finalHold
       };
 
       for (const letter of A2Z) {
         if (token !== songToken) return;
         pulseLetter(letter);
-        const wait = timingsAfterLetter[letter] ?? normalBeat;
+        const wait = timingsAfterLetter[letter] ?? songTiming.normalBeat;
         await sleep(wait * speed);
       }
 
@@ -593,7 +588,7 @@
       if (token !== songToken) return;
       songText.textContent = item;
       restartOverlayAnimation();
-      await sleep(1250 * speed);
+      await sleep(songTiming.countdownStep * speed);
     }
   }
 
@@ -602,7 +597,7 @@
     songText.textContent = 'FINISHED';
     songOverlay.classList.add('show', 'finished');
     restartOverlayAnimation();
-    await sleep(1700 * speed);
+    await sleep(songTiming.finishedHold * speed);
     songOverlay.classList.remove('show', 'finished');
   }
 
@@ -623,7 +618,7 @@
 
     setTimeout(() => {
       tile.classList.remove('song-active');
-    }, isDoubleSpeed ? 260 : 520);
+    }, isDoubleSpeed ? songTiming.pulseDouble : songTiming.pulseNormal);
   }
 
   function stopSong() {
