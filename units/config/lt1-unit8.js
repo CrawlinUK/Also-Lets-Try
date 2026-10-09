@@ -73,7 +73,15 @@
     }
 
     if (categoryId === "animals" && extraAnimalIds.has(id)) {
-      return spriteVisual(sheets.animalsExtra.file, "200% 300%", cells.animalsExtra[id]);
+      const file = LETS_TRY_DATA.assets.images.unit8[id];
+      if (!file) throw new Error(`Missing Unit 8 image for ${id}`);
+      return {
+        src: LETS_TRY_DATA.assetUrl(file),
+        size: "contain",
+        position: "center",
+        flip: false,
+        cropTop: 0
+      };
     }
 
     if (categoryId === "nature" && id === "tree") {
