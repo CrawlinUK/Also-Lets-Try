@@ -69,7 +69,7 @@
 
   function visualFor(categoryId, id) {
     if (categoryId === "animals" && oldAnimalIds.has(id)) {
-      return spriteVisual(sheets.animals.file, "400% 500%", cells.animals[id]);
+      return spriteVisual(sheets.animals.file, "600% 300%", cells.animals[id]);
     }
 
     if (categoryId === "animals" && extraAnimalIds.has(id)) {
