@@ -574,12 +574,12 @@
       },
 
       animalsExtra: {
-        crow: "0% 0%",
+        crow: "calc(0% + 0.22%) calc(0% - 1.32%)",
         moth: "100% 0%",
-        owl: "0% 50%",
-        starfish: "100% 50%",
-        jellyfish: "0% 100%",
-        seahorse: "100% 100%"
+        owl: "calc(0% + 2.42%) calc(50% - 3.52%)",
+        starfish: "calc(100% - 0.22%) calc(50% - 4.4%)",
+        jellyfish: "calc(0% + 5.94%) calc(100% - 4.84%)",
+        seahorse: "calc(100% - 0.44%) calc(100% - 5.28%)"
       },
 
       days: {
@@ -813,7 +813,7 @@
   }
 
   global.LETS_TRY_DATA = Object.freeze({
-    version: 15,
+    version: 16,
     assetUrl,
     categories: CATEGORIES,
     assets: ASSETS,
