@@ -431,15 +431,6 @@
         note: "4x5 source sheet. Row 1: heart, diamond, star, cat; row 2: panda, bear, spider, tree; row 3: elephant, mouse, cow, tiger; row 4: rabbit, dragon, snake, horse; row 5: sheep, monkey, chicken, dog."
       },
 
-      animalsExtra: {
-        file: "images/animals-extra.webp",
-        grid: "2x3",
-        physicalCells: 6,
-        logicalCategories: ["animals"],
-        status: "mapped",
-        note: "Row-major: crow in nest, moth, owl on branch, starfish, jellyfish, seahorse."
-      },
-
       days: {
         file: "images/days.png",
         grid: "4x2",
@@ -571,15 +562,6 @@
         dog: "100% 100%"
       },
 
-      animalsExtra: {
-        crow: "0% 0%",
-        moth: "100% 0%",
-        owl: "0% 50%",
-        starfish: "100% 50%",
-        jellyfish: "0% 100%",
-        seahorse: "100% 100%"
-      },
-
       days: {
         Monday: "0% 0%",
         Tuesday: "33.333% 0%",
@@ -592,8 +574,16 @@
     },
 
     images: {
+      unit8: {
+        crow: "images/unit8/crow.jpg",
+        moth: "images/unit8/moth.jpg",
+        owl: "images/unit8/owl.jpg",
+        starfish: "images/unit8/starfish.jpg",
+        jellyfish: "images/unit8/jellyfish.jpg",
+        seahorse: "images/unit8/seahorse.jpg"
+      },
       nature: {
-        tree: "images/nature/tree.webp"
+        tree: "images/nature/tree.jpg"
       }
     },
 
@@ -811,7 +801,7 @@
   }
 
   global.LETS_TRY_DATA = Object.freeze({
-    version: 10,
+    version: 11,
     assetUrl,
     categories: CATEGORIES,
     assets: ASSETS,
