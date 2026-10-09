@@ -428,7 +428,7 @@
         physicalCells: 18,
         logicalCategories: ["animals"],
         status: "mapped",
-        note: "6x3 source sheet. Row 1: cat, panda, bear, spider, elephant, fish; row 2: mouse, cow, tiger, rabbit, dragon, snake; row 3: horse, sheep, monkey, chicken, dog, wild-boar."
+        note: "6x3 WebP source sheet. Row 1: cat, mouse, horse, panda, cow, sheep; row 2: bear, tiger, monkey, spider, rabbit, chicken; row 3: elephant, dragon, dog, fish, snake, wild-boar."
       },
 
       animalsExtra: {
@@ -554,22 +554,22 @@
 
       animals: {
         cat: "0% 0%",
-        panda: "20% 0%",
-        bear: "40% 0%",
-        spider: "60% 0%",
-        elephant: "80% 0%",
-        fish: "100% 0%",
-        mouse: "0% 50%",
-        cow: "20% 50%",
-        tiger: "40% 50%",
-        rabbit: "60% 50%",
-        dragon: "80% 50%",
-        snake: "100% 50%",
-        horse: "0% 100%",
-        sheep: "20% 100%",
-        monkey: "40% 100%",
-        chicken: "60% 100%",
-        dog: "80% 100%",
+        mouse: "20% 0%",
+        horse: "40% 0%",
+        panda: "60% 0%",
+        cow: "80% 0%",
+        sheep: "100% 0%",
+        bear: "0% 50%",
+        tiger: "20% 50%",
+        monkey: "40% 50%",
+        spider: "60% 50%",
+        rabbit: "80% 50%",
+        chicken: "100% 50%",
+        elephant: "0% 100%",
+        dragon: "20% 100%",
+        dog: "40% 100%",
+        fish: "60% 100%",
+        snake: "80% 100%",
         "wild-boar": "100% 100%"
       },
 
@@ -813,7 +813,7 @@
   }
 
   global.LETS_TRY_DATA = Object.freeze({
-    version: 14,
+    version: 15,
     assetUrl,
     categories: CATEGORIES,
     assets: ASSETS,
