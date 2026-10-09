@@ -747,6 +747,33 @@
         return card.word;
       }
 
+      function renderCardText(element, card) {
+        const text = cardText(card);
+        element.replaceChildren();
+
+        if (
+          card
+          && state.displayMode === "pictureSentence"
+          && card.underlineToken
+        ) {
+          const token = String(card.underlineToken);
+          const needle = ` ${token} `;
+          const index = text.indexOf(needle);
+
+          if (index >= 0) {
+            element.append(document.createTextNode(text.slice(0, index + 1)));
+            const underline = document.createElement("u");
+            underline.className = "phrase-emphasis";
+            underline.textContent = token;
+            element.append(underline);
+            element.append(document.createTextNode(text.slice(index + needle.length - 1)));
+            return;
+          }
+        }
+
+        element.textContent = text;
+      }
+
       function updateSettingsPreview() {
         if (!elements.settingsPreview) return;
 
@@ -772,7 +799,7 @@
         }
 
         if (showText) {
-          elements.settingsPreviewText.textContent = cardText(card);
+          renderCardText(elements.settingsPreviewText, card);
         }
       }
 
@@ -991,7 +1018,7 @@
         syncShapePracticeControls(card);
         applyVisual(elements.cardPicture, card);
         elements.cardPicture.setAttribute("aria-label", cardText(card));
-        elements.displayText.textContent = cardText(card);
+        renderCardText(elements.displayText, card);
         elements.counter.textContent = `${state.position + 1} / ${state.deck.length}`;
         elements.modeLabel.textContent = "Flashcard mode";
         elements.shuffleButton.textContent = "Shuffle";
