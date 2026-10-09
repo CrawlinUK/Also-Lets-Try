@@ -350,14 +350,14 @@
       },
 
       emotions: {
-        file: "images/emotions.png",
+        file: "images/emotions.webp",
         grid: "4x2",
         logicalCategories: ["feelings"],
         status: "mapped"
       },
 
       foods: {
-        file: "images/foods.png",
+        file: "images/foods.webp",
         grid: "4x4",
         logicalCategories: ["food"],
         status: "mapped",
@@ -365,7 +365,7 @@
       },
 
       fruit: {
-        file: "images/fruit.png",
+        file: "images/fruit.webp",
         grid: "3x4",
         physicalCells: 12,
         logicalCategories: ["fruit","food"],
@@ -374,7 +374,7 @@
       },
 
       vegetables: {
-        file: "images/veg.png",
+        file: "images/veg.webp",
         grid: "3x3",
         physicalCells: 9,
         logicalCategories: ["vegetables"],
@@ -382,7 +382,7 @@
       },
 
       sports: {
-        file: "images/sports.png",
+        file: "images/sports.webp",
         grid: "4x3",
         physicalCells: 12,
         logicalCategories: ["sports"],
@@ -396,16 +396,16 @@
       },
 
       stationery: {
-        file: "images/stationary.png",
+        file: "images/stationary.webp",
         grid: "4x3",
         physicalCells: 12,
         logicalCategories: ["stationery"],
         status: "cell-map-to-verify",
-        note: "Filename is intentionally stationary.png because that is the uploaded asset name."
+        note: "Filename is intentionally stationary.webp because that is the uploaded asset name."
       },
 
       adjectives: {
-        file: "images/Adjectives.png",
+        file: "images/Adjectives.webp",
         grid: "4x2",
         physicalCells: 8,
         logicalCategories: ["describingWords"],
@@ -414,7 +414,7 @@
       },
 
       bodyParts: {
-        file: "images/BodyParts.png",
+        file: "images/BodyParts.webp",
         grid: "4x2",
         physicalCells: 8,
         logicalCategories: ["bodyParts"],
@@ -423,7 +423,7 @@
       },
 
       animals: {
-        file: "images/animals.jpg",
+        file: "images/animals.webp",
         grid: "6x3",
         physicalCells: 18,
         logicalCategories: ["animals"],
@@ -432,7 +432,7 @@
       },
 
       animalsExtra: {
-        file: "images/animals-extra.png",
+        file: "images/animals-extra.webp",
         grid: "2x3",
         physicalCells: 6,
         logicalCategories: ["animals"],
@@ -441,7 +441,7 @@
       },
 
       days: {
-        file: "images/days.png",
+        file: "images/days.webp",
         grid: "4x2",
         physicalCells: 8,
         logicalCategories: ["days"],
@@ -813,7 +813,7 @@
   }
 
   global.LETS_TRY_DATA = Object.freeze({
-    version: 13,
+    version: 14,
     assetUrl,
     categories: CATEGORIES,
     assets: ASSETS,
