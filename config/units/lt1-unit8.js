@@ -56,6 +56,10 @@
     "crow", "moth", "owl", "starfish", "jellyfish", "seahorse"
   ]);
 
+  const extraAnimalSizes = Object.freeze({
+    owl: "210% 315%"
+  });
+
   function spriteVisual(file, size, position) {
     if (!position) throw new Error("Missing Unit 8 sprite position.");
     return {
@@ -73,7 +77,11 @@
     }
 
     if (categoryId === "animals" && extraAnimalIds.has(id)) {
-      return spriteVisual(sheets.animalsExtra.file, "200% 300%", cells.animalsExtra[id]);
+      return spriteVisual(
+        sheets.animalsExtra.file,
+        extraAnimalSizes[id] || "200% 300%",
+        cells.animalsExtra[id]
+      );
     }
 
     if (categoryId === "nature" && id === "tree") {
