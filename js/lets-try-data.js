@@ -389,12 +389,6 @@
         status: "mapped"
       },
 
-      sportsOriginal: {
-        file: "images/sports_original.png",
-        purpose: "reference",
-        status: "reference-only"
-      },
-
       stationery: {
         file: "images/stationary.webp",
         grid: "4x3",
