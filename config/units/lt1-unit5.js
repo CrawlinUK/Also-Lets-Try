@@ -116,7 +116,7 @@ const UNIT_BOOK_ID = "lt1";
       unitColour: "#00ADA9",
       unitNumberColour: "#52C8C4",
 
-      menuFile: "../lets_try_1.html",
+      menuFile: "lets_try_1.html",
 
       defaultPrompt: "What do you like?",
       selectionHeading: "Words",
