@@ -56,7 +56,7 @@
     unitColour: "#6F58A3",
     unitNumberColour: "#8E79BB",
 
-    menuFile: "../lets_try_1.html",
+    menuFile: "lets_try_1.html",
 
     defaultPrompt: "",
     selectionHeading: "Shapes",
