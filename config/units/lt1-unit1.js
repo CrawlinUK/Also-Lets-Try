@@ -38,7 +38,7 @@
     browserTitle: "Let’s Try! Tools — Hello!",
     unitColour: "#7FBE25",
     unitNumberColour: "#A8DC52",
-    menuFile: "../lets_try_1.html",
+    menuFile: "lets_try_1.html",
     defaultPrompt: "",
     wordLabel: "Greeting",
     sentenceLabel: "Country",
