@@ -41,7 +41,7 @@
     unitColour: "#E94643",
     unitNumberColour: "#EF7471",
 
-    menuFile: "../lets_try_2.html",
+    menuFile: "lets_try_2.html",
 
     defaultPrompt: "",
     selectionHeading: "Letters",
