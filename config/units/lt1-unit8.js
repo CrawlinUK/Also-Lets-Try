@@ -153,7 +153,7 @@
     unitColour: "#0B7CC3",
     unitNumberColour: "#5AA9DA",
 
-    menuFile: "../lets_try_1.html",
+    menuFile: "lets_try_1.html",
 
     defaultPrompt: "It’s a ~",
     selectionHeading: "Unit 8 words",
