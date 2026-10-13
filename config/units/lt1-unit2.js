@@ -51,7 +51,7 @@
     browserTitle: "Let’s Try! Tools — How are you?",
     unitColour: "#F6AB00",
     unitNumberColour: "#F6CA3F",
-    menuFile: "../lets_try_1.html",
+    menuFile: "lets_try_1.html",
     defaultPrompt: "How are you?",
     wordLabel: "Word",
     sentenceLabel: "Sentence",
