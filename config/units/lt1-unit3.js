@@ -46,7 +46,7 @@
     browserTitle: "Let’s Try! Tools — How many?",
     unitColour: "#E84283",
     unitNumberColour: "#F06AA0",
-    menuFile: "../lets_try_1.html",
+    menuFile: "lets_try_1.html",
     defaultPrompt: "",
     sentenceLabel: "Word",
     showPictureSentenceMode: false,
