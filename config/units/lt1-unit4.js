@@ -147,7 +147,7 @@
       unitNumberColour: "#F28C45",
 
       /* Existing project menu page. */
-      menuFile: "../lets_try_1.html",
+      menuFile: "lets_try_1.html",
 
       /* Main wording and settings labels. */
       defaultPrompt: "I like...",
@@ -172,7 +172,7 @@
           alternate: "baseball",
           textbook: true,
           visual: {
-            src: "../images/sports.png",
+            src: LETS_TRY_DATA.assetUrl(LETS_TRY_DATA.assets.sheets.sports.file),
             size: "400% 300%",
             position: "0% 0%",
             flip: false,
@@ -186,7 +186,7 @@
           alternate: "dodgeball",
           textbook: true,
           visual: {
-            src: "../images/sports.png",
+            src: LETS_TRY_DATA.assetUrl(LETS_TRY_DATA.assets.sheets.sports.file),
             size: "400% 300%",
             position: "33.333% 0%",
             flip: false,
@@ -200,7 +200,7 @@
           alternate: "soccer",
           textbook: true,
           visual: {
-            src: "../images/sports.png",
+            src: LETS_TRY_DATA.assetUrl(LETS_TRY_DATA.assets.sheets.sports.file),
             size: "400% 300%",
             position: "66.667% 0%",
             flip: false,
@@ -214,7 +214,7 @@
           alternate: "basketball",
           textbook: true,
           visual: {
-            src: "../images/sports.png",
+            src: LETS_TRY_DATA.assetUrl(LETS_TRY_DATA.assets.sheets.sports.file),
             size: "400% 300%",
             position: "100% 0%",
             flip: false,
@@ -228,7 +228,7 @@
           alternate: "swimming",
           textbook: true,
           visual: {
-            src: "../images/sports.png",
+            src: LETS_TRY_DATA.assetUrl(LETS_TRY_DATA.assets.sheets.sports.file),
             size: "400% 300%",
             position: "0% 50.000%",
             flip: false,
@@ -242,7 +242,7 @@
           alternate: "ice cream",
           textbook: true,
           visual: {
-            src: "../images/foods.png",
+            src: LETS_TRY_DATA.assetUrl(LETS_TRY_DATA.assets.sheets.foods.file),
             size: "400% 400%",
             position: "0% 0%",
             flip: false,
@@ -256,7 +256,7 @@
           alternate: "pudding",
           textbook: true,
           visual: {
-            src: "../images/foods.png",
+            src: LETS_TRY_DATA.assetUrl(LETS_TRY_DATA.assets.sheets.foods.file),
             size: "400% 400%",
             position: "33.333% 0%",
             flip: false,
@@ -270,7 +270,7 @@
           alternate: "milk",
           textbook: true,
           visual: {
-            src: "../images/foods.png",
+            src: LETS_TRY_DATA.assetUrl(LETS_TRY_DATA.assets.sheets.foods.file),
             size: "400% 400%",
             position: "66.667% 0%",
             flip: false,
@@ -284,7 +284,7 @@
           alternate: "orange juice",
           textbook: true,
           visual: {
-            src: "../images/foods.png",
+            src: LETS_TRY_DATA.assetUrl(LETS_TRY_DATA.assets.sheets.foods.file),
             size: "400% 400%",
             position: "100% 0%",
             flip: false,
@@ -298,7 +298,7 @@
           alternate: "hamburger",
           textbook: true,
           visual: {
-            src: "../images/foods.png",
+            src: LETS_TRY_DATA.assetUrl(LETS_TRY_DATA.assets.sheets.foods.file),
             size: "400% 400%",
             position: "0% 33.333%",
             flip: false,
@@ -312,7 +312,7 @@
           alternate: "pizza",
           textbook: true,
           visual: {
-            src: "../images/foods.png",
+            src: LETS_TRY_DATA.assetUrl(LETS_TRY_DATA.assets.sheets.foods.file),
             size: "400% 400%",
             position: "33.333% 33.333%",
             flip: false,
@@ -326,7 +326,7 @@
           alternate: "spaghetti",
           textbook: true,
           visual: {
-            src: "../images/foods.png",
+            src: LETS_TRY_DATA.assetUrl(LETS_TRY_DATA.assets.sheets.foods.file),
             size: "400% 400%",
             position: "66.667% 33.333%",
             flip: false,
@@ -340,7 +340,7 @@
           alternate: "sushi",
           textbook: true,
           visual: {
-            src: "../images/foods.png",
+            src: LETS_TRY_DATA.assetUrl(LETS_TRY_DATA.assets.sheets.foods.file),
             size: "400% 400%",
             position: "100% 33.333%",
             flip: false,
@@ -354,7 +354,7 @@
           alternate: "steak",
           textbook: true,
           visual: {
-            src: "../images/foods.png",
+            src: LETS_TRY_DATA.assetUrl(LETS_TRY_DATA.assets.sheets.foods.file),
             size: "400% 400%",
             position: "0% 66.667%",
             flip: false,
@@ -368,7 +368,7 @@
           alternate: "salad",
           textbook: true,
           visual: {
-            src: "../images/foods.png",
+            src: LETS_TRY_DATA.assetUrl(LETS_TRY_DATA.assets.sheets.foods.file),
             size: "400% 400%",
             position: "33.333% 66.667%",
             flip: false,
@@ -382,7 +382,7 @@
           alternate: "cake",
           textbook: true,
           visual: {
-            src: "../images/foods.png",
+            src: LETS_TRY_DATA.assetUrl(LETS_TRY_DATA.assets.sheets.foods.file),
             size: "400% 400%",
             position: "66.667% 66.667%",
             flip: false,
@@ -396,7 +396,7 @@
           alternate: "egg",
           textbook: true,
           visual: {
-            src: "../images/foods.png",
+            src: LETS_TRY_DATA.assetUrl(LETS_TRY_DATA.assets.sheets.foods.file),
             size: "400% 400%",
             position: "100% 66.667%",
             flip: false,
@@ -410,7 +410,7 @@
           alternate: "jam",
           textbook: true,
           visual: {
-            src: "../images/foods.png",
+            src: LETS_TRY_DATA.assetUrl(LETS_TRY_DATA.assets.sheets.foods.file),
             size: "400% 400%",
             position: "0% 100%",
             flip: false,
@@ -424,7 +424,7 @@
           alternate: "noodles",
           textbook: true,
           visual: {
-            src: "../images/foods.png",
+            src: LETS_TRY_DATA.assetUrl(LETS_TRY_DATA.assets.sheets.foods.file),
             size: "400% 400%",
             position: "33.333% 100%",
             flip: false,
@@ -438,7 +438,7 @@
           alternate: "rice ball",
           textbook: true,
           visual: {
-            src: "../images/foods.png",
+            src: LETS_TRY_DATA.assetUrl(LETS_TRY_DATA.assets.sheets.foods.file),
             size: "400% 400%",
             position: "66.667% 100%",
             flip: false,
@@ -452,7 +452,7 @@
           alternate: "milk",
           textbook: false,
           visual: {
-            src: "../images/foods.png",
+            src: LETS_TRY_DATA.assetUrl(LETS_TRY_DATA.assets.sheets.foods.file),
             size: "400% 400%",
             position: "100% 100%",
             flip: false,
@@ -466,7 +466,7 @@
           alternate: "onion",
           textbook: true,
           visual: {
-            src: "../images/veg.png",
+            src: LETS_TRY_DATA.assetUrl(LETS_TRY_DATA.assets.sheets.vegetables.file),
             size: "300% 300%",
             position: "0% 0%",
             flip: false,
@@ -480,7 +480,7 @@
           alternate: "green pepper",
           textbook: true,
           visual: {
-            src: "../images/veg.png",
+            src: LETS_TRY_DATA.assetUrl(LETS_TRY_DATA.assets.sheets.vegetables.file),
             size: "300% 300%",
             position: "50.000% 0%",
             flip: false,
@@ -494,7 +494,7 @@
           alternate: "cucumber",
           textbook: true,
           visual: {
-            src: "../images/veg.png",
+            src: LETS_TRY_DATA.assetUrl(LETS_TRY_DATA.assets.sheets.vegetables.file),
             size: "300% 300%",
             position: "100% 0%",
             flip: false,
@@ -508,7 +508,7 @@
           alternate: "carrot",
           textbook: true,
           visual: {
-            src: "../images/veg.png",
+            src: LETS_TRY_DATA.assetUrl(LETS_TRY_DATA.assets.sheets.vegetables.file),
             size: "300% 300%",
             position: "0% 50.000%",
             flip: false,
@@ -522,7 +522,7 @@
           alternate: "grapes",
           textbook: true,
           visual: {
-            src: "../images/fruit.png",
+            src: LETS_TRY_DATA.assetUrl(LETS_TRY_DATA.assets.sheets.fruit.file),
             size: "300% 400%",
             position: "0% 0%",
             flip: false,
@@ -536,7 +536,7 @@
           alternate: "orange",
           textbook: true,
           visual: {
-            src: "../images/fruit.png",
+            src: LETS_TRY_DATA.assetUrl(LETS_TRY_DATA.assets.sheets.fruit.file),
             size: "300% 400%",
             position: "50.000% 0%",
             flip: false,
@@ -550,7 +550,7 @@
           alternate: "pineapple",
           textbook: true,
           visual: {
-            src: "../images/fruit.png",
+            src: LETS_TRY_DATA.assetUrl(LETS_TRY_DATA.assets.sheets.fruit.file),
             size: "300% 400%",
             position: "100% 0%",
             flip: false,
@@ -564,7 +564,7 @@
           alternate: "peach",
           textbook: true,
           visual: {
-            src: "../images/fruit.png",
+            src: LETS_TRY_DATA.assetUrl(LETS_TRY_DATA.assets.sheets.fruit.file),
             size: "300% 400%",
             position: "0% 33.333%",
             flip: false,
@@ -578,7 +578,7 @@
           alternate: "melon",
           textbook: true,
           visual: {
-            src: "../images/fruit.png",
+            src: LETS_TRY_DATA.assetUrl(LETS_TRY_DATA.assets.sheets.fruit.file),
             size: "300% 400%",
             position: "50.000% 33.333%",
             flip: false,
@@ -592,7 +592,7 @@
           alternate: "banana",
           textbook: true,
           visual: {
-            src: "../images/fruit.png",
+            src: LETS_TRY_DATA.assetUrl(LETS_TRY_DATA.assets.sheets.fruit.file),
             size: "300% 400%",
             position: "100% 33.333%",
             flip: false,
@@ -606,7 +606,7 @@
           alternate: "kiwi",
           textbook: true,
           visual: {
-            src: "../images/fruit.png",
+            src: LETS_TRY_DATA.assetUrl(LETS_TRY_DATA.assets.sheets.fruit.file),
             size: "300% 400%",
             position: "0% 66.667%",
             flip: false,
@@ -620,7 +620,7 @@
           alternate: "lemon",
           textbook: true,
           visual: {
-            src: "../images/fruit.png",
+            src: LETS_TRY_DATA.assetUrl(LETS_TRY_DATA.assets.sheets.fruit.file),
             size: "300% 400%",
             position: "50.000% 66.667%",
             flip: false,
