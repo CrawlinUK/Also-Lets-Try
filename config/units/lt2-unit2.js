@@ -10,8 +10,26 @@
     return String(id).replace(/-/g, " ");
   }
 
-  function textVisual(text) {
-    return { type: "text", text, aspectRatio: "1 / 1" };
+  const sheets = LETS_TRY_DATA.assets.sheets;
+  const cells = LETS_TRY_DATA.assets.knownCells;
+
+  function spriteVisual(categoryId, id) {
+    const map = {
+      weather: { sheet: sheets.weather, cells: cells.weather, size: "300% 200%" },
+      clothes: { sheet: sheets.clothes, cells: cells.clothes, size: "300% 200%" },
+      playActivities: { sheet: sheets.playActivities, cells: cells.playActivities, size: "200% 200%" }
+    };
+    const source = map[categoryId];
+    if (!source || !source.cells[id]) {
+      return { type: "text", text: human(id), aspectRatio: "1 / 1" };
+    }
+    return {
+      src: LETS_TRY_DATA.assetUrl(source.sheet.file),
+      size: source.size,
+      position: source.cells[id],
+      flip: false,
+      cropTop: 0
+    };
   }
 
   const cards = categoryIds.flatMap((categoryId) => {
@@ -36,7 +54,7 @@
         optionLabel: word,
         teacherAnswer: word,
         textbook: defaultIds.has(entry.id),
-        visual: textVisual(word)
+        visual: spriteVisual(categoryId, entry.id)
       };
     });
   });

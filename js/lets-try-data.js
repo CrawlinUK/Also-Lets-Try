@@ -441,6 +441,33 @@
         logicalCategories: ["days"],
         status: "mapped",
         note: "Seven day icons in Monday-Sunday order with one empty final cell."
+      },
+
+      weather: {
+        file: "images/weather.webp",
+        grid: "3x2",
+        physicalCells: 6,
+        logicalCategories: ["weather"],
+        status: "mapped",
+        note: "Row-major: sunny, cloudy, rainy, snowy, hot, cold."
+      },
+
+      clothes: {
+        file: "images/clothes.webp",
+        grid: "3x2",
+        physicalCells: 6,
+        logicalCategories: ["clothes"],
+        status: "mapped",
+        note: "Row-major: shorts, shirt, pants, jacket, boots, cap."
+      },
+
+      playActivities: {
+        file: "images/activities.webp",
+        grid: "2x2",
+        physicalCells: 4,
+        logicalCategories: ["playActivities"],
+        status: "mapped",
+        note: "Row-major: play tag, play cards, play dodgeball, make a snowman."
       }
     },
 
@@ -584,6 +611,31 @@
         Friday: "0% 100%",
         Saturday: "33.333% 100%",
         Sunday: "66.667% 100%"
+      },
+
+      weather: {
+        sunny: "0% 0%",
+        cloudy: "50% 0%",
+        rainy: "100% 0%",
+        snowy: "0% 100%",
+        hot: "50% 100%",
+        cold: "100% 100%"
+      },
+
+      clothes: {
+        shorts: "0% 0%",
+        shirt: "50% 0%",
+        pants: "100% 0%",
+        jacket: "0% 100%",
+        boots: "50% 100%",
+        cap: "100% 100%"
+      },
+
+      playActivities: {
+        "play-tag": "0% 0%",
+        "play-cards": "100% 0%",
+        "play-dodgeball": "0% 100%",
+        "make-a-snowman": "100% 100%"
       }
     },
 
@@ -807,7 +859,7 @@
   }
 
   global.LETS_TRY_DATA = Object.freeze({
-    version: 16,
+    version: 17,
     assetUrl,
     categories: CATEGORIES,
     assets: ASSETS,
