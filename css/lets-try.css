@@ -1954,7 +1954,10 @@ html.shared-unit-template .display-mode-options label[hidden] {
   display: none;
 }
 
-/* Four display choices use a balanced 2 × 2 grid throughout the shared interface. */
+/* Book 1 Unit 3 has three display choices; Book 2 Unit 3 has four. */
+html.shared-unit-template[data-book="lt1"][data-unit="3"] .display-mode-options {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
 
 
 /* ============================================================
