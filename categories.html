@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Categories — Classroom English Tools</title>
+<link rel="stylesheet" href="css/lets-try-menu.css">
+<style>
+.category-menu header{border-bottom:3px solid var(--categories)}
+.category-menu main{max-width:1200px;margin:auto;padding:34px 24px}
+.category-menu .grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+.category-link{display:block;min-height:105px;padding:18px 20px;border:1px solid var(--line);border-left:12px solid var(--categories);border-radius:18px;background:var(--surface);box-shadow:var(--shadow);color:inherit;text-decoration:none}
+.category-link strong,.category-link span{display:block}
+.category-link strong{font-size:25px}
+.category-link span{margin-top:5px;color:var(--muted);font-size:15px}
+.category-link:hover,.category-link:focus-visible{outline:3px solid #8cccf8;outline-offset:2px}
+.category-menu .intro{margin:0 0 24px;color:var(--muted);font-size:18px}
+.category-placeholder{max-width:700px;padding:28px;border:1px solid var(--line);border-radius:22px;background:white}
+.category-placeholder h2{margin:0 0 12px;font-size:34px}
+.category-placeholder p{font-size:18px}
+@media(max-width:800px){.category-menu main{padding:20px 14px}.category-menu .grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body class="category-menu">
+<header><button class="back" id="back" type="button">◀ Back</button><h1>Categories</h1></header>
+<main id="categoryMain"><p class="intro">Browse the shared vocabulary categories. Lesson pages will be added later.</p><section class="grid" id="categoryGrid"></section></main>
+<script src="js/lets-try-data.js"></script>
+<script>
+(function(){
+  "use strict";
+  const data = window.LETS_TRY_DATA;
+  const params = new URLSearchParams(location.search);
+  const selected = params.get("category");
+  document.getElementById("back").addEventListener("click",()=>{location.href=selected?"categories.html":"index.html";});
+  const available = Object.entries(data.categories);
+  const category = selected ? available.find(([id])=>id===selected) : null;
+  const main=document.getElementById("categoryMain");
+  if(selected){
+    main.replaceChildren();
+    const panel=document.createElement("section");panel.className="category-placeholder";
+    const heading=document.createElement("h2");heading.textContent=category?category[1].label:"Unknown category";
+    const detail=document.createElement("p");
+    detail.textContent=category?"Category page coming soon. The vocabulary is available in the shared project data.":"This category is not currently available.";
+    panel.append(heading,detail);main.append(panel);
+    document.title=(category?category[1].label:"Categories")+" — Classroom English Tools";
+    return;
+  }
+  const grid=document.getElementById("categoryGrid");
+  available.forEach(([id,definition])=>{
+    const link=document.createElement("a");
+    link.className="category-link";
+    link.href="categories.html?category="+encodeURIComponent(id);
+    const title=document.createElement("strong");title.textContent=definition.label;
+    const status=document.createElement("span");status.textContent="Page coming soon";
+    link.append(title,status);grid.append(link);
+  });
+})();
+</script>
+</body>
+</html>
