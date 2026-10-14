@@ -197,7 +197,7 @@
   window.addEventListener("DOMContentLoaded", async () => {
     try {
       await loadScript("js/lets-try-data.js");
-      await loadScript(`config/units/${book}-unit${unit}.js`);
+      await loadScript(book === "categories" ? "config/categories.js" : `config/units/${book}-unit${unit}.js`);
 
       const config = window.LETS_TRY_UNIT_CONFIG;
       const usesNumberSvgs = Boolean(
