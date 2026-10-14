@@ -15,6 +15,9 @@
     return /^[aeiou]/i.test(word) ? "an" : "a";
   }
 
+  const sheet = LETS_TRY_DATA.assets.sheets.stationery;
+  const cells = LETS_TRY_DATA.assets.knownCells.stationery;
+
   const cards = category.items.map((entry) => {
     const word = label(entry.id);
     return {
@@ -26,7 +29,9 @@
       optionLabel: word,
       teacherAnswer: word,
       textbook: defaults.has(entry.id),
-      visual: { type: "text", text: word, aspectRatio: "1 / 1" }
+      visual: cells[entry.id]
+        ? { src: LETS_TRY_DATA.assetUrl(sheet.file), size: "400% 300%", position: cells[entry.id], flip: false, cropTop: 0 }
+        : { type: "text", text: word, aspectRatio: "1 / 1" }
     };
   });
 
