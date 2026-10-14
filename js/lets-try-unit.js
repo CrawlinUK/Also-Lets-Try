@@ -1135,6 +1135,11 @@
       function renderCardText(element, card) {
         const text = cardText(card);
         element.replaceChildren();
+        // Long Unit 7 request sentences must fit the available card width.
+        element.style.fontSize = UNIT_CONFIG.bookId === "lt2"
+          && String(UNIT_CONFIG.unitNumber) === "7"
+          && state.displayMode === "pictureSentence"
+          ? "clamp(19px, 3.3vw, 44px)" : "";
 
         if (
           card
