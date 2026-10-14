@@ -47,8 +47,7 @@
       return {
         id: entry.id,
         category: categoryId,
-        phraseMode: isWeather ? "weather" : isPlay ? "lets" : "",
-        word,
+            word,
         sentence,
         alternate: word,
         optionLabel: word,
@@ -73,14 +72,6 @@
     wordLabel: "Word",
     sentenceLabel: "Phrase",
     alternateLabel: "Word",
-    phraseSwitch: {
-      initial: "lets",
-      includeUnassigned: true,
-      modes: [
-        { id: "lets", label: "Let’s ~" },
-        { id: "weather", label: "It’s ~" }
-      ]
-    },
     displayModeLabels: {
       pictureText: "Picture + word",
       picture: "Picture only",
