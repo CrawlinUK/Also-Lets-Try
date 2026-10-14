@@ -34,7 +34,7 @@
       teacherAnswer: word,
       textbook: defaults.has(entry.id),
       visual: {
-        src: LETS_TRY_DATA.assetUrl("images/emotions.jpg"),
+        src: LETS_TRY_DATA.assetUrl("images/emotions.webp"),
         size: "400% 200%",
         position: `${cell.x}% ${cell.y}%`,
         flip: Boolean(cell.flip),
