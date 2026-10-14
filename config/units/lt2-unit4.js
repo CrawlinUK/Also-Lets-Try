@@ -41,7 +41,7 @@
       alternate: word,
       optionLabel: word,
       teacherAnswer: word,
-      textbook: (defaults.clockTimes || []).includes(entry.id),
+      textbook: false, // Clock cards remain available as optional extras.
       visual: {
         src: LETS_TRY_DATA.assetUrl(sheets.clocks.file),
         size: "400% 300%", position: clockPositions[index], flip: false, cropTop: 0
