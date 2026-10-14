@@ -23,7 +23,7 @@
 </head>
 <body class="category-menu">
 <header><button class="back" id="back" type="button">◀ Back</button><h1>Categories</h1></header>
-<main id="categoryMain"><p class="intro">Browse the shared vocabulary categories. Lesson pages will be added later.</p><section class="grid" id="categoryGrid"></section></main>
+<main id="categoryMain"><p class="intro">Browse the shared vocabulary categories. Select an available deck or view a planned topic.</p><section class="grid" id="categoryGrid"></section></main>
 <script src="js/lets-try-data.js"></script>
 <script>
 (function(){
@@ -49,9 +49,10 @@
   available.forEach(([id,definition])=>{
     const link=document.createElement("a");
     link.className="category-link";
-    link.href="categories.html?category="+encodeURIComponent(id);
+    const ready = ["worldGreetings", "englishGreetings", "feelings"].includes(id);
+    link.href=ready ? "unit.html?book=categories&unit=1&category="+encodeURIComponent(id) : "categories.html?category="+encodeURIComponent(id);
     const title=document.createElement("strong");title.textContent=definition.label;
-    const status=document.createElement("span");status.textContent="Page coming soon";
+    const status=document.createElement("span");status.textContent=ready ? "Open flashcards" : "Page coming soon";
     link.append(title,status);grid.append(link);
   });
 })();
