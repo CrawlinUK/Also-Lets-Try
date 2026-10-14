@@ -300,6 +300,13 @@
       ]
     },
 
+    clockTimes: {
+      label: "Clock times",
+      items: [
+        item("1-oclock", ["2-4"]), item("2-oclock", ["2-4"]), item("3-oclock", ["2-4"]), item("4-oclock", ["2-4"]), item("5-oclock", ["2-4"]), item("6-oclock", ["2-4"]), item("7-oclock", ["2-4"]), item("8-oclock", ["2-4"]), item("9-oclock", ["2-4"]), item("10-oclock", ["2-4"]), item("11-oclock", ["2-4"]), item("12-oclock", ["2-4"])
+      ]
+    },
+
     stationery: {
       label: "Stationery",
       expectedImageSheetCount: 12,
@@ -339,6 +346,14 @@
 
   const ASSETS = {
     sheets: {
+      timeActivities: {
+        file: "images/TimeActivities.webp", grid: "5x2", physicalCells: 10,
+        logicalCategories: ["dailyTimes"], status: "mapped"
+      },
+      clocks: {
+        file: "images/clocks.svg", grid: "4x3", physicalCells: 12,
+        logicalCategories: ["clockTimes"], status: "mapped"
+      },
       flags: {
         file: "images/flags.svg",
         grid: "4x4",
