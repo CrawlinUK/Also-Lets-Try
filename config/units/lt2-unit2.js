@@ -47,7 +47,8 @@
       return {
         id: entry.id,
         category: categoryId,
-            word,
+        phraseMode: isWeather ? "weather" : isPlay ? "lets" : "",
+        word,
         sentence,
         alternate: word,
         optionLabel: word,
@@ -68,6 +69,14 @@
     unitNumberColour: "#F8C34A",
     menuFile: "lets_try_2.html",
     defaultPrompt: "Let’s ~",
+    phraseSwitch: {
+      initial: "lets",
+      includeUnassigned: true,
+      modes: [
+        { id: "lets", label: "Let’s ~" },
+        { id: "weather", label: "It’s ~" }
+      ]
+    },
     selectionHeading: "Unit 2 words",
     wordLabel: "Word",
     sentenceLabel: "Phrase",
