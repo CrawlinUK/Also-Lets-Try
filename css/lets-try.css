@@ -1954,9 +1954,7 @@ html.shared-unit-template .display-mode-options label[hidden] {
   display: none;
 }
 
-html.shared-unit-template[data-unit="3"] .display-mode-options {
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-}
+/* Four display choices use a balanced 2 × 2 grid throughout the shared interface. */
 
 
 /* ============================================================
