@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Vocabulary database viewer — Also Let’s Try</title>
+<title>Vocabulary database — Image editor — Also Let’s Try</title>
 <link rel="stylesheet" href="css/lets-try-menu.css">
 <style>
 .viewer{max-width:1320px;margin:auto;padding:24px}
@@ -42,9 +42,9 @@ dl{display:grid;grid-template-columns:120px 1fr;gap:9px;overflow-wrap:anywhere}d
 </style>
 </head>
 <body class="viewer">
-<header><button type="button" class="back" onclick="location.href='index.html'">◀ Home</button><h1>Vocabulary database viewer</h1></header>
+<header><button type="button" class="back" onclick="location.href='index.html'">◀ Home</button><h1>Vocabulary database editor</h1></header>
 <main>
-<p class="viewer-intro">Read-only view of the existing shared vocabulary. Changes here are not saved. This is the foundation for a future editor.</p>
+<p class="viewer-intro">Browse the shared vocabulary and preview the exact global sprite positions. Adjust image alignment locally, then export a text file for review. Nothing is saved to GitHub.</p>
 <div class="toolbar"><label>Category<select id="category"></select></label><label>Search words<input id="search" type="search" placeholder="Type a word or ID…"></label></div>
 <p id="count" aria-live="polite"></p>
 <div class="layout">
