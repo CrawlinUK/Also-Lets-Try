@@ -31,7 +31,17 @@ function context(search = "") {
 function config(relativePath, search = "") {
   const scope = context(search);
   vm.runInContext(source(relativePath), scope);
-  return scope.window.LETS_TRY_UNIT_CONFIG;
+  const configuration = scope.window.LETS_TRY_UNIT_CONFIG;
+  if (!Array.isArray(configuration.cards) && Array.isArray(configuration.categories)) {
+    configuration.cards = scope.LETS_TRY_CARD_FACTORY.makeCardsForCategories(configuration.categories, {
+      bookId: configuration.bookId,
+      unitNumber: configuration.unitNumber,
+      defaults: configuration.defaults || "tagged",
+      grammar: configuration.grammar,
+      grammarForm: configuration.grammarForm
+    });
+  }
+  return configuration;
 }
 function checkDeck(label, cards, expectedCount, expectedSelected) {
   assert.equal(cards.length, expectedCount, label + " card count");
@@ -56,7 +66,7 @@ assert.match(db.getWordVisual("food", "sausage").src, /fruit\.webp$/);
 assert.match(db.getWordVisual("animals", "owl").src, /animals-extra\.webp$/);
 assert.match(db.getWordVisual("feelings", "happy").src, /emotions\.webp$/);
 
-for (const [id, total] of [["worldGreetings", 14], ["englishGreetings", 8], ["feelings", 9]]) {
+for (const [id, total] of [["worldGreetings", 14], ["englishGreetings", 8], ["feelings", 9], ["sports", 12], ["food", 16], ["fruit", 11]]) {
   checkDeck("Categories/" + id,
     config("config/categories.js", "?category=" + id).cards, total, total);
 }
@@ -64,10 +74,26 @@ checkDeck("LT1 Unit 1", config("config/units/lt1-unit1.js").cards, 14, 9);
 checkDeck("LT1 Unit 2", config("config/units/lt1-unit2.js").cards, 9, 6);
 checkDeck("LT2 Unit 1", config("config/units/lt2-unit1.js").cards, 14, 11);
 
+const unit5 = config("config/units/lt1-unit5.js");
+checkDeck("LT1 Unit 5", unit5.cards, 39, 21);
+assert.equal(unit5.categories.join(","), "sports,food,fruit", "LT1 Unit 5 categories");
+assert.equal(unit5.grammar, "I like [word].", "LT1 Unit 5 grammar");
+for (const [id, sentence] of [
+  ["hamburger", "I like hamburgers."],
+  ["sausage", "I like sausages."],
+  ["strawberry", "I like strawberries."],
+  ["noodle", "I like noodles."]
+]) {
+  assert.equal(unit5.cards.find(card => card.id === id).sentence, sentence, id + " grammar form");
+}
+assert.equal(unit5.cards.find(card => card.id === "noodle").word, "noodles");
+assert.match(unit5.cards.find(card => card.id === "sausage").visual.src, /fruit\.webp$/);
+assert.ok(unit5.cards.every(card => card.visual?.position), "LT1 Unit 5 image positions");
+
 const unit4 = config("config/units/lt2-unit4.js");
 assert.equal(unit4.cards.length, 22, "LT2 Unit 4 combined card count");
 assert.equal(unit4.cards.filter(card => card.category === "clockTimes" && card.textbook).length, 0,
   "LT2 Unit 4 clocks must remain optional");
 assert.ok(unit4.cards.every(card => card.visual?.position), "LT2 Unit 4 sprite positions");
 
-console.log("Vocabulary checks passed: 24 categories, artwork mappings, six migrated decks, Unit 4 clocks.");
+console.log("Vocabulary checks passed: 24 categories, nine category/unit decks, LT1 Unit 5 grammar, Unit 4 clocks.");
