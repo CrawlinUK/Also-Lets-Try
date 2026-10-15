@@ -24,8 +24,11 @@ The current database is ordinary JavaScript, not SQL or JSON yet:
   It uses `getWordVisual` plus the central sprite sheet `cellAspectRatio` to
   preview the actual physical cell geometry rather than forcing square crops.
   Position nudges (0.1%, 0.5%, 1%, 5%), proportional scale, horizontal
-  mirroring and all four cropping edges are available. Choose a tool at the
-  bottom of the details to return to that tool immediately above the picture.
+  mirroring and all four cropping edges are available. The picture and
+  metadata appear without editing controls by default. Choose a tool below
+  the details to reveal only that tool immediately above the picture.
+  Tap the same tool again, or Done, to collapse the controls; switching
+  vocabulary also closes them, without losing unsaved local adjustments.
   Size is a single multiplier: a 4×2 sheet changes from 400%/200% to
   500%/250% when scaling by 125%, never distorting the image.
   All edits are held only in the current browser tab until exported.
