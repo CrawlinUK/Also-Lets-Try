@@ -6,12 +6,6 @@
   const defaults = LETS_TRY_DATA.getUnitDefaults(bookId, unitNumber);
   const sheets = LETS_TRY_DATA.assets.sheets;
 
-  const activityPositions = ["0% 0%", "25% 0%", "50% 0%", "75% 0%", "100% 0%",
-    "0% 100%", "25% 100%", "50% 100%", "75% 100%", "100% 100%"];
-  const clockPositions = ["0% 0%", "33.333% 0%", "66.667% 0%", "100% 0%",
-    "0% 50%", "33.333% 50%", "66.667% 50%", "100% 50%",
-    "0% 100%", "33.333% 100%", "66.667% 100%", "100% 100%"];
-
   const activityCards = LETS_TRY_DATA.getCategory("dailyTimes").items.map((entry, index) => {
     const word = entry.id.replace(/-/g, " ");
     return {
@@ -25,7 +19,7 @@
       textbook: (defaults.dailyTimes || []).includes(entry.id),
       visual: {
         src: LETS_TRY_DATA.assetUrl(sheets.timeActivities.file),
-        size: "500% 200%", position: activityPositions[index], flip: false, cropTop: 0
+        size: sheets.timeActivities.backgroundSize, position: LETS_TRY_DATA.assets.knownCells.dailyTimes[entry.id], flip: false, cropTop: 0
       }
     };
   });
@@ -44,7 +38,7 @@
       textbook: false, // Clock cards remain available as optional extras.
       visual: {
         src: LETS_TRY_DATA.assetUrl(sheets.clocks.file),
-        size: "400% 300%", position: clockPositions[index], flip: false, cropTop: 0
+        size: sheets.clocks.backgroundSize, position: LETS_TRY_DATA.assets.knownCells.clockTimes[entry.id], flip: false, cropTop: 0
       }
     };
   });
