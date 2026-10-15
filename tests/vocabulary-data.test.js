@@ -51,6 +51,16 @@ function checkDeck(label, cards, expectedCount, expectedSelected) {
 
 // The viewer must retain its metadata helper. When this function was
 // accidentally deleted, the first card click threw and no images appeared.
+// Standalone Categories show category names, sample words and honest unavailable tiles.
+const categoryMenuSource = source("categories.html");
+const sharedCssSource = source("css/lets-try.css");
+assert.match(categoryMenuSource, /definition\.items\.slice\(0,3\)/, "category tiles use first three shared words");
+assert.match(categoryMenuSource, /samples\.scrollWidth<=samples\.clientWidth/, "whole words fit available width");
+assert.match(categoryMenuSource, /category-unavailable::after/, "unavailable tiles have diagonal stroke");
+assert.doesNotMatch(categoryMenuSource, /Open flashcards|Page coming soon/, "no placeholder status text");
+assert.match(sharedCssSource, /data-book="categories"\] \.site-title \.unit-word/, "hide Unit label only for Categories");
+assert.match(sharedCssSource, /data-book="categories"\] \.site-title \.unit-number/, "hide unit number only for Categories");
+
 const viewerSource = source("vocabulary-viewer.html");
 assert.match(viewerSource, /function row\(label,value\)/,
   "viewer metadata helper required before artwork can render");
