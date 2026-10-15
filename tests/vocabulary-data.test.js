@@ -62,6 +62,18 @@ assert.match(viewerSource, /function exportChanges\(\)/,
   "viewer can export local proposed mapping changes");
 assert.match(viewerSource, /id="positionX"/,
   "viewer includes image calibration controls");
+assert.match(viewerSource, /id="scaleNumber"/, "viewer has a single proportional scaling control");
+assert.match(viewerSource, /function splitSize\(size\)/, "viewer derives scale from original sprite proportions");
+assert.doesNotMatch(viewerSource, /id="sizeX"/, "viewer must not independently stretch sprite width");
+assert.doesNotMatch(viewerSource, /id="sizeY"/, "viewer must not independently stretch sprite height");
+for (const side of ["Top","Right","Bottom","Left"]) {
+  assert.match(viewerSource, new RegExp('id="crop' + side + '"'), "viewer crop " + side);
+}
+assert.match(viewerSource, /data-nudge="up"/, "viewer has position nudge arrows");
+assert.match(viewerSource, /data-jump-tool="position"/, "viewer jumps to controls above image");
+assert.match(source("js/lets-try-unit.js"), /const cropEdges = \["cropTop", "cropRight", "cropBottom", "cropLeft"\]/,
+  "classroom renderer handles all four crop edges");
+
 
 
 const db = context().LETS_TRY_DATA;
@@ -71,6 +83,11 @@ for (const [sheet,ratio] of [
   ["stationery","1 / 1"], ["fruit","1 / 1"]
 ]) {
   assert.equal(db.assets.sheets[sheet].cellAspectRatio,ratio, sheet + " cell proportions");
+}
+
+const untouchedVisual = db.getWordVisual("worldGreetings", "finland");
+for (const side of ["cropTop","cropRight","cropBottom","cropLeft"]) {
+  assert.equal(untouchedVisual[side] || 0, 0, "global default " + side);
 }
 
 assert.equal(Object.keys(db.categories).length, 24, "vocabulary category count");
