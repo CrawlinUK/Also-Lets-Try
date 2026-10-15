@@ -935,7 +935,10 @@
       size: sheet.sizeOverrides?.[itemId] || sheet.backgroundSize,
       position: properties.position,
       flip: Boolean(properties.flip),
-      cropTop: properties.cropTop || 0
+      cropTop: properties.cropTop || 0,
+      cropRight: properties.cropRight || 0,
+      cropBottom: properties.cropBottom || 0,
+      cropLeft: properties.cropLeft || 0
     };
   }
 
