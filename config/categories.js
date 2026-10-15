@@ -4,7 +4,7 @@
   const id = new URLSearchParams(location.search).get("category");
   const data = LETS_TRY_DATA;
   const category = data.getCategory(id);
-  const supported = ["worldGreetings", "englishGreetings", "feelings"];
+  const supported = ["worldGreetings", "englishGreetings", "feelings", "sports", "food", "fruit"];
   if (!category || !supported.includes(id)) throw new Error("Category is not yet available: " + id);
 
   // Shared vocabulary profiles and artwork mappings build these cards.
