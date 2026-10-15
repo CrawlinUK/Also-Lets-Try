@@ -10,21 +10,12 @@
     LETS_TRY_DATA.getUnitDefaults(bookId, unitNumber)[categoryId] || []
   );
 
-  const sprite = {
-    happy:       { x: 0,       y: 0,  flip: false },
-    tired:       { x: 64,      y: 93, flip: false, cropTop: 3 },
-    hungry:      { x: 96,      y: 0,  flip: false },
-    sleepy:      { x: 31,      y: 93, flip: false },
-    sad:         { x: 0,       y: 93, flip: false },
-    fine:        { x: 93,      y: 93, flip: true,  cropTop: 3 },
-    good:        { x: 93,      y: 93, flip: false, cropTop: 3 },
-    great:       { x: 64,      y: 0,  flip: false },
-    wonderful:   { x: 33.3333, y: 0,  flip: false }
-  };
+  const sheet = LETS_TRY_DATA.assets.sheets.emotions;
+  const cells = LETS_TRY_DATA.assets.knownCells.emotions;
 
   const cards = category.items.map((entry) => {
     const word = entry.id.replace(/-/g, " ");
-    const cell = sprite[entry.id];
+    const cell = cells[entry.id];
     return {
       id: entry.id,
       category: categoryId,
@@ -34,9 +25,9 @@
       teacherAnswer: word,
       textbook: defaults.has(entry.id),
       visual: {
-        src: LETS_TRY_DATA.assetUrl("images/emotions.webp"),
-        size: "400% 200%",
-        position: `${cell.x}% ${cell.y}%`,
+        src: LETS_TRY_DATA.assetUrl(sheet.file),
+        size: sheet.backgroundSize,
+        position: cell.position,
         flip: Boolean(cell.flip),
         cropTop: cell.cropTop || 0
       }
