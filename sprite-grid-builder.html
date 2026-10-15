@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#1687df">
+<title>Sprite Grid Builder — Also Let's Try</title>
+<link rel="stylesheet" href="css/lets-try-menu.css">
+<style>
+:root{--accent:#1687df;--paper:#fff;--border:#d4e0e7}
+*{box-sizing:border-box}
+body{margin:0;background:#f5f8f6;color:#17191d}
+.builder-header{display:flex;align-items:center;gap:14px;border-bottom:3px solid var(--accent);background:#fff;padding:12px max(16px,calc((100vw - 1420px)/2));min-height:70px}
+.builder-header h1{font-size:clamp(23px,3vw,34px);line-height:1.1;margin:0}
+.builder-header a{color:inherit;text-decoration:none;border-radius:10px;background:#eef4f7;font-weight:800;padding:11px 14px;white-space:nowrap}
+main{max-width:1440px;margin:auto;padding:18px 20px 40px}
+.intro{margin:0 0 16px;line-height:1.5;color:#46545e;font-size:17px}
+.layout{display:grid;grid-template-columns:minmax(0,1fr) minmax(260px,310px);gap:18px;align-items:start}
+.panel{background:#fff;border:1px solid var(--border);border-radius:16px;padding:16px;min-width:0}
+.panel h2{font-size:21px;margin:0 0 12px}
+.controls{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:13px}
+.controls label,.settings label{display:grid;gap:4px;font-size:13px;font-weight:800}
+.controls select,.settings select,.settings input[type=number],.settings input[type=text]{font:inherit;min-height:43px;border:1px solid #9cabb5;border-radius:9px;background:white;padding:8px;width:100%}
+.controls label{flex:1 1 110px}
+.canvas-wrap{position:relative;border:2px dashed #b9ccd8;border-radius:10px;background:#eff4f8;overflow:hidden;touch-action:none}
+#sheetCanvas{display:block;width:100%;height:auto;touch-action:none;cursor:grab}
+#sheetCanvas.dragging{cursor:grabbing}
+.canvas-wrap.file-target{border-color:#1687df;box-shadow:0 0 0 4px #c9eaff}
+.help{margin:10px 0 0;color:#4d5e69;font-size:14px;line-height:1.45}
+.strip{display:grid;gap:7px;margin:12px 0}
+.strip button{min-height:54px;min-width:0;border:1px solid #ced9e0;border-radius:10px;background:#f8fafc;padding:7px;font:inherit;text-align:left;overflow:hidden;cursor:pointer}
+.strip button[aria-pressed=true]{border:2px solid var(--accent);background:#e8f5ff}
+.strip strong{display:block;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.strip small{display:block;color:#60717d;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.settings{display:grid;gap:13px}
+.settings .row{display:flex;align-items:center;gap:8px;min-width:0}
+.settings .row label{flex:1}
+.settings input[type=range]{width:100%;accent-color:var(--accent)}
+.settings .two-cols{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.buttons{display:flex;flex-wrap:wrap;gap:8px}
+button.action{font:inherit;min-height:43px;border:1px solid #9cabb5;border-radius:9px;padding:9px 13px;background:#f0f6f9;color:#17232b;font-weight:800;cursor:pointer}
+button.primary{background:#1687df;border-color:#1687df;color:#fff}
+button.success{background:#def3e6;border-color:#90c5a8}
+button.action:disabled{opacity:.45;cursor:not-allowed}
+button.action:focus-visible,#sheetCanvas:focus-visible,.strip button:focus-visible{outline:3px solid #f4ba3c;outline-offset:2px}
+.status{padding:10px;background:#eef6ff;border-radius:9px;line-height:1.45;font-size:14px;min-height:42px}
+#selectedName{margin:0;font-size:16px;font-weight:900;overflow-wrap:anywhere}
+.small-note{font-size:13px;color:#5a6873;line-height:1.4;margin:4px 0}
+.divider{border:0;border-top:1px solid #e0e8ed;margin:4px 0}
+#qualityWrap{max-width:95px}
+.download-label{margin-bottom:0;color:#43505b}
+@media(max-width:870px){.layout{grid-template-columns:1fr}main{padding:14px 12px}.settings{grid-template-columns:repeat(2,minmax(0,1fr))}.settings>section{min-width:0}.strip button{min-height:47px}}
+@media(max-width:560px){.builder-header{padding:10px 12px}.builder-header a{font-size:14px;padding:10px}.settings{grid-template-columns:1fr}.panel{padding:12px}.controls label{flex-basis:90px}.intro{font-size:15px}}
+</style>
+</head>
+<body>
+<header class="builder-header"><a href="index.html" aria-label="Return to home">← Home</a><h1>Sprite Grid Builder</h1></header>
+<main>
+<p class="intro">Drop downloaded illustrations into individual cells, or tap a cell to choose an image. Move and resize them without distortion, then export a mathematically exact WebP sprite sheet. Images stay on your device.</p>
+<div class="layout">
+<section class="panel" aria-label="Sprite grid canvas">
+<div class="controls">
+  <label>Columns<select id="columns"><option>2</option><option>3</option><option selected>4</option><option>5</option><option>6</option></select></label>
+  <label>Rows<select id="rows"><option>1</option><option selected>2</option><option>3</option><option>4</option><option>5</option></select></label>
+  <label>Cell size<select id="cellSize"><option>300</option><option>400</option><option selected>500</option><option>600</option><option>800</option></select></label>
+  <label>Inner margin<select id="margin"><option value="0">0%</option><option value="4">4%</option><option value="6">6%</option><option selected value="8">8%</option><option value="10">10%</option><option value="12">12%</option></select></label>
+</div>
+<div id="canvasWrap" class="canvas-wrap"><canvas id="sheetCanvas" width="2000" height="1000" tabindex="0" aria-label="Sprite sheet: select or drag within a cell to position a picture"></canvas></div>
+<p class="help"><strong>How to use:</strong> Drop images onto cells, or tap an empty cell to upload. Tap a filled cell to select it; drag its picture to reposition. The blue guides are for editing only—they will not be exported. Every image is clipped inside its own cell and the chosen margin.</p>
+<div class="strip" id="cellStrip" aria-label="Grid cell list"></div>
+</section>
+<aside class="panel settings" aria-label="Grid settings">
+<section>
+  <h2>Selected cell</h2><p id="selectedName">1 — empty</p>
+  <div class="buttons" style="margin-top:10px">
+    <button class="action primary" id="chooseImage" type="button">Add / Replace image</button>
+    <button class="action" id="removeImage" type="button" disabled>Remove</button>
+  </div>
+  <label style="margin-top:10px">Cell name (for mapping)<input type="text" id="cellName" placeholder="e.g. moon" maxlength="60"></label>
+  <p class="small-note">You can load multiple images at once. They will fill successive cells starting from the selected cell.</p>
+</section>
+<hr class="divider">
+<section>
+  <h2>Position and scale</h2>
+  <label>Scale: <span id="scaleValue">100%</span><input id="scale" type="range" min="25" max="300" value="100" step="1"></label>
+  <div class="two-cols" style="margin-top:8px">
+    <label>Horizontal offset (%)<input id="offsetX" type="number" step="1" min="-100" max="100" value="0"></label>
+    <label>Vertical offset (%)<input id="offsetY" type="number" step="1" min="-100" max="100" value="0"></label>
+  </div>
+  <div class="buttons" style="margin-top:10px">
+    <button class="action" id="resetCell" type="button">Reset placement</button>
+    <button class="action" id="swapCell" type="button">Move / Swap cell</button>
+  </div>
+  <p class="small-note">Width and height always change together. Zoomed artwork is clipped at the cell's safe boundary, never spilled into the next cell.</p>
+</section>
+<hr class="divider">
+<section>
+  <h2>Export</h2>
+  <p id="dimensions" style="margin:0 0 8px;font-weight:900">2000 × 1000 pixels</p>
+  <label class="row" style="display:flex;justify-content:space-between">Show editing guides <input id="guides" type="checkbox" checked></label>
+  <label class="row" style="display:flex;justify-content:space-between;margin-top:8px">Transparent background <input id="transparent" type="checkbox"></label>
+  <div class="row" style="margin-top:8px"><label id="qualityWrap">WebP quality<input id="quality" type="number" min="50" max="100" step="1" value="92"></label><span class="small-note">Higher = larger file, clearer details.</span></div>
+  <div class="buttons" style="margin-top:12px">
+    <button class="action primary" id="exportWebp" type="button">Export WebP</button>
+    <button class="action success" id="exportPng" type="button">Export PNG</button>
+    <button class="action" id="exportMap" type="button">Export positions (.txt)</button>
+  </div>
+  <div class="buttons" style="margin-top:10px"><button class="action" id="clearAll" type="button">Clear all cells</button></div>
+</section>
+<div class="status" id="status" role="status" aria-live="polite">Ready. Your images never leave this browser.</div>
+</aside>
+</div>
+<input id="imagePicker" type="file" accept="image/*" multiple hidden>
+</main>
+<script>
+(function(){
+"use strict";
+const $ = id => document.getElementById(id);
+const canvas = $("sheetCanvas"), wrap = $("canvasWrap");
+const ctx = canvas.getContext("2d", { alpha:true });
+if(!ctx){$("status").textContent="Canvas is not supported in this browser.";return;}
+const settings = {cols:4, rows:2, cell:500, padding:8, guides:true, transparent:false};
+let slots = Array.from({length:8},()=>null);
+let names = Array.from({length:8},()=>"");
+let selected = 0, pickerStart = 0, pointer = null, dragCell = -1;
+const fmt = n => Number(n.toFixed(2));
+const cellCount = () => settings.cols * settings.rows;
+function status(text){$("status").textContent=text;}
+function slotLabel(i){return String(i+1) + (names[i] ? " — "+names[i] : slots[i] ? " — "+slots[i].filename : " — empty");}
+function dimensions(){return [settings.cols*settings.cell,settings.rows*settings.cell];}
+function renderOn(target, includeGuides){
+ const {cols,rows,cell,padding,guides,transparent}=settings;
+ const w=cols*cell,h=rows*cell;
+ target.clearRect(0,0,w,h);
+ if(!transparent){target.fillStyle="#fff";target.fillRect(0,0,w,h);}
+ for(let i=0;i<slots.length;i++){
+  const slot=slots[i];if(!slot || !slot.img || !slot.img.naturalWidth)continue;
+  const left=(i%cols)*cell,top=Math.floor(i/cols)*cell;
+  const inset=padding/100*cell;
+  const safe=cell-2*inset;
+  const base=Math.min(safe/slot.img.naturalWidth,safe/slot.img.naturalHeight);
+  const dw=slot.img.naturalWidth*base*slot.zoom,dh=slot.img.naturalHeight*base*slot.zoom;
+  const centerX=left+cell/2+(slot.x/100)*cell,centerY=top+cell/2+(slot.y/100)*cell;
+  target.save();target.beginPath();target.rect(left+inset,top+inset,safe,safe);target.clip();
+  target.drawImage(slot.img,centerX-dw/2,centerY-dh/2,dw,dh);target.restore();
+ }
+ if(includeGuides && guides){
+  target.save();target.lineWidth=Math.max(2,cell/225);
+  target.strokeStyle="rgba(0,120,220,.60)";
+  for(let c=1;c<cols;c++){target.beginPath();target.moveTo(c*cell,0);target.lineTo(c*cell,h);target.stroke();}
+  for(let r=1;r<rows;r++){target.beginPath();target.moveTo(0,r*cell);target.lineTo(w,r*cell);target.stroke();}
+  const sx=(selected%cols)*cell,sy=Math.floor(selected/cols)*cell;
+  target.strokeStyle="rgba(0,125,210,.94)";target.lineWidth=Math.max(4,cell/100);
+  target.strokeRect(sx+target.lineWidth/2,sy+target.lineWidth/2,cell-target.lineWidth,cell-target.lineWidth);
+  target.setLineDash([cell/40,cell/65]);target.strokeStyle="rgba(247,128,56,.55)";
+  const inner=padding*cell/100;target.lineWidth=Math.max(1,cell/350);
+  target.strokeRect(sx+inner,sy+inner,cell-2*inner,cell-2*inner);
+  target.restore();
+ }
+}
+function draw(){renderOn(ctx,true);}
+function rebuildCanvas(){
+ const [w,h]=dimensions();canvas.width=w;canvas.height=h;$("dimensions").textContent=w+" × "+h+" pixels ("+settings.cols+" × "+settings.rows+" cells)";
+ $("cellStrip").style.gridTemplateColumns="repeat("+settings.cols+",minmax(0,1fr))";
+ buildStrip();select(Math.min(selected,slots.length-1));draw();
+}
+function buildStrip(){
+ const container=$("cellStrip");container.replaceChildren();
+ for(let i=0;i<slots.length;i++){
+  const button=document.createElement("button");button.type="button";
+  button.textContent="";button.setAttribute("aria-label","Select cell "+slotLabel(i));
+  button.dataset.cell=i;
+  const strong=document.createElement("strong");strong.textContent="Cell "+(i+1);
+  const small=document.createElement("small");small.textContent=names[i]||slots[i]?.filename||"Empty";
+  button.append(strong,small);
+  button.addEventListener("click",()=>select(i));container.append(button);
+ }
+ updateSelection();
+}
+function select(i){
+ selected=Math.max(0,Math.min(slots.length-1,i));
+ $("cellName").value=names[selected]||"";
+ const s=slots[selected];
+ $("selectedName").textContent=slotLabel(selected);
+ $("scale").value=s?fmt(s.zoom*100):100;$("scaleValue").textContent=$("scale").value+"%";
+ $("offsetX").value=s?fmt(s.x):0;$("offsetY").value=s?fmt(s.y):0;
+ $("removeImage").disabled=!s;$("resetCell").disabled=!s;
+ updateSelection();draw();
+}
+function updateSelection(){for(const button of $("cellStrip").children)button.setAttribute("aria-pressed",String(Number(button.dataset.cell)===selected));}
+function changeGrid(){
+ const cols=Number($("columns").value),rows=Number($("rows").value);
+ const newCount=cols*rows;
+ if(newCount<slots.length && slots.slice(newCount).some(Boolean)){
+  if(!confirm("Changing this grid will remove images from cells outside the new size. Continue?")){
+   $("columns").value=settings.cols;$("rows").value=settings.rows;return;
+  }
+ }
+ slots=Array.from({length:newCount},(_,i)=>slots[i]||null);
+ names=Array.from({length:newCount},(_,i)=>names[i]||"");
+ settings.cols=cols;settings.rows=rows;settings.cell=Number($("cellSize").value);
+ settings.padding=Number($("margin").value);
+ rebuildCanvas();
+}
+function saveImage(file,index){
+ return new Promise(resolve=>{
+  if(!file.type.startsWith("image/")){resolve(false);return;}
+  const url=URL.createObjectURL(file),image=new Image();
+  image.onload=()=>{
+   if(!image.naturalWidth||!image.naturalHeight){URL.revokeObjectURL(url);resolve(false);return;}
+   if(slots[index]?.url)URL.revokeObjectURL(slots[index].url);
+   slots[index]={img:image,url,filename:file.name,x:0,y:0,zoom:1};
+   names[index]=file.name.replace(/\.[^.]+$/,'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
+   resolve(true);
+  };
+  image.onerror=()=>{URL.revokeObjectURL(url);resolve(false);};
+  image.src=url;
+ });
+}
+async function addImages(files,start){
+ const choices=Array.from(files).filter(file=>file.type.startsWith("image/"));
+ if(!choices.length){status("No supported image files found.");return;}
+ let count=0,position=start;
+ for(const file of choices){
+  if(position>=cellCount())break;
+  if(await saveImage(file,position))count++;
+  position++;
+ }
+ select(Math.min(start+Math.max(0,count-1),cellCount()-1));buildStrip();draw();
+ status(count+" picture"+(count===1?"":"s")+" loaded. Drag a picture inside its cell to position it, or select its cell to adjust scale.");
+}
+function openPicker(i){pickerStart=i;$("imagePicker").value="";$("imagePicker").click();}
+$("imagePicker").addEventListener("change",event=>addImages(event.target.files,pickerStart));
+$("chooseImage").addEventListener("click",()=>openPicker(selected));
+$("removeImage").addEventListener("click",()=>{
+ if(slots[selected]?.url)URL.revokeObjectURL(slots[selected].url);
+ slots[selected]=null;names[selected]="";buildStrip();select(selected);status("Image removed from cell "+(selected+1)+".");
+});
+$("cellName").addEventListener("input",()=>{names[selected]=$("cellName").value;$("selectedName").textContent=slotLabel(selected);buildStrip();});
+$("scale").addEventListener("input",()=>{const s=slots[selected];if(!s)return;s.zoom=Number($("scale").value)/100;$("scaleValue").textContent=fmt(s.zoom*100)+"%";draw();});
+for(const [id,key] of [["offsetX","x"],["offsetY","y"]])$(id).addEventListener("input",()=>{
+ const s=slots[selected];if(!s)return;const num=Number($(id).value);if(!Number.isFinite(num))return;s[key]=Math.max(-100,Math.min(100,num));draw();
+});
+$("resetCell").addEventListener("click",()=>{const s=slots[selected];if(!s)return;s.x=0;s.y=0;s.zoom=1;select(selected);});
+$("swapCell").addEventListener("click",()=>{
+ const raw=prompt("Move or swap this picture with cell number (1 to "+cellCount()+"):",String(selected+1));if(raw===null)return;
+ const to=Number(raw)-1;if(!Number.isInteger(to)||to<0||to>=cellCount()){status("Please choose a valid cell number.");return;}
+ [slots[selected],slots[to]]=[slots[to],slots[selected]];
+ [names[selected],names[to]]=[names[to],names[selected]];
+ buildStrip();select(to);status("Moved/swapped cells.");
+});
+for(const id of ["columns","rows","cellSize","margin"])$(id).addEventListener("change",changeGrid);
+$("guides").addEventListener("change",()=>{settings.guides=$("guides").checked;draw();});
+$("transparent").addEventListener("change",()=>{settings.transparent=$("transparent").checked;draw();});
+function cellAt(event){
+ const rect=canvas.getBoundingClientRect();
+ const x=(event.clientX-rect.left)/rect.width*settings.cols*settings.cell;
+ const y=(event.clientY-rect.top)/rect.height*settings.rows*settings.cell;
+ const c=Math.floor(x/settings.cell),r=Math.floor(y/settings.cell);
+ return (c>=0&&c<settings.cols&&r>=0&&r<settings.rows)?r*settings.cols+c:-1;
+}
+canvas.addEventListener("pointerdown",event=>{
+ if(event.button!==0&&event.pointerType!=="touch")return;
+ const i=cellAt(event);if(i<0)return;
+ select(i);pointer={id:event.pointerId,startX:event.clientX,startY:event.clientY,lastX:event.clientX,lastY:event.clientY,dragged:false,cell:i};
+ canvas.setPointerCapture?.(event.pointerId);
+});
+canvas.addEventListener("pointermove",event=>{
+ if(!pointer||event.pointerId!==pointer.id||!slots[pointer.cell])return;
+ const dx=event.clientX-pointer.lastX,dy=event.clientY-pointer.lastY;
+ if(Math.abs(event.clientX-pointer.startX)+Math.abs(event.clientY-pointer.startY)>4)pointer.dragged=true;
+ if(pointer.dragged){
+  const rect=canvas.getBoundingClientRect();const s=slots[pointer.cell];
+  s.x=Math.max(-100,Math.min(100,s.x+dx/rect.width*settings.cols*100));
+  s.y=Math.max(-100,Math.min(100,s.y+dy/rect.height*settings.rows*100));
+  $("offsetX").value=fmt(s.x);$("offsetY").value=fmt(s.y);
+  canvas.classList.add("dragging");draw();
+ }
+ pointer.lastX=event.clientX;pointer.lastY=event.clientY;
+});
+function endPointer(event){
+ if(!pointer||event.pointerId!==pointer.id)return;
+ const hit=pointer.cell,click=!pointer.dragged;
+ pointer=null;canvas.classList.remove("dragging");
+ if(click&&!slots[hit])openPicker(hit);
+}
+canvas.addEventListener("pointerup",endPointer);
+canvas.addEventListener("pointercancel",()=>{pointer=null;canvas.classList.remove("dragging");});
+canvas.addEventListener("keydown",event=>{
+ const s=slots[selected];if(!s)return;
+ const step=event.shiftKey?5:1;
+ if(event.key==="ArrowLeft")s.x-=step;
+ else if(event.key==="ArrowRight")s.x+=step;
+ else if(event.key==="ArrowUp")s.y-=step;
+ else if(event.key==="ArrowDown")s.y+=step;
+ else return;
+ event.preventDefault();select(selected);
+});
+let dragDepth=0;
+wrap.addEventListener("dragenter",event=>{event.preventDefault();dragDepth++;wrap.classList.add("file-target");});
+wrap.addEventListener("dragover",event=>{event.preventDefault();if(event.dataTransfer)event.dataTransfer.dropEffect="copy";});
+wrap.addEventListener("dragleave",event=>{event.preventDefault();dragDepth=Math.max(0,dragDepth-1);if(!dragDepth)wrap.classList.remove("file-target");});
+wrap.addEventListener("drop",event=>{event.preventDefault();dragDepth=0;wrap.classList.remove("file-target");const i=cellAt(event);if(i>=0)addImages(event.dataTransfer.files,i);});
+async function saveBlob(mime,quality){
+ if(!slots.some(Boolean)){status("Add at least one picture before exporting.");return;}
+ const [w,h]=dimensions();
+ const out=document.createElement("canvas");out.width=w;out.height=h;
+ const context=out.getContext("2d");if(!context){status("Unable to create export canvas.");return;}
+ renderOn(context,false);
+ status("Preparing "+w+" × "+h+" export…");
+ const blob=await new Promise(resolve=>out.toBlob(resolve,mime,quality));
+ if(!blob){status("Image export failed. Please try PNG.");return;}
+ const actual=blob.type==="image/webp"?"webp":"png";
+ const url=URL.createObjectURL(blob),anchor=document.createElement("a");
+ anchor.href=url;anchor.download="also-lets-try-sprite-"+settings.cols+"x"+settings.rows+"-"+w+"x"+h+"."+actual;
+ document.body.append(anchor);anchor.click();anchor.remove();
+ setTimeout(()=>URL.revokeObjectURL(url),30000);
+ status("Saved "+actual.toUpperCase()+" at exactly "+w+" × "+h+" pixels. No grid guides included."+(mime==="image/webp"&&actual!=="webp"?" This browser exported PNG because WebP encoding is unavailable.":""));
+}
+$("exportWebp").addEventListener("click",()=>saveBlob("image/webp",Math.max(.5,Math.min(1,Number($("quality").value)/100||.92))));
+$("exportPng").addEventListener("click",()=>saveBlob("image/png"));
+$("exportMap").addEventListener("click",()=>{
+ const c=settings.cols,r=settings.rows;
+ const cells={};
+ for(let i=0;i<slots.length;i++){
+  if(!slots[i])continue;
+  const k=names[i]||"cell-"+(i+1);
+  const x=c===1?0:i%c/(c-1)*100,y=r===1?0:Math.floor(i/c)/(r-1)*100;
+  cells[k]={position:fmt(x)+"% "+fmt(y)+"%",size:c*100+"% "+r*100+"%",zoom:fmt(slots[i].zoom*100)+"%",offsetX:fmt(slots[i].x)+"%",offsetY:fmt(slots[i].y)+"%"};
+ }
+ const text=["Also Let's Try sprite sheet",dimensions().join(" × ")+" px",c+" × "+r+" cells, "+settings.cell+" px each", "CSS background-size: "+c*100+"% "+r*100+"%", "", "Global cell positions (standard):",JSON.stringify(cells,null,2)].join("\n");
+ const blob=new Blob([text],{type:"text/plain;charset=utf-8"}),url=URL.createObjectURL(blob);
+ const link=document.createElement("a");link.href=url;link.download="also-lets-try-sprite-mapping.txt";document.body.append(link);link.click();link.remove();
+ setTimeout(()=>URL.revokeObjectURL(url),30000);status("Position mapping exported. The WebP already contains your visual adjustments, so standard grid coordinates work.");
+});
+$("clearAll").addEventListener("click",()=>{
+ if(!slots.some(Boolean))return;
+ if(!confirm("Remove every image from this grid?"))return;
+ for(const s of slots)if(s?.url)URL.revokeObjectURL(s.url);
+ slots=Array.from({length:cellCount()},()=>null);names=Array.from({length:cellCount()},()=>"");buildStrip();select(0);status("All cells cleared.");
+});
+rebuildCanvas();
+})();
+</script>
+</body>
+</html>
