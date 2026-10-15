@@ -65,6 +65,15 @@ for (const categoryId of [
 assert.match(db.getWordVisual("food", "sausage").src, /fruit\.webp$/);
 assert.match(db.getWordVisual("animals", "owl").src, /animals-extra\.webp$/);
 assert.match(db.getWordVisual("feelings", "happy").src, /emotions\.webp$/);
+const stationeryCells = {
+  pencil: "0% 0%", eraser: "33.333% 0%", "pencil-case": "66.667% 0%", ruler: "100% 0%",
+  "glue-stick": "0% 50%", pen: "33.333% 50%", notebook: "66.667% 50%", calendar: "100% 50%",
+  stapler: "0% 100%", "pencil-sharpener": "33.333% 100%", marker: "66.667% 100%", magnet: "100% 100%"
+};
+for (const [id, position] of Object.entries(stationeryCells)) {
+  assert.equal(db.getWordVisual("stationery", id)?.position, position, "stationery/" + id + " sheet position");
+}
+
 
 for (const [id, total] of [["worldGreetings", 14], ["englishGreetings", 8], ["feelings", 9], ["sports", 12], ["food", 16], ["fruit", 11]]) {
   checkDeck("Categories/" + id,
