@@ -37,7 +37,7 @@ dl{display:grid;grid-template-columns:120px 1fr;gap:9px;overflow-wrap:anywhere}d
 <section class="panel" aria-live="polite"><h2 id="wordTitle">Select a word</h2><div id="preview"></div><dl id="details"></dl><p class="note" id="mappingNote"></p></section>
 </div>
 </main>
-<script src="js/lets-try-data.js?v=20261015-card-factory-v1"></script>
+<script src="js/lets-try-data.js?v=20261015-card-factory-v2"></script>
 <script>
 (function(){
 "use strict";
@@ -57,7 +57,7 @@ function show(category,entry){
 heading.textContent=entry.greeting||entry.id.replace(/-/g," ");
 details.replaceChildren();preview.replaceChildren();preview.style.backgroundImage="none";preview.style.backgroundSize="";preview.style.backgroundPosition="";preview.style.transform="none";
 row("ID",entry.id);row("Category",db.categories[category].label);row("Default in",(entry.defaultIn||[]).join(", ")||"None");
-if(entry.country)row("Country",entry.country);if(entry.greeting)row("Greeting",entry.greeting);if(entry.hex)row("Colour",entry.hex);
+if(entry.country)row("Country",entry.country);if(entry.greeting)row("Greeting",entry.greeting);if(entry.hex)row("Colour",entry.hex);if(entry.word)row("Display word",entry.word);if(entry.forms?.like)row("I like form",entry.forms.like);
 const visual=imageFor(category,entry.id);
 if(visual.url){row("Image",visual.sheet||visual.url.split("/").pop());if(visual.position)row("Position",visual.position);if(visual.size)row("Sprite size",visual.size);
 if(visual.fit){const im=document.createElement("img");im.src=visual.url;im.alt="Artwork for "+entry.id;preview.append(im)}
