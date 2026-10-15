@@ -2721,3 +2721,29 @@ html.shared-unit-template .control-bar:not(:has(#floatingTimer:not([hidden]))):h
     border-radius: 12px;
   }
 }
+
+
+/* AUTOMATIC COUNTDOWN — one light-red beat per second.
+   Only the timer number pulses, and the +/- duration controls are locked
+   while Play is active. Respect reduced-motion accessibility settings. */
+@keyframes lets-try-countdown-beat {
+  0%   { color: #f19ca3; transform: scale(1.1); }
+  45%  { color: #c54e58; transform: scale(1); }
+  100% { color: var(--ink); transform: scale(1); }
+}
+html.shared-unit-template .control-bar .floating-timer.is-counting .timer-value::before {
+  display: inline-block;
+  transform-origin: center;
+  animation: lets-try-countdown-beat 1s ease-out infinite;
+}
+html.shared-unit-template .control-bar .floating-timer.timer-control button:disabled {
+  opacity: .3;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  html.shared-unit-template .control-bar .floating-timer.is-counting .timer-value::before {
+    animation: none;
+    color: #c54e58;
+  }
+}
