@@ -422,8 +422,8 @@
         grid: "4x3",
         physicalCells: 12,
         logicalCategories: ["stationery"],
-        status: "cell-map-to-verify",
-        note: "Filename is intentionally stationary.webp because that is the uploaded asset name."
+        status: "mapped",
+        note: "Filename is stationary.webp (as uploaded). Cell map follows the physical sheet order."
       },
 
       adjectives: {
@@ -520,13 +520,22 @@
         (index + 1) + "-oclock",
         ["0%","33.333%","66.667%","100%"][index % 4] + " " + ["0%","50%","100%"][Math.floor(index / 4)]
       ])),
-      stationery: Object.fromEntries([
-        "pencil", "eraser", "pencil-case", "ruler", "glue-stick", "pen",
-        "marker", "calendar", "notebook", "stapler", "magnet", "pencil-sharpener"
-      ].map((id, index) => [
-        id,
-        ["0%", "33.333%", "66.667%", "100%"][index % 4] + " " + ["0%", "50%", "100%"][Math.floor(index / 4)]
-      ])),
+      // Physical 4×3 artwork order, independently verified against stationary.webp.
+      // Do not infer sprite cells from the vocabulary display order.
+      stationery: {
+        pencil: "0% 0%",
+        eraser: "33.333% 0%",
+        "pencil-case": "66.667% 0%",
+        ruler: "100% 0%",
+        "glue-stick": "0% 50%",
+        pen: "33.333% 50%",
+        notebook: "66.667% 50%",
+        calendar: "100% 50%",
+        stapler: "0% 100%",
+        "pencil-sharpener": "33.333% 100%",
+        marker: "66.667% 100%",
+        magnet: "100% 100%"
+      },
       // Single source for the Feelings sprite cells, used by units and Categories.
       emotions: {
         happy: { position: "0% 0%", flip: false, cropTop: 0 },
