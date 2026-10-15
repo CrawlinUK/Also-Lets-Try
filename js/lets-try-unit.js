@@ -1924,8 +1924,16 @@
       }
 
       function updateTimerDisplay() {
-        const shown = state.autoTimer ? state.countdown : state.autoSeconds;
+        const running = Boolean(state.autoTimer)
+          || elements.autoButton.classList.contains("active");
+        const shown = running ? state.countdown : state.autoSeconds;
         elements.timerValue.textContent = `${shown} sec`;
+
+        // Pulse the countdown once per second and lock both timer buttons
+        // while automatic playback is running. Keyboard changes are guarded too.
+        elements.floatingTimer.classList.toggle("is-counting", running);
+        elements.timerDownButton.disabled = running;
+        elements.timerUpButton.disabled = running;
       }
 
       function stopAuto() {
@@ -1970,14 +1978,14 @@
       }
 
       function changeTimer(amount) {
+        // Timer duration is adjustable only while playback is stopped.
+        // This also blocks keyboard + / - changes during playback.
+        if (state.autoTimer || elements.autoButton.classList.contains("active")) return;
         state.autoSeconds = Math.max(
           UNIT_CONFIG.autoSecondsMinimum,
           Math.min(UNIT_CONFIG.autoSecondsMaximum, state.autoSeconds + amount)
         );
-        const wasRunning = Boolean(state.autoTimer);
         stopAuto();
-        updateTimerDisplay();
-        if (wasRunning) startAuto();
       }
 
       function alignSideNavigation() {
