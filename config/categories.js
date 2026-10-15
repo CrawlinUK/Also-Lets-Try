@@ -7,41 +7,8 @@
   const supported = ["worldGreetings", "englishGreetings", "feelings"];
   if (!category || !supported.includes(id)) throw new Error("Category is not yet available: " + id);
 
-  const flags = data.assets.sheets.flags;
-  const flagCells = data.assets.knownCells.flags;
-  const feelingSheet = data.assets.sheets.emotions;
-  const feelingCells = data.assets.knownCells.emotions;
-  function label(value) {
-    return value.replace(/-/g, " ");
-  }
-  const cards = category.items.map((entry) => {
-    const word = id === "worldGreetings" ? entry.greeting : label(entry.id);
-    let visual;
-    if (id === "worldGreetings") {
-      if (!flagCells[entry.id]) return null;
-      visual = {
-        src: data.assetUrl(flags.file), size: flags.backgroundSize,
-        position: flagCells[entry.id], flip: false, cropTop: 0
-      };
-    } else if (id === "feelings") {
-      const cell = feelingCells[entry.id];
-      if (!cell) return null;
-      visual = {
-        src: data.assetUrl(feelingSheet.file), size: feelingSheet.backgroundSize,
-        position: cell.position,
-        flip: cell.flip, cropTop: cell.cropTop
-      };
-    } else {
-      visual = { type: "text", text: word, aspectRatio: "1 / 1" };
-    }
-    return {
-      id: entry.id, category: id, word,
-      sentence: id === "worldGreetings" ? entry.country : id === "feelings" ? "I’m " + word + "." : word,
-      alternate: id === "worldGreetings" ? entry.country : word,
-      optionLabel: word, teacherAnswer: id === "worldGreetings" ? entry.country : word,
-      textbook: true, visual
-    };
-  }).filter(Boolean);
+  // Shared vocabulary profiles and artwork mappings build these cards.
+  const cards = LETS_TRY_CARD_FACTORY.makeCategoryCards(id, { defaults: "all" });
   window.LETS_TRY_UNIT_CATEGORY_IDS = [id];
   window.LETS_TRY_UNIT_CONFIG = {
     bookId: "categories", unitNumber: "", unitTitle: category.label,
