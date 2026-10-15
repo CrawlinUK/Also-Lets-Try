@@ -37,7 +37,7 @@ dl{display:grid;grid-template-columns:120px 1fr;gap:9px;overflow-wrap:anywhere}d
 <section class="panel" aria-live="polite"><h2 id="wordTitle">Select a word</h2><div id="preview"></div><dl id="details"></dl><p class="note" id="mappingNote"></p></section>
 </div>
 </main>
-<script src="js/lets-try-data.js?v=20261015-tablet-layout-v3"></script>
+<script src="js/lets-try-data.js?v=20261015-viewer-images-v7"></script>
 <script>
 (function(){
 "use strict";
@@ -52,6 +52,12 @@ const visual=db.getWordVisual(category,id);
 if(!visual)return {};
 const filename=visual.src.split("?")[0].split("/").pop();
 return {...visual,url:visual.src,sheet:filename,fit:visual.size==="contain"};
+}
+// Metadata rows must be created before displaying each word's artwork.
+function row(label,value){
+  const dt=document.createElement("dt");dt.textContent=label;
+  const dd=document.createElement("dd");dd.textContent=value;
+  details.append(dt,dd);
 }
 function show(category,entry){
 heading.textContent=entry.greeting||entry.id.replace(/-/g," ");
