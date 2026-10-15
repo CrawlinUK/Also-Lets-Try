@@ -6,7 +6,7 @@
     ? new URL(document.currentScript.src)
     : new URL("js/lets-try-unit-loader.js", location.href);
   const projectRoot = new URL("../", current);
-  const ASSET_VERSION = "20261015-card-factory-v1";
+  const ASSET_VERSION = "20261015-card-factory-v2";
 
   const params = new URLSearchParams(location.search);
   const book = (params.get("book") || "lt1").toLowerCase();
@@ -201,6 +201,18 @@
       await loadScript(book === "categories" ? "config/categories.js" : `config/units/${book}-unit${unit}.js`);
 
       const config = window.LETS_TRY_UNIT_CONFIG;
+      // Declarative units name their categories and grammar; the factory builds cards.
+      // Existing units with an explicit cards array continue unchanged.
+      if (config && !Array.isArray(config.cards) && Array.isArray(config.categories)) {
+        config.cards = window.LETS_TRY_CARD_FACTORY.makeCardsForCategories(config.categories, {
+          bookId: config.bookId,
+          unitNumber: config.unitNumber,
+          defaults: config.defaults || "tagged",
+          grammar: config.grammar,
+          grammarForm: config.grammarForm
+        });
+        window.LETS_TRY_UNIT_CATEGORY_IDS = config.categories.slice();
+      }
       const usesNumberSvgs = Boolean(
         config
         && Array.isArray(config.cards)
