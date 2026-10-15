@@ -173,8 +173,8 @@
           textbook: true,
           visual: {
             src: LETS_TRY_DATA.assetUrl(LETS_TRY_DATA.assets.sheets.sports.file),
-            size: "400% 300%",
-            position: "0% 0%",
+            size: LETS_TRY_DATA.assets.sheets.sports.backgroundSize,
+            position: LETS_TRY_DATA.assets.knownCells.sports["baseball"],
             flip: false,
             cropTop: 0
           }
@@ -187,8 +187,8 @@
           textbook: true,
           visual: {
             src: LETS_TRY_DATA.assetUrl(LETS_TRY_DATA.assets.sheets.sports.file),
-            size: "400% 300%",
-            position: "33.333% 0%",
+            size: LETS_TRY_DATA.assets.sheets.sports.backgroundSize,
+            position: LETS_TRY_DATA.assets.knownCells.sports["dodgeball"],
             flip: false,
             cropTop: 0
           }
@@ -201,8 +201,8 @@
           textbook: true,
           visual: {
             src: LETS_TRY_DATA.assetUrl(LETS_TRY_DATA.assets.sheets.sports.file),
-            size: "400% 300%",
-            position: "66.667% 0%",
+            size: LETS_TRY_DATA.assets.sheets.sports.backgroundSize,
+            position: LETS_TRY_DATA.assets.knownCells.sports["soccer"],
             flip: false,
             cropTop: 0
           }
@@ -215,8 +215,8 @@
           textbook: true,
           visual: {
             src: LETS_TRY_DATA.assetUrl(LETS_TRY_DATA.assets.sheets.sports.file),
-            size: "400% 300%",
-            position: "100% 0%",
+            size: LETS_TRY_DATA.assets.sheets.sports.backgroundSize,
+            position: LETS_TRY_DATA.assets.knownCells.sports["basketball"],
             flip: false,
             cropTop: 0
           }
@@ -229,8 +229,8 @@
           textbook: true,
           visual: {
             src: LETS_TRY_DATA.assetUrl(LETS_TRY_DATA.assets.sheets.sports.file),
-            size: "400% 300%",
-            position: "0% 50.000%",
+            size: LETS_TRY_DATA.assets.sheets.sports.backgroundSize,
+            position: LETS_TRY_DATA.assets.knownCells.sports["swimming"],
             flip: false,
             cropTop: 0
           }
@@ -243,8 +243,8 @@
           textbook: true,
           visual: {
             src: LETS_TRY_DATA.assetUrl(LETS_TRY_DATA.assets.sheets.foods.file),
-            size: "400% 400%",
-            position: "0% 0%",
+            size: LETS_TRY_DATA.assets.sheets.foods.backgroundSize,
+            position: LETS_TRY_DATA.assets.knownCells.foods["ice-cream"],
             flip: false,
             cropTop: 0
           }
@@ -257,8 +257,8 @@
           textbook: true,
           visual: {
             src: LETS_TRY_DATA.assetUrl(LETS_TRY_DATA.assets.sheets.foods.file),
-            size: "400% 400%",
-            position: "33.333% 0%",
+            size: LETS_TRY_DATA.assets.sheets.foods.backgroundSize,
+            position: LETS_TRY_DATA.assets.knownCells.foods["pudding"],
             flip: false,
             cropTop: 0
           }
@@ -271,8 +271,8 @@
           textbook: true,
           visual: {
             src: LETS_TRY_DATA.assetUrl(LETS_TRY_DATA.assets.sheets.foods.file),
-            size: "400% 400%",
-            position: "66.667% 0%",
+            size: LETS_TRY_DATA.assets.sheets.foods.backgroundSize,
+            position: LETS_TRY_DATA.assets.knownCells.foods["milk"],
             flip: false,
             cropTop: 0
           }
@@ -285,8 +285,8 @@
           textbook: true,
           visual: {
             src: LETS_TRY_DATA.assetUrl(LETS_TRY_DATA.assets.sheets.foods.file),
-            size: "400% 400%",
-            position: "100% 0%",
+            size: LETS_TRY_DATA.assets.sheets.foods.backgroundSize,
+            position: LETS_TRY_DATA.assets.knownCells.foods["orange-juice"],
             flip: false,
             cropTop: 0
           }
@@ -299,8 +299,8 @@
           textbook: true,
           visual: {
             src: LETS_TRY_DATA.assetUrl(LETS_TRY_DATA.assets.sheets.foods.file),
-            size: "400% 400%",
-            position: "0% 33.333%",
+            size: LETS_TRY_DATA.assets.sheets.foods.backgroundSize,
+            position: LETS_TRY_DATA.assets.knownCells.foods["hamburger"],
             flip: false,
             cropTop: 0
           }
@@ -313,8 +313,8 @@
           textbook: true,
           visual: {
             src: LETS_TRY_DATA.assetUrl(LETS_TRY_DATA.assets.sheets.foods.file),
-            size: "400% 400%",
-            position: "33.333% 33.333%",
+            size: LETS_TRY_DATA.assets.sheets.foods.backgroundSize,
+            position: LETS_TRY_DATA.assets.knownCells.foods["pizza"],
             flip: false,
             cropTop: 0
           }
@@ -327,8 +327,8 @@
           textbook: true,
           visual: {
             src: LETS_TRY_DATA.assetUrl(LETS_TRY_DATA.assets.sheets.foods.file),
-            size: "400% 400%",
-            position: "66.667% 33.333%",
+            size: LETS_TRY_DATA.assets.sheets.foods.backgroundSize,
+            position: LETS_TRY_DATA.assets.knownCells.foods["spaghetti"],
             flip: false,
             cropTop: 0
           }
@@ -341,8 +341,8 @@
           textbook: true,
           visual: {
             src: LETS_TRY_DATA.assetUrl(LETS_TRY_DATA.assets.sheets.foods.file),
-            size: "400% 400%",
-            position: "100% 33.333%",
+            size: LETS_TRY_DATA.assets.sheets.foods.backgroundSize,
+            position: LETS_TRY_DATA.assets.knownCells.foods["sushi"],
             flip: false,
             cropTop: 0
           }
@@ -355,8 +355,8 @@
           textbook: true,
           visual: {
             src: LETS_TRY_DATA.assetUrl(LETS_TRY_DATA.assets.sheets.foods.file),
-            size: "400% 400%",
-            position: "0% 66.667%",
+            size: LETS_TRY_DATA.assets.sheets.foods.backgroundSize,
+            position: LETS_TRY_DATA.assets.knownCells.foods["steak"],
             flip: false,
             cropTop: 0
           }
@@ -369,8 +369,8 @@
           textbook: true,
           visual: {
             src: LETS_TRY_DATA.assetUrl(LETS_TRY_DATA.assets.sheets.foods.file),
-            size: "400% 400%",
-            position: "33.333% 66.667%",
+            size: LETS_TRY_DATA.assets.sheets.foods.backgroundSize,
+            position: LETS_TRY_DATA.assets.knownCells.foods["salad"],
             flip: false,
             cropTop: 0
           }
@@ -383,8 +383,8 @@
           textbook: true,
           visual: {
             src: LETS_TRY_DATA.assetUrl(LETS_TRY_DATA.assets.sheets.foods.file),
-            size: "400% 400%",
-            position: "66.667% 66.667%",
+            size: LETS_TRY_DATA.assets.sheets.foods.backgroundSize,
+            position: LETS_TRY_DATA.assets.knownCells.foods["cake"],
             flip: false,
             cropTop: 0
           }
@@ -397,8 +397,8 @@
           textbook: true,
           visual: {
             src: LETS_TRY_DATA.assetUrl(LETS_TRY_DATA.assets.sheets.foods.file),
-            size: "400% 400%",
-            position: "100% 66.667%",
+            size: LETS_TRY_DATA.assets.sheets.foods.backgroundSize,
+            position: LETS_TRY_DATA.assets.knownCells.foods["egg"],
             flip: false,
             cropTop: 0
           }
@@ -411,8 +411,8 @@
           textbook: true,
           visual: {
             src: LETS_TRY_DATA.assetUrl(LETS_TRY_DATA.assets.sheets.foods.file),
-            size: "400% 400%",
-            position: "0% 100%",
+            size: LETS_TRY_DATA.assets.sheets.foods.backgroundSize,
+            position: LETS_TRY_DATA.assets.knownCells.foods["jam"],
             flip: false,
             cropTop: 0
           }
@@ -425,8 +425,8 @@
           textbook: true,
           visual: {
             src: LETS_TRY_DATA.assetUrl(LETS_TRY_DATA.assets.sheets.foods.file),
-            size: "400% 400%",
-            position: "33.333% 100%",
+            size: LETS_TRY_DATA.assets.sheets.foods.backgroundSize,
+            position: LETS_TRY_DATA.assets.knownCells.foods["noodle"],
             flip: false,
             cropTop: 0
           }
@@ -439,8 +439,8 @@
           textbook: true,
           visual: {
             src: LETS_TRY_DATA.assetUrl(LETS_TRY_DATA.assets.sheets.foods.file),
-            size: "400% 400%",
-            position: "66.667% 100%",
+            size: LETS_TRY_DATA.assets.sheets.foods.backgroundSize,
+            position: LETS_TRY_DATA.assets.knownCells.foods["rice-ball"],
             flip: false,
             cropTop: 0
           }
@@ -453,8 +453,8 @@
           textbook: false,
           visual: {
             src: LETS_TRY_DATA.assetUrl(LETS_TRY_DATA.assets.sheets.foods.file),
-            size: "400% 400%",
-            position: "100% 100%",
+            size: LETS_TRY_DATA.assets.sheets.foods.backgroundSize,
+            position: LETS_TRY_DATA.assets.knownCells.foods["milk-red"],
             flip: false,
             cropTop: 0
           }
@@ -467,8 +467,8 @@
           textbook: true,
           visual: {
             src: LETS_TRY_DATA.assetUrl(LETS_TRY_DATA.assets.sheets.vegetables.file),
-            size: "300% 300%",
-            position: "0% 0%",
+            size: LETS_TRY_DATA.assets.sheets.vegetables.backgroundSize,
+            position: LETS_TRY_DATA.assets.knownCells.vegetables["onion"],
             flip: false,
             cropTop: 0
           }
@@ -481,8 +481,8 @@
           textbook: true,
           visual: {
             src: LETS_TRY_DATA.assetUrl(LETS_TRY_DATA.assets.sheets.vegetables.file),
-            size: "300% 300%",
-            position: "50.000% 0%",
+            size: LETS_TRY_DATA.assets.sheets.vegetables.backgroundSize,
+            position: LETS_TRY_DATA.assets.knownCells.vegetables["green-pepper"],
             flip: false,
             cropTop: 0
           }
@@ -495,8 +495,8 @@
           textbook: true,
           visual: {
             src: LETS_TRY_DATA.assetUrl(LETS_TRY_DATA.assets.sheets.vegetables.file),
-            size: "300% 300%",
-            position: "100% 0%",
+            size: LETS_TRY_DATA.assets.sheets.vegetables.backgroundSize,
+            position: LETS_TRY_DATA.assets.knownCells.vegetables["cucumber"],
             flip: false,
             cropTop: 0
           }
@@ -509,8 +509,8 @@
           textbook: true,
           visual: {
             src: LETS_TRY_DATA.assetUrl(LETS_TRY_DATA.assets.sheets.vegetables.file),
-            size: "300% 300%",
-            position: "0% 50.000%",
+            size: LETS_TRY_DATA.assets.sheets.vegetables.backgroundSize,
+            position: LETS_TRY_DATA.assets.knownCells.vegetables["carrot"],
             flip: false,
             cropTop: 0
           }
@@ -523,8 +523,8 @@
           textbook: true,
           visual: {
             src: LETS_TRY_DATA.assetUrl(LETS_TRY_DATA.assets.sheets.fruit.file),
-            size: "300% 400%",
-            position: "0% 0%",
+            size: LETS_TRY_DATA.assets.sheets.fruit.backgroundSize,
+            position: LETS_TRY_DATA.assets.knownCells.fruit["grapes"],
             flip: false,
             cropTop: 0
           }
@@ -537,8 +537,8 @@
           textbook: true,
           visual: {
             src: LETS_TRY_DATA.assetUrl(LETS_TRY_DATA.assets.sheets.fruit.file),
-            size: "300% 400%",
-            position: "50.000% 0%",
+            size: LETS_TRY_DATA.assets.sheets.fruit.backgroundSize,
+            position: LETS_TRY_DATA.assets.knownCells.fruit["orange"],
             flip: false,
             cropTop: 0
           }
@@ -551,8 +551,8 @@
           textbook: true,
           visual: {
             src: LETS_TRY_DATA.assetUrl(LETS_TRY_DATA.assets.sheets.fruit.file),
-            size: "300% 400%",
-            position: "100% 0%",
+            size: LETS_TRY_DATA.assets.sheets.fruit.backgroundSize,
+            position: LETS_TRY_DATA.assets.knownCells.fruit["pineapple"],
             flip: false,
             cropTop: 0
           }
@@ -565,8 +565,8 @@
           textbook: true,
           visual: {
             src: LETS_TRY_DATA.assetUrl(LETS_TRY_DATA.assets.sheets.fruit.file),
-            size: "300% 400%",
-            position: "0% 33.333%",
+            size: LETS_TRY_DATA.assets.sheets.fruit.backgroundSize,
+            position: LETS_TRY_DATA.assets.knownCells.fruit["peach"],
             flip: false,
             cropTop: 0
           }
@@ -579,8 +579,8 @@
           textbook: true,
           visual: {
             src: LETS_TRY_DATA.assetUrl(LETS_TRY_DATA.assets.sheets.fruit.file),
-            size: "300% 400%",
-            position: "50.000% 33.333%",
+            size: LETS_TRY_DATA.assets.sheets.fruit.backgroundSize,
+            position: LETS_TRY_DATA.assets.knownCells.fruit["melon"],
             flip: false,
             cropTop: 0
           }
@@ -593,8 +593,8 @@
           textbook: true,
           visual: {
             src: LETS_TRY_DATA.assetUrl(LETS_TRY_DATA.assets.sheets.fruit.file),
-            size: "300% 400%",
-            position: "100% 33.333%",
+            size: LETS_TRY_DATA.assets.sheets.fruit.backgroundSize,
+            position: LETS_TRY_DATA.assets.knownCells.fruit["banana"],
             flip: false,
             cropTop: 0
           }
@@ -607,8 +607,8 @@
           textbook: true,
           visual: {
             src: LETS_TRY_DATA.assetUrl(LETS_TRY_DATA.assets.sheets.fruit.file),
-            size: "300% 400%",
-            position: "0% 66.667%",
+            size: LETS_TRY_DATA.assets.sheets.fruit.backgroundSize,
+            position: LETS_TRY_DATA.assets.knownCells.fruit["kiwi-fruit"],
             flip: false,
             cropTop: 0
           }
@@ -621,8 +621,8 @@
           textbook: true,
           visual: {
             src: LETS_TRY_DATA.assetUrl(LETS_TRY_DATA.assets.sheets.fruit.file),
-            size: "300% 400%",
-            position: "50.000% 66.667%",
+            size: LETS_TRY_DATA.assets.sheets.fruit.backgroundSize,
+            position: LETS_TRY_DATA.assets.knownCells.fruit["lemon"],
             flip: false,
             cropTop: 0
           }
@@ -700,7 +700,7 @@
       id: entry.id,
       category: "sports",
       sheet: sharedSheets.sports.file,
-      size: "400% 300%",
+      size: sharedSheets.sports.backgroundSize,
       position: sharedCells.sports[entry.id]
     });
   });
@@ -710,7 +710,7 @@
       id: entry.id,
       category: "vegetables",
       sheet: sharedSheets.vegetables.file,
-      size: "300% 300%",
+      size: sharedSheets.vegetables.backgroundSize,
       position: sharedCells.vegetables[entry.id]
     });
   });
@@ -720,7 +720,7 @@
       id: entry.id,
       category: "fruit",
       sheet: sharedSheets.fruit.file,
-      size: "300% 400%",
+      size: sharedSheets.fruit.backgroundSize,
       position: sharedCells.fruit[entry.id]
     });
   });
@@ -729,7 +729,7 @@
     id: "sausage",
     category: "food",
     sheet: sharedSheets.fruit.file,
-    size: "300% 400%",
+    size: sharedSheets.fruit.backgroundSize,
     position: sharedCells.fruit.sausage
   });
 
