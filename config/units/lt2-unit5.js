@@ -16,9 +16,7 @@
   }
 
   const sheet = LETS_TRY_DATA.assets.sheets.stationery;
-  // The shared data has no verified stationery cell map yet; use row-major sheet order.
-  const spritePositions = ["0% 0%", "33.333% 0%", "66.667% 0%", "100% 0%", "0% 50%", "33.333% 50%", "66.667% 50%", "100% 50%", "0% 100%", "33.333% 100%", "66.667% 100%", "100% 100%"];
-  const cells = LETS_TRY_DATA.assets.knownCells.stationery || Object.fromEntries(category.items.map((entry, index) => [entry.id, spritePositions[index]]));
+  const cells = LETS_TRY_DATA.assets.knownCells.stationery;
 
   const cards = category.items.map((entry) => {
     const word = label(entry.id);
@@ -32,7 +30,7 @@
       teacherAnswer: word,
       textbook: defaults.has(entry.id),
       visual: cells[entry.id]
-        ? { src: LETS_TRY_DATA.assetUrl(sheet.file), size: "400% 300%", position: cells[entry.id], flip: false, cropTop: 0 }
+        ? { src: LETS_TRY_DATA.assetUrl(sheet.file), size: sheet.backgroundSize, position: cells[entry.id], flip: false, cropTop: 0 }
         : { type: "text", text: word, aspectRatio: "1 / 1" }
     };
   });
