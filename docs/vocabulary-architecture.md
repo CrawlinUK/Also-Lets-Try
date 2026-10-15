@@ -9,11 +9,16 @@ The current database is ordinary JavaScript, not SQL or JSON yet:
   canonical `getWordVisual(categoryId, itemId)` resolver.
 - `js/lets-try-card-factory.js` turns a category's records into flashcards.
   It can select **all**, **none**, or **tagged** words by default. It also
-  supports an optional unit grammar template containing `[word]`.
-- `config/categories.js` uses the shared card generator for the first
-  three standalone category decks.
+  supports category lists, a unit grammar template containing `[word]`,
+  and optional named word forms (for example, `grammarForm: "like"`).
+- `config/categories.js` uses the shared card generator for six
+  standalone category decks (World Greetings, Greetings, Feelings, Sports,
+  Food & Drink, Fruit).
+- `config/units/lt1-unit5.js` is now a **declarative** unit containing
+  only settings, categories (`sports`, `food`, `fruit`) and the grammar form.
+  `js/lets-try-unit-loader.js` automatically creates its card list.
 - `config/units/lt1-unit1.js`, `lt1-unit2.js` and `lt2-unit1.js`
-  use the shared generator. Other units still have bespoke card-building
+  also use the shared generator. Other units still have bespoke card-building
   logic and must be migrated carefully.
 - `vocabulary-viewer.html` is a read-only window onto the shared records.
   It uses the same `getWordVisual` function as the generated flashcards.
@@ -37,7 +42,9 @@ node tests/vocabulary-data.test.js
    chosen category; untagged words in that category remain selectable.
 4. Category pages select every word by default.
 5. Unit grammar and sentence variants remain separate from the shared
-   word definition, with explicit exceptions for plurals/articles.
+   word definition. A word may provide named forms, e.g.
+   `forms: { like: "strawberries" }`, and a unit may select that form with
+   `grammarForm: "like"`. The default `[word]` displays the ordinary word.
 6. The unit card generator must not change student-facing wording,
    default selections or picture appearance during migration.
 
