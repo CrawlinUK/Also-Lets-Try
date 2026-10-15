@@ -278,7 +278,9 @@ function nudge(direction){
   // Background sheet is larger than its cell. Increasing background-position
   // moves artwork up or left, so arrow directions follow the visible image.
   const delta=direction==="up"||direction==="left"?step:-step;
-  axis.value=rounded(value+delta)+"%";
+  // Horizontal mirroring reverses the visible direction of an X nudge.
+  const flipDirection=(axis===input.x && input.flip.checked)?-1:1;
+  axis.value=rounded(value+delta*flipDirection)+"%";
   edit();
 }
 function show(categoryId,entry){
