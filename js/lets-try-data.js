@@ -347,11 +347,13 @@
   const ASSETS = {
     sheets: {
       timeActivities: {
-        file: "images/TimeActivities.webp", grid: "5x2", physicalCells: 10,
+        file: "images/TimeActivities.webp",
+        backgroundSize: "500% 200%", grid: "5x2", physicalCells: 10,
         logicalCategories: ["dailyTimes"], status: "mapped"
       },
       clocks: {
-        file: "images/clocks.svg", grid: "4x3", physicalCells: 12,
+        file: "images/clocks.svg",
+        backgroundSize: "400% 300%", grid: "4x3", physicalCells: 12,
         logicalCategories: ["clockTimes"], status: "mapped"
       },
       flags: {
@@ -374,6 +376,7 @@
 
       foods: {
         file: "images/foods.webp",
+        backgroundSize: "400% 400%",
         grid: "4x4",
         logicalCategories: ["food"],
         status: "mapped",
@@ -382,6 +385,7 @@
 
       fruit: {
         file: "images/fruit.webp",
+        backgroundSize: "300% 400%",
         grid: "3x4",
         physicalCells: 12,
         logicalCategories: ["fruit","food"],
@@ -391,6 +395,7 @@
 
       vegetables: {
         file: "images/veg.webp",
+        backgroundSize: "300% 300%",
         grid: "3x3",
         physicalCells: 9,
         logicalCategories: ["vegetables"],
@@ -399,6 +404,7 @@
 
       sports: {
         file: "images/sports.webp",
+        backgroundSize: "400% 300%",
         grid: "4x3",
         physicalCells: 12,
         logicalCategories: ["sports"],
@@ -407,6 +413,7 @@
 
       stationery: {
         file: "images/stationary.webp",
+        backgroundSize: "400% 300%",
         grid: "4x3",
         physicalCells: 12,
         logicalCategories: ["stationery"],
@@ -416,6 +423,7 @@
 
       adjectives: {
         file: "images/Adjectives.webp",
+        backgroundSize: "400% 200%",
         grid: "4x2",
         physicalCells: 8,
         logicalCategories: ["describingWords"],
@@ -425,6 +433,7 @@
 
       bodyParts: {
         file: "images/BodyParts.webp",
+        backgroundSize: "400% 200%",
         grid: "4x2",
         physicalCells: 8,
         logicalCategories: ["bodyParts"],
@@ -434,6 +443,7 @@
 
       animals: {
         file: "images/animals.webp",
+        backgroundSize: "600% 300%",
         grid: "6x3",
         physicalCells: 18,
         logicalCategories: ["animals"],
@@ -443,6 +453,7 @@
 
       animalsExtra: {
         file: "images/animals-extra.webp",
+        backgroundSize: "200% 300%",
         grid: "2x3",
         physicalCells: 6,
         logicalCategories: ["animals"],
@@ -452,6 +463,7 @@
 
       days: {
         file: "images/days.webp",
+        backgroundSize: "400% 200%",
         grid: "4x2",
         physicalCells: 8,
         logicalCategories: ["days"],
@@ -461,6 +473,7 @@
 
       weather: {
         file: "images/weather.webp",
+        backgroundSize: "300% 200%",
         grid: "3x2",
         physicalCells: 6,
         logicalCategories: ["weather"],
@@ -470,6 +483,7 @@
 
       clothes: {
         file: "images/clothes.webp",
+        backgroundSize: "300% 200%",
         grid: "3x2",
         physicalCells: 6,
         logicalCategories: ["clothes"],
@@ -479,6 +493,7 @@
 
       playActivities: {
         file: "images/activities.webp",
+        backgroundSize: "200% 200%",
         grid: "2x2",
         physicalCells: 4,
         logicalCategories: ["playActivities"],
@@ -488,6 +503,17 @@
     },
 
     knownCells: {
+      dailyTimes: {
+        "wake-up-time": "0% 0%", "breakfast-time": "25% 0%",
+        "study-time": "50% 0%", "lunch-time": "75% 0%",
+        "homework-time": "100% 0%", "snack-time": "0% 100%",
+        "bath-time": "25% 100%", "dinner-time": "50% 100%",
+        "bed-time": "75% 100%", "dream-time": "100% 100%"
+      },
+      clockTimes: Object.fromEntries(Array.from({ length: 12 }, (_, index) => [
+        (index + 1) + "-oclock",
+        ["0%","33.333%","66.667%","100%"][index % 4] + " " + ["0%","50%","100%"][Math.floor(index / 4)]
+      ])),
       // Single source for the Feelings sprite cells, used by units and Categories.
       emotions: {
         happy: { position: "0% 0%", flip: false, cropTop: 0 },
