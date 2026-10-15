@@ -96,4 +96,4 @@ assert.equal(unit4.cards.filter(card => card.category === "clockTimes" && card.t
   "LT2 Unit 4 clocks must remain optional");
 assert.ok(unit4.cards.every(card => card.visual?.position), "LT2 Unit 4 sprite positions");
 
-console.log("Vocabulary checks passed: 24 categories, nine category/unit decks, LT1 Unit 5 grammar, Unit 4 clocks.");
+console.log("Vocabulary checks passed: 24 categories, six category decks and four textbook units, LT1 Unit 5 grammar, Unit 4 clocks.");
