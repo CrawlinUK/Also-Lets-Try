@@ -453,6 +453,7 @@
 
       animalsExtra: {
         file: "images/animals-extra.webp",
+        sizeOverrides: { owl: "210% 315%" },
         backgroundSize: "200% 300%",
         grid: "2x3",
         physicalCells: 6,
@@ -610,7 +611,8 @@
         egg: "100% 66.667%",
         jam: "0% 100%",
         noodle: "33.333% 100%",
-        "rice-ball": "66.667% 100%"
+        "rice-ball": "66.667% 100%",
+        "milk-red": "100% 100%"
       },
 
       adjectives: {
