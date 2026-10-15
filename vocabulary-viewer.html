@@ -25,9 +25,11 @@
 
 .calibration{margin:10px 0 0;scroll-margin-top:10px}
 .calibration h3{font-size:17px;margin:0 0 6px}
-.calibration .tool-tabs,.editor-shortcuts{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px}
-.calibration .tool-tabs button,.editor-shortcuts button{min-height:40px;padding:8px 12px;border:1px solid #9aadb5;border-radius:9px;background:#f1f7fa;font:inherit;font-weight:800;cursor:pointer}
-.calibration .tool-tabs button[aria-selected="true"]{background:#dceeff;border-color:#147cbb;box-shadow:inset 0 0 0 1px #147cbb}
+.editor-shortcuts{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px}
+.calibration .tool-heading button,.editor-shortcuts button{min-height:40px;padding:8px 12px;border:1px solid #9aadb5;border-radius:9px;background:#f1f7fa;font:inherit;font-weight:800;cursor:pointer}
+.calibration[hidden]{display:none!important}
+.calibration .tool-heading{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px}
+.editor-shortcuts button[aria-expanded="true"]{background:#dceeff;border-color:#147cbb;box-shadow:inset 0 0 0 1px #147cbb}
 .calibration .tool-panel{border:1px solid #d6e0e5;border-radius:10px;background:#f9fcfd;padding:12px;margin-bottom:10px}
 .calibration .tool-panel[hidden],.editor-shortcuts[hidden]{display:none!important}
 .calibration .edit-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
@@ -71,13 +73,11 @@ dl{display:grid;grid-template-columns:120px 1fr;gap:9px;overflow-wrap:anywhere}d
 <section class="panel" aria-live="polite" id="editorPanel">
 <h2 id="wordTitle">Select a word</h2>
 <div class="calibration" id="calibration" hidden>
-<div class="tool-tabs" role="tablist" aria-label="Adjust image">
-  <button type="button" data-tool="position" role="tab" aria-selected="true" aria-controls="toolPosition">Position</button>
-  <button type="button" data-tool="size" role="tab" aria-selected="false" aria-controls="toolSize">Size</button>
-  <button type="button" data-tool="crop" role="tab" aria-selected="false" aria-controls="toolCrop">Crop</button>
-  <button type="button" data-tool="flip" role="tab" aria-selected="false" aria-controls="toolFlip">Flip</button>
+<div class="tool-heading">
+  <strong id="activeToolTitle"></strong>
+  <button type="button" id="closeTool" aria-label="Finish adjusting image and hide controls">Done ✕</button>
 </div>
-<div class="tool-panel" id="toolPosition" role="tabpanel">
+<div class="tool-panel" id="toolPosition" role="group" aria-label="Position adjustment" hidden>
   <div class="edit-grid">
     <label>Horizontal position<input id="positionX" type="text" spellcheck="false"></label>
     <label>Vertical position<input id="positionY" type="text" spellcheck="false"></label>
@@ -92,7 +92,7 @@ dl{display:grid;grid-template-columns:120px 1fr;gap:9px;overflow-wrap:anywhere}d
     <button type="button" data-nudge="right" aria-label="Move image right">→</button>
   </div>
 </div>
-<div class="tool-panel" id="toolSize" role="tabpanel" hidden>
+<div class="tool-panel" id="toolSize" role="group" hidden>
   <label for="scale">Proportional scale — width and height stay linked</label>
   <div class="scale-row">
     <input id="scale" type="range" min="25" max="250" step="1" value="100" aria-label="Proportional image scale">
@@ -101,7 +101,7 @@ dl{display:grid;grid-template-columns:120px 1fr;gap:9px;overflow-wrap:anywhere}d
   </div>
   <p id="effectiveSize" class="note" aria-live="polite"></p>
 </div>
-<div class="tool-panel" id="toolCrop" role="tabpanel" hidden>
+<div class="tool-panel" id="toolCrop" role="group" hidden>
   <div class="edit-grid">
     <label>Crop top (%)<input id="cropTop" type="number" min="0" max="90" step="1" value="0"></label>
     <label>Crop right (%)<input id="cropRight" type="number" min="0" max="90" step="1" value="0"></label>
@@ -110,19 +110,19 @@ dl{display:grid;grid-template-columns:120px 1fr;gap:9px;overflow-wrap:anywhere}d
   </div>
   <p class="note">Cropping hides the chosen edge of the displayed cell; it does not stretch the artwork.</p>
 </div>
-<div class="tool-panel" id="toolFlip" role="tabpanel" hidden>
+<div class="tool-panel" id="toolFlip" role="group" hidden>
   <label class="flip-row"><input type="checkbox" id="flip"> Mirror horizontally</label>
 </div>
 </div>
 <div id="preview"><div id="previewArt"></div><span id="previewLabel" hidden></span></div>
 <dl id="details"></dl><p class="note" id="mappingNote"></p>
 <div class="editor-actions" id="editorActions" hidden>
-  <p class="note">Need to adjust something? Select a tool to return to the preview with its controls directly above.</p>
+  <p class="note">Your picture and image details remain clear until you select a tool below. Tap the same tool again, or Done above, to hide it.</p>
   <nav class="editor-shortcuts" aria-label="Jump to image controls">
-    <button type="button" data-jump-tool="position">↑ Position</button>
-    <button type="button" data-jump-tool="size">↑ Size</button>
-    <button type="button" data-jump-tool="crop">↑ Crop</button>
-    <button type="button" data-jump-tool="flip">↑ Flip</button>
+    <button type="button" data-jump-tool="position" aria-expanded="false" aria-controls="calibration">↑ Position</button>
+    <button type="button" data-jump-tool="size" aria-expanded="false" aria-controls="calibration">↑ Size</button>
+    <button type="button" data-jump-tool="crop" aria-expanded="false" aria-controls="calibration">↑ Crop</button>
+    <button type="button" data-jump-tool="flip" aria-expanded="false" aria-controls="calibration">↑ Flip</button>
   </nav>
   <div class="buttons">
     <button type="button" id="resetCurrent">Reset this word</button>
@@ -131,10 +131,10 @@ dl{display:grid;grid-template-columns:120px 1fr;gap:9px;overflow-wrap:anywhere}d
   <p id="draftCount" class="note status" aria-live="polite"></p>
   <p id="editError" class="error" role="status" aria-live="polite"></p>
 </div>
-</section>>
+</section>
 </div>
 </main>
-<script src="js/lets-try-data.js?v=20261015-editor-tools-v9"></script>
+<script src="js/lets-try-data.js?v=20261015-toggle-editor-v11"></script>
 <script>
 (function(){
 "use strict";
@@ -155,7 +155,7 @@ const input={
 };
 const error=$("editError"),exportButton=$("exportChanges"),draftCount=$("draftCount");
 const changes=new Map();
-let active=null,tool="position";
+let active=null,tool=null;
 for(const [id,item] of Object.entries(db.categories)){
   const option=document.createElement("option");
   option.value=id;option.textContent=item.label;category.append(option);
@@ -207,13 +207,33 @@ function showPreview(v){
   const c=[v.cropTop,v.cropRight,v.cropBottom,v.cropLeft].map(n=>Number(n)||0);
   if(c.some(n=>n!==0))art.style.clipPath="inset("+c.map(n=>n+"%").join(" ")+")";
 }
-function setTool(which,scroll){
+// The image and database details appear first. Editing controls only show
+// when a shortcut *below* the details is selected, like an on/off switch.
+function hideTool(scrollToPicture=false){
+  tool=null;
+  calibration.hidden=true;
+  for(const name of ["position","size","crop","flip"]){
+    $("tool"+name[0].toUpperCase()+name.slice(1)).hidden=true;
+  }
+  document.querySelectorAll("[data-jump-tool]").forEach(button=>
+    button.setAttribute("aria-expanded","false"));
+  if(scrollToPicture)preview.scrollIntoView({behavior:"smooth",block:"start"});
+}
+function toggleTool(which){
+  if(!active?.source || active.source.standalone)return;
+  if(tool===which && !calibration.hidden){
+    hideTool(true);
+    return;
+  }
   tool=which;
-  document.querySelectorAll("[data-tool]").forEach(b=>b.setAttribute("aria-selected",String(b.dataset.tool===which)));
+  calibration.hidden=false;
+  $("activeToolTitle").textContent=which[0].toUpperCase()+which.slice(1)+" adjustment";
   for(const name of ["position","size","crop","flip"]){
     $("tool"+name[0].toUpperCase()+name.slice(1)).hidden=name!==which;
   }
-  if(scroll)calibration.scrollIntoView({behavior:"smooth",block:"start"});
+  document.querySelectorAll("[data-jump-tool]").forEach(button=>
+    button.setAttribute("aria-expanded",String(button.dataset.jumpTool===which)));
+  calibration.scrollIntoView({behavior:"smooth",block:"start"});
 }
 function counts(){
   const n=changes.size;draftCount.textContent=n+" unsaved image adjustment"+(n===1?"":"s")+" in this tab.";
@@ -295,7 +315,9 @@ function show(categoryId,entry){
   if(entry.forms?.like)row("I like form",entry.forms.like);
   const source=artwork(categoryId,entry.id),key=categoryId+"/"+entry.id;
   active={category:categoryId,id:entry.id,key,source};
-  calibration.hidden=actions.hidden=!source||source.standalone;
+  // Every new word starts with its full picture and statistics visible.
+  hideTool();
+  actions.hidden=!source||source.standalone;
   if(source){
     row("Image",source.sheetFile||source.src.split("/").pop());
     if(source.size)row("Sprite size",source.size);
@@ -357,10 +379,9 @@ function exportChanges(){
   document.body.append(link);link.click();link.remove();
   setTimeout(()=>URL.revokeObjectURL(url),1000);
 }
-document.querySelectorAll("[data-tool]").forEach(b=>
-  b.addEventListener("click",()=>setTool(b.dataset.tool,false)));
 document.querySelectorAll("[data-jump-tool]").forEach(b=>
-  b.addEventListener("click",()=>setTool(b.dataset.jumpTool,true)));
+  b.addEventListener("click",()=>toggleTool(b.dataset.jumpTool)));
+$("closeTool").addEventListener("click",()=>hideTool(true));
 document.querySelectorAll("[data-nudge]").forEach(b=>
   b.addEventListener("click",()=>nudge(b.dataset.nudge)));
 for(const name of ["x","y","cropTop","cropRight","cropBottom","cropLeft","flip"])
@@ -382,7 +403,7 @@ category.addEventListener("change",()=>{
   history.replaceState(null,"",url);render();
 });
 search.addEventListener("input",render);
-setTool("position",false);
+hideTool();
 render();
 })();
 </script>
