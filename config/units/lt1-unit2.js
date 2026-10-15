@@ -5,33 +5,8 @@
   const bookId = "lt1";
   const unitNumber = 2;
   const categoryId = "feelings";
-  const category = LETS_TRY_DATA.getCategory(categoryId);
-  const defaults = new Set(
-    LETS_TRY_DATA.getUnitDefaults(bookId, unitNumber)[categoryId] || []
-  );
-
-  const sheet = LETS_TRY_DATA.assets.sheets.emotions;
-  const cells = LETS_TRY_DATA.assets.knownCells.emotions;
-
-  const cards = category.items.map((entry) => {
-    const word = entry.id.replace(/-/g, " ");
-    const cell = cells[entry.id];
-    return {
-      id: entry.id,
-      category: categoryId,
-      word,
-      sentence: `I’m ${word}.`,
-      alternate: word,
-      teacherAnswer: word,
-      textbook: defaults.has(entry.id),
-      visual: {
-        src: LETS_TRY_DATA.assetUrl(sheet.file),
-        size: sheet.backgroundSize,
-        position: cell.position,
-        flip: Boolean(cell.flip),
-        cropTop: cell.cropTop || 0
-      }
-    };
+  const cards = LETS_TRY_CARD_FACTORY.makeCategoryCards(categoryId, {
+    bookId, unitNumber, defaults: "tagged"
   });
 
   window.LETS_TRY_UNIT_CATEGORY_IDS = [categoryId];
