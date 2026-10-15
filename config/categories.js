@@ -9,13 +9,8 @@
 
   const flags = data.assets.sheets.flags;
   const flagCells = data.assets.knownCells.flags;
-  const feelingCells = {
-    happy: [0, 0, false, 0], tired: [64, 93, false, 3],
-    hungry: [96, 0, false, 0], sleepy: [31, 93, false, 0],
-    sad: [0, 93, false, 0], fine: [93, 93, true, 3],
-    good: [93, 93, false, 3], great: [64, 0, false, 0],
-    wonderful: [33.3333, 0, false, 0]
-  };
+  const feelingSheet = data.assets.sheets.emotions;
+  const feelingCells = data.assets.knownCells.emotions;
   function label(value) {
     return value.replace(/-/g, " ");
   }
@@ -32,9 +27,9 @@
       const cell = feelingCells[entry.id];
       if (!cell) return null;
       visual = {
-        src: data.assetUrl("images/emotions.jpg"), size: "400% 200%",
-        position: cell[0] + "% " + cell[1] + "%",
-        flip: cell[2], cropTop: cell[3]
+        src: data.assetUrl(feelingSheet.file), size: feelingSheet.backgroundSize,
+        position: cell.position,
+        flip: cell.flip, cropTop: cell.cropTop
       };
     } else {
       visual = { type: "text", text: word, aspectRatio: "1 / 1" };
