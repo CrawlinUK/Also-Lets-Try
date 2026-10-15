@@ -71,6 +71,16 @@ for (const side of ["Top","Right","Bottom","Left"]) {
 }
 assert.match(viewerSource, /data-nudge="up"/, "viewer has position nudge arrows");
 assert.match(viewerSource, /data-jump-tool="position"/, "viewer jumps to controls above image");
+assert.match(viewerSource, /id="calibration" hidden/,
+  "image adjustment controls start hidden");
+assert.match(viewerSource, /function toggleTool\(which\)/,
+  "bottom buttons act as show/hide switches");
+assert.match(viewerSource, /function hideTool\(scrollToPicture=false\)/,
+  "image controls can collapse without changing drafts");
+assert.match(viewerSource, /id="closeTool"/, "Done hides editor controls");
+assert.doesNotMatch(viewerSource, /class="tool-tabs"/,
+  "duplicated top tabs must not occupy picture space");
+
 assert.match(source("js/lets-try-unit.js"), /const cropEdges = \["cropTop", "cropRight", "cropBottom", "cropLeft"\]/,
   "classroom renderer handles all four crop edges");
 
