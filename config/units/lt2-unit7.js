@@ -39,7 +39,7 @@
     if (categoryId === "fruit") {
       return {
         src: LETS_TRY_DATA.assetUrl(sheets.fruit.file),
-        size: "300% 400%",
+        size: sheets.fruit.backgroundSize,
         position: cells.fruit[id],
         flip: false,
         cropTop: 0
@@ -47,7 +47,7 @@
     }
     return {
       src: LETS_TRY_DATA.assetUrl(sheets.vegetables.file),
-      size: "300% 300%",
+      size: sheets.vegetables.backgroundSize,
       position: cells.vegetables[id],
       flip: false,
       cropTop: 0
