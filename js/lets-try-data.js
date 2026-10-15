@@ -351,11 +351,13 @@
     sheets: {
       timeActivities: {
         file: "images/TimeActivities.webp",
+        cellMap: "dailyTimes",
         backgroundSize: "500% 200%", grid: "5x2", physicalCells: 10,
         logicalCategories: ["dailyTimes"], status: "mapped"
       },
       clocks: {
         file: "images/clocks.svg",
+        cellMap: "clockTimes",
         backgroundSize: "400% 300%", grid: "4x3", physicalCells: 12,
         logicalCategories: ["clockTimes"], status: "mapped"
       },
@@ -897,7 +899,8 @@
     if (categoryId === "food" && itemId === "sausage") sheetId = "fruit";
     if (categoryId === "animals" && EXTRA_ANIMAL_IMAGE_IDS.has(itemId)) sheetId = "animalsExtra";
     const sheet = ASSETS.sheets[sheetId];
-    const cell = ASSETS.knownCells[sheetId] && ASSETS.knownCells[sheetId][itemId];
+    const cellMapId = sheet?.cellMap || sheetId;
+    const cell = ASSETS.knownCells[cellMapId] && ASSETS.knownCells[cellMapId][itemId];
     if (!sheet || !cell) return null;
 
     const properties = typeof cell === "string" ? { position: cell } : cell;
