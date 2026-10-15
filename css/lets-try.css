@@ -2223,10 +2223,12 @@ html.shared-unit-template .guess-tap-prompt {
 }
 
 html.shared-unit-template .guess-picture {
+  /* Sprite cells must keep their real aspect ratio; square sizing mixed flag rows. */
   width: min(64vh, 60vw, 720px);
-  height: min(64vh, 60vw, 720px);
+  height: auto;
   max-width: 96%;
   max-height: 96%;
+  aspect-ratio: var(--visual-ratio, 1);
   background-repeat: no-repeat;
   background-color: #ffffff;
 }
