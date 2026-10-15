@@ -36,6 +36,10 @@ main{max-width:1440px;margin:auto;padding:18px 20px 40px}
 .settings .row{display:flex;align-items:center;gap:8px;min-width:0}
 .settings .row label{flex:1}
 .settings input[type=range]{width:100%;accent-color:var(--accent)}
+.zoom-controls{display:grid;grid-template-columns:minmax(0,1fr) 90px;gap:12px;align-items:center}
+.zoom-controls .zoom-number{display:grid;gap:3px;min-width:0}
+.zoom-controls .zoom-number input{width:100%;min-height:43px;border:1px solid #9cabb5;border-radius:9px;padding:8px;font:inherit}
+@media(max-width:380px){.zoom-controls{grid-template-columns:minmax(0,1fr) 82px}}
 .settings .two-cols{display:grid;grid-template-columns:1fr 1fr;gap:9px}
 .buttons{display:flex;flex-wrap:wrap;gap:8px}
 button.action{font:inherit;min-height:43px;border:1px solid #9cabb5;border-radius:9px;padding:9px 13px;background:#f0f6f9;color:#17232b;font-weight:800;cursor:pointer}
@@ -82,16 +86,20 @@ button.action:focus-visible,#sheetCanvas:focus-visible,.strip button:focus-visib
 <hr class="divider">
 <section>
   <h2>Position and scale</h2>
-  <label>Scale: <span id="scaleValue">100%</span><input id="scale" type="range" min="25" max="300" value="100" step="1"></label>
+  <label for="scale">Scale: <span id="scaleValue">100%</span></label>
+  <div class="zoom-controls">
+    <input id="scale" type="range" min="25" max="1200" value="100" step="1" aria-label="Image scale slider">
+    <label class="zoom-number">Zoom (%)<input id="scaleNumber" type="number" min="25" max="1200" step="1" value="100" inputmode="numeric"></label>
+  </div>
   <div class="two-cols" style="margin-top:8px">
-    <label>Horizontal offset (%)<input id="offsetX" type="number" step="1" min="-100" max="100" value="0"></label>
-    <label>Vertical offset (%)<input id="offsetY" type="number" step="1" min="-100" max="100" value="0"></label>
+    <label>Horizontal offset (% of cell)<input id="offsetX" type="number" step="1" min="-1000" max="1000" value="0"></label>
+    <label>Vertical offset (% of cell)<input id="offsetY" type="number" step="1" min="-1000" max="1000" value="0"></label>
   </div>
   <div class="buttons" style="margin-top:10px">
     <button class="action" id="resetCell" type="button">Reset placement</button>
     <button class="action" id="swapCell" type="button">Move / Swap cell</button>
   </div>
-  <p class="small-note">Width and height always change together. Zoomed artwork is clipped at the cell's safe boundary, never spilled into the next cell.</p>
+  <p class="small-note">Width and height always change together. For existing full sprite sheets, use 400–600% (or more) zoom and drag to the right picture. Expanded offsets let you reach edge cells. Artwork remains clipped to the selected cell.</p>
 </section>
 <hr class="divider">
 <section>
@@ -182,7 +190,9 @@ function select(i){
  $("cellName").value=names[selected]||"";
  const s=slots[selected];
  $("selectedName").textContent=slotLabel(selected);
- $("scale").value=s?fmt(s.zoom*100):100;$("scaleValue").textContent=$("scale").value+"%";
+ $("scale").value=s?fmt(s.zoom*100):100;
+ $("scaleNumber").value=$("scale").value;
+ $("scaleValue").textContent=$("scale").value+"%";
  $("offsetX").value=s?fmt(s.x):0;$("offsetY").value=s?fmt(s.y):0;
  $("removeImage").disabled=!s;$("resetCell").disabled=!s;
  updateSelection();draw();
@@ -237,9 +247,29 @@ $("removeImage").addEventListener("click",()=>{
  slots[selected]=null;names[selected]="";buildStrip();select(selected);status("Image removed from cell "+(selected+1)+".");
 });
 $("cellName").addEventListener("input",()=>{names[selected]=$("cellName").value;$("selectedName").textContent=slotLabel(selected);buildStrip();});
-$("scale").addEventListener("input",()=>{const s=slots[selected];if(!s)return;s.zoom=Number($("scale").value)/100;$("scaleValue").textContent=fmt(s.zoom*100)+"%";draw();});
+const MIN_ZOOM=25,MAX_ZOOM=1200,MAX_OFFSET=1000;
+function setZoom(raw) {
+ const s=slots[selected];
+ if(!s)return;
+ const value=Number(raw);
+ if(!Number.isFinite(value)||value<MIN_ZOOM||value>MAX_ZOOM)return;
+ s.zoom=value/100;
+ $("scale").value=value;
+ $("scaleNumber").value=value;
+ $("scaleValue").textContent=fmt(value)+"%";
+ draw();
+}
+$("scale").addEventListener("input",()=>setZoom($("scale").value));
+$("scaleNumber").addEventListener("input",()=>setZoom($("scaleNumber").value));
+$("scaleNumber").addEventListener("change",()=>{
+ const s=slots[selected];
+ if(!s)return;
+ const num=Number($("scaleNumber").value);
+ if(Number.isFinite(num))setZoom(Math.max(MIN_ZOOM,Math.min(MAX_ZOOM,num)));
+ $("scaleNumber").value=fmt(s.zoom*100);
+});
 for(const [id,key] of [["offsetX","x"],["offsetY","y"]])$(id).addEventListener("input",()=>{
- const s=slots[selected];if(!s)return;const num=Number($(id).value);if(!Number.isFinite(num))return;s[key]=Math.max(-100,Math.min(100,num));draw();
+ const s=slots[selected];if(!s)return;const num=Number($(id).value);if(!Number.isFinite(num))return;s[key]=Math.max(-MAX_OFFSET,Math.min(MAX_OFFSET,num));draw();
 });
 $("resetCell").addEventListener("click",()=>{const s=slots[selected];if(!s)return;s.x=0;s.y=0;s.zoom=1;select(selected);});
 $("swapCell").addEventListener("click",()=>{
@@ -271,8 +301,8 @@ canvas.addEventListener("pointermove",event=>{
  if(Math.abs(event.clientX-pointer.startX)+Math.abs(event.clientY-pointer.startY)>4)pointer.dragged=true;
  if(pointer.dragged){
   const rect=canvas.getBoundingClientRect();const s=slots[pointer.cell];
-  s.x=Math.max(-100,Math.min(100,s.x+dx/rect.width*settings.cols*100));
-  s.y=Math.max(-100,Math.min(100,s.y+dy/rect.height*settings.rows*100));
+  s.x=Math.max(-MAX_OFFSET,Math.min(MAX_OFFSET,s.x+dx/rect.width*settings.cols*100));
+  s.y=Math.max(-MAX_OFFSET,Math.min(MAX_OFFSET,s.y+dy/rect.height*settings.rows*100));
   $("offsetX").value=fmt(s.x);$("offsetY").value=fmt(s.y);
   canvas.classList.add("dragging");draw();
  }
@@ -289,10 +319,10 @@ canvas.addEventListener("pointercancel",()=>{pointer=null;canvas.classList.remov
 canvas.addEventListener("keydown",event=>{
  const s=slots[selected];if(!s)return;
  const step=event.shiftKey?5:1;
- if(event.key==="ArrowLeft")s.x-=step;
- else if(event.key==="ArrowRight")s.x+=step;
- else if(event.key==="ArrowUp")s.y-=step;
- else if(event.key==="ArrowDown")s.y+=step;
+ if(event.key==="ArrowLeft")s.x=Math.max(-MAX_OFFSET,s.x-step);
+ else if(event.key==="ArrowRight")s.x=Math.min(MAX_OFFSET,s.x+step);
+ else if(event.key==="ArrowUp")s.y=Math.max(-MAX_OFFSET,s.y-step);
+ else if(event.key==="ArrowDown")s.y=Math.min(MAX_OFFSET,s.y+step);
  else return;
  event.preventDefault();select(selected);
 });
