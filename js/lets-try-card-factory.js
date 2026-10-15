@@ -24,10 +24,12 @@
     const answerField = options.teacherAnswerField || profile.teacherAnswerField || "word";
 
     return category.items.map((entry) => {
-      const word = entry[profile.wordField] || entry.id.replace(/-/g, " ");
+      const word = (profile.wordField && entry[profile.wordField]) || entry.word || entry.id.replace(/-/g, " ");
+      const grammarWord = options.grammarForm && entry.forms && entry.forms[options.grammarForm]
+        ? entry.forms[options.grammarForm] : word;
       const sentence = grammar == null
         ? (profile.sentenceField && entry[profile.sentenceField]) || word
-        : String(grammar).replace(/\[word\]/g, word);
+        : String(grammar).replace(/\[word\]/g, grammarWord);
       const alternate = alternateField === "word" ? word : (entry[alternateField] || word);
       const teacherAnswer = answerField === "word" ? word : (entry[answerField] || word);
       const visual = database.getWordVisual(categoryId, entry.id);
@@ -51,5 +53,10 @@
     });
   }
 
-  global.LETS_TRY_CARD_FACTORY = Object.freeze({ makeCategoryCards });
+  function makeCardsForCategories(categoryIds, options = {}) {
+    if (!Array.isArray(categoryIds)) throw new Error("Category list must be an array");
+    return categoryIds.flatMap(categoryId => makeCategoryCards(categoryId, options));
+  }
+
+  global.LETS_TRY_CARD_FACTORY = Object.freeze({ makeCategoryCards, makeCardsForCategories });
 })(window);
