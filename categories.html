@@ -49,7 +49,7 @@
   available.forEach(([id,definition])=>{
     const link=document.createElement("a");
     link.className="category-link";
-    const ready = ["worldGreetings", "englishGreetings", "feelings"].includes(id);
+    const ready = ["worldGreetings", "englishGreetings", "feelings", "sports", "food", "fruit"].includes(id);
     link.href=ready ? "unit.html?book=categories&unit=1&category="+encodeURIComponent(id) : "categories.html?category="+encodeURIComponent(id);
     const title=document.createElement("strong");title.textContent=definition.label;
     const status=document.createElement("span");status.textContent=ready ? "Open flashcards" : "Page coming soon";
