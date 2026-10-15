@@ -35,6 +35,7 @@
   const CATEGORIES = {
     worldGreetings: {
       label: "World greetings",
+      card: { wordField: "greeting", sentenceField: "country", alternateField: "country", teacherAnswerField: "country" },
       items: [
         item("finland", ["1-1"], { country: "Finland", greeting: "Terve" }),
         item("china", ["1-1", "2-1"], { country: "China", greeting: "Nihao" }),
@@ -55,6 +56,7 @@
 
     englishGreetings: {
       label: "Greetings",
+      card: { textOnly: true },
       items: [
         item("hello"),
         item("hi"),
@@ -69,6 +71,7 @@
 
     feelings: {
       label: "Feelings",
+      card: { grammar: "I’m [word]." },
       items: [
         item("happy", ["1-2"]),
         item("tired", ["1-2"]),
@@ -866,6 +869,47 @@
     }
   };
 
+  // Canonical artwork resolver used by textbook units, category decks and the viewer.
+  // Some logical vocabulary categories share a physical image sheet.
+  const CATEGORY_IMAGE_SHEETS = Object.freeze({
+    worldGreetings: "flags", feelings: "emotions",
+    sports: "sports", food: "foods", fruit: "fruit",
+    vegetables: "vegetables", animals: "animals",
+    bodyParts: "bodyParts", describingWords: "adjectives",
+    days: "days", weather: "weather", clothes: "clothes",
+    playActivities: "playActivities", stationery: "stationery",
+    dailyTimes: "timeActivities", clockTimes: "clocks"
+  });
+  const EXTRA_ANIMAL_IMAGE_IDS = new Set([
+    "crow", "moth", "owl", "starfish", "jellyfish", "seahorse"
+  ]);
+
+  function getWordVisual(categoryId, itemId) {
+    const imagePath = ASSETS.images[categoryId] && ASSETS.images[categoryId][itemId];
+    const vectorPath = ASSETS.vectors[categoryId] && ASSETS.vectors[categoryId][itemId];
+    const standalonePath = imagePath || vectorPath;
+    if (standalonePath) return {
+      src: assetUrl(standalonePath), size: "contain", position: "center",
+      flip: false, cropTop: 0
+    };
+
+    let sheetId = CATEGORY_IMAGE_SHEETS[categoryId];
+    if (categoryId === "food" && itemId === "sausage") sheetId = "fruit";
+    if (categoryId === "animals" && EXTRA_ANIMAL_IMAGE_IDS.has(itemId)) sheetId = "animalsExtra";
+    const sheet = ASSETS.sheets[sheetId];
+    const cell = ASSETS.knownCells[sheetId] && ASSETS.knownCells[sheetId][itemId];
+    if (!sheet || !cell) return null;
+
+    const properties = typeof cell === "string" ? { position: cell } : cell;
+    return {
+      src: assetUrl(sheet.file),
+      size: sheet.sizeOverrides?.[itemId] || sheet.backgroundSize,
+      position: properties.position,
+      flip: Boolean(properties.flip),
+      cropTop: properties.cropTop || 0
+    };
+  }
+
   function getCategory(id) {
     return CATEGORIES[id] || null;
   }
@@ -931,6 +975,7 @@
     alphabetColours: ALPHABET_COLOURS,
     extraGames: EXTRA_GAMES,
     getCategory,
+    getWordVisual,
     getItem,
     getUnit,
     getUnitKey,
