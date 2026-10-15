@@ -49,6 +49,14 @@ function checkDeck(label, cards, expectedCount, expectedSelected) {
   assert.ok(cards.every(card => card.visual && card.word), label + " card content");
 }
 
+// The viewer must retain its metadata helper. When this function was
+// accidentally deleted, the first card click threw and no images appeared.
+const viewerSource = source("vocabulary-viewer.html");
+assert.match(viewerSource, /function row\(label,value\)/,
+  "viewer metadata helper required before artwork can render");
+assert.match(viewerSource, /db\.getWordVisual\(category,id\)/,
+  "viewer uses shared artwork mapping");
+
 const db = context().LETS_TRY_DATA;
 assert.equal(Object.keys(db.categories).length, 24, "vocabulary category count");
 for (const categoryId of [
