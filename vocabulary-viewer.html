@@ -150,7 +150,7 @@ function previewVisual(visual){
   previewArt.style.transform="none";
   previewArt.style.clipPath="none";
   previewArt.style.backgroundColor="#fff";
-  preview.style.setProperty("--cell-ratio",current?.source.cellRatio||"1 / 1");
+  preview.style.setProperty("--cell-ratio",current?.source?.cellRatio||"1 / 1");
   if(!visual?.src){
     previewLabel.hidden=false;
     previewLabel.textContent="No image mapped";
