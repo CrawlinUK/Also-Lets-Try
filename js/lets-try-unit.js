@@ -1119,8 +1119,12 @@
         element.style.backgroundSize = visual.size || "contain";
         element.style.backgroundPosition = visual.position || "center";
         element.style.transform = visual.flip ? "scaleX(-1)" : "scaleX(1)";
-        element.style.clipPath = visual.cropTop
-          ? `inset(${Number(visual.cropTop)}% 0 0 0)`
+        // All four crop edges use the same shared global values.
+        // Undefined edges are zero, preserving every existing unit's artwork.
+        const cropEdges = ["cropTop", "cropRight", "cropBottom", "cropLeft"]
+          .map((edge) => Number(visual[edge]) || 0);
+        element.style.clipPath = cropEdges.some((amount) => amount !== 0)
+          ? `inset(${cropEdges.map((amount) => amount + "%").join(" ")})`
           : "none";
         applyImageDiagnosticAdjustment(element, card);
       }
