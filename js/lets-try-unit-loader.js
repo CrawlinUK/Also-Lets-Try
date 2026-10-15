@@ -6,7 +6,7 @@
     ? new URL(document.currentScript.src)
     : new URL("js/lets-try-unit-loader.js", location.href);
   const projectRoot = new URL("../", current);
-  const ASSET_VERSION = "20261013-lt2-unit2-images";
+  const ASSET_VERSION = "20261015-card-factory-v1";
 
   const params = new URLSearchParams(location.search);
   const book = (params.get("book") || "lt1").toLowerCase();
@@ -197,6 +197,7 @@
   window.addEventListener("DOMContentLoaded", async () => {
     try {
       await loadScript("js/lets-try-data.js");
+      await loadScript("js/lets-try-card-factory.js");
       await loadScript(book === "categories" ? "config/categories.js" : `config/units/${book}-unit${unit}.js`);
 
       const config = window.LETS_TRY_UNIT_CONFIG;
