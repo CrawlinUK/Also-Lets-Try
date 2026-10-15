@@ -20,8 +20,12 @@ The current database is ordinary JavaScript, not SQL or JSON yet:
 - `config/units/lt1-unit1.js`, `lt1-unit2.js` and `lt2-unit1.js`
   also use the shared generator. Other units still have bespoke card-building
   logic and must be migrated carefully.
-- `vocabulary-viewer.html` is a read-only window onto the shared records.
-  It uses the same `getWordVisual` function as the generated flashcards.
+- `vocabulary-viewer.html` is the first stage of the image calibration editor.
+  It uses `getWordVisual` plus the central sprite sheet `cellAspectRatio` to
+  preview the actual physical cell geometry rather than forcing square crops.
+  Position, scale, flip and top-crop edits are local to the open tab. The
+  **Export changes (.txt)** button downloads proposed changes for review;
+  it does not update GitHub or the lesson pages.
 - `tests/vocabulary-data.test.js` checks mapped images, category decks,
   default selections and the optional Unit 4 clocks.
 
@@ -71,9 +75,11 @@ js/
 vocabulary-viewer.html
 ```
 
-The editor should be able to inspect a word, update its text or artwork
-mapping, show all uses of that word, and validate changes. A read-only
-viewer is safe on GitHub Pages. Publishing edits directly will require
+The image calibration editor already previews and exports proposed artwork
+mapping changes. It still needs support for editing vocabulary text,
+showing all uses of a word, and validating proposed changes against the
+classroom renderer. Exporting a text file is safe on GitHub Pages because
+it does not write remotely. Publishing edits directly will require
 either exporting validated JSON and committing it manually or connecting
 an authenticated, appropriately restricted GitHub save workflow.
 Never embed an access token or write credentials into publicly served
