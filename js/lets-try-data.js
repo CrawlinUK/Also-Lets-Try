@@ -514,6 +514,13 @@
         (index + 1) + "-oclock",
         ["0%","33.333%","66.667%","100%"][index % 4] + " " + ["0%","50%","100%"][Math.floor(index / 4)]
       ])),
+      stationery: Object.fromEntries([
+        "pencil", "eraser", "pencil-case", "ruler", "glue-stick", "pen",
+        "marker", "calendar", "notebook", "stapler", "magnet", "pencil-sharpener"
+      ].map((id, index) => [
+        id,
+        ["0%", "33.333%", "66.667%", "100%"][index % 4] + " " + ["0%", "50%", "100%"][Math.floor(index / 4)]
+      ])),
       // Single source for the Feelings sprite cells, used by units and Categories.
       emotions: {
         happy: { position: "0% 0%", flip: false, cropTop: 0 },
