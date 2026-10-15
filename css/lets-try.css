@@ -2634,3 +2634,24 @@ html.shared-unit-template.image-diagnostic-active [data-diagnostic-image="true"]
     gap: 5px;
   }
 }
+
+
+/* ============================================================
+   SHARED FLASHCARDS — FIT ARTWORK TO AVAILABLE SPACE
+   Keep the existing header, controls and text presentation while using
+   the empty vertical space within the flashcard. The shared renderer
+   calculates a ratio-safe frame size after measuring the text.
+   Applies to all books and standalone Categories; not the game grids.
+   ============================================================ */
+html.shared-unit-template .flashcard .answer-area {
+  padding: clamp(8px, 1.3vh, 16px) clamp(12px, 2vw, 28px);
+}
+
+html.shared-unit-template .flashcard .picture-frame,
+html.shared-unit-template .flashcard.picture-only .picture-frame {
+  flex: 0 0 auto;
+  min-width: 0;
+  min-height: 0;
+  max-width: 100%;
+  max-height: 100%;
+}
