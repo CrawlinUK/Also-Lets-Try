@@ -366,6 +366,7 @@
 
       emotions: {
         file: "images/emotions.webp",
+        backgroundSize: "400% 200%",
         grid: "4x2",
         logicalCategories: ["feelings"],
         status: "mapped"
@@ -487,6 +488,19 @@
     },
 
     knownCells: {
+      // Single source for the Feelings sprite cells, used by units and Categories.
+      emotions: {
+        happy: { position: "0% 0%", flip: false, cropTop: 0 },
+        tired: { position: "64% 93%", flip: false, cropTop: 3 },
+        hungry: { position: "96% 0%", flip: false, cropTop: 0 },
+        sleepy: { position: "31% 93%", flip: false, cropTop: 0 },
+        sad: { position: "0% 93%", flip: false, cropTop: 0 },
+        fine: { position: "93% 93%", flip: true, cropTop: 3 },
+        good: { position: "93% 93%", flip: false, cropTop: 3 },
+        great: { position: "64% 0%", flip: false, cropTop: 0 },
+        wonderful: { position: "33.3333% 0%", flip: false, cropTop: 0 }
+      },
+
       flags: {
         australia: "0% 0%",
         brazil: "33.333% 0%",
