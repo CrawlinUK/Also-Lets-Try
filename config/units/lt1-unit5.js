@@ -59,7 +59,7 @@ const UNIT_BOOK_ID = "lt1";
       if (categoryId === "sports") {
         return {
           src: LETS_TRY_DATA.assetUrl(sheets.sports.file),
-          size: "400% 300%",
+          size: sheets.sports.backgroundSize,
           position: cells.sports[id],
           flip: false,
           cropTop: 0
@@ -69,7 +69,7 @@ const UNIT_BOOK_ID = "lt1";
       if (categoryId === "food" && id !== "sausage") {
         return {
           src: LETS_TRY_DATA.assetUrl(sheets.foods.file),
-          size: "400% 400%",
+          size: sheets.foods.backgroundSize,
           position: cells.foods[id],
           flip: false,
           cropTop: 0
@@ -78,7 +78,7 @@ const UNIT_BOOK_ID = "lt1";
 
       return {
         src: LETS_TRY_DATA.assetUrl(sheets.fruit.file),
-        size: "300% 400%",
+        size: sheets.fruit.backgroundSize,
         position: cells.fruit[id],
         flip: false,
         cropTop: 0
