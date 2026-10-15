@@ -23,9 +23,14 @@ The current database is ordinary JavaScript, not SQL or JSON yet:
 - `vocabulary-viewer.html` is the first stage of the image calibration editor.
   It uses `getWordVisual` plus the central sprite sheet `cellAspectRatio` to
   preview the actual physical cell geometry rather than forcing square crops.
-  Position, scale, flip and top-crop edits are local to the open tab. The
-  **Export changes (.txt)** button downloads proposed changes for review;
-  it does not update GitHub or the lesson pages.
+  Position nudges (0.1%, 0.5%, 1%, 5%), proportional scale, horizontal
+  mirroring and all four cropping edges are available. Choose a tool at the
+  bottom of the details to return to that tool immediately above the picture.
+  Size is a single multiplier: a 4×2 sheet changes from 400%/200% to
+  500%/250% when scaling by 125%, never distorting the image.
+  All edits are held only in the current browser tab until exported.
+  **Export changes (.txt)** downloads proposed before/after values for
+  review; it does not update GitHub or the lesson pages.
 - `tests/vocabulary-data.test.js` checks mapped images, category decks,
   default selections and the optional Unit 4 clocks.
 
@@ -40,8 +45,10 @@ node tests/vocabulary-data.test.js
 1. A word keeps a stable category-qualified ID (for example,
    `sports/baseball`). Reordering categories must not silently change
    its identity.
-2. Image filenames and sprite positioning are defined centrally. Unit
-   configurations should not contain a separate copy.
+2. Image filenames, proportions, sprite positioning and four-sided crop
+   values are defined centrally. Unit configurations should not contain
+   separate copies. The classroom renderer uses zero for any unspecified crop
+   edge, so old cards remain unchanged.
 3. Textbook tags such as `1-1` select default words **within** a
    chosen category; untagged words in that category remain selectable.
 4. Category pages select every word by default.
