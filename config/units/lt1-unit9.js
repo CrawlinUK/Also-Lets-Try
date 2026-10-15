@@ -29,7 +29,7 @@
     if (!position) throw new Error(`Missing Unit 9 animal position for ${id}.`);
     return {
       src: LETS_TRY_DATA.assetUrl(sheets.animals.file),
-      size: "600% 300%",
+      size: sheets.animals.backgroundSize,
       position,
       flip: false,
       cropTop: 0
