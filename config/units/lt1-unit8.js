@@ -56,10 +56,6 @@
     "crow", "moth", "owl", "starfish", "jellyfish", "seahorse"
   ]);
 
-  const extraAnimalSizes = Object.freeze({
-    owl: "210% 315%"
-  });
-
   function spriteVisual(file, size, position) {
     if (!position) throw new Error("Missing Unit 8 sprite position.");
     return {
@@ -73,13 +69,13 @@
 
   function visualFor(categoryId, id) {
     if (categoryId === "animals" && oldAnimalIds.has(id)) {
-      return spriteVisual(sheets.animals.file, "600% 300%", cells.animals[id]);
+      return spriteVisual(sheets.animals.file, sheets.animals.backgroundSize, cells.animals[id]);
     }
 
     if (categoryId === "animals" && extraAnimalIds.has(id)) {
       return spriteVisual(
         sheets.animalsExtra.file,
-        extraAnimalSizes[id] || "200% 300%",
+        sheets.animalsExtra.sizeOverrides?.[id] || sheets.animalsExtra.backgroundSize,
         cells.animalsExtra[id]
       );
     }
@@ -95,19 +91,19 @@
     }
 
     if (categoryId === "vegetables") {
-      return spriteVisual(sheets.vegetables.file, "300% 300%", cells.vegetables[id]);
+      return spriteVisual(sheets.vegetables.file, sheets.vegetables.backgroundSize, cells.vegetables[id]);
     }
 
     if (categoryId === "fruit") {
-      return spriteVisual(sheets.fruit.file, "300% 400%", cells.fruit[id]);
+      return spriteVisual(sheets.fruit.file, sheets.fruit.backgroundSize, cells.fruit[id]);
     }
 
     if (categoryId === "food") {
-      return spriteVisual(sheets.foods.file, "400% 400%", cells.foods[id]);
+      return spriteVisual(sheets.foods.file, sheets.foods.backgroundSize, cells.foods[id]);
     }
 
     if (categoryId === "sports") {
-      return spriteVisual(sheets.sports.file, "400% 300%", cells.sports[id]);
+      return spriteVisual(sheets.sports.file, sheets.sports.backgroundSize, cells.sports[id]);
     }
 
     throw new Error(`No Unit 8 visual mapping for ${categoryId} / ${id}`);
