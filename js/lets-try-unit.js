@@ -1429,6 +1429,7 @@
         else if (count === 9) columns = 3;
         else if (count <= 20) columns = 5;
         else if (count === 21) columns = 7;
+        else if (count <= 28) columns = 7;
         else if (count <= 32) columns = 8;
         else columns = 9;
 
