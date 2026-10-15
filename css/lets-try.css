@@ -2747,3 +2747,13 @@ html.shared-unit-template .control-bar .floating-timer.timer-control button:disa
     color: #c54e58;
   }
 }
+
+
+/* Standalone Categories use the shared flashcard header without "Unit" or a unit number. */
+html.shared-unit-template[data-book="categories"] .site-title .unit-word,
+html.shared-unit-template[data-book="categories"] .site-title .unit-number {
+  display: none !important;
+}
+html.shared-unit-template[data-book="categories"] .site-title {
+  gap: 0;
+}
