@@ -37,7 +37,7 @@ dl{display:grid;grid-template-columns:120px 1fr;gap:9px;overflow-wrap:anywhere}d
 <section class="panel" aria-live="polite"><h2 id="wordTitle">Select a word</h2><div id="preview"></div><dl id="details"></dl><p class="note" id="mappingNote"></p></section>
 </div>
 </main>
-<script src="js/lets-try-data.js"></script>
+<script src="js/lets-try-data.js?v=20261015-card-factory-v1"></script>
 <script>
 (function(){
 "use strict";
@@ -46,17 +46,12 @@ words=document.getElementById("words"), details=document.getElementById("details
 heading=document.getElementById("wordTitle"), note=document.getElementById("mappingNote");
 for(const [key,value] of Object.entries(db.categories)){const opt=document.createElement("option");opt.value=key;opt.textContent=value.label;catSelect.append(opt)}
 const requested=new URLSearchParams(location.search).get("category");if(requested&&db.categories[requested])catSelect.value=requested;
-const sheetByCategory={worldGreetings:"flags",feelings:"emotions",sports:"sports",food:"foods",fruit:"fruit",vegetables:"vegetables",bodyParts:"bodyParts",describingWords:"adjectives",animals:"animals",days:"days",weather:"weather",clothes:"clothes",playActivities:"playActivities",stationery:"stationery",dailyTimes:"timeActivities",clockTimes:"clocks"};
-const aliases={food:{"sausage":["fruit","sausage"]},animals:{crow:["animalsExtra","crow"],moth:["animalsExtra","moth"],owl:["animalsExtra","owl"],starfish:["animalsExtra","starfish"],jellyfish:["animalsExtra","jellyfish"],seahorse:["animalsExtra","seahorse"]}};
-function row(label,value){const dt=document.createElement("dt");dt.textContent=label;const dd=document.createElement("dd");dd.textContent=value;details.append(dt,dd)}
+// The database itself decides which sprite or vector is used for each word.
 function imageFor(category,id){
-if(category==="nature"&&db.assets.images.nature[id])return {url:db.assetUrl(db.assets.images.nature[id]),fit:true};
-if(category==="shapes"&&db.assets.vectors.shapes[id])return {url:db.assetUrl(db.assets.vectors.shapes[id]),fit:true};
-const [sheetId,cellId]=(aliases[category]&&aliases[category][id])||[sheetByCategory[category],id];
-const sheet=db.assets.sheets[sheetId],cell=db.assets.knownCells[sheetId]&&db.assets.knownCells[sheetId][cellId];
-if(!sheet||!cell)return {sheet:sheetId&&db.assets.sheets[sheetId]?db.assets.sheets[sheetId].file:null};
-const position=typeof cell==="string"?cell:cell.position;
-return {url:db.assetUrl(sheet.file),size:sheet.sizeOverrides?.[cellId]||sheet.backgroundSize,position,flip:typeof cell==="object"&&cell.flip,cropTop:typeof cell==="object"?cell.cropTop:0,sheet:sheet.file};
+const visual=db.getWordVisual(category,id);
+if(!visual)return {};
+const filename=visual.src.split("?")[0].split("/").pop();
+return {...visual,url:visual.src,sheet:filename,fit:visual.size==="contain"};
 }
 function show(category,entry){
 heading.textContent=entry.greeting||entry.id.replace(/-/g," ");
