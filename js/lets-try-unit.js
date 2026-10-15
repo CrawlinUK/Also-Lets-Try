@@ -1391,6 +1391,55 @@
         elements.nextButton.classList.add("game-action");
       }
 
+      // Fit each flashcard picture into the space left after its text.
+      // Sprite sheets need the exact artwork aspect ratio, so never stretch
+      // the picture frame simply to fill both width and height.
+      function fitFlashcardArtwork() {
+        const frame = elements.pictureFrame;
+        const card = currentCard();
+        if (!card || elements.answerArea.hidden || state.gameMode !== "flashcards"
+            || state.displayMode === "text") {
+          frame.style.removeProperty("width");
+          frame.style.removeProperty("height");
+          return;
+        }
+
+        const ratioText = card.visual?.aspectRatio || UNIT_CONFIG.pictureAspectRatio || "1 / 1";
+        const parts = String(ratioText).split("/").map(Number);
+        const ratio = parts.length === 2 && parts[0] > 0 && parts[1] > 0
+          ? parts[0] / parts[1] : Number(ratioText);
+        if (!Number.isFinite(ratio) || ratio <= 0) return;
+
+        const area = elements.answerArea;
+        const dimensions = area.getBoundingClientRect();
+        if (!dimensions.width || !dimensions.height) return;
+
+        const styles = getComputedStyle(area);
+        const horizontalPadding = (parseFloat(styles.paddingLeft) || 0)
+          + (parseFloat(styles.paddingRight) || 0);
+        const verticalPadding = (parseFloat(styles.paddingTop) || 0)
+          + (parseFloat(styles.paddingBottom) || 0);
+        const textVisible = getComputedStyle(elements.displayText).display !== "none";
+        const textHeight = textVisible ? elements.displayText.getBoundingClientRect().height : 0;
+        const gap = textVisible ? (parseFloat(styles.rowGap) || 0) : 0;
+
+        const availableWidth = Math.max(0, dimensions.width - horizontalPadding) * .96;
+        const availableHeight = Math.max(0,
+          dimensions.height - verticalPadding - textHeight - gap) * .94;
+        if (availableWidth < 40 || availableHeight < 40) return;
+
+        const scale = Number(getComputedStyle(document.documentElement)
+          .getPropertyValue("--picture-scale")) || 1;
+        const width = Math.min(availableWidth, availableHeight * ratio)
+          * Math.min(1, Math.max(.4, scale));
+        frame.style.width = Math.floor(width) + "px";
+        frame.style.height = Math.floor(width / ratio) + "px";
+      }
+
+      function scheduleFlashcardArtworkFit() {
+        requestAnimationFrame(fitFlashcardArtwork);
+      }
+
       function renderFlashcards() {
         showFlashcardLayout();
 
@@ -1413,6 +1462,7 @@
         applyVisual(elements.cardPicture, card);
         elements.cardPicture.setAttribute("aria-label", cardText(card));
         renderCardText(elements.displayText, card);
+        scheduleFlashcardArtworkFit();
         elements.counter.textContent = `${state.position + 1} / ${state.deck.length}`;
         elements.modeLabel.textContent = "Flashcard mode";
         elements.shuffleButton.textContent = "Shuffle";
@@ -2326,7 +2376,17 @@
         }
       });
 
+      // Refit after rotation, window resizing and font/layout changes.
+      if (typeof ResizeObserver === "function") {
+        const artLayoutObserver = new ResizeObserver(scheduleFlashcardArtworkFit);
+        artLayoutObserver.observe(elements.answerArea);
+        artLayoutObserver.observe(elements.displayText);
+      }
+      if (document.fonts && document.fonts.ready) {
+        document.fonts.ready.then(scheduleFlashcardArtworkFit);
+      }
       window.addEventListener("resize", () => {
+        scheduleFlashcardArtworkFit();
         requestAnimationFrame(alignSideNavigation);
       });
 
