@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Vocabulary database viewer — Also Let’s Try</title>
+<link rel="stylesheet" href="css/lets-try-menu.css">
+<style>
+.viewer{max-width:1320px;margin:auto;padding:24px}
+.viewer header{height:auto;border-bottom:3px solid var(--categories)}
+.viewer h1{font-size:clamp(24px,3vw,36px)}
+.viewer-intro{color:var(--muted);margin:0 0 18px}
+.toolbar{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:16px}
+.toolbar label{display:grid;gap:4px;font-weight:800;min-width:210px;flex:1}
+.toolbar input,.toolbar select{width:100%;min-height:46px;padding:8px 12px;border:1px solid var(--line);border-radius:10px;font:inherit;background:white}
+.layout{display:grid;grid-template-columns:minmax(260px,1fr) minmax(310px,1fr);gap:16px}
+.panel{border:1px solid var(--line);border-radius:18px;background:white;padding:16px;min-width:0}
+.list{max-height:65vh;overflow:auto}
+.word-row{display:block;width:100%;background:white;padding:12px;text-align:left;border:0;border-bottom:1px solid var(--line);border-radius:7px;font:inherit}
+.word-row:hover,.word-row:focus-visible,.word-row[aria-current=true]{background:#e7f4ff}
+.word-row small{display:block;color:var(--muted);margin-top:3px}
+#preview{width:230px;max-width:100%;aspect-ratio:1/1;margin:10px auto;background-color:#f4f7f9;background-repeat:no-repeat;border:1px solid var(--line);border-radius:14px;display:grid;place-items:center;font-size:44px;overflow:hidden}
+#preview img{max-width:100%;max-height:100%;object-fit:contain}
+dl{display:grid;grid-template-columns:120px 1fr;gap:9px;overflow-wrap:anywhere}dt{font-weight:900}dd{margin:0}
+.note{font-size:14px;color:var(--muted)}
+@media(max-width:780px){.layout{grid-template-columns:1fr}.list{max-height:35vh}.viewer{padding:12px}}
+</style>
+</head>
+<body class="viewer">
+<header><button type="button" class="back" onclick="location.href='index.html'">◀ Home</button><h1>Vocabulary database viewer</h1></header>
+<main>
+<p class="viewer-intro">Read-only view of the existing shared vocabulary. Changes here are not saved. This is the foundation for a future editor.</p>
+<div class="toolbar"><label>Category<select id="category"></select></label><label>Search words<input id="search" type="search" placeholder="Type a word or ID…"></label></div>
+<p id="count" aria-live="polite"></p>
+<div class="layout">
+<section class="panel list" id="words" aria-label="Vocabulary words"></section>
+<section class="panel" aria-live="polite"><h2 id="wordTitle">Select a word</h2><div id="preview"></div><dl id="details"></dl><p class="note" id="mappingNote"></p></section>
+</div>
+</main>
+<script src="js/lets-try-data.js"></script>
+<script>
+(function(){
+"use strict";
+const db=window.LETS_TRY_DATA, catSelect=document.getElementById("category"), search=document.getElementById("search"),
+words=document.getElementById("words"), details=document.getElementById("details"), preview=document.getElementById("preview"),
+heading=document.getElementById("wordTitle"), note=document.getElementById("mappingNote");
+for(const [key,value] of Object.entries(db.categories)){const opt=document.createElement("option");opt.value=key;opt.textContent=value.label;catSelect.append(opt)}
+const requested=new URLSearchParams(location.search).get("category");if(requested&&db.categories[requested])catSelect.value=requested;
+const sheetByCategory={worldGreetings:"flags",feelings:"emotions",sports:"sports",food:"foods",fruit:"fruit",vegetables:"vegetables",bodyParts:"bodyParts",describingWords:"adjectives",animals:"animals",days:"days",weather:"weather",clothes:"clothes",playActivities:"playActivities",stationery:"stationery",dailyTimes:"timeActivities",clockTimes:"clocks"};
+const aliases={food:{"sausage":["fruit","sausage"]},animals:{crow:["animalsExtra","crow"],moth:["animalsExtra","moth"],owl:["animalsExtra","owl"],starfish:["animalsExtra","starfish"],jellyfish:["animalsExtra","jellyfish"],seahorse:["animalsExtra","seahorse"]}};
+function row(label,value){const dt=document.createElement("dt");dt.textContent=label;const dd=document.createElement("dd");dd.textContent=value;details.append(dt,dd)}
+function imageFor(category,id){
+if(category==="nature"&&db.assets.images.nature[id])return {url:db.assetUrl(db.assets.images.nature[id]),fit:true};
+if(category==="shapes"&&db.assets.vectors.shapes[id])return {url:db.assetUrl(db.assets.vectors.shapes[id]),fit:true};
+const [sheetId,cellId]=(aliases[category]&&aliases[category][id])||[sheetByCategory[category],id];
+const sheet=db.assets.sheets[sheetId],cell=db.assets.knownCells[sheetId]&&db.assets.knownCells[sheetId][cellId];
+if(!sheet||!cell)return {sheet:sheetId&&db.assets.sheets[sheetId]?db.assets.sheets[sheetId].file:null};
+const position=typeof cell==="string"?cell:cell.position;
+return {url:db.assetUrl(sheet.file),size:sheet.sizeOverrides?.[cellId]||sheet.backgroundSize,position,flip:typeof cell==="object"&&cell.flip,cropTop:typeof cell==="object"?cell.cropTop:0,sheet:sheet.file};
+}
+function show(category,entry){
+heading.textContent=entry.greeting||entry.id.replace(/-/g," ");
+details.replaceChildren();preview.replaceChildren();preview.style.backgroundImage="none";preview.style.backgroundSize="";preview.style.backgroundPosition="";preview.style.transform="none";
+row("ID",entry.id);row("Category",db.categories[category].label);row("Default in",(entry.defaultIn||[]).join(", ")||"None");
+if(entry.country)row("Country",entry.country);if(entry.greeting)row("Greeting",entry.greeting);if(entry.hex)row("Colour",entry.hex);
+const visual=imageFor(category,entry.id);
+if(visual.url){row("Image",visual.sheet||visual.url.split("/").pop());if(visual.position)row("Position",visual.position);if(visual.size)row("Sprite size",visual.size);
+if(visual.fit){const im=document.createElement("img");im.src=visual.url;im.alt="Artwork for "+entry.id;preview.append(im)}
+else if(visual.position&&visual.size){preview.style.backgroundImage='url("'+visual.url+'")';preview.style.backgroundSize=visual.size;preview.style.backgroundPosition=visual.position}
+else {preview.textContent="Image mapped without a preview";}}
+else{row("Image",visual.sheet||"No shared picture mapping");preview.textContent=entry.hex?"●":entry.id.slice(0,2).toUpperCase();if(entry.hex)preview.style.color=entry.hex}
+note.textContent=visual.flip||visual.cropTop?"The classroom renderer also applies flip/cropping adjustments. This viewer shows the unadjusted sprite cell.":"Preview uses the existing shared mapping where available; unmapped pictures are marked rather than guessed.";
+}
+function render(){
+const category=catSelect.value,items=db.categories[category].items.filter(x=>[x.id,x.greeting,x.country].filter(Boolean).join(" ").toLowerCase().includes(search.value.trim().toLowerCase()));
+words.replaceChildren();document.getElementById("count").textContent=items.length+" of "+db.categories[category].items.length+" words";
+for(const entry of items){const button=document.createElement("button");button.type="button";button.className="word-row";button.textContent=entry.greeting||entry.id.replace(/-/g," ");const small=document.createElement("small");small.textContent=entry.id;button.append(small);button.addEventListener("click",()=>{words.querySelectorAll("button").forEach(b=>b.removeAttribute("aria-current"));button.setAttribute("aria-current","true");show(category,entry)});words.append(button)}
+if(items.length){words.firstElementChild.click()}else{heading.textContent="No words found";details.replaceChildren();preview.replaceChildren();preview.style.backgroundImage="none";note.textContent=""}
+}
+catSelect.addEventListener("change",()=>{const url=new URL(location.href);url.searchParams.set("category",catSelect.value);history.replaceState(null,"",url);render()});search.addEventListener("input",render);render();
+})();
+</script>
+</body>
+</html>
