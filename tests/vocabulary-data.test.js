@@ -56,8 +56,23 @@ assert.match(viewerSource, /function row\(label,value\)/,
   "viewer metadata helper required before artwork can render");
 assert.match(viewerSource, /db\.getWordVisual\(category,id\)/,
   "viewer uses shared artwork mapping");
+assert.match(viewerSource, /cellAspectRatio/,
+  "viewer reads canonical sprite cell proportions");
+assert.match(viewerSource, /function exportChanges\(\)/,
+  "viewer can export local proposed mapping changes");
+assert.match(viewerSource, /id="positionX"/,
+  "viewer includes image calibration controls");
+
 
 const db = context().LETS_TRY_DATA;
+for (const [sheet,ratio] of [
+  ["flags","4 / 3"], ["emotions","2 / 3"],
+  ["sports","9 / 8"], ["bodyParts","1 / 2"],
+  ["stationery","1 / 1"], ["fruit","1 / 1"]
+]) {
+  assert.equal(db.assets.sheets[sheet].cellAspectRatio,ratio, sheet + " cell proportions");
+}
+
 assert.equal(Object.keys(db.categories).length, 24, "vocabulary category count");
 for (const categoryId of [
   "worldGreetings", "feelings", "sports", "food", "fruit", "vegetables",
