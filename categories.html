@@ -9,52 +9,71 @@
 .category-menu header{border-bottom:3px solid var(--categories)}
 .category-menu main{max-width:1200px;margin:auto;padding:34px 24px}
 .category-menu .grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
-.category-link{display:block;min-height:105px;padding:18px 20px;border:1px solid var(--line);border-left:12px solid var(--categories);border-radius:18px;background:var(--surface);box-shadow:var(--shadow);color:inherit;text-decoration:none}
+.category-link{display:block;position:relative;min-width:0;min-height:105px;padding:18px 20px;border:1px solid var(--line);border-left:12px solid var(--categories);border-radius:18px;background:var(--surface);box-shadow:var(--shadow);color:inherit;text-decoration:none}
 .category-link strong,.category-link span{display:block}
 .category-link strong{font-size:25px}
-.category-link span{margin-top:5px;color:var(--muted);font-size:15px}
-.category-link:hover,.category-link:focus-visible{outline:3px solid #8cccf8;outline-offset:2px}
+.category-link .word-samples{max-width:100%;margin-top:5px;color:var(--muted);font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+a.category-link:hover,a.category-link:focus-visible{outline:3px solid #8cccf8;outline-offset:2px}
+.category-unavailable{opacity:.63;cursor:default}
+/* A single diagonal stroke marks unfinished categories, without placeholder text or links. */
+.category-unavailable::after{content:"";position:absolute;inset:0;pointer-events:none;border-radius:inherit;background:linear-gradient(to bottom right,transparent calc(50% - 1.25px),rgba(38,55,68,.68) calc(50% - 1px),rgba(38,55,68,.68) calc(50% + 1px),transparent calc(50% + 1.25px))}
 .category-menu .intro{margin:0 0 24px;color:var(--muted);font-size:18px}
-.category-placeholder{max-width:700px;padding:28px;border:1px solid var(--line);border-radius:22px;background:white}
-.category-placeholder h2{margin:0 0 12px;font-size:34px}
-.category-placeholder p{font-size:18px}
 @media(max-width:800px){.category-menu main{padding:20px 14px}.category-menu .grid{grid-template-columns:1fr}}
 </style>
 </head>
 <body class="category-menu">
 <header><button class="back" id="back" type="button">◀ Back</button><h1>Categories</h1></header>
-<main id="categoryMain"><p class="intro">Browse the shared vocabulary categories. Select an available deck or view a planned topic.</p><section class="grid" id="categoryGrid"></section></main>
+<main id="categoryMain"><p class="intro">Choose a working vocabulary category. Unfinished topics are crossed out.</p><section class="grid" id="categoryGrid"></section></main>
 <script src="js/lets-try-data.js"></script>
 <script>
 (function(){
   "use strict";
   const data = window.LETS_TRY_DATA;
-  const params = new URLSearchParams(location.search);
-  const selected = params.get("category");
-  document.getElementById("back").addEventListener("click",()=>{location.href=selected?"categories.html":"index.html";});
-  const available = Object.entries(data.categories);
-  const category = selected ? available.find(([id])=>id===selected) : null;
-  const main=document.getElementById("categoryMain");
-  if(selected){
-    main.replaceChildren();
-    const panel=document.createElement("section");panel.className="category-placeholder";
-    const heading=document.createElement("h2");heading.textContent=category?category[1].label:"Unknown category";
-    const detail=document.createElement("p");
-    detail.textContent=category?"Category page coming soon. The vocabulary is available in the shared project data.":"This category is not currently available.";
-    panel.append(heading,detail);main.append(panel);
-    document.title=(category?category[1].label:"Categories")+" — Classroom English Tools";
-    return;
-  }
-  const grid=document.getElementById("categoryGrid");
-  available.forEach(([id,definition])=>{
-    const link=document.createElement("a");
-    link.className="category-link";
-    const ready = ["worldGreetings", "englishGreetings", "feelings", "sports", "food", "fruit"].includes(id);
-    link.href=ready ? "unit.html?book=categories&unit=1&category="+encodeURIComponent(id) : "categories.html?category="+encodeURIComponent(id);
-    const title=document.createElement("strong");title.textContent=definition.label;
-    const status=document.createElement("span");status.textContent=ready ? "Open flashcards" : "Page coming soon";
-    link.append(title,status);grid.append(link);
+  const supported = ["worldGreetings", "englishGreetings", "feelings", "sports", "food", "fruit"];
+  const grid = document.getElementById("categoryGrid");
+  document.getElementById("back").addEventListener("click",()=>{location.href="index.html";});
+
+  // The menu draws directly from the same category records as the flashcard decks.
+  const previews = [];
+  Object.entries(data.categories).forEach(([id,definition])=>{
+    const ready = supported.includes(id);
+    const card = document.createElement(ready ? "a" : "div");
+    card.className = "category-link" + (ready ? "" : " category-unavailable");
+    if(ready){
+      card.href = "unit.html?book=categories&unit=1&category=" + encodeURIComponent(id);
+    }else{
+      card.setAttribute("aria-label", definition.label + " — not yet available");
+    }
+    const title = document.createElement("strong");
+    title.textContent = definition.label;
+    card.append(title);
+    if(ready){
+      const wordField = definition.card && definition.card.wordField;
+      const words = definition.items.slice(0,3).map(item=>
+        (wordField && item[wordField]) || item.word || item.id.replace(/-/g," ")
+      );
+      const samples = document.createElement("span");
+      samples.className = "word-samples";
+      card.append(samples);
+      previews.push({samples,words});
+    }
+    grid.append(card);
   });
+
+  // Fit whole vocabulary words: 3 where possible, otherwise 2 or 1.
+  // Recalculate on rotation/resizing and after the handwriting font loads.
+  function fitSamples(){
+    for(const {samples,words} of previews){
+      for(let count=words.length;count>0;count--){
+        samples.textContent=words.slice(0,count).join(", ");
+        if(samples.scrollWidth<=samples.clientWidth||count===1)break;
+      }
+    }
+  }
+  requestAnimationFrame(fitSamples);
+  if(document.fonts&&document.fonts.ready)document.fonts.ready.then(fitSamples);
+  if(typeof ResizeObserver==="function")new ResizeObserver(fitSamples).observe(grid);
+  else window.addEventListener("resize",fitSamples);
 })();
 </script>
 </body>
