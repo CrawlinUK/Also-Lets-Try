@@ -351,18 +351,21 @@
     sheets: {
       timeActivities: {
         file: "images/TimeActivities.webp",
+        cellAspectRatio: "1 / 1",
         cellMap: "dailyTimes",
         backgroundSize: "500% 200%", grid: "5x2", physicalCells: 10,
         logicalCategories: ["dailyTimes"], status: "mapped"
       },
       clocks: {
         file: "images/clocks.svg",
+        cellAspectRatio: "1 / 1",
         cellMap: "clockTimes",
         backgroundSize: "400% 300%", grid: "4x3", physicalCells: 12,
         logicalCategories: ["clockTimes"], status: "mapped"
       },
       flags: {
         file: "images/flags.svg",
+        cellAspectRatio: "4 / 3",
         grid: "4x4",
         backgroundSize: "400% 400%",
         physicalCells: 16,
@@ -373,6 +376,7 @@
 
       emotions: {
         file: "images/emotions.webp",
+        cellAspectRatio: "2 / 3",
         backgroundSize: "400% 200%",
         grid: "4x2",
         logicalCategories: ["feelings"],
@@ -381,6 +385,7 @@
 
       foods: {
         file: "images/foods.webp",
+        cellAspectRatio: "1 / 1",
         backgroundSize: "400% 400%",
         grid: "4x4",
         logicalCategories: ["food"],
@@ -390,6 +395,7 @@
 
       fruit: {
         file: "images/fruit.webp",
+        cellAspectRatio: "1 / 1",
         backgroundSize: "300% 400%",
         grid: "3x4",
         physicalCells: 12,
@@ -400,6 +406,7 @@
 
       vegetables: {
         file: "images/veg.webp",
+        cellAspectRatio: "1 / 1",
         backgroundSize: "300% 300%",
         grid: "3x3",
         physicalCells: 9,
@@ -409,6 +416,7 @@
 
       sports: {
         file: "images/sports.webp",
+        cellAspectRatio: "9 / 8",
         backgroundSize: "400% 300%",
         grid: "4x3",
         physicalCells: 12,
@@ -418,6 +426,7 @@
 
       stationery: {
         file: "images/stationary.webp",
+        cellAspectRatio: "1 / 1",
         backgroundSize: "400% 300%",
         grid: "4x3",
         physicalCells: 12,
@@ -428,6 +437,7 @@
 
       adjectives: {
         file: "images/Adjectives.webp",
+        cellAspectRatio: "1 / 1",
         backgroundSize: "400% 200%",
         grid: "4x2",
         physicalCells: 8,
@@ -438,6 +448,7 @@
 
       bodyParts: {
         file: "images/BodyParts.webp",
+        cellAspectRatio: "1 / 2",
         backgroundSize: "400% 200%",
         grid: "4x2",
         physicalCells: 8,
@@ -448,6 +459,7 @@
 
       animals: {
         file: "images/animals.webp",
+        cellAspectRatio: "1 / 1",
         backgroundSize: "600% 300%",
         grid: "6x3",
         physicalCells: 18,
@@ -458,6 +470,7 @@
 
       animalsExtra: {
         file: "images/animals-extra.webp",
+        cellAspectRatio: "1 / 1",
         sizeOverrides: { owl: "210% 315%" },
         backgroundSize: "200% 300%",
         grid: "2x3",
@@ -469,6 +482,7 @@
 
       days: {
         file: "images/days.webp",
+        cellAspectRatio: "1 / 1",
         backgroundSize: "400% 200%",
         grid: "4x2",
         physicalCells: 8,
@@ -479,6 +493,7 @@
 
       weather: {
         file: "images/weather.webp",
+        cellAspectRatio: "1 / 1",
         backgroundSize: "300% 200%",
         grid: "3x2",
         physicalCells: 6,
@@ -489,6 +504,7 @@
 
       clothes: {
         file: "images/clothes.webp",
+        cellAspectRatio: "1 / 1",
         backgroundSize: "300% 200%",
         grid: "3x2",
         physicalCells: 6,
@@ -499,6 +515,7 @@
 
       playActivities: {
         file: "images/activities.webp",
+        cellAspectRatio: "1 / 1",
         backgroundSize: "200% 200%",
         grid: "2x2",
         physicalCells: 4,
