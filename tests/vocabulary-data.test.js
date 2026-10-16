@@ -184,14 +184,22 @@ assert.doesNotMatch(classroomSource, /lastTextFitKey/,
   "do not cache a width measurement made before layout or fonts settle");
 assert.match(classroomSource, /textMeasure\.getBoundingClientRect\(\)\.width/,
   "measure unclipped text in an independent natural-size node");
-assert.match(classroomSource, /textMeasure\.style/,
-  "separate measurement is excluded from flashcard layout");
+assert.match(classroomSource, /elements\.flashcard\.append\(textMeasure\)/,
+  "hidden text measurement is outside the answer-area flex layout");
+assert.doesNotMatch(classroomSource, /elements\.answerArea\.append\(textMeasure\)/,
+  "never add measuring text as an answer-area flex child");
+assert.match(classroomSource, /position: "fixed"/,
+  "measurement never consumes stage layout space");
 assert.match(classroomSource, /document\.fonts\.addEventListener\("loadingdone"/,
   "refit after handwriting font finishes loading");
 assert.match(classroomSource, /if \(artworkFitScheduled\) return;/,
   "refit requests should be coalesced into one animation frame");
-assert.match(classroomSource, /Math\.max\(28, desired\)/,
-  "keep a readable minimum and permit multi-line text"); 
+assert.match(classroomSource, /const oneLineFits =/,
+  "choose a single-line fit when room allows");
+assert.match(classroomSource, /Math\.max\(minimum, Math\.min\(widthFit, heightFit\)\)/,
+  "text fitting accounts for both stage width and available height");
+assert.match(classroomSource, /dimensions\.height - verticalPadding - textHeight - gap - 24/,
+  "picture must reserve space for the complete sentence and padding");
 assert.match(sharedCssSource, /white-space: normal;[\s\S]*?overflow-wrap: anywhere;/,
   "long phrases must wrap rather than clip while awaiting refit");
 
