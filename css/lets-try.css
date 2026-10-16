@@ -1461,18 +1461,18 @@ html.shared-unit-template .display-text {
 
 /* Unit 2 uses portrait artwork, so reserve enough vertical room for
    HandwritingWeCan descenders in Picture + Text mode. */
-html.shared-unit-template[data-unit="2"] .flashcard:not(.picture-only):not(.text-only) .picture-frame {
+html.shared-unit-template[data-book="lt1"][data-unit="2"] .flashcard:not(.picture-only):not(.text-only) .picture-frame {
   width: calc(min(43vh, 40vw, 500px) * var(--picture-scale));
 }
 
-html.shared-unit-template[data-unit="2"] .flashcard:not(.picture-only) .display-text {
+html.shared-unit-template[data-book="lt1"][data-unit="2"] .flashcard:not(.picture-only) .display-text {
   padding-bottom: .14em;
   line-height: 1.12;
 }
 
 /* Portrait-safe Picture Only sizing: use the available height rather than
    treating the portrait frame like a square/landscape picture. */
-html.shared-unit-template[data-unit="2"] .flashcard.picture-only .picture-frame {
+html.shared-unit-template[data-book="lt1"][data-unit="2"] .flashcard.picture-only .picture-frame {
   width: auto;
   height: calc(min(72vh, 760px) * var(--picture-scale));
   max-width: 92%;
