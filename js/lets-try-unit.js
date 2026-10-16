@@ -1190,6 +1190,8 @@
 
       function renderCardText(element, card) {
         const text = cardText(card);
+        // Rendering resets the text's natural size, so invalidate its fit once.
+        lastTextFitKey = null;
         element.replaceChildren();
         // The shared stage-fitting pass handles long phrases in every unit.
         element.style.fontSize = "";
@@ -1472,15 +1474,27 @@
       // Measure the actual rendered handwriting, including apostrophes and
       // punctuation. Shrink only overlong lines so no lesson text is cut off
       // by the stage edge. This applies to both picture+phrase and word-only.
+      // Text fitting must be idempotent. Observing a text element and resetting
+      // its font on every measurement creates a resize feedback loop: full size
+      // -> shrink -> resize callback -> full size -> shrink ("pulsating").
+      // Only remeasure when the text, layout width or size preference changes.
+      let lastTextFitKey = null;
       function fitFlashcardText() {
         const text = elements.displayText;
+        const area = elements.answerArea;
+        const rect = area.getBoundingClientRect();
+        const key = [
+          text.textContent, state.displayMode, state.sizeBalance,
+          Math.round(rect.width * 10) / 10
+        ].join("|");
+        if (key === lastTextFitKey) return;
+        if (rect.width < 80) return;
+        lastTextFitKey = key;
+        // The initial size is always measured once at the natural CSS size.
         text.style.fontSize = "";
         text.style.whiteSpace = "nowrap";
         text.style.maxWidth = "";
         if (getComputedStyle(text).display === "none" || !text.textContent) return;
-        const area = elements.answerArea;
-        const rect = area.getBoundingClientRect();
-        if (rect.width < 80) return;
         const style = getComputedStyle(area);
         const available = Math.max(60, rect.width
           - (parseFloat(style.paddingLeft) || 0)
@@ -1494,8 +1508,6 @@
         if (text.scrollWidth > available) {
           text.style.whiteSpace = "normal";
           text.style.maxWidth = Math.floor(available) + "px";
-        } else {
-          text.style.maxWidth = "";
         }
       }
 
@@ -1549,8 +1561,15 @@
         frame.style.height = Math.floor(width / ratio) + "px";
       }
 
+      let artworkFitScheduled = false;
       function scheduleFlashcardArtworkFit() {
-        requestAnimationFrame(fitFlashcardArtwork);
+        // Collapse repeated resize/observer callbacks into one measurement.
+        if (artworkFitScheduled) return;
+        artworkFitScheduled = true;
+        requestAnimationFrame(() => {
+          artworkFitScheduled = false;
+          fitFlashcardArtwork();
+        });
       }
 
       function renderFlashcards() {
@@ -2509,11 +2528,15 @@
       // Refit after rotation, window resizing and font/layout changes.
       if (typeof ResizeObserver === "function") {
         const artLayoutObserver = new ResizeObserver(scheduleFlashcardArtworkFit);
+        // Do not observe displayText: fitting it changes its own dimensions.
+        // Observing the stage and the window is sufficient.
         artLayoutObserver.observe(elements.answerArea);
-        artLayoutObserver.observe(elements.displayText);
       }
       if (document.fonts && document.fonts.ready) {
-        document.fonts.ready.then(scheduleFlashcardArtworkFit);
+        document.fonts.ready.then(() => {
+          lastTextFitKey = null; // the handwriting font may load after first fit
+          scheduleFlashcardArtworkFit();
+        });
       }
       window.addEventListener("resize", () => {
         scheduleFlashcardArtworkFit();
