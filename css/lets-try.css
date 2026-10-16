@@ -2776,3 +2776,15 @@ html.shared-unit-template .display-text{
   box-sizing:border-box;
   padding-inline:.08em;
 }
+
+
+/* Long words/sentences must never be cut off at the stage edge.
+   JavaScript measures text at its natural size in a separate hidden node;
+   ordinary wrapping remains the fallback while fonts/layout finish loading. */
+html.shared-unit-template .flashcard .answer-area > .display-text:not([aria-hidden="true"]) {
+  min-width: 0;
+  max-width: calc(100% - 24px);
+  white-space: normal;
+  overflow-wrap: anywhere;
+  text-wrap: balance;
+}
