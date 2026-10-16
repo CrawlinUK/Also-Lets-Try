@@ -70,9 +70,11 @@
     menuFile: "lets_try_2.html",
     defaultPrompt: "Let’s ~",
     phraseSwitch: {
-      initial: "lets",
+      // Start by showing all selected vocabulary; focus modes are optional.
+      initial: "all",
       includeUnassigned: true,
       modes: [
+        { id: "all", label: "All words" },
         { id: "lets", label: "Let’s ~" },
         { id: "weather", label: "It’s ~" }
       ]
