@@ -933,6 +933,7 @@
     return {
       src: assetUrl(sheet.file),
       size: sheet.sizeOverrides?.[itemId] || sheet.backgroundSize,
+      aspectRatio: sheet.cellAspectRatio || "1 / 1",
       position: properties.position,
       flip: Boolean(properties.flip),
       cropTop: properties.cropTop || 0,
