@@ -1714,7 +1714,8 @@ html.shared-unit-template[data-unit="3"] .game-picture.text-visual {
    as the Alphabet Board. Keep the single letter large in flashcards and
    readable when all 26 letters are shown in grid games. */
 html.shared-unit-template[data-unit="6"] .card-picture.text-visual {
-  font-size: clamp(150px, 30vw, 380px);
+  /* Use the larger TV flashcard frame without affecting alphabet grid games. */
+  font-size: clamp(150px, 34vw, 440px);
   font-weight: 500;
 }
 
