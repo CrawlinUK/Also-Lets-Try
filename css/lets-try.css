@@ -2758,3 +2758,21 @@ html.shared-unit-template[data-book="categories"] .site-title .unit-number {
 html.shared-unit-template[data-book="categories"] .site-title {
   gap: 0;
 }
+
+
+/* Unit-specific office-name option; only shown when a unit opts in. */
+html.shared-unit-template .school-shortening-section[hidden]{display:none!important}
+html.shared-unit-template .school-shortening-button{
+  min-height:42px;width:100%;padding:8px 12px;border:1px solid var(--line);
+  border-radius:10px;background:#f3f7f9;color:var(--ink);
+  font:inherit;font-weight:800;cursor:pointer
+}
+html.shared-unit-template .school-shortening-button[aria-pressed="true"]{
+  background:#def3e7;border-color:#32a46d
+}
+/* Preserve right-hand punctuation; the shared text fit measures long phrases
+   and provides a little extra breathing room at each edge. */
+html.shared-unit-template .display-text{
+  box-sizing:border-box;
+  padding-inline:.08em;
+}
