@@ -44,6 +44,13 @@ main{max-width:1440px;margin:auto;padding:18px 20px 40px}
 .zoom-controls .zoom-number input{width:100%;min-height:43px;border:1px solid #9cabb5;border-radius:9px;padding:8px;font:inherit}
 @media(max-width:380px){.zoom-controls{grid-template-columns:minmax(0,1fr) 82px}}
 .settings .two-cols{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.nudge-tool{display:flex;align-items:end;justify-content:space-between;gap:14px;flex-wrap:wrap;margin-top:10px;padding:10px;border:1px solid #dbe5eb;border-radius:10px;background:#f8fbfd}
+.nudge-title{display:block;font-size:13px;font-weight:900;margin-bottom:6px}
+.nudge-grid{display:grid;grid-template-columns:repeat(3,44px);grid-template-rows:repeat(3,40px);gap:5px}
+.nudge-grid button{min-height:40px;min-width:44px;padding:4px;font-size:20px;line-height:1}
+.nudge-grid .nudge-blank{visibility:hidden}
+.nudge-step{min-width:110px}
+.nudge-step select{min-height:40px}
 .buttons{display:flex;flex-wrap:wrap;gap:8px}
 button.action{font:inherit;min-height:43px;border:1px solid #9cabb5;border-radius:9px;padding:9px 13px;background:#f0f6f9;color:#17232b;font-weight:800;cursor:pointer}
 button.primary{background:#1687df;border-color:#1687df;color:#fff}
@@ -77,7 +84,7 @@ button.action:focus-visible,#sheetCanvas:focus-visible,.strip button:focus-visib
   <p class="small-note">Temporarily hide all blue and orange outlines to check every edge. Your selection stays active.</p>
 </div>
 <div id="canvasWrap" class="canvas-wrap"><canvas id="sheetCanvas" width="2000" height="1000" tabindex="0" aria-label="Sprite sheet: select or drag within a cell to position a picture"></canvas></div>
-<p class="help"><strong>How to use:</strong> Drop images onto cells, or tap an empty cell to upload. Tap a filled cell to select it; drag its picture to reposition. Use <strong>Inspect without outlines</strong> to check for tiny pieces crossing the edge; guides never appear in exports. Every image is clipped inside its own cell and the chosen margin.</p>
+<p class="help"><strong>How to use:</strong> Drop images onto cells, or tap an empty cell to upload. Tap a filled cell to select it; drag its picture to reposition, then use <strong>Precision nudge</strong> for final alignment. Use <strong>Inspect without outlines</strong> to check every edge; guides never appear in exports. Every image is clipped inside its own cell and the chosen margin.</p>
 <div class="strip" id="cellStrip" aria-label="Grid cell list"></div>
 </section>
 <aside class="panel settings" aria-label="Grid settings">
@@ -99,14 +106,32 @@ button.action:focus-visible,#sheetCanvas:focus-visible,.strip button:focus-visib
     <label class="zoom-number">Zoom (%)<input id="scaleNumber" type="number" min="25" max="1200" step="1" value="100" inputmode="numeric"></label>
   </div>
   <div class="two-cols" style="margin-top:8px">
-    <label>Horizontal offset (% of cell)<input id="offsetX" type="number" step="1" min="-1000" max="1000" value="0"></label>
-    <label>Vertical offset (% of cell)<input id="offsetY" type="number" step="1" min="-1000" max="1000" value="0"></label>
+    <label>Horizontal offset (% of cell)<input id="offsetX" type="number" step="0.1" min="-1000" max="1000" value="0"></label>
+    <label>Vertical offset (% of cell)<input id="offsetY" type="number" step="0.1" min="-1000" max="1000" value="0"></label>
+  </div>
+  <div class="nudge-tool">
+    <div>
+      <span class="nudge-title">Precision nudge</span>
+      <div class="nudge-grid" role="group" aria-label="Nudge selected image">
+        <span class="nudge-blank"></span><button class="action nudge-button" type="button" data-nudge-y="-1" aria-label="Nudge up">↑</button><span class="nudge-blank"></span>
+        <button class="action nudge-button" type="button" data-nudge-x="-1" aria-label="Nudge left">←</button><span class="nudge-blank"></span><button class="action nudge-button" type="button" data-nudge-x="1" aria-label="Nudge right">→</button>
+        <span class="nudge-blank"></span><button class="action nudge-button" type="button" data-nudge-y="1" aria-label="Nudge down">↓</button><span class="nudge-blank"></span>
+      </div>
+    </div>
+    <label class="nudge-step">Nudge step
+      <select id="nudgeStep">
+        <option value="0.1" selected>0.1%</option>
+        <option value="0.25">0.25%</option>
+        <option value="0.5">0.5%</option>
+        <option value="1">1%</option>
+      </select>
+    </label>
   </div>
   <div class="buttons" style="margin-top:10px">
     <button class="action" id="resetCell" type="button">Reset placement</button>
     <button class="action" id="swapCell" type="button">Move / Swap cell</button>
   </div>
-  <p class="small-note">Width and height always change together. For existing full sprite sheets, use 400–600% (or more) zoom and drag to the right picture. Expanded offsets let you reach edge cells. Artwork remains clipped to the selected cell.</p>
+  <p class="small-note">Width and height always change together. For existing full sprite sheets, use 400–600% (or more) zoom and drag to the right picture. Use Precision nudge for final alignment; arrow keys use the chosen nudge step, and Shift + arrow moves 10× that amount. Artwork remains clipped to the selected cell.</p>
 </section>
 <hr class="divider">
 <section>
@@ -165,8 +190,8 @@ function renderOn(target, includeGuides){
   for(let c=1;c<cols;c++){target.beginPath();target.moveTo(c*cell,0);target.lineTo(c*cell,h);target.stroke();}
   for(let r=1;r<rows;r++){target.beginPath();target.moveTo(0,r*cell);target.lineTo(w,r*cell);target.stroke();}
   const sx=(selected%cols)*cell,sy=Math.floor(selected/cols)*cell;
-  target.strokeStyle="rgba(0,125,210,.94)";target.lineWidth=Math.max(4,cell/100);
-  target.strokeRect(sx+target.lineWidth/2,sy+target.lineWidth/2,cell-target.lineWidth,cell-target.lineWidth);
+  // Do not draw a selection border over the selected cell: it can hide edge pixels.
+  // Selection remains visible in the cell strip and Selected cell panel.
   target.setLineDash([cell/40,cell/65]);target.strokeStyle="rgba(247,128,56,.55)";
   // Draw the inner safe-area guide *outside* the clipped artwork,
   // inside the blank margin. Do not cover the first pixels of a picture.
@@ -208,6 +233,7 @@ function select(i){
  $("scaleValue").textContent=$("scale").value+"%";
  $("offsetX").value=s?fmt(s.x):0;$("offsetY").value=s?fmt(s.y):0;
  $("removeImage").disabled=!s;$("resetCell").disabled=!s;
+ for(const button of document.querySelectorAll(".nudge-button"))button.disabled=!s;
  updateSelection();draw();
 }
 function updateSelection(){for(const button of $("cellStrip").children)button.setAttribute("aria-pressed",String(Number(button.dataset.cell)===selected));}
@@ -284,6 +310,17 @@ $("scaleNumber").addEventListener("change",()=>{
 for(const [id,key] of [["offsetX","x"],["offsetY","y"]])$(id).addEventListener("input",()=>{
  const s=slots[selected];if(!s)return;const num=Number($(id).value);if(!Number.isFinite(num))return;s[key]=Math.max(-MAX_OFFSET,Math.min(MAX_OFFSET,num));draw();
 });
+function nudgeSelected(dx,dy,multiplier=1){
+ const s=slots[selected];if(!s)return;
+ const configured=Number($("nudgeStep").value);
+ const step=(Number.isFinite(configured)&&configured>0?configured:.1)*multiplier;
+ s.x=Math.max(-MAX_OFFSET,Math.min(MAX_OFFSET,fmt(s.x+dx*step)));
+ s.y=Math.max(-MAX_OFFSET,Math.min(MAX_OFFSET,fmt(s.y+dy*step)));
+ $("offsetX").value=fmt(s.x);$("offsetY").value=fmt(s.y);draw();
+}
+for(const button of document.querySelectorAll(".nudge-button"))button.addEventListener("click",()=>{
+ nudgeSelected(Number(button.dataset.nudgeX||0),Number(button.dataset.nudgeY||0));
+});
 $("resetCell").addEventListener("click",()=>{const s=slots[selected];if(!s)return;s.x=0;s.y=0;s.zoom=1;select(selected);});
 $("swapCell").addEventListener("click",()=>{
  const raw=prompt("Move or swap this picture with cell number (1 to "+cellCount()+"):",String(selected+1));if(raw===null)return;
@@ -343,14 +380,14 @@ function endPointer(event){
 canvas.addEventListener("pointerup",endPointer);
 canvas.addEventListener("pointercancel",()=>{pointer=null;canvas.classList.remove("dragging");});
 canvas.addEventListener("keydown",event=>{
- const s=slots[selected];if(!s)return;
- const step=event.shiftKey?5:1;
- if(event.key==="ArrowLeft")s.x=Math.max(-MAX_OFFSET,s.x-step);
- else if(event.key==="ArrowRight")s.x=Math.min(MAX_OFFSET,s.x+step);
- else if(event.key==="ArrowUp")s.y=Math.max(-MAX_OFFSET,s.y-step);
- else if(event.key==="ArrowDown")s.y=Math.min(MAX_OFFSET,s.y+step);
+ if(!slots[selected])return;
+ const multiplier=event.shiftKey?10:1;
+ if(event.key==="ArrowLeft")nudgeSelected(-1,0,multiplier);
+ else if(event.key==="ArrowRight")nudgeSelected(1,0,multiplier);
+ else if(event.key==="ArrowUp")nudgeSelected(0,-1,multiplier);
+ else if(event.key==="ArrowDown")nudgeSelected(0,1,multiplier);
  else return;
- event.preventDefault();select(selected);
+ event.preventDefault();
 });
 let dragDepth=0;
 wrap.addEventListener("dragenter",event=>{event.preventDefault();dragDepth++;wrap.classList.add("file-target");});
