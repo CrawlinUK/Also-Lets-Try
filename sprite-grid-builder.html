@@ -26,6 +26,9 @@ main{max-width:1440px;margin:auto;padding:18px 20px 40px}
 #sheetCanvas{display:block;width:100%;height:auto;touch-action:none;cursor:grab}
 #sheetCanvas.dragging{cursor:grabbing}
 .canvas-wrap.file-target{border-color:#1687df;box-shadow:0 0 0 4px #c9eaff}
+.canvas-tools{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:9px;margin:0 0 10px}
+.canvas-tools .action{min-height:40px}
+.canvas-tools .small-note{flex:1;margin:0}
 .help{margin:10px 0 0;color:#4d5e69;font-size:14px;line-height:1.45}
 .strip{display:grid;gap:7px;margin:12px 0}
 .strip button{min-height:54px;min-width:0;border:1px solid #ced9e0;border-radius:10px;background:#f8fafc;padding:7px;font:inherit;text-align:left;overflow:hidden;cursor:pointer}
@@ -69,8 +72,12 @@ button.action:focus-visible,#sheetCanvas:focus-visible,.strip button:focus-visib
   <label>Cell size<select id="cellSize"><option>300</option><option>400</option><option selected>500</option><option>600</option><option>800</option></select></label>
   <label>Inner margin<select id="margin"><option value="0">0%</option><option value="4">4%</option><option value="6">6%</option><option selected value="8">8%</option><option value="10">10%</option><option value="12">12%</option></select></label>
 </div>
+<div class="canvas-tools">
+  <button class="action" id="inspectButton" type="button" aria-pressed="false">Inspect without outlines</button>
+  <p class="small-note">Temporarily hide all blue and orange outlines to check every edge. Your selection stays active.</p>
+</div>
 <div id="canvasWrap" class="canvas-wrap"><canvas id="sheetCanvas" width="2000" height="1000" tabindex="0" aria-label="Sprite sheet: select or drag within a cell to position a picture"></canvas></div>
-<p class="help"><strong>How to use:</strong> Drop images onto cells, or tap an empty cell to upload. Tap a filled cell to select it; drag its picture to reposition. The blue guides are for editing only—they will not be exported. Every image is clipped inside its own cell and the chosen margin.</p>
+<p class="help"><strong>How to use:</strong> Drop images onto cells, or tap an empty cell to upload. Tap a filled cell to select it; drag its picture to reposition. Use <strong>Inspect without outlines</strong> to check for tiny pieces crossing the edge; guides never appear in exports. Every image is clipped inside its own cell and the chosen margin.</p>
 <div class="strip" id="cellStrip" aria-label="Grid cell list"></div>
 </section>
 <aside class="panel settings" aria-label="Grid settings">
@@ -161,8 +168,14 @@ function renderOn(target, includeGuides){
   target.strokeStyle="rgba(0,125,210,.94)";target.lineWidth=Math.max(4,cell/100);
   target.strokeRect(sx+target.lineWidth/2,sy+target.lineWidth/2,cell-target.lineWidth,cell-target.lineWidth);
   target.setLineDash([cell/40,cell/65]);target.strokeStyle="rgba(247,128,56,.55)";
+  // Draw the inner safe-area guide *outside* the clipped artwork,
+  // inside the blank margin. Do not cover the first pixels of a picture.
   const inner=padding*cell/100;target.lineWidth=Math.max(1,cell/350);
-  target.strokeRect(sx+inner,sy+inner,cell-2*inner,cell-2*inner);
+  const gap=Math.max(3*target.lineWidth,cell/150);
+  if(inner>gap+target.lineWidth){
+   const guideEdge=inner-gap;
+   target.strokeRect(sx+guideEdge,sy+guideEdge,cell-2*guideEdge,cell-2*guideEdge);
+  }
   target.restore();
  }
 }
@@ -280,7 +293,20 @@ $("swapCell").addEventListener("click",()=>{
  buildStrip();select(to);status("Moved/swapped cells.");
 });
 for(const id of ["columns","rows","cellSize","margin"])$(id).addEventListener("change",changeGrid);
-$("guides").addEventListener("change",()=>{settings.guides=$("guides").checked;draw();});
+function syncGuideDisplay(){
+ $("guides").checked=settings.guides;
+ $("inspectButton").textContent=settings.guides?"Inspect without outlines":"Show editing outlines";
+ $("inspectButton").setAttribute("aria-pressed",String(!settings.guides));
+ draw();
+}
+$("inspectButton").addEventListener("click",()=>{
+ settings.guides=!settings.guides;
+ syncGuideDisplay();
+});
+$("guides").addEventListener("change",()=>{
+ settings.guides=$("guides").checked;
+ syncGuideDisplay();
+});
 $("transparent").addEventListener("change",()=>{settings.transparent=$("transparent").checked;draw();});
 function cellAt(event){
  const rect=canvas.getBoundingClientRect();
@@ -370,6 +396,7 @@ $("clearAll").addEventListener("click",()=>{
  slots=Array.from({length:cellCount()},()=>null);names=Array.from({length:cellCount()},()=>"");buildStrip();select(0);status("All cells cleared.");
 });
 rebuildCanvas();
+syncGuideDisplay();
 })();
 </script>
 </body>
