@@ -733,7 +733,9 @@
 
       function phraseSwitchCardActive(card) {
         const config = UNIT_CONFIG.phraseSwitch;
-        if (!config) return true;
+        // An explicit All words mode always respects the teacher's selections.
+        // Other modes remain optional focus filters for specific phrases.
+        if (!config || state.phraseSwitchMode === "all") return true;
         if (!card.phraseMode) return config.includeUnassigned !== false;
         return card.phraseMode === state.phraseSwitchMode;
       }
