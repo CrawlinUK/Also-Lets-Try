@@ -175,6 +175,16 @@ assert.match(classroomSource, /value="pictureLets"/,
   "Let's phrase choice is in Settings");
 assert.match(classroomSource, /function fitFlashcardText\(\)/,
   "shared classroom text must fit the available width");
+// The text itself must NEVER be a ResizeObserver target: shrinking it
+// would trigger the callback again and make it pulse indefinitely.
+assert.doesNotMatch(classroomSource,
+  /artLayoutObserver\.observe\(elements\.displayText\)/,
+  "do not observe the element being resized");
+assert.match(classroomSource, /if \(key === lastTextFitKey\) return;/,
+  "unchanged text/layout must not reset its font repeatedly");
+assert.match(classroomSource, /if \(artworkFitScheduled\) return;/,
+  "refit requests should be coalesced into one animation frame");
+
 assert.match(classroomSource, /text\.scrollWidth > available/,
   "overlong text must be measured rather than clipped");
 
