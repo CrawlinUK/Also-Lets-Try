@@ -1472,61 +1472,81 @@
         elements.nextButton.classList.add("game-action");
       }
 
-      // Measure the natural-size text offscreen instead of expanding the
-      // visible flashcard to measure it. The visible text never participates in
-      // its own measurement, so late font loading and layout changes cannot
-      // leave a cached, oversized line clipped at the right edge.
+      // Measure text independently of the answer-area flex layout.
+      // The hidden probe must NEVER be a flex child of the answer area:
+      // it can otherwise influence its intrinsic size and make the picture
+      // and multi-line text extend beyond the visible stage.
       const textMeasure = document.createElement("div");
       textMeasure.className = "display-text";
       textMeasure.setAttribute("aria-hidden", "true");
       Object.assign(textMeasure.style, {
-        position: "absolute",
+        position: "fixed",
+        left: "-100000px",
+        top: "0",
         width: "max-content",
         maxWidth: "none",
-        minWidth: "max-content",
+        minWidth: "0",
         height: "auto",
         whiteSpace: "nowrap",
+        overflowWrap: "normal",
+        textWrap: "nowrap",
         visibility: "hidden",
         pointerEvents: "none"
       });
-      elements.answerArea.append(textMeasure);
+      // Same font rules as the flashcard but outside its layout.
+      elements.flashcard.append(textMeasure);
 
       function fitFlashcardText() {
         const text = elements.displayText;
         const area = elements.answerArea;
         if (!text.textContent || getComputedStyle(text).display === "none") return;
-
-        const rect = area.getBoundingClientRect();
-        if (rect.width < 80) return;
-        const areaStyle = getComputedStyle(area);
-        const available = Math.max(60, (
-          rect.width
-          - (parseFloat(areaStyle.paddingLeft) || 0)
-          - (parseFloat(areaStyle.paddingRight) || 0)
-          - 32
+        const dimensions = area.getBoundingClientRect();
+        if (dimensions.width < 80 || dimensions.height < 80) return;
+        const styles = getComputedStyle(area);
+        const availableWidth = Math.max(60, (
+          dimensions.width
+          - (parseFloat(styles.paddingLeft) || 0)
+          - (parseFloat(styles.paddingRight) || 0) - 36
         ) * .94);
-
-        // Both nodes inherit the same handwriting font and text-size settings.
-        // Unlike the real label, the measuring node is always one line and is
-        // removed from the flex layout. Its width includes the whole sentence.
+        const availableHeight = Math.max(50, (
+          dimensions.height
+          - (parseFloat(styles.paddingTop) || 0)
+          - (parseFloat(styles.paddingBottom) || 0)
+        ));
+        // Update the probe on every new card, but never reset the visible
+        // text to huge size during a ResizeObserver callback.
         if (textMeasure.textContent !== text.textContent) {
           textMeasure.textContent = text.textContent;
         }
-        const naturalSize = parseFloat(getComputedStyle(textMeasure).fontSize);
-        const naturalWidth = textMeasure.getBoundingClientRect().width;
-        if (!naturalSize || !naturalWidth) return;
+        const measureStyles = getComputedStyle(textMeasure);
+        const naturalSize = parseFloat(measureStyles.fontSize);
+        const naturalWidth = Math.max(
+          textMeasure.getBoundingClientRect().width, textMeasure.scrollWidth
+        );
+        if (!(naturalSize > 0) || !(naturalWidth > 0)) return;
 
-        // Aim for a single line. If this would make letters unreadably small,
-        // keep a reasonable minimum and let the real label wrap safely.
-        const desired = naturalWidth > available
-          ? Math.floor(naturalSize * available / naturalWidth * .96)
-          : naturalSize;
-        const fittedSize = Math.min(naturalSize, Math.max(28, desired));
-        const nextFontSize = fittedSize < naturalSize - 1
-          ? fittedSize + "px" : "";
-        if (text.style.fontSize !== nextFontSize) {
-          text.style.fontSize = nextFontSize;
-        }
+        // Prefer one readable line; shrink to fit it within the *actual*
+        // stage width. A one-line label also cannot consume the image's
+        // vertical allowance when the window or font changes.
+        const widthFit = Math.floor(
+          naturalSize * availableWidth / naturalWidth * .94
+        );
+        const heightFit = Math.floor(
+          availableHeight * (state.displayMode === "text" ? .72 : .26) / 1.16
+        );
+        const minimum = 22;
+        const fontSize = Math.min(naturalSize, Math.max(
+          minimum, Math.min(widthFit, heightFit)
+        ));
+        const oneLineFits = naturalWidth * fontSize / naturalSize
+          <= availableWidth * .995;
+        const nextFontSize = fontSize >= naturalSize - 1
+          ? "" : fontSize + "px";
+        const nextWhiteSpace = oneLineFits ? "nowrap" : "normal";
+        const nextMaxWidth = Math.floor(availableWidth) + "px";
+        if (text.style.fontSize !== nextFontSize) text.style.fontSize = nextFontSize;
+        if (text.style.whiteSpace !== nextWhiteSpace) text.style.whiteSpace = nextWhiteSpace;
+        if (text.style.maxWidth !== nextMaxWidth) text.style.maxWidth = nextMaxWidth;
       }
 
       // Fit each flashcard picture into the space left after its text.
@@ -1567,8 +1587,13 @@
         // are not reduced. The picture/text balance preference still applies.
         const availableWidth = Math.max(0, dimensions.width - horizontalPadding) * .985;
         const availableHeight = Math.max(0,
-          dimensions.height - verticalPadding - textHeight - gap) * .985;
-        if (availableWidth < 40 || availableHeight < 40) return;
+          dimensions.height - verticalPadding - textHeight - gap - 24) * .98;
+        if (availableWidth < 40 || availableHeight < 40) {
+          // Don't leave a previous card's oversized picture in place.
+          frame.style.width = "0px";
+          frame.style.height = "0px";
+          return;
+        }
 
         const scale = Number(getComputedStyle(document.documentElement)
           .getPropertyValue("--picture-scale")) || 1;
