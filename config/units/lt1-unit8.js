@@ -127,7 +127,7 @@
     optionLabel: word,
     teacherAnswer: word,
     textbook: true,
-    underlineToken: AN_ARTICLE_IDS.has(id) ? "an" : "",
+    // No underline on "an": the underline looked like a stray black mark.
     visual: visualFor(category, id)
   }));
 
