@@ -12,7 +12,7 @@
       id: entry.id,
       category: "dailyTimes",
       word,
-      sentence: word,
+      sentence: "It’s " + word + ".",
       alternate: word,
       optionLabel: word,
       teacherAnswer: word,
@@ -55,12 +55,12 @@
     defaultPrompt: "What time is it?",
     selectionHeading: "Activities and clocks",
     wordLabel: "Word",
-    sentenceLabel: "Phrase",
+    sentenceLabel: "It’s ~",
     alternateLabel: "Word",
     displayModeLabels: {
       pictureText: "Picture + word",
       picture: "Picture only",
-      pictureSentence: "Picture + phrase",
+      pictureSentence: "Picture + It’s",
       text: "Word only"
     },
     pictureAspectRatio: "1 / 1",
