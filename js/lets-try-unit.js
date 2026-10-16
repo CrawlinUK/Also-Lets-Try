@@ -1307,7 +1307,26 @@
 
       function rebuildDeck() {
         stopAuto();
-        state.deck = selectedCards();
+        let cards = selectedCards();
+        // When the current phrase has no selected cards, follow the selected
+        // vocabulary into a phrase that does. This fixes Weather-only
+        // selections opening an empty "Let's ~" deck in LT2 Unit 2.
+        const modes = UNIT_CONFIG.phraseSwitch?.modes;
+        if (!cards.length && Array.isArray(modes)) {
+          const previous = state.phraseSwitchMode;
+          for (const mode of modes) {
+            if (mode.id === previous) continue;
+            state.phraseSwitchMode = mode.id;
+            const available = selectedCards();
+            if (available.length) {
+              cards = available;
+              syncPhraseSwitchButton();
+              break;
+            }
+          }
+          if (!cards.length) state.phraseSwitchMode = previous;
+        }
+        state.deck = cards;
         state.position = 0;
         resetGameState();
         render();
@@ -1427,15 +1446,19 @@
         const textHeight = textVisible ? elements.displayText.getBoundingClientRect().height : 0;
         const gap = textVisible ? (parseFloat(styles.rowGap) || 0) : 0;
 
-        const availableWidth = Math.max(0, dimensions.width - horizontalPadding) * .96;
+        // Use nearly all of the stage that remains after the word/phrase.
+        // The card still keeps a small safety border; the header and controls
+        // are not reduced. The picture/text balance preference still applies.
+        const availableWidth = Math.max(0, dimensions.width - horizontalPadding) * .985;
         const availableHeight = Math.max(0,
-          dimensions.height - verticalPadding - textHeight - gap) * .94;
+          dimensions.height - verticalPadding - textHeight - gap) * .985;
         if (availableWidth < 40 || availableHeight < 40) return;
 
         const scale = Number(getComputedStyle(document.documentElement)
           .getPropertyValue("--picture-scale")) || 1;
         const width = Math.min(availableWidth, availableHeight * ratio)
           * Math.min(1, Math.max(.4, scale));
+        frame.style.aspectRatio = ratioText;
         frame.style.width = Math.floor(width) + "px";
         frame.style.height = Math.floor(width / ratio) + "px";
       }
