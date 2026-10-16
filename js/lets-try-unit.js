@@ -1190,11 +1190,12 @@
 
       function renderCardText(element, card) {
         const text = cardText(card);
-        // Rendering resets the text's natural size, so invalidate its fit once.
-        lastTextFitKey = null;
+        // Start each card at its natural CSS size. The separate measuring node
+        // determines the fitted size after this card's text is rendered.
         element.replaceChildren();
-        // The shared stage-fitting pass handles long phrases in every unit.
         element.style.fontSize = "";
+        element.style.whiteSpace = "";
+        element.style.maxWidth = "";
 
         if (
           card
@@ -1471,43 +1472,60 @@
         elements.nextButton.classList.add("game-action");
       }
 
-      // Measure the actual rendered handwriting, including apostrophes and
-      // punctuation. Shrink only overlong lines so no lesson text is cut off
-      // by the stage edge. This applies to both picture+phrase and word-only.
-      // Text fitting must be idempotent. Observing a text element and resetting
-      // its font on every measurement creates a resize feedback loop: full size
-      // -> shrink -> resize callback -> full size -> shrink ("pulsating").
-      // Only remeasure when the text, layout width or size preference changes.
-      let lastTextFitKey = null;
+      // Measure the natural-size text offscreen instead of expanding the
+      // visible flashcard to measure it. The visible text never participates in
+      // its own measurement, so late font loading and layout changes cannot
+      // leave a cached, oversized line clipped at the right edge.
+      const textMeasure = document.createElement("div");
+      textMeasure.className = "display-text";
+      textMeasure.setAttribute("aria-hidden", "true");
+      Object.assign(textMeasure.style, {
+        position: "absolute",
+        width: "max-content",
+        maxWidth: "none",
+        minWidth: "max-content",
+        height: "auto",
+        whiteSpace: "nowrap",
+        visibility: "hidden",
+        pointerEvents: "none"
+      });
+      elements.answerArea.append(textMeasure);
+
       function fitFlashcardText() {
         const text = elements.displayText;
         const area = elements.answerArea;
+        if (!text.textContent || getComputedStyle(text).display === "none") return;
+
         const rect = area.getBoundingClientRect();
-        const key = [
-          text.textContent, state.displayMode, state.sizeBalance,
-          Math.round(rect.width * 10) / 10
-        ].join("|");
-        if (key === lastTextFitKey) return;
         if (rect.width < 80) return;
-        lastTextFitKey = key;
-        // The initial size is always measured once at the natural CSS size.
-        text.style.fontSize = "";
-        text.style.whiteSpace = "nowrap";
-        text.style.maxWidth = "";
-        if (getComputedStyle(text).display === "none" || !text.textContent) return;
-        const style = getComputedStyle(area);
-        const available = Math.max(60, rect.width
-          - (parseFloat(style.paddingLeft) || 0)
-          - (parseFloat(style.paddingRight) || 0) - 32) * .94;
-        const intrinsicWidth = Math.max(text.scrollWidth, text.getBoundingClientRect().width);
-        const originalSize = parseFloat(getComputedStyle(text).fontSize);
-        if (!(intrinsicWidth > available) || !originalSize) return;
-        const fitted = Math.floor(originalSize * available / intrinsicWidth * .97);
-        text.style.fontSize = Math.max(20, fitted) + "px";
-        // Very long sentences may need two lines instead of microscopic text.
-        if (text.scrollWidth > available) {
-          text.style.whiteSpace = "normal";
-          text.style.maxWidth = Math.floor(available) + "px";
+        const areaStyle = getComputedStyle(area);
+        const available = Math.max(60, (
+          rect.width
+          - (parseFloat(areaStyle.paddingLeft) || 0)
+          - (parseFloat(areaStyle.paddingRight) || 0)
+          - 32
+        ) * .94);
+
+        // Both nodes inherit the same handwriting font and text-size settings.
+        // Unlike the real label, the measuring node is always one line and is
+        // removed from the flex layout. Its width includes the whole sentence.
+        if (textMeasure.textContent !== text.textContent) {
+          textMeasure.textContent = text.textContent;
+        }
+        const naturalSize = parseFloat(getComputedStyle(textMeasure).fontSize);
+        const naturalWidth = textMeasure.getBoundingClientRect().width;
+        if (!naturalSize || !naturalWidth) return;
+
+        // Aim for a single line. If this would make letters unreadably small,
+        // keep a reasonable minimum and let the real label wrap safely.
+        const desired = naturalWidth > available
+          ? Math.floor(naturalSize * available / naturalWidth * .96)
+          : naturalSize;
+        const fittedSize = Math.min(naturalSize, Math.max(28, desired));
+        const nextFontSize = fittedSize < naturalSize - 1
+          ? fittedSize + "px" : "";
+        if (text.style.fontSize !== nextFontSize) {
+          text.style.fontSize = nextFontSize;
         }
       }
 
@@ -2532,11 +2550,16 @@
         // Observing the stage and the window is sufficient.
         artLayoutObserver.observe(elements.answerArea);
       }
-      if (document.fonts && document.fonts.ready) {
-        document.fonts.ready.then(() => {
-          lastTextFitKey = null; // the handwriting font may load after first fit
-          scheduleFlashcardArtworkFit();
-        });
+      if (document.fonts) {
+        // Fonts may finish loading *after* the first flashcard was measured.
+        // Both the initial readiness and subsequent loads must trigger a fit.
+        if (document.fonts.ready) {
+          document.fonts.ready.then(scheduleFlashcardArtworkFit);
+        }
+        if (typeof document.fonts.addEventListener === "function") {
+          document.fonts.addEventListener("loadingdone", scheduleFlashcardArtworkFit);
+          document.fonts.addEventListener("loadingerror", scheduleFlashcardArtworkFit);
+        }
       }
       window.addEventListener("resize", () => {
         scheduleFlashcardArtworkFit();
