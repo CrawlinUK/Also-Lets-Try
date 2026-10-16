@@ -189,6 +189,51 @@ rebuildWeather();
 assert.equal(weatherState.phraseSwitchMode, "lets", "Play-only selection activates Let's mode");
 assert.equal(weatherState.deck.length, 4, "Play-only selection displays four cards");
 
+// Counter must follow category selections by default. The phrase switch
+// is an explicit focus tool, not a hidden restriction on the initial deck.
+assert.equal(weatherUnit.phraseSwitch.initial, "all", "LT2 Unit 2 starts in All words");
+assert.deepEqual(Array.from(weatherUnit.phraseSwitch.modes, mode => mode.id),
+  ["all", "lets", "weather"], "All/Let's/It's are explicit teaching choices");
+const engineSource = source("js/lets-try-unit.js");
+const phraseActiveMatch = engineSource.match(
+  /      function phraseSwitchCardActive\(card\) \{[\s\S]*?\n      \}/
+);
+const selectedDeckMatch = engineSource.match(
+  /      function selectedCards\(\) \{[\s\S]*?\n      \}/
+);
+assert.ok(phraseActiveMatch && selectedDeckMatch, "shared phrase filters found");
+const selectionState = {
+  selectedIds: new Set(weatherUnit.cards.filter(card => card.textbook).map(card => card.id)),
+  phraseSwitchMode: weatherUnit.phraseSwitch.initial, deck: [], position: 0
+};
+const rebuildSelected = new Function("state", "UNIT_CONFIG", "stopAuto",
+  "syncPhraseSwitchButton", "resetGameState", "render",
+  phraseActiveMatch[0] + "\n" + selectedDeckMatch[0] + "\n" + rebuildSource +
+  "\nreturn rebuildDeck;"
+)(selectionState, weatherUnit, () => {}, () => {}, () => {}, () => {});
+function assertVisibleCount(expected, label) {
+  rebuildSelected();
+  assert.equal(selectionState.deck.length, expected, label);
+}
+assertVisibleCount(16, "Initially all 16 selected cards are shown");
+for (const group of ["playActivities", "clothes"]) {
+  weatherUnit.cards.filter(card => card.category === group)
+    .forEach(card => selectionState.selectedIds.delete(card.id));
+}
+assertVisibleCount(6, "Only Weather gives six cards");
+weatherUnit.cards.filter(card => card.category === "playActivities")
+  .forEach(card => selectionState.selectedIds.add(card.id));
+assertVisibleCount(10, "Adding four Play Activities gives ten cards");
+weatherUnit.cards.filter(card => card.category === "clothes")
+  .forEach(card => selectionState.selectedIds.add(card.id));
+assertVisibleCount(16, "Re-adding six Clothes returns to sixteen cards");
+selectionState.phraseSwitchMode = "lets";
+assertVisibleCount(10, "Opting into Let's focuses ten cards");
+selectionState.phraseSwitchMode = "weather";
+assertVisibleCount(12, "Opting into It's focuses twelve cards");
+selectionState.phraseSwitchMode = "all";
+assertVisibleCount(16, "Returning to All words restores sixteen cards");
+
 assert.doesNotMatch(sharedCssSource, /html\.shared-unit-template\[data-unit="2"\]/,
   "portrait size overrides cannot accidentally affect both books");
 assert.match(sharedCssSource, /\[data-book="lt1"\]\[data-unit="2"\]/,
@@ -209,4 +254,4 @@ assert.equal(unit4.cards.filter(card => card.category === "clockTimes" && card.t
   "LT2 Unit 4 clocks must remain optional");
 assert.ok(unit4.cards.every(card => card.visual?.position), "LT2 Unit 4 sprite positions");
 
-console.log("Vocabulary checks passed: 24 categories, shared ratios, LT2 Unit 2 Weather phrase switching, prior decks and Unit 4 clocks.");
+console.log("Vocabulary checks passed: 24 categories, shared ratios, LT2 Unit 2 selection counts and phrase modes, prior decks and Unit 4 clocks.");
