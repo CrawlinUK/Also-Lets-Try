@@ -159,10 +159,54 @@ assert.equal(unit5.cards.find(card => card.id === "noodle").word, "noodles");
 assert.match(unit5.cards.find(card => card.id === "sausage").visual.src, /fruit\.webp$/);
 assert.ok(unit5.cards.every(card => card.visual?.position), "LT1 Unit 5 image positions");
 
+// LT2 Unit 2 must not show an empty screen when only Weather is selected
+// while the former phrase mode was Let's. Exercise the actual shared rebuildDeck.
+const weatherUnit = config("config/units/lt2-unit2.js");
+checkDeck("LT2 Unit 2", weatherUnit.cards, 16, 16);
+const rebuildMatch = source("js/lets-try-unit.js").match(
+  /      function rebuildDeck\(\) \{[\s\S]*?\n      \}\n\n      function resetGameState\(\)/
+);
+assert.ok(rebuildMatch, "shared rebuildDeck must be present");
+const rebuildSource = rebuildMatch[0].replace(/\n\n      function resetGameState\(\)$/, "");
+const weatherState = {
+  selectedIds: new Set(weatherUnit.cards.filter(card => card.category === "weather").map(card => card.id)),
+  phraseSwitchMode: "lets", deck: [], position: 0
+};
+const visibleCards = () => weatherUnit.cards.filter(card =>
+  weatherState.selectedIds.has(card.id) &&
+  (!card.phraseMode || card.phraseMode === weatherState.phraseSwitchMode)
+);
+const rebuildWeather = new Function("state", "UNIT_CONFIG", "stopAuto",
+  "selectedCards", "syncPhraseSwitchButton", "resetGameState", "render",
+  rebuildSource + "\nreturn rebuildDeck;"
+)(weatherState, weatherUnit, () => {}, visibleCards, () => {}, () => {}, () => {});
+rebuildWeather();
+assert.equal(weatherState.phraseSwitchMode, "weather", "Weather-only selection activates It's mode");
+assert.equal(weatherState.deck.length, 6, "Weather-only selection displays six cards");
+weatherState.selectedIds = new Set(weatherUnit.cards
+  .filter(card => card.category === "playActivities").map(card => card.id));
+rebuildWeather();
+assert.equal(weatherState.phraseSwitchMode, "lets", "Play-only selection activates Let's mode");
+assert.equal(weatherState.deck.length, 4, "Play-only selection displays four cards");
+
+assert.doesNotMatch(sharedCssSource, /html\.shared-unit-template\[data-unit="2"\]/,
+  "portrait size overrides cannot accidentally affect both books");
+assert.match(sharedCssSource, /\[data-book="lt1"\]\[data-unit="2"\]/,
+  "feelings portrait overrides apply only to LT1 Unit 2");
+for (const [category,id,ratio] of [
+  ["worldGreetings","china","4 / 3"],
+  ["feelings","happy","2 / 3"],
+  ["sports","baseball","9 / 8"],
+  ["bodyParts",db.getCategory("bodyParts").items[0].id,"1 / 2"]
+]) {
+  assert.equal(db.getWordVisual(category,id)?.aspectRatio,ratio,
+    category + " cards inherit canonical aspect ratio");
+}
+
 const unit4 = config("config/units/lt2-unit4.js");
 assert.equal(unit4.cards.length, 22, "LT2 Unit 4 combined card count");
 assert.equal(unit4.cards.filter(card => card.category === "clockTimes" && card.textbook).length, 0,
   "LT2 Unit 4 clocks must remain optional");
 assert.ok(unit4.cards.every(card => card.visual?.position), "LT2 Unit 4 sprite positions");
 
-console.log("Vocabulary checks passed: 24 categories, six category decks and four textbook units, LT1 Unit 5 grammar, Unit 4 clocks.");
+console.log("Vocabulary checks passed: 24 categories, shared ratios, LT2 Unit 2 Weather phrase switching, prior decks and Unit 4 clocks.");
