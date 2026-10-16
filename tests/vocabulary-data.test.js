@@ -163,76 +163,56 @@ assert.ok(unit5.cards.every(card => card.visual?.position), "LT1 Unit 5 image po
 // while the former phrase mode was Let's. Exercise the actual shared rebuildDeck.
 const weatherUnit = config("config/units/lt2-unit2.js");
 checkDeck("LT2 Unit 2", weatherUnit.cards, 16, 16);
-const rebuildMatch = source("js/lets-try-unit.js").match(
-  /      function rebuildDeck\(\) \{[\s\S]*?\n      \}\n\n      function resetGameState\(\)/
-);
-assert.ok(rebuildMatch, "shared rebuildDeck must be present");
-const rebuildSource = rebuildMatch[0].replace(/\n\n      function resetGameState\(\)$/, "");
-const weatherState = {
-  selectedIds: new Set(weatherUnit.cards.filter(card => card.category === "weather").map(card => card.id)),
-  phraseSwitchMode: "lets", deck: [], position: 0
-};
-const visibleCards = () => weatherUnit.cards.filter(card =>
-  weatherState.selectedIds.has(card.id) &&
-  (!card.phraseMode || card.phraseMode === weatherState.phraseSwitchMode)
-);
-const rebuildWeather = new Function("state", "UNIT_CONFIG", "stopAuto",
-  "selectedCards", "syncPhraseSwitchButton", "resetGameState", "render",
-  rebuildSource + "\nreturn rebuildDeck;"
-)(weatherState, weatherUnit, () => {}, visibleCards, () => {}, () => {}, () => {});
-rebuildWeather();
-assert.equal(weatherState.phraseSwitchMode, "weather", "Weather-only selection activates It's mode");
-assert.equal(weatherState.deck.length, 6, "Weather-only selection displays six cards");
-weatherState.selectedIds = new Set(weatherUnit.cards
-  .filter(card => card.category === "playActivities").map(card => card.id));
-rebuildWeather();
-assert.equal(weatherState.phraseSwitchMode, "lets", "Play-only selection activates Let's mode");
-assert.equal(weatherState.deck.length, 4, "Play-only selection displays four cards");
+assert.equal(weatherUnit.phraseSwitch, undefined,
+  "LT2 Unit 2 no longer adds a footer phrase switch");
+assert.deepEqual(Array.from(weatherUnit.displayModes),
+  ["pictureText","picture","pictureIts","pictureLets","text"],
+  "LT2 Unit 2 has two distinct phrase options in Settings");
+const classroomSource = source("js/lets-try-unit.js");
+assert.match(classroomSource, /value="pictureIts"/,
+  "It's phrase choice is in Settings");
+assert.match(classroomSource, /value="pictureLets"/,
+  "Let's phrase choice is in Settings");
+assert.match(classroomSource, /function fitFlashcardText\(\)/,
+  "shared classroom text must fit the available width");
+assert.match(classroomSource, /text\.scrollWidth > available/,
+  "overlong text must be measured rather than clipped");
 
-// Counter must follow category selections by default. The phrase switch
-// is an explicit focus tool, not a hidden restriction on the initial deck.
-assert.equal(weatherUnit.phraseSwitch.initial, "all", "LT2 Unit 2 starts in All words");
-assert.deepEqual(Array.from(weatherUnit.phraseSwitch.modes, mode => mode.id),
-  ["all", "lets", "weather"], "All/Let's/It's are explicit teaching choices");
-const engineSource = source("js/lets-try-unit.js");
-const phraseActiveMatch = engineSource.match(
-  /      function phraseSwitchCardActive\(card\) \{[\s\S]*?\n      \}/
-);
-const selectedDeckMatch = engineSource.match(
-  /      function selectedCards\(\) \{[\s\S]*?\n      \}/
-);
-assert.ok(phraseActiveMatch && selectedDeckMatch, "shared phrase filters found");
-const selectionState = {
-  selectedIds: new Set(weatherUnit.cards.filter(card => card.textbook).map(card => card.id)),
-  phraseSwitchMode: weatherUnit.phraseSwitch.initial, deck: [], position: 0
-};
-const rebuildSelected = new Function("state", "UNIT_CONFIG", "stopAuto",
-  "syncPhraseSwitchButton", "resetGameState", "render",
-  phraseActiveMatch[0] + "\n" + selectedDeckMatch[0] + "\n" + rebuildSource +
-  "\nreturn rebuildDeck;"
-)(selectionState, weatherUnit, () => {}, () => {}, () => {}, () => {});
-function assertVisibleCount(expected, label) {
-  rebuildSelected();
-  assert.equal(selectionState.deck.length, expected, label);
-}
-assertVisibleCount(16, "Initially all 16 selected cards are shown");
-for (const group of ["playActivities", "clothes"]) {
-  weatherUnit.cards.filter(card => card.category === group)
-    .forEach(card => selectionState.selectedIds.delete(card.id));
-}
-assertVisibleCount(6, "Only Weather gives six cards");
-weatherUnit.cards.filter(card => card.category === "playActivities")
-  .forEach(card => selectionState.selectedIds.add(card.id));
-assertVisibleCount(10, "Adding four Play Activities gives ten cards");
-weatherUnit.cards.filter(card => card.category === "clothes")
-  .forEach(card => selectionState.selectedIds.add(card.id));
-assertVisibleCount(16, "Re-adding six Clothes returns to sixteen cards");
-selectionState.phraseSwitchMode = "lets";
-assertVisibleCount(10, "Opting into Let's focuses ten cards");
-selectionState.phraseSwitchMode = "weather";
-assertVisibleCount(12, "Opting into It's focuses twelve cards");
-selectionState.phraseSwitchMode = "all";
-assertVisibleCount(16, "Returning to All words restores sixteen cards");
+// All category selections must count, regardless of which sentence display
+// is selected. The two phrase settings only change displayed text.
+const phraseSelected = new Set(weatherUnit.cards.map(c => c.id));
+const selectionCount = () => weatherUnit.cards.filter(c => phraseSelected.has(c.id)).length;
+assert.equal(selectionCount(),16,"LT2 Unit 2 initially has 16 cards");
+for (const category of ["playActivities","clothes"])
+  weatherUnit.cards.filter(c => c.category === category).forEach(c => phraseSelected.delete(c.id));
+assert.equal(selectionCount(),6,"Weather only shows six cards");
+weatherUnit.cards.filter(c => c.category === "playActivities").forEach(c => phraseSelected.add(c.id));
+assert.equal(selectionCount(),10,"Weather plus Play Activities shows ten cards");
+weatherUnit.cards.filter(c => c.category === "clothes").forEach(c => phraseSelected.add(c.id));
+assert.equal(selectionCount(),16,"Selecting Clothes restores all sixteen cards");
+
+const lt2Unit4 = config("config/units/lt2-unit4.js");
+assert.ok(lt2Unit4.cards.every(card => card.sentence.startsWith("It’s ")),
+  "LT2 Unit 4 cards use It's sentences");
+assert.equal(lt2Unit4.displayModeLabels.pictureSentence,"Picture + It’s",
+  "LT2 Unit 4 phrase setting");
+const lt2Unit8 = config("config/units/lt2-unit8.js");
+assert.equal(lt2Unit8.schoolShortenSetting,true,"LT2 Unit 8 offers optional school shortening");
+assert.ok(lt2Unit8.cards.some(c => c.word==="school principal’s office"),
+  "LT2 Unit 8 master office names remain intact");
+assert.match(classroomSource,/schoolShortenButton/,
+  "Unit 8 school-shortening button exists");
+const lt2Unit9 = config("config/units/lt2-unit9.js");
+assert.ok(lt2Unit9.cards.every(card => card.sentence==="I "+card.word+"."),
+  "LT2 Unit 9 has I ~. sentences");
+assert.equal(lt2Unit9.displayModeLabels.pictureSentence,"Picture + I ~.",
+  "LT2 Unit 9 phrase mode enabled");
+const lt1Unit2 = config("config/units/lt1-unit2.js");
+assert.equal(lt1Unit2.displayModeLabels.pictureSentence,"Picture + I’m",
+  "LT1 Unit 2 describes its I'm phrase");
+const lt1Unit8 = config("config/units/lt1-unit8.js");
+assert.ok(lt1Unit8.cards.every(card => !card.underlineToken),
+  "LT1 Unit 8 has no stray underline mark on an");
 
 assert.doesNotMatch(sharedCssSource, /html\.shared-unit-template\[data-unit="2"\]/,
   "portrait size overrides cannot accidentally affect both books");
@@ -254,4 +234,4 @@ assert.equal(unit4.cards.filter(card => card.category === "clockTimes" && card.t
   "LT2 Unit 4 clocks must remain optional");
 assert.ok(unit4.cards.every(card => card.visual?.position), "LT2 Unit 4 sprite positions");
 
-console.log("Vocabulary checks passed: 24 categories, shared ratios, LT2 Unit 2 selection counts and phrase modes, prior decks and Unit 4 clocks.");
+console.log("Vocabulary checks passed: 24 categories, shared ratios, unit phrase settings, Unit 2 selections, and prior decks.");
