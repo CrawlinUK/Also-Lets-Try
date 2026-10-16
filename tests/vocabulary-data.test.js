@@ -180,13 +180,20 @@ assert.match(classroomSource, /function fitFlashcardText\(\)/,
 assert.doesNotMatch(classroomSource,
   /artLayoutObserver\.observe\(elements\.displayText\)/,
   "do not observe the element being resized");
-assert.match(classroomSource, /if \(key === lastTextFitKey\) return;/,
-  "unchanged text/layout must not reset its font repeatedly");
+assert.doesNotMatch(classroomSource, /lastTextFitKey/,
+  "do not cache a width measurement made before layout or fonts settle");
+assert.match(classroomSource, /textMeasure\.getBoundingClientRect\(\)\.width/,
+  "measure unclipped text in an independent natural-size node");
+assert.match(classroomSource, /textMeasure\.style/,
+  "separate measurement is excluded from flashcard layout");
+assert.match(classroomSource, /document\.fonts\.addEventListener\("loadingdone"/,
+  "refit after handwriting font finishes loading");
 assert.match(classroomSource, /if \(artworkFitScheduled\) return;/,
   "refit requests should be coalesced into one animation frame");
-
-assert.match(classroomSource, /text\.scrollWidth > available/,
-  "overlong text must be measured rather than clipped");
+assert.match(classroomSource, /Math\.max\(28, desired\)/,
+  "keep a readable minimum and permit multi-line text"); 
+assert.match(sharedCssSource, /white-space: normal;[\s\S]*?overflow-wrap: anywhere;/,
+  "long phrases must wrap rather than clip while awaiting refit");
 
 // All category selections must count, regardless of which sentence display
 // is selected. The two phrase settings only change displayed text.
