@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#1687df">
+<title>Sprite Adjuster — Also Let's Try</title>
+<link rel="stylesheet" href="css/lets-try-menu.css">
+<style>
+:root{--accent:#1687df;--paper:#fff;--border:#d4e0e7;--pink:#ff5aa5}
+*{box-sizing:border-box}
+body{margin:0;background:#f5f8f6;color:#17191d}
+.builder-header{display:flex;align-items:center;gap:10px;flex-wrap:wrap;border-bottom:3px solid var(--accent);background:#fff;padding:12px max(16px,calc((100vw - 1500px)/2));min-height:70px}
+.builder-header h1{font-size:clamp(23px,3vw,34px);line-height:1.1;margin:0;flex:1}
+.builder-header a{color:inherit;text-decoration:none;border-radius:10px;background:#eef4f7;font-weight:800;padding:11px 14px;white-space:nowrap}
+main{max-width:1520px;margin:auto;padding:18px 20px 40px}
+.intro{margin:0 0 16px;line-height:1.5;color:#46545e;font-size:17px}
+.layout{display:grid;grid-template-columns:minmax(0,1fr) minmax(290px,330px);gap:18px;align-items:start}
+.panel{background:#fff;border:1px solid var(--border);border-radius:16px;padding:16px;min-width:0}
+.panel h2{font-size:20px;margin:0 0 10px}
+.toolbar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px}
+button.action{font:inherit;min-height:42px;border:1px solid #9cabb5;border-radius:9px;padding:8px 12px;background:#f0f6f9;color:#17232b;font-weight:800;cursor:pointer}
+button.action.primary{background:#1687df;border-color:#1687df;color:#fff}
+button.action.success{background:#def3e6;border-color:#90c5a8}
+button.action.active{background:#d9efff;border:2px solid #1687df;padding:7px 11px}
+button.action:disabled{opacity:.4;cursor:not-allowed}
+button.action:focus-visible,#viewCanvas:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid #f4ba3c;outline-offset:2px}
+.canvas-shell{border:2px dashed #b9ccd8;border-radius:10px;background:#dfe7eb;overflow:auto;max-height:74vh;min-height:320px;display:grid;place-items:center;padding:10px;touch-action:none}
+.canvas-shell.file-target{border-color:#1687df;box-shadow:0 0 0 4px #c9eaff}
+#viewCanvas{display:block;max-width:none;touch-action:none;cursor:crosshair;background:#fff;box-shadow:0 1px 7px rgba(0,0,0,.12)}
+#viewCanvas.move-mode{cursor:grab}
+#viewCanvas.dragging{cursor:grabbing}
+.settings{display:grid;gap:13px}
+.settings section{min-width:0}
+.settings label{display:grid;gap:4px;font-size:13px;font-weight:800}
+.settings input[type=number],.settings input[type=text],.settings input[type=color],.settings select{font:inherit;min-height:40px;border:1px solid #9cabb5;border-radius:8px;background:white;padding:7px;width:100%}
+.settings input[type=color]{padding:3px}
+.settings input[type=range]{width:100%;accent-color:var(--accent)}
+.row{display:flex;align-items:center;gap:8px}
+.row>label{flex:1}
+.two-cols{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.three-cols{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.buttons{display:flex;flex-wrap:wrap;gap:8px}
+.divider{border:0;border-top:1px solid #e0e8ed;margin:2px 0}
+.small-note{font-size:13px;color:#5a6873;line-height:1.4;margin:5px 0}
+.status{padding:10px;background:#eef6ff;border-radius:9px;line-height:1.45;font-size:14px;min-height:42px}
+.nudge-grid{display:grid;grid-template-columns:repeat(3,43px);grid-template-rows:repeat(3,39px);gap:4px;width:max-content}
+.nudge-grid .blank{visibility:hidden}
+.nudge-grid button{min-height:39px;padding:3px;font-size:19px}
+.zoom-line{display:grid;grid-template-columns:minmax(0,1fr) 82px;gap:8px;align-items:center}
+.checkline{display:flex!important;align-items:center;justify-content:space-between;gap:10px}
+.checkline input{width:auto!important}
+#selectionInfo{font-weight:900;margin:0 0 8px}
+@media(max-width:900px){.layout{grid-template-columns:1fr}.canvas-shell{max-height:64vh}.settings{grid-template-columns:repeat(2,minmax(0,1fr))}.settings>section{border-bottom:1px solid #e3e9ed;padding-bottom:12px}.divider{display:none}}
+@media(max-width:600px){main{padding:12px}.panel{padding:12px}.settings{grid-template-columns:1fr}.builder-header{padding:10px 12px}.intro{font-size:15px}.three-cols{grid-template-columns:1fr 1fr}}
+</style>
+</head>
+<body>
+<header class="builder-header">
+  <a href="index.html">← Home</a>
+  <a href="sprite-grid-builder.html">Grid Builder</a>
+  <h1>Sprite Adjuster</h1>
+</header>
+<main>
+<p class="intro">Open an existing sprite sheet, overlay a temporary grid, select a sprite with a rectangle, ellipse or lasso, then move, nudge and proportionally resize it. The grid and selection guides are never included in exports.</p>
+<div class="layout">
+<section class="panel" aria-label="Sprite adjustment canvas">
+  <div class="toolbar" role="toolbar" aria-label="Selection tools">
+    <button class="action active" type="button" data-tool="rect">▭ Rectangle</button>
+    <button class="action" type="button" data-tool="ellipse">◯ Ellipse</button>
+    <button class="action" type="button" data-tool="lasso">⌁ Lasso</button>
+    <button class="action" type="button" data-tool="move">✥ Move</button>
+  </div>
+  <div id="canvasShell" class="canvas-shell">
+    <canvas id="viewCanvas" width="1000" height="600" tabindex="0" aria-label="Sprite image editor"></canvas>
+  </div>
+  <p class="small-note"><strong>Selection workflow:</strong> draw around one sprite → it becomes movable → adjust position/size → <strong>Apply</strong>. Use <strong>Cancel</strong> to put it back exactly where it came from.</p>
+</section>
+
+<aside class="panel settings">
+<section>
+  <h2>Image</h2>
+  <div class="buttons">
+    <button id="openImage" class="action primary" type="button">Open sprite sheet</button>
+    <button id="undo" class="action" type="button" disabled>Undo</button>
+    <button id="redo" class="action" type="button" disabled>Redo</button>
+  </div>
+  <p id="imageInfo" class="small-note">No image loaded.</p>
+  <label>Canvas zoom
+    <div class="zoom-line"><input id="canvasZoom" type="range" min="25" max="200" step="5" value="100"><input id="canvasZoomNumber" type="number" min="25" max="200" step="5" value="100"></div>
+  </label>
+</section>
+
+<hr class="divider">
+
+<section>
+  <h2>Grid overlay</h2>
+  <label>Preset
+    <select id="gridPreset">
+      <option value="custom">Custom</option>
+      <option value="2x2">2 × 2</option>
+      <option value="3x2">3 × 2</option>
+      <option value="2x3">2 × 3</option>
+      <option value="4x2" selected>4 × 2</option>
+      <option value="4x3">4 × 3</option>
+      <option value="5x2">5 × 2</option>
+      <option value="6x2">6 × 2</option>
+    </select>
+  </label>
+  <div class="two-cols" style="margin-top:8px">
+    <label>Columns<input id="gridCols" type="number" min="1" max="20" step="1" value="4"></label>
+    <label>Rows<input id="gridRows" type="number" min="1" max="20" step="1" value="2"></label>
+  </div>
+  <div class="two-cols" style="margin-top:8px">
+    <label>Grid colour<input id="gridColor" type="color" value="#ff5aa5"></label>
+    <label>Opacity<input id="gridOpacity" type="number" min="10" max="100" step="5" value="80"></label>
+  </div>
+  <label class="checkline" style="margin-top:8px">Show grid <input id="showGrid" type="checkbox" checked></label>
+</section>
+
+<hr class="divider">
+
+<section>
+  <h2>Selected sprite</h2>
+  <p id="selectionInfo">Nothing selected</p>
+  <label>Scale: <span id="scaleReadout">100%</span>
+    <div class="zoom-line"><input id="spriteScale" type="range" min="10" max="400" step="1" value="100" disabled><input id="spriteScaleNumber" type="number" min="10" max="400" step="1" value="100" disabled></div>
+  </label>
+  <div class="row" style="margin-top:9px;align-items:flex-end">
+    <div>
+      <span style="display:block;font-size:13px;font-weight:900;margin-bottom:5px">Precision nudge</span>
+      <div class="nudge-grid">
+        <span class="blank"></span><button class="action nudge" data-dx="0" data-dy="-1" type="button" disabled>↑</button><span class="blank"></span>
+        <button class="action nudge" data-dx="-1" data-dy="0" type="button" disabled>←</button><span class="blank"></span><button class="action nudge" data-dx="1" data-dy="0" type="button" disabled>→</button>
+        <span class="blank"></span><button class="action nudge" data-dx="0" data-dy="1" type="button" disabled>↓</button><span class="blank"></span>
+      </div>
+    </div>
+    <label style="max-width:110px">Step
+      <select id="nudgeStep"><option value="0.5">0.5 px</option><option value="1" selected>1 px</option><option value="2">2 px</option><option value="5">5 px</option></select>
+    </label>
+  </div>
+  <div class="buttons" style="margin-top:10px">
+    <button id="applySelection" class="action success" type="button" disabled>Apply</button>
+    <button id="cancelSelection" class="action" type="button" disabled>Cancel</button>
+  </div>
+</section>
+
+<hr class="divider">
+
+<section>
+  <h2>Move-from area</h2>
+  <label>When pixels are lifted
+    <select id="holeMode">
+      <option value="transparent">Transparent</option>
+      <option value="white" selected>White</option>
+      <option value="auto">Auto edge colour</option>
+    </select>
+  </label>
+  <p class="small-note">White suits most existing classroom sprite sheets. Auto samples the image corners. Transparent is best for PNG/WebP sheets that already use transparency.</p>
+</section>
+
+<hr class="divider">
+
+<section>
+  <h2>Export</h2>
+  <div class="buttons">
+    <button id="exportWebp" class="action primary" type="button" disabled>Export WebP</button>
+    <button id="exportPng" class="action success" type="button" disabled>Export PNG</button>
+  </div>
+  <label style="margin-top:8px;max-width:110px">WebP quality<input id="quality" type="number" min="50" max="100" step="1" value="95"></label>
+  <p class="small-note">Exports use the original image dimensions. Grid and editing outlines are excluded.</p>
+</section>
+
+<div id="status" class="status" role="status" aria-live="polite">Open a sprite sheet to begin. Images stay in your browser.</div>
+</aside>
+</div>
+<input id="imagePicker" type="file" accept="image/*" hidden>
+</main>
+
+<script>
+(function(){
+"use strict";
+const $=id=>document.getElementById(id);
+const view=$("viewCanvas"),vctx=view.getContext("2d",{alpha:true});
+const base=document.createElement("canvas"),bctx=base.getContext("2d",{alpha:true});
+if(!vctx||!bctx){$("status").textContent="Canvas is not supported in this browser.";return;}
+
+let loaded=false,filename="sprite-sheet",tool="rect",zoom=1;
+let floating=null,selectionBackup=null,pointer=null,lassoPoints=[];
+let history=[],historyIndex=-1,dragDepth=0;
+
+const clamp=(n,a,b)=>Math.max(a,Math.min(b,n));
+const status=t=>$("status").textContent=t;
+const pointFromEvent=e=>{
+ const r=view.getBoundingClientRect();
+ return {x:(e.clientX-r.left)/r.width*base.width,y:(e.clientY-r.top)/r.height*base.height};
+};
+function updateCanvasCss(){
+ if(!loaded)return;
+ view.style.width=Math.max(1,Math.round(base.width*zoom))+"px";
+ view.style.height=Math.max(1,Math.round(base.height*zoom))+"px";
+}
+function cloneBase(){
+ const c=document.createElement("canvas");c.width=base.width;c.height=base.height;
+ c.getContext("2d").drawImage(base,0,0);return c;
+}
+function restoreCanvas(c){
+ base.width=c.width;base.height=c.height;bctx.clearRect(0,0,base.width,base.height);bctx.drawImage(c,0,0);
+ view.width=base.width;view.height=base.height;updateCanvasCss();draw();
+}
+function pushHistory(){
+ history=history.slice(0,historyIndex+1);
+ history.push(cloneBase());
+ if(history.length>10)history.shift();else historyIndex++;
+ historyIndex=history.length-1;updateUndoRedo();
+}
+function updateUndoRedo(){
+ $("undo").disabled=historyIndex<=0;
+ $("redo").disabled=historyIndex<0||historyIndex>=history.length-1;
+}
+function autoEdgeColor(){
+ if(!loaded||!base.width||!base.height)return "#ffffff";
+ const pts=[[0,0],[base.width-1,0],[0,base.height-1],[base.width-1,base.height-1]];
+ let r=0,g=0,b=0,a=0;
+ for(const [x,y] of pts){const d=bctx.getImageData(x,y,1,1).data;r+=d[0];g+=d[1];b+=d[2];a+=d[3];}
+ if(a/4<16)return "rgba(0,0,0,0)";
+ return "rgb("+Math.round(r/4)+","+Math.round(g/4)+","+Math.round(b/4)+")";
+}
+function makePath(ctx,shape,bounds,points){
+ ctx.beginPath();
+ if(shape==="rect")ctx.rect(bounds.x,bounds.y,bounds.w,bounds.h);
+ else if(shape==="ellipse"){
+  ctx.ellipse(bounds.x+bounds.w/2,bounds.y+bounds.h/2,Math.abs(bounds.w/2),Math.abs(bounds.h/2),0,0,Math.PI*2);
+ }else if(shape==="lasso"&&points.length){
+  ctx.moveTo(points[0].x,points[0].y);for(let i=1;i<points.length;i++)ctx.lineTo(points[i].x,points[i].y);ctx.closePath();
+ }
+}
+function normalBounds(a,b){
+ return {x:Math.min(a.x,b.x),y:Math.min(a.y,b.y),w:Math.abs(b.x-a.x),h:Math.abs(b.y-a.y)};
+}
+function lassoBounds(points){
+ let minX=Infinity,minY=Infinity,maxX=-Infinity,maxY=-Infinity;
+ for(const p of points){minX=Math.min(minX,p.x);minY=Math.min(minY,p.y);maxX=Math.max(maxX,p.x);maxY=Math.max(maxY,p.y);}
+ return {x:minX,y:minY,w:maxX-minX,h:maxY-minY};
+}
+function drawGrid(){
+ if(!$("showGrid").checked||!loaded)return;
+ const cols=clamp(Number($("gridCols").value)||1,1,20),rows=clamp(Number($("gridRows").value)||1,1,20);
+ vctx.save();vctx.strokeStyle=$("gridColor").value;vctx.globalAlpha=clamp(Number($("gridOpacity").value)||80,10,100)/100;
+ vctx.lineWidth=Math.max(1,1/zoom);
+ for(let c=1;c<cols;c++){const x=c*base.width/cols;vctx.beginPath();vctx.moveTo(x,0);vctx.lineTo(x,base.height);vctx.stroke();}
+ for(let r=1;r<rows;r++){const y=r*base.height/rows;vctx.beginPath();vctx.moveTo(0,y);vctx.lineTo(base.width,y);vctx.stroke();}
+ vctx.restore();
+}
+function floatingRect(){
+ if(!floating)return null;
+ const w=floating.source.width*floating.scale,h=floating.source.height*floating.scale;
+ return {x:floating.cx-w/2,y:floating.cy-h/2,w,h};
+}
+function drawFloating(ctx){
+ if(!floating)return;
+ const r=floatingRect();
+ ctx.drawImage(floating.source,r.x,r.y,r.w,r.h);
+}
+function drawSelectionGuide(){
+ vctx.save();vctx.lineWidth=Math.max(1.5,2/zoom);vctx.setLineDash([8/zoom,5/zoom]);vctx.strokeStyle="#1687df";
+ if(floating){
+  const r=floatingRect();vctx.strokeRect(r.x,r.y,r.w,r.h);
+  const hs=8/zoom;vctx.setLineDash([]);vctx.fillStyle="#fff";vctx.strokeStyle="#1687df";
+  for(const [x,y] of [[r.x,r.y],[r.x+r.w,r.y],[r.x,r.y+r.h],[r.x+r.w,r.y+r.h]]){vctx.fillRect(x-hs/2,y-hs/2,hs,hs);vctx.strokeRect(x-hs/2,y-hs/2,hs,hs);}
+ }else if(pointer&&pointer.kind==="select"&&pointer.start&&pointer.now){
+  const b=normalBounds(pointer.start,pointer.now);makePath(vctx,tool,b,lassoPoints);vctx.stroke();
+ }else if(tool==="lasso"&&lassoPoints.length>1){
+  const b=lassoBounds(lassoPoints);makePath(vctx,"lasso",b,lassoPoints);vctx.stroke();
+ }
+ vctx.restore();
+}
+function draw(){
+ if(!loaded){vctx.clearRect(0,0,view.width,view.height);vctx.fillStyle="#fff";vctx.fillRect(0,0,view.width,view.height);return;}
+ vctx.clearRect(0,0,view.width,view.height);vctx.drawImage(base,0,0);drawFloating(vctx);drawGrid();drawSelectionGuide();
+}
+function setTool(next){
+ tool=next;
+ for(const b of document.querySelectorAll("[data-tool]"))b.classList.toggle("active",b.dataset.tool===tool);
+ view.classList.toggle("move-mode",tool==="move");
+ status(floating&&tool!=="move"?"Sprite selected. Switch to Move or drag inside the selection to reposition it.":"Tool: "+({rect:"Rectangle selection",ellipse:"Ellipse selection",lasso:"Lasso selection",move:"Move selected sprite"}[tool])+".");
+ draw();
+}
+for(const b of document.querySelectorAll("[data-tool]"))b.addEventListener("click",()=>setTool(b.dataset.tool));
+
+function setSelectionUi(enabled){
+ $("spriteScale").disabled=!enabled;$("spriteScaleNumber").disabled=!enabled;
+ $("applySelection").disabled=!enabled;$("cancelSelection").disabled=!enabled;
+ for(const b of document.querySelectorAll(".nudge"))b.disabled=!enabled;
+ $("selectionInfo").textContent=enabled?"Sprite selected":"Nothing selected";
+}
+function fillHole(shape,bounds,points){
+ const mode=$("holeMode").value;
+ bctx.save();makePath(bctx,shape,bounds,points);bctx.clip();
+ bctx.clearRect(bounds.x-2,bounds.y-2,bounds.w+4,bounds.h+4);
+ if(mode!=="transparent"){bctx.fillStyle=mode==="white"?"#ffffff":autoEdgeColor();bctx.fillRect(bounds.x-2,bounds.y-2,bounds.w+4,bounds.h+4);}
+ bctx.restore();
+}
+function liftSelection(shape,bounds,points=[]){
+ if(!loaded||bounds.w<2||bounds.h<2)return;
+ if(floating)commitFloating();
+ bounds={x:clamp(bounds.x,0,base.width),y:clamp(bounds.y,0,base.height),w:Math.min(bounds.w,base.width-clamp(bounds.x,0,base.width)),h:Math.min(bounds.h,base.height-clamp(bounds.y,0,base.height))};
+ if(bounds.w<2||bounds.h<2)return;
+ selectionBackup=cloneBase();
+ const piece=document.createElement("canvas");piece.width=Math.max(1,Math.ceil(bounds.w));piece.height=Math.max(1,Math.ceil(bounds.h));
+ const pctx=piece.getContext("2d");
+ pctx.save();
+ const localBounds={x:0,y:0,w:bounds.w,h:bounds.h};
+ const localPoints=points.map(p=>({x:p.x-bounds.x,y:p.y-bounds.y}));
+ makePath(pctx,shape,localBounds,localPoints);pctx.clip();pctx.drawImage(base,-bounds.x,-bounds.y);pctx.restore();
+ fillHole(shape,bounds,points);
+ floating={source:piece,cx:bounds.x+bounds.w/2,cy:bounds.y+bounds.h/2,scale:1};
+ $("spriteScale").value=100;$("spriteScaleNumber").value=100;$("scaleReadout").textContent="100%";
+ setSelectionUi(true);setTool("move");draw();status("Sprite lifted. Drag it, nudge it, or resize proportionally, then Apply.");
+}
+function commitFloating(){
+ if(!floating)return;
+ drawFloating(bctx);floating=null;selectionBackup=null;setSelectionUi(false);pushHistory();draw();status("Adjustment applied.");
+}
+function cancelFloating(){
+ if(!floating)return;
+ if(selectionBackup)restoreCanvas(selectionBackup);
+ floating=null;selectionBackup=null;setSelectionUi(false);draw();status("Selection cancelled; original pixels restored.");
+}
+function hitFloating(p){
+ const r=floatingRect();return r&&p.x>=r.x&&p.x<=r.x+r.w&&p.y>=r.y&&p.y<=r.y+r.h;
+}
+view.addEventListener("pointerdown",e=>{
+ if(!loaded||(e.button!==0&&e.pointerType!=="touch"))return;
+ const p=pointFromEvent(e);view.setPointerCapture?.(e.pointerId);
+ if(floating&&hitFloating(p)){
+  pointer={id:e.pointerId,kind:"move",start:p,last:p,startCx:floating.cx,startCy:floating.cy};view.classList.add("dragging");return;
+ }
+ if(floating){status("Apply or Cancel the current sprite before making a new selection.");return;}
+ if(tool==="move"){status("Choose Rectangle, Ellipse or Lasso to select a sprite first.");return;}
+ if(tool==="lasso"){lassoPoints=[p];pointer={id:e.pointerId,kind:"lasso",start:p,now:p};}
+ else pointer={id:e.pointerId,kind:"select",start:p,now:p};
+ draw();
+});
+view.addEventListener("pointermove",e=>{
+ if(!pointer||e.pointerId!==pointer.id)return;
+ const p=pointFromEvent(e);
+ if(pointer.kind==="move"&&floating){floating.cx=pointer.startCx+(p.x-pointer.start.x);floating.cy=pointer.startCy+(p.y-pointer.start.y);}
+ else if(pointer.kind==="lasso"){lassoPoints.push(p);pointer.now=p;}
+ else pointer.now=p;
+ draw();
+});
+function finishPointer(e){
+ if(!pointer||e.pointerId!==pointer.id)return;
+ const cur=pointer;pointer=null;view.classList.remove("dragging");
+ if(cur.kind==="move"){draw();return;}
+ if(cur.kind==="lasso"){
+  if(lassoPoints.length>2){const b=lassoBounds(lassoPoints);liftSelection("lasso",b,lassoPoints.slice());}
+  lassoPoints=[];return;
+ }
+ const b=normalBounds(cur.start,cur.now||cur.start);liftSelection(tool,b,[]);
+}
+view.addEventListener("pointerup",finishPointer);
+view.addEventListener("pointercancel",()=>{pointer=null;lassoPoints=[];view.classList.remove("dragging");draw();});
+
+function nudge(dx,dy,mult=1){
+ if(!floating)return;
+ const step=(Number($("nudgeStep").value)||1)*mult;floating.cx+=dx*step;floating.cy+=dy*step;draw();
+}
+for(const b of document.querySelectorAll(".nudge"))b.addEventListener("click",()=>nudge(Number(b.dataset.dx),Number(b.dataset.dy)));
+view.addEventListener("keydown",e=>{
+ if(!floating)return;
+ const mult=e.shiftKey?10:1;
+ if(e.key==="ArrowLeft")nudge(-1,0,mult);
+ else if(e.key==="ArrowRight")nudge(1,0,mult);
+ else if(e.key==="ArrowUp")nudge(0,-1,mult);
+ else if(e.key==="ArrowDown")nudge(0,1,mult);
+ else if(e.key==="Enter")commitFloating();
+ else if(e.key==="Escape")cancelFloating();
+ else return;
+ e.preventDefault();
+});
+
+function setSpriteScale(raw){
+ if(!floating)return;
+ const n=clamp(Number(raw)||100,10,400);floating.scale=n/100;
+ $("spriteScale").value=n;$("spriteScaleNumber").value=n;$("scaleReadout").textContent=Math.round(n)+"%";draw();
+}
+$("spriteScale").addEventListener("input",()=>setSpriteScale($("spriteScale").value));
+$("spriteScaleNumber").addEventListener("input",()=>setSpriteScale($("spriteScaleNumber").value));
+$("applySelection").addEventListener("click",commitFloating);
+$("cancelSelection").addEventListener("click",cancelFloating);
+
+function loadFile(file){
+ if(!file||!file.type.startsWith("image/")){status("Please choose an image file.");return;}
+ const url=URL.createObjectURL(file),img=new Image();
+ img.onload=()=>{
+  base.width=img.naturalWidth;base.height=img.naturalHeight;bctx.clearRect(0,0,base.width,base.height);bctx.drawImage(img,0,0);
+  view.width=base.width;view.height=base.height;loaded=true;filename=file.name.replace(/\.[^.]+$/,"")||"sprite-sheet";
+  floating=null;selectionBackup=null;history=[];historyIndex=-1;pushHistory();setSelectionUi(false);
+  updateCanvasCss();$("imageInfo").textContent=img.naturalWidth+" × "+img.naturalHeight+" px — "+file.name;
+  $("exportWebp").disabled=false;$("exportPng").disabled=false;draw();status("Sprite sheet loaded. Choose a selection tool and draw around a sprite.");URL.revokeObjectURL(url);
+ };
+ img.onerror=()=>{status("That image could not be opened.");URL.revokeObjectURL(url);};
+ img.src=url;
+}
+$("imagePicker").addEventListener("change",e=>loadFile(e.target.files[0]));
+$("openImage").addEventListener("click",()=>{$("imagePicker").value="";$("imagePicker").click();});
+
+$("undo").addEventListener("click",()=>{
+ if(floating)cancelFloating();
+ if(historyIndex<=0)return;historyIndex--;restoreCanvas(history[historyIndex]);updateUndoRedo();status("Undo.");
+});
+$("redo").addEventListener("click",()=>{
+ if(floating)cancelFloating();
+ if(historyIndex>=history.length-1)return;historyIndex++;restoreCanvas(history[historyIndex]);updateUndoRedo();status("Redo.");
+});
+
+function setCanvasZoom(raw){
+ zoom=clamp(Number(raw)||100,25,200)/100;$("canvasZoom").value=Math.round(zoom*100);$("canvasZoomNumber").value=Math.round(zoom*100);updateCanvasCss();draw();
+}
+$("canvasZoom").addEventListener("input",()=>setCanvasZoom($("canvasZoom").value));
+$("canvasZoomNumber").addEventListener("change",()=>setCanvasZoom($("canvasZoomNumber").value));
+
+$("gridPreset").addEventListener("change",()=>{
+ const val=$("gridPreset").value;if(val==="custom")return;
+ const [c,r]=val.split("x").map(Number);$("gridCols").value=c;$("gridRows").value=r;draw();
+});
+for(const id of ["gridCols","gridRows"])$(id).addEventListener("input",()=>{$("gridPreset").value="custom";draw();});
+for(const id of ["gridColor","gridOpacity","showGrid"])$(id).addEventListener("input",draw);
+
+async function exportImage(mime){
+ if(!loaded)return;
+ if(floating)commitFloating();
+ const out=document.createElement("canvas");out.width=base.width;out.height=base.height;out.getContext("2d").drawImage(base,0,0);
+ const q=clamp(Number($("quality").value)||95,50,100)/100;
+ const blob=await new Promise(resolve=>out.toBlob(resolve,mime,q));
+ if(!blob){status("Export failed. Try PNG.");return;}
+ const ext=blob.type==="image/webp"?"webp":"png",url=URL.createObjectURL(blob),a=document.createElement("a");
+ a.href=url;a.download=filename+"-adjusted."+ext;document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),30000);
+ status("Exported "+base.width+" × "+base.height+" "+ext.toUpperCase()+". Grid and selection guides were not included.");
+}
+$("exportWebp").addEventListener("click",()=>exportImage("image/webp"));
+$("exportPng").addEventListener("click",()=>exportImage("image/png"));
+
+const shell=$("canvasShell");
+shell.addEventListener("dragenter",e=>{e.preventDefault();dragDepth++;shell.classList.add("file-target");});
+shell.addEventListener("dragover",e=>{e.preventDefault();if(e.dataTransfer)e.dataTransfer.dropEffect="copy";});
+shell.addEventListener("dragleave",e=>{e.preventDefault();dragDepth=Math.max(0,dragDepth-1);if(!dragDepth)shell.classList.remove("file-target");});
+shell.addEventListener("drop",e=>{e.preventDefault();dragDepth=0;shell.classList.remove("file-target");loadFile(e.dataTransfer.files[0]);});
+
+draw();setSelectionUi(false);
+})();
+</script>
+</body>
+</html>
