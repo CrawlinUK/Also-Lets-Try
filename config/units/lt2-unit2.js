@@ -69,16 +69,10 @@
     unitNumberColour: "#F8C34A",
     menuFile: "lets_try_2.html",
     defaultPrompt: "Let’s ~",
-    phraseSwitch: {
-      // Start by showing all selected vocabulary; focus modes are optional.
-      initial: "all",
-      includeUnassigned: true,
-      modes: [
-        { id: "all", label: "All words" },
-        { id: "lets", label: "Let’s ~" },
-        { id: "weather", label: "It’s ~" }
-      ]
-    },
+    // Phrase choices are in Settings, not an extra button in the footer.
+    // Both modes keep every selected card in the deck.
+    displayModes: ["pictureText", "picture", "pictureIts", "pictureLets", "text"],
+    showPictureSentenceMode: false,
     selectionHeading: "Unit 2 words",
     wordLabel: "Word",
     sentenceLabel: "Phrase",
@@ -86,7 +80,8 @@
     displayModeLabels: {
       pictureText: "Picture + word",
       picture: "Picture only",
-      pictureSentence: "Picture + phrase",
+      pictureIts: "Picture + It’s",
+      pictureLets: "Picture + Let’s",
       text: "Word only"
     },
     pictureAspectRatio: "1 / 1",
