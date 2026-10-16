@@ -1469,10 +1469,41 @@
         elements.nextButton.classList.add("game-action");
       }
 
+      // Measure the actual rendered handwriting, including apostrophes and
+      // punctuation. Shrink only overlong lines so no lesson text is cut off
+      // by the stage edge. This applies to both picture+phrase and word-only.
+      function fitFlashcardText() {
+        const text = elements.displayText;
+        text.style.fontSize = "";
+        text.style.whiteSpace = "nowrap";
+        text.style.maxWidth = "";
+        if (getComputedStyle(text).display === "none" || !text.textContent) return;
+        const area = elements.answerArea;
+        const rect = area.getBoundingClientRect();
+        if (rect.width < 80) return;
+        const style = getComputedStyle(area);
+        const available = Math.max(60, rect.width
+          - (parseFloat(style.paddingLeft) || 0)
+          - (parseFloat(style.paddingRight) || 0) - 32) * .94;
+        const intrinsicWidth = Math.max(text.scrollWidth, text.getBoundingClientRect().width);
+        const originalSize = parseFloat(getComputedStyle(text).fontSize);
+        if (!(intrinsicWidth > available) || !originalSize) return;
+        const fitted = Math.floor(originalSize * available / intrinsicWidth * .97);
+        text.style.fontSize = Math.max(20, fitted) + "px";
+        // Very long sentences may need two lines instead of microscopic text.
+        if (text.scrollWidth > available) {
+          text.style.whiteSpace = "normal";
+          text.style.maxWidth = Math.floor(available) + "px";
+        } else {
+          text.style.maxWidth = "";
+        }
+      }
+
       // Fit each flashcard picture into the space left after its text.
       // Sprite sheets need the exact artwork aspect ratio, so never stretch
       // the picture frame simply to fill both width and height.
       function fitFlashcardArtwork() {
+        fitFlashcardText();
         const frame = elements.pictureFrame;
         const card = currentCard();
         if (!card || elements.answerArea.hidden || state.gameMode !== "flashcards"
