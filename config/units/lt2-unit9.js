@@ -17,7 +17,7 @@
       id: entry.id,
       category: categoryId,
       word,
-      sentence: word,
+      sentence: `I ${word}.`,
       alternate: word,
       optionLabel: word,
       teacherAnswer: word,
@@ -35,15 +35,16 @@
     unitColour: "#14A83B",
     unitNumberColour: "#54BE6D",
     menuFile: "lets_try_2.html",
-    defaultPrompt: "",
+    defaultPrompt: "I ~.",
     selectionHeading: "Daily routine",
     wordLabel: "Activity",
-    sentenceLabel: "Activity",
+    sentenceLabel: "I ~.",
     alternateLabel: "Activity",
-    showPictureSentenceMode: false,
+
     displayModeLabels: {
       pictureText: "Picture + activity",
       picture: "Picture only",
+      pictureSentence: "Picture + I ~.",
       text: "Activity only"
     },
     pictureAspectRatio: "1 / 1",
