@@ -43,6 +43,7 @@
     unitNumberColour: "#5AA9DA",
     menuFile: "lets_try_2.html",
     defaultPrompt: "The ~",
+    schoolShortenSetting: true,
     selectionHeading: "School places",
     wordLabel: "Place",
     sentenceLabel: "The ~",
