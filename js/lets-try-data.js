@@ -35,6 +35,7 @@
   const CATEGORIES = {
     worldGreetings: {
       label: "World greetings",
+      ready: true,
       card: { wordField: "greeting", sentenceField: "country", alternateField: "country", teacherAnswerField: "country" },
       items: [
         item("finland", ["1-1"], { country: "Finland", greeting: "Terve" }),
@@ -56,6 +57,7 @@
 
     englishGreetings: {
       label: "Greetings",
+      ready: true,
       card: { textOnly: true },
       items: [
         item("hello"),
@@ -71,6 +73,7 @@
 
     feelings: {
       label: "Feelings",
+      ready: true,
       card: { grammar: "I’m [word]." },
       items: [
         item("happy", ["1-2"]),
@@ -87,6 +90,7 @@
 
     numbers: {
       label: "Numbers",
+      ready: false,
       generated: true,
       items: [
         item("0"),
@@ -100,6 +104,7 @@
 
     colours: {
       label: "Colours",
+      ready: false,
       items: [
         item("red", ["1-4"], { hex: "#E53935" }),
         item("pink", ["1-4"], { hex: "#F28AB2" }),
@@ -119,6 +124,7 @@
 
     sports: {
       label: "Sports",
+      ready: true,
       expectedImageSheetCount: 12,
       status: "mapped",
       items: [
@@ -140,6 +146,7 @@
 
     food: {
       label: "Food & drink",
+      ready: true,
       items: [
         item("ice-cream", ["1-4"]),
         item("pudding", ["1-4"]),
@@ -163,6 +170,7 @@
 
     fruit: {
       label: "Fruit",
+      ready: true,
       expectedImageSheetCount: 12,
       items: [
         item("apple", ["1-8", "2-7"], { forms: { like: "apples" } }),
@@ -182,6 +190,7 @@
 
     vegetables: {
       label: "Vegetables",
+      ready: false,
       expectedImageSheetCount: 9,
       items: [
         item("onion", ["1-4", "1-8", "2-7"]),
@@ -198,6 +207,7 @@
 
     alphabet: {
       label: "Alphabet",
+      ready: false,
       generated: true,
       items: [
         item("A", ["1-6", "2-6"]), item("B", ["1-6", "2-6"]), item("C", ["1-6", "2-6"]),
@@ -214,6 +224,7 @@
 
     shapes: {
       label: "Shapes",
+      ready: false,
       items: [
         item("circle", ["1-7"]),
         item("triangle", ["1-7"]),
@@ -227,6 +238,7 @@
 
     animals: {
       label: "Animals",
+      ready: false,
       items: [
         item("cat", ["1-8"]), item("panda", ["1-8"]), item("bear"),
         item("spider", ["1-8"]), item("elephant", ["1-8"]),
@@ -242,11 +254,13 @@
 
     nature: {
       label: "Nature",
+      ready: false,
       items: [item("tree", ["1-8"])]
     },
 
     bodyParts: {
       label: "Body parts",
+      ready: false,
       items: [
         item("head", ["1-9"]), item("shoulders", ["1-9"]), item("knees", ["1-9"]), item("toes", ["1-9"]),
         item("ears", ["1-9"]), item("eyes", ["1-9"]), item("mouth", ["1-9"]), item("nose", ["1-9"])
@@ -255,6 +269,7 @@
 
     describingWords: {
       label: "Describing words",
+      ready: false,
       items: [
         item("long", ["1-9"]), item("short", ["1-9"]), item("big", ["1-9"]), item("small", ["1-9"]),
         item("scary", ["1-9"]), item("furry", ["1-9"]), item("round", ["1-9"]), item("shiny", ["1-9"])
@@ -263,6 +278,7 @@
 
     weather: {
       label: "Weather",
+      ready: false,
       items: [
         item("sunny", ["2-2"]), item("cloudy", ["2-2"]), item("rainy", ["2-2"]),
         item("snowy", ["2-2"]), item("hot", ["2-2"]), item("cold", ["2-2"])
@@ -271,6 +287,7 @@
 
     clothes: {
       label: "Clothes",
+      ready: false,
       items: [
         item("shorts", ["2-2"]), item("shirt", ["2-2"]), item("pants", ["2-2"]),
         item("jacket", ["2-2"]), item("boots", ["2-2"]), item("cap", ["2-2"])
@@ -279,6 +296,7 @@
 
     playActivities: {
       label: "Play activities",
+      ready: false,
       items: [
         item("play-tag", ["2-2"]), item("play-cards", ["2-2"]),
         item("play-dodgeball", ["2-2"]), item("make-a-snowman", ["2-2"])
@@ -287,6 +305,7 @@
 
     days: {
       label: "Days",
+      ready: false,
       items: [
         item("Monday", ["2-3"]), item("Tuesday", ["2-3"]), item("Wednesday", ["2-3"]),
         item("Thursday", ["2-3"]), item("Friday", ["2-3"]), item("Saturday", ["2-3"]), item("Sunday", ["2-3"])
@@ -295,6 +314,7 @@
 
     dailyTimes: {
       label: "Daily times",
+      ready: false,
       items: [
         item("wake-up-time", ["2-4"]), item("breakfast-time", ["2-4"]), item("study-time", ["2-4"]),
         item("lunch-time", ["2-4"]), item("homework-time", ["2-4"]), item("snack-time", ["2-4"]),
@@ -305,6 +325,7 @@
 
     clockTimes: {
       label: "Clock times",
+      ready: false,
       items: [
         item("1-oclock", ["2-4"]), item("2-oclock", ["2-4"]), item("3-oclock", ["2-4"]), item("4-oclock", ["2-4"]), item("5-oclock", ["2-4"]), item("6-oclock", ["2-4"]), item("7-oclock", ["2-4"]), item("8-oclock", ["2-4"]), item("9-oclock", ["2-4"]), item("10-oclock", ["2-4"]), item("11-oclock", ["2-4"]), item("12-oclock", ["2-4"])
       ]
@@ -312,6 +333,7 @@
 
     stationery: {
       label: "Stationery",
+      ready: false,
       expectedImageSheetCount: 12,
       items: [
         item("pencil", ["2-5"]), item("eraser", ["2-5"]), item("pencil-case", ["2-5"]),
@@ -323,6 +345,7 @@
 
     schoolPlaces: {
       label: "School places",
+      ready: false,
       items: [
         item("library", ["2-8"]), item("teachers-office", ["2-8"]),
         item("school-principals-office", ["2-8"]), item("school-nurses-office", ["2-8"]),
@@ -336,6 +359,7 @@
 
     dailyRoutine: {
       label: "Daily routine",
+      ready: false,
       items: [
         item("wake-up", ["2-9"]), item("wash-my-face", ["2-9"]), item("brush-my-teeth", ["2-9"]),
         item("put-away-my-futon", ["2-9"]), item("have-breakfast", ["2-9"]),
@@ -947,6 +971,18 @@
     return CATEGORIES[id] || null;
   }
 
+  // Standalone category readiness is a deliberate publication decision.
+  // Vocabulary may already be used by textbook units without being published
+  // as a standalone deck. A ready category must also have renderable artwork,
+  // unless it is explicitly text-only.
+  function isCategoryReady(id) {
+    const category = getCategory(id);
+    if (!category || category.ready !== true || !Array.isArray(category.items)
+        || category.items.length === 0) return false;
+    return Boolean(category.card?.textOnly)
+      || category.items.every(entry => Boolean(getWordVisual(id, entry.id)));
+  }
+
   function getItem(categoryId, itemId) {
     const category = getCategory(categoryId);
     return category
@@ -1000,7 +1036,7 @@
   }
 
   global.LETS_TRY_DATA = Object.freeze({
-    version: 17,
+    version: 18,
     assetUrl,
     categories: CATEGORIES,
     assets: ASSETS,
@@ -1008,6 +1044,7 @@
     alphabetColours: ALPHABET_COLOURS,
     extraGames: EXTRA_GAMES,
     getCategory,
+    isCategoryReady,
     getWordVisual,
     getItem,
     getUnit,
