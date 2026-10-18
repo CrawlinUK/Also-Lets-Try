@@ -135,8 +135,11 @@ assert.equal(db.isCategoryReady("numbers"), false, "unmapped numbers stay disabl
 assert.equal(db.isCategoryReady("englishGreetings"), true, "intentionally text-only deck is allowed");
 db.categories.vegetables.ready = true;
 assert.equal(db.isCategoryReady("vegetables"), true, "enabling mapped vegetables needs no menu change");
-checkDeck("Newly published Vegetables", 
-  config("config/categories.js", "?category=vegetables").cards, 9, 9);
+const newlyPublished = context("?category=vegetables");
+newlyPublished.LETS_TRY_DATA.categories.vegetables.ready = true;
+vm.runInContext(source("config/categories.js"), newlyPublished);
+checkDeck("Newly published Vegetables",
+  newlyPublished.window.LETS_TRY_UNIT_CONFIG.cards, 9, 9);
 db.categories.vegetables.ready = false;
 assert.equal(db.isCategoryReady("vegetables"), false, "switching readiness off disables a deck");
 assert.throws(() => config("config/categories.js", "?category=vegetables"),
