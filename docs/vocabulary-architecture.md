@@ -11,9 +11,19 @@ The current database is ordinary JavaScript, not SQL or JSON yet:
   It can select **all**, **none**, or **tagged** words by default. It also
   supports category lists, a unit grammar template containing `[word]`,
   and optional named word forms (for example, `grammarForm: "like"`).
-- `config/categories.js` uses the shared card generator for six
-  standalone category decks (World Greetings, Greetings, Feelings, Sports,
-  Food & Drink, Fruit).
+- Each entry in `js/lets-try-data.js` has a `ready` boolean for its
+  **standalone Categories page**. Initially six verified decks are marked
+  `ready: true`: World Greetings, Greetings, Feelings, Sports, Food & Drink,
+  and Fruit. All other categories are currently `ready: false`.
+- `LETS_TRY_DATA.isCategoryReady(id)` is shared by `categories.html` and
+  `config/categories.js`. A ready deck must have vocabulary and mapped
+  artwork for every item, or be intentionally marked `card: { textOnly: true }`.
+  The menu and loader no longer maintain their own category allowlists.
+- To publish a completed new category, validate its vocabulary and artwork,
+  then change **only its master record** to `ready: true`. The menu shows
+  its first three words and enables its standalone deck automatically.
+  Unready entries remain visible with a diagonal strike-through.
+  This flag does **not** affect vocabulary available in textbook units.
 - `config/units/lt1-unit5.js` is now a **declarative** unit containing
   only settings, categories (`sports`, `food`, `fruit`) and the grammar form.
   `js/lets-try-unit-loader.js` automatically creates its card list.
@@ -54,7 +64,8 @@ node tests/vocabulary-data.test.js
    edge, so old cards remain unchanged.
 3. Textbook tags such as `1-1` select default words **within** a
    chosen category; untagged words in that category remain selectable.
-4. Category pages select every word by default.
+4. Category pages select every word by default; `ready` only governs
+   standalone publication, not textbook unit membership.
 5. Unit grammar and sentence variants remain separate from the shared
    word definition. A word may provide named forms, e.g.
    `forms: { like: "strawberries" }`, and a unit may select that form with
