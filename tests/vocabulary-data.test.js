@@ -55,6 +55,17 @@ function checkDeck(label, cards, expectedCount, expectedSelected) {
 const categoryMenuSource = source("categories.html");
 const sharedCssSource = source("css/lets-try.css");
 assert.match(categoryMenuSource, /definition\.items\.slice\(0,3\)/, "category tiles use first three shared words");
+assert.match(categoryMenuSource, /data\.isCategoryReady\(id\)/,
+  "menu derives ready/unready state from the central vocabulary data");
+assert.doesNotMatch(categoryMenuSource, /const supported\s*=/,
+  "menu must not maintain a second category allowlist");
+const standaloneLoaderSource = source("config/categories.js");
+assert.match(standaloneLoaderSource, /data\.isCategoryReady\(id\)/,
+  "standalone category loader checks the same central readiness setting");
+assert.doesNotMatch(standaloneLoaderSource, /const supported\s*=/,
+  "standalone category loader must not duplicate the ready list");
+assert.match(standaloneLoaderSource, /cards\.find\(card => card\.visual\?\.src\)\?\.visual\?\.aspectRatio/,
+  "newly enabled decks inherit their canonical picture proportions");
 assert.match(categoryMenuSource, /samples\.scrollWidth<=samples\.clientWidth/, "whole words fit available width");
 assert.match(categoryMenuSource, /category-unavailable::after/, "unavailable tiles have diagonal stroke");
 assert.doesNotMatch(categoryMenuSource, /Open flashcards|Page coming soon/, "no placeholder status text");
@@ -111,6 +122,29 @@ for (const side of ["cropTop","cropRight","cropBottom","cropLeft"]) {
 }
 
 assert.equal(Object.keys(db.categories).length, 24, "vocabulary category count");
+// Publishable standalone decks are controlled by one per-category flag, not
+// by hard-coded lists in either menu or loader. Textbook vocabulary is separate.
+const readyAtStart = Object.keys(db.categories).filter(id => db.isCategoryReady(id));
+assert.deepEqual(readyAtStart, [
+  "worldGreetings", "englishGreetings", "feelings", "sports", "food", "fruit"
+], "the same six tested standalone decks are initially published");
+assert.ok(Object.values(db.categories).every(cat => typeof cat.ready === "boolean"),
+  "every category has an explicit ready flag");
+assert.equal(db.isCategoryReady("doesNotExist"), false, "unknown categories stay disabled");
+assert.equal(db.isCategoryReady("numbers"), false, "unmapped numbers stay disabled");
+assert.equal(db.isCategoryReady("englishGreetings"), true, "intentionally text-only deck is allowed");
+db.categories.vegetables.ready = true;
+assert.equal(db.isCategoryReady("vegetables"), true, "enabling mapped vegetables needs no menu change");
+checkDeck("Newly published Vegetables", 
+  config("config/categories.js", "?category=vegetables").cards, 9, 9);
+db.categories.vegetables.ready = false;
+assert.equal(db.isCategoryReady("vegetables"), false, "switching readiness off disables a deck");
+assert.throws(() => config("config/categories.js", "?category=vegetables"),
+  /not yet available/, "unready decks cannot be opened by URL");
+db.categories.numbers.ready = true;
+assert.equal(db.isCategoryReady("numbers"), false,
+  "a ready flag alone never publishes a deck with missing image support");
+db.categories.numbers.ready = false;
 for (const categoryId of [
   "worldGreetings", "feelings", "sports", "food", "fruit", "vegetables",
   "shapes", "animals", "nature", "bodyParts", "describingWords", "weather",
@@ -259,4 +293,4 @@ assert.equal(unit4.cards.filter(card => card.category === "clockTimes" && card.t
   "LT2 Unit 4 clocks must remain optional");
 assert.ok(unit4.cards.every(card => card.visual?.position), "LT2 Unit 4 sprite positions");
 
-console.log("Vocabulary checks passed: 24 categories, shared ratios, unit phrase settings, Unit 2 selections, and prior decks.");
+console.log("Vocabulary checks passed: 24 central readiness flags, standalone decks, shared ratios, unit settings, Unit 2 selections, and prior decks.");
