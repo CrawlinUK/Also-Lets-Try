@@ -4,8 +4,7 @@
   const id = new URLSearchParams(location.search).get("category");
   const data = LETS_TRY_DATA;
   const category = data.getCategory(id);
-  const supported = ["worldGreetings", "englishGreetings", "feelings", "sports", "food", "fruit"];
-  if (!category || !supported.includes(id)) throw new Error("Category is not yet available: " + id);
+  if (!data.isCategoryReady(id)) throw new Error("Category is not yet available: " + id);
 
   // Shared vocabulary profiles and artwork mappings build these cards.
   const cards = LETS_TRY_CARD_FACTORY.makeCategoryCards(id, { defaults: "all" });
@@ -19,7 +18,7 @@
     wordLabel: id === "worldGreetings" ? "Greeting" : "Word",
     sentenceLabel: id === "worldGreetings" ? "Country" : "Phrase",
     alternateLabel: id === "worldGreetings" ? "Country" : "Word",
-    pictureAspectRatio: id === "worldGreetings" ? "4 / 3" : id === "feelings" ? "364 / 512" : "1 / 1",
+    pictureAspectRatio: cards.find(card => card.visual?.src)?.visual?.aspectRatio || "1 / 1",
     autoSeconds: 3, autoSecondsMinimum: 1, autoSecondsMaximum: 5,
     ...(id === "englishGreetings" ? {
       defaultDisplayMode: "text",
