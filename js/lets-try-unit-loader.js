@@ -6,7 +6,7 @@
     ? new URL(document.currentScript.src)
     : new URL("js/lets-try-unit-loader.js", location.href);
   const projectRoot = new URL("../", current);
-  const ASSET_VERSION = "20261016-stage-fit-v19";
+  const ASSET_VERSION = "20261019-category-readiness-v20";
 
   const params = new URLSearchParams(location.search);
   const book = (params.get("book") || "lt1").toLowerCase();
