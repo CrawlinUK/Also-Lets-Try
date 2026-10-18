@@ -24,19 +24,18 @@ a.category-link:hover,a.category-link:focus-visible{outline:3px solid #8cccf8;ou
 <body class="category-menu">
 <header><button class="back" id="back" type="button">◀ Back</button><h1>Categories</h1></header>
 <main id="categoryMain"><p class="intro">Choose a working vocabulary category. Unfinished topics are crossed out.</p><section class="grid" id="categoryGrid"></section></main>
-<script src="js/lets-try-data.js"></script>
+<script src="js/lets-try-data.js?v=20261019-category-ready-v1"></script>
 <script>
 (function(){
   "use strict";
   const data = window.LETS_TRY_DATA;
-  const supported = ["worldGreetings", "englishGreetings", "feelings", "sports", "food", "fruit"];
   const grid = document.getElementById("categoryGrid");
   document.getElementById("back").addEventListener("click",()=>{location.href="index.html";});
 
   // The menu draws directly from the same category records as the flashcard decks.
   const previews = [];
   Object.entries(data.categories).forEach(([id,definition])=>{
-    const ready = supported.includes(id);
+    const ready = data.isCategoryReady(id);
     const card = document.createElement(ready ? "a" : "div");
     card.className = "category-link" + (ready ? "" : " category-unavailable");
     if(ready){
