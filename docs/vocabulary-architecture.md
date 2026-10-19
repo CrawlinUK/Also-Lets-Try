@@ -11,19 +11,21 @@ The current database is ordinary JavaScript, not SQL or JSON yet:
   It can select **all**, **none**, or **tagged** words by default. It also
   supports category lists, a unit grammar template containing `[word]`,
   and optional named word forms (for example, `grammarForm: "like"`).
-- Each entry in `js/lets-try-data.js` has a `ready` boolean for its
-  **standalone Categories page**. Initially six verified decks are marked
-  `ready: true`: World Greetings, Greetings, Feelings, Sports, Food & Drink,
-  and Fruit. All other categories are currently `ready: false`.
-- `LETS_TRY_DATA.isCategoryReady(id)` is shared by `categories.html` and
-  `config/categories.js`. A ready deck must have vocabulary and mapped
-  artwork for every item, or be intentionally marked `card: { textOnly: true }`.
-  The menu and loader no longer maintain their own category allowlists.
-- To publish a completed new category, validate its vocabulary and artwork,
-  then change **only its master record** to `ready: true`. The menu shows
-  its first three words and enables its standalone deck automatically.
-  Unready entries remain visible with a diagonal strike-through.
-  This flag does **not** affect vocabulary available in textbook units.
+- Standalone Categories require **no manual ready flag**. The shared
+  `LETS_TRY_DATA.getCategoryPictureItems(id)` returns the master entries that
+  have a mapped picture via `getWordVisual`, and
+  `LETS_TRY_DATA.hasCategoryPictures(id)` is true when at least one exists.
+- `categories.html` lists **only** categories containing pictures; no
+  crossed-out placeholders. It displays the first three *pictured* words where
+  they fit. The menu and `config/categories.js` use the same shared artwork
+  mapping, rather than maintaining lists of enabled categories.
+- A standalone deck includes **only its currently pictured items**, all
+  selected by default; it works when a category has just one mapped picture.
+  Missing pictures never block other cards in the same category. The full
+  vocabulary records remain available to textbook units and the database
+  viewer. Text-only or generated visuals (Greetings, Numbers, Colours,
+  Alphabet) require a separate policy if we later want them in this
+  picture-based menu.
 - `config/units/lt1-unit5.js` is now a **declarative** unit containing
   only settings, categories (`sports`, `food`, `fruit`) and the grammar form.
   `js/lets-try-unit-loader.js` automatically creates its card list.
@@ -64,8 +66,9 @@ node tests/vocabulary-data.test.js
    edge, so old cards remain unchanged.
 3. Textbook tags such as `1-1` select default words **within** a
    chosen category; untagged words in that category remain selectable.
-4. Category pages select every word by default; `ready` only governs
-   standalone publication, not textbook unit membership.
+4. Standalone picture Categories select **every pictured word** by default.
+   Vocabulary without pictures stays in the master and remains available to
+   textbook units. There is no manual publication switch.
 5. Unit grammar and sentence variants remain separate from the shared
    word definition. A word may provide named forms, e.g.
    `forms: { like: "strawberries" }`, and a unit may select that form with
