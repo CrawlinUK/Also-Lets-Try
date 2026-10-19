@@ -1,66 +1,539 @@
-<!doctype html>
-<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<title>What time is it? — Also ESL</title>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>What time is it? — Also ESL Games</title>
 <style>
-*{box-sizing:border-box}body{margin:0;min-height:100dvh;font-family:Arial,sans-serif;background:#f3f9fc;color:#172332;display:grid;grid-template-rows:auto minmax(0,1fr) auto}
-header{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:6px 18px}h1{font-size:clamp(1.5rem,3.5vw,3rem);margin:0;color:#175790}a{color:#175790;font-weight:bold}
-main{min-height:0;display:grid;grid-template-rows:minmax(0,1fr) auto;place-items:center;gap:8px;padding:0 12px 9px}
-.clock{width:min(68dvh,76vw,720px);aspect-ratio:1;position:relative;overflow:hidden;border-radius:50%;background:white;border:clamp(6px,1vw,11px) solid #1e3042;box-shadow:0 12px 28px #15365933}
-.clock.twentyfour{background:conic-gradient(#24365d 0 25%,#fff0a7 25% 75%,#24365d 75% 100%)}
-.clock.twentyfour:before{content:"";position:absolute;inset:22%;border:3px solid #6d84a5;border-radius:50%;background:white;z-index:1}
-.num{position:absolute;transform:translate(-50%,-50%);font-size:clamp(1.15rem,4.2vmin,3.2rem);font-weight:900;z-index:3;pointer-events:none}
-.num.small{font-size:clamp(.7rem,2.65vmin,1.5rem);color:#1d3448;text-shadow:0 1px 2px white}.num.dark{color:white;text-shadow:0 1px 3px #14213a}
-.clock:not(.twentyfour) .small,.clock.twentyfour .normal{display:none}
-.hand{position:absolute;bottom:50%;left:50%;transform-origin:bottom center;z-index:5;border-radius:99px}.hour{height:25%;width:clamp(8px,1.55vw,17px);background:#111827}.minute{height:36%;width:clamp(5px,.9vw,10px);background:#e84858}
-.hub{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:clamp(19px,3.2vw,34px);aspect-ratio:1;background:#172332;border:4px solid white;border-radius:50%;z-index:7}
-.visual{position:absolute;z-index:3;display:none;pointer-events:none}.clock.twentyfour .visual{display:block}
-.moon{top:14%;left:48%;font-size:clamp(1rem,3.5vmin,2.4rem)}.sun{bottom:14%;left:48%;font-size:clamp(1rem,3.5vmin,2.4rem)}
-.period{font-weight:900;font-size:clamp(.85rem,2.2vmin,1.5rem);border-radius:99px;padding:3px 9px;border:2px solid #354f79;background:white;top:39%}.am{left:60%}.pm{right:60%}
-.answer{width:min(900px,96vw);min-height:clamp(67px,11dvh,110px);background:white;border:5px solid #c3def5;border-radius:20px;display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:10px;padding:7px 16px;text-align:center}
-#sentence{font-size:clamp(1.35rem,3.5vw,3.35rem);font-weight:900;color:#18518c;line-height:1.15}
-#periodChip{font-size:clamp(1.05rem,2.5vw,2rem);font-weight:900;border:3px solid #e5ab45;color:#764917;background:#fff3bc;border-radius:99px;padding:3px 12px}
-#periodChip.pm{border-color:#6274c0;background:#e2e8ff;color:#243a84}
-.answer.hidden-answer{position:relative}.answer.hidden-answer #sentence,.answer.hidden-answer #periodChip{visibility:hidden}.answer.hidden-answer:after{content:"What time is it?";position:absolute;font-size:clamp(1.3rem,3vw,2.5rem);font-weight:900;color:#5b748c}
-footer{background:white;border-top:2px solid #d2e2ee;padding:8px;display:flex;flex-wrap:wrap;gap:7px;justify-content:center}
-button{min-height:40px;padding:8px 12px;border:1px solid #b6d3e5;border-radius:11px;background:#eaf5fc;color:#194e73;font-size:clamp(.78rem,1.25vw,1rem);font-weight:800;cursor:pointer;touch-action:manipulation}
-button.random{background:#ffefd2;border-color:#eebc70;color:#86510b}button.active{background:#304e89;color:white}button:focus-visible,a:focus-visible{outline:3px solid #e99934;outline-offset:2px}
-@media(max-width:720px){.clock{width:min(61dvh,92vw)}button{padding:7px 9px}footer{gap:5px}}
-@media(max-height:620px) and (orientation:landscape){main{grid-template-columns:1fr 1fr;grid-template-rows:1fr}.clock{width:min(70dvh,48vw)}.answer{width:100%}footer{padding:5px}button{min-height:33px;padding:4px 8px}h1{font-size:1.5rem}}
-</style></head>
-<body><header><h1>What time is it?</h1><a href="index.html">← ESL Games</a></header>
-<main><div class="clock" id="clock" role="img" aria-label="Analogue clock"><div class="visual moon">🌙</div><div class="visual sun">☀️</div>
-<div class="visual period am">a.m.</div><div class="visual period pm">p.m.</div>
-<div class="hand hour" id="hourHand"></div><div class="hand minute" id="minuteHand"></div><div class="hub"></div></div>
-<div class="answer" id="answer"><span id="sentence"></span><span id="periodChip"></span></div></main>
-<footer><button data-step="-60">−1h</button><button data-step="60">+1h</button><button data-step="-15">−15m</button><button data-step="15">+15m</button>
-<button class="random" data-random="60">Random hour</button><button class="random" data-random="15">Random 15m</button><button class="random" data-random="5">Random 5m</button>
-<button id="answerBtn">Hide answer</button><button id="modeBtn">24-hour dial</button><button id="switchBtn">Switch a.m./p.m.</button><button id="resetBtn">Reset</button></footer>
+  :root{
+    --ink:#17202b;
+    --blue:#145b98;
+    --paper:#f3f8fc;
+    --line:#cfe0eb;
+    --sky-day-1:#bfe8ff;
+    --sky-day-2:#ecf8ff;
+    --sky-dawn-1:#ffd39b;
+    --sky-dawn-2:#fff2cb;
+    --sky-dusk-1:#ffbc92;
+    --sky-dusk-2:#8262b2;
+    --sky-night-1:#102443;
+    --sky-night-2:#304f78;
+    --grass-1:#7dc06c;
+    --grass-2:#65a957;
+    --wood-1:#b98048;
+    --wood-2:#996538;
+    --danger:#e24959;
+    --digit-bg:#172533;
+    --digit-on:#85ff87;
+    --digit-shadow:#58c15e;
+    --sill-h:clamp(28px,4.8vw,48px);
+  }
+
+  *{box-sizing:border-box}
+  body{
+    margin:0;
+    min-height:100dvh;
+    background:var(--paper);
+    color:var(--ink);
+    font-family:Arial,Helvetica,sans-serif;
+    display:grid;
+    grid-template-rows:auto minmax(0,1fr) auto;
+  }
+
+  header{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+    padding:8px clamp(12px,2vw,28px);
+  }
+  h1{margin:0;font-size:clamp(1.55rem,3.2vw,2.8rem);color:var(--blue)}
+  .back{color:#265b7f;text-decoration:none;font-weight:800;font-size:clamp(.85rem,1.25vw,1.05rem)}
+
+  main{
+    min-height:0;
+    display:grid;
+    grid-template-rows:minmax(0,1fr) auto auto;
+    place-items:center;
+    gap:10px;
+    padding:0 12px 12px;
+  }
+
+  .scene-shell{width:min(980px,100%);min-height:0;display:grid;place-items:center}
+  .window-stage{width:min(920px,100%);display:grid;place-items:end center;position:relative;padding:14px 14px 0}
+
+  .window-frame{
+    position:relative;
+    width:min(880px,100%);
+    aspect-ratio:16 / 10;
+    border:clamp(10px,1.25vw,16px) solid #f5efe3;
+    border-bottom-width:clamp(14px,1.6vw,20px);
+    border-radius:18px 18px 0 0;
+    background:#fff8ef;
+    box-shadow:0 16px 34px rgba(26,46,69,.18);
+    overflow:hidden;
+  }
+
+  .window-view{
+    position:absolute;
+    inset:0;
+    overflow:hidden;
+    background:linear-gradient(180deg,var(--sky-day-1),var(--sky-day-2));
+  }
+  .window-view.day{background:linear-gradient(180deg,var(--sky-day-1),var(--sky-day-2))}
+  .window-view.dawn{background:linear-gradient(180deg,var(--sky-dawn-1),var(--sky-dawn-2))}
+  .window-view.dusk{background:linear-gradient(180deg,var(--sky-dusk-1),var(--sky-dusk-2))}
+  .window-view.night{background:linear-gradient(180deg,var(--sky-night-1),var(--sky-night-2))}
+
+  .horizon{
+    position:absolute;left:0;right:0;bottom:0;height:28%;
+    background:linear-gradient(180deg,var(--grass-1),var(--grass-2));
+  }
+  .horizon::before,.horizon::after{
+    content:"";position:absolute;bottom:55%;width:24%;aspect-ratio:1.8;
+    background:#5e8a53;border-radius:50% 50% 0 0;filter:saturate(.92);
+  }
+  .horizon::before{left:6%}
+  .horizon::after{right:8%}
+
+  .sun,.moon{position:absolute;width:clamp(48px,7vw,92px);aspect-ratio:1;border-radius:50%}
+  .sun{
+    right:12%;top:12%;
+    background:radial-gradient(circle at 35% 35%,#fffcd5 0 22%,#ffd760 23% 62%,#f2b73d 63% 100%);
+    box-shadow:0 0 0 12px rgba(255,221,120,.17),0 0 34px rgba(255,213,95,.45);
+  }
+  .moon{display:none;right:13%;top:12%;background:#f5f0d8;box-shadow:0 0 24px rgba(255,255,255,.15)}
+  .moon::after{content:"";position:absolute;inset:12% 0 12% 24%;background:var(--sky-night-1);border-radius:50%}
+  .window-view.night .moon{display:block}
+  .window-view.dusk .moon{display:block;opacity:.4}
+  .window-view.night .sun{display:none}
+  .window-view.dawn .sun,
+  .window-view.dusk .sun{top:44%;right:12%}
+  .sun,.moon{transition:left .65s ease,top .65s ease,opacity .5s ease}
+  @media(prefers-reduced-motion:reduce){.sun,.moon{transition:none}}
+  .window-view.dawn .sun{box-shadow:0 0 0 10px rgba(255,221,120,.15),0 0 26px rgba(255,189,91,.30)}
+  .window-view.dusk .sun{box-shadow:0 0 0 10px rgba(255,176,96,.12),0 0 24px rgba(255,130,90,.24)}
+
+  .stars{position:absolute;inset:0;display:none}
+  .window-view.night .stars{display:block}
+  .star{position:absolute;width:4px;height:4px;background:#fff9d1;border-radius:50%;box-shadow:0 0 8px rgba(255,255,255,.6)}
+
+  .cloud{
+    position:absolute;width:clamp(90px,14vw,170px);height:clamp(32px,5vw,56px);
+    background:rgba(255,255,255,.92);border-radius:999px;box-shadow:0 8px 18px rgba(57,105,152,.10)
+  }
+  .cloud::before,.cloud::after{content:"";position:absolute;background:rgba(255,255,255,.95);border-radius:50%}
+  .cloud::before{width:42%;height:85%;left:12%;bottom:35%}
+  .cloud::after{width:34%;height:70%;right:16%;bottom:42%}
+  .cloud.one{left:10%;top:18%}
+  .cloud.two{right:18%;top:30%;transform:scale(.82)}
+  .window-view.night .cloud{opacity:.16}
+  .window-view.dusk .cloud{opacity:.44}
+  .window-view.dawn .cloud{opacity:.75}
+
+  .window-cross-v,.window-cross-h{position:absolute;background:#f1eadc;box-shadow:0 0 0 1px rgba(179,151,119,.18);z-index:2}
+  .window-cross-v{top:0;bottom:0;left:50%;width:clamp(8px,1vw,12px);transform:translateX(-50%)}
+  .window-cross-h{left:0;right:0;top:50%;height:clamp(8px,1vw,12px);transform:translateY(-50%)}
+
+  .scene-label{
+    position:absolute;top:12px;left:12px;z-index:3;padding:6px 12px;border-radius:999px;
+    font-weight:900;font-size:clamp(.82rem,1.35vw,1rem);letter-spacing:.02em;
+    background:rgba(255,255,255,.92);color:#214a6d;box-shadow:0 4px 12px rgba(0,0,0,.08)
+  }
+
+  .window-sill{
+    position:relative;width:min(930px,104%);height:var(--sill-h);margin-top:-2px;
+    border-radius:0 0 18px 18px;background:linear-gradient(180deg,#c88d52,var(--wood-1) 55%,var(--wood-2));
+    box-shadow:0 8px 16px rgba(88,53,24,.24)
+  }
+
+  /* Separate anchored holders stop the clock from dropping when digital is hidden. */
+  .clock-holder,
+  .digital-holder{
+    position:absolute;left:50%;transform:translateX(-50%);z-index:4;
+    display:flex;justify-content:center;width:min(100%,640px);
+  }
+  .clock-holder{bottom:calc(var(--sill-h) + 23px)}
+  .digital-holder{bottom:calc(var(--sill-h) + 22px)}
+
+  .clock{
+    position:relative;width:min(54dvh,60vw,440px);aspect-ratio:1;border-radius:50%;
+    border:clamp(6px,1vw,10px) solid #253243;background:#fff;
+    box-shadow:0 14px 28px rgba(28,53,83,.25)
+  }
+  .clock::before{
+    content:"";position:absolute;inset:4.5%;border-radius:50%;
+    background:radial-gradient(circle at 50% 38%,#ffffff,#f4f7fb 72%)
+  }
+  .number{
+    position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
+    font-weight:900;font-size:clamp(1.05rem,4.1vmin,2.4rem);line-height:1;z-index:2;pointer-events:none
+  }
+  .hand{position:absolute;left:50%;bottom:50%;transform-origin:bottom center;border-radius:100px;z-index:3}
+  .hour-hand{width:clamp(8px,1.35vw,15px);height:24%;background:var(--ink)}
+  .minute-hand{width:clamp(4px,.8vw,8px);height:35%;background:var(--danger)}
+  .centre-dot{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:clamp(20px,3.5vw,32px);aspect-ratio:1;border-radius:50%;background:var(--ink);border:4px solid #fff;z-index:4}
+
+  .digital-panel{
+    display:grid;gap:8px;justify-items:center;padding:12px 16px 14px;border-radius:16px;
+    background:rgba(255,255,255,.95);box-shadow:0 10px 22px rgba(28,53,83,.15);
+    border:2px solid #d7e6ef;min-width:min(92vw,420px)
+  }
+  .digital-heading{font-size:clamp(.9rem,1.4vw,1.05rem);font-weight:900;color:#37526a;letter-spacing:.03em;text-transform:uppercase}
+  .digital-row{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:10px}
+  .digital-time{
+    padding:10px 16px;border-radius:12px;background:linear-gradient(180deg,#1b2c3f,#121e2c);
+    color:var(--digit-on);font-family:"Courier New",Courier,monospace;font-weight:900;font-variant-numeric:tabular-nums;
+    font-size:clamp(2rem,5vw,3.25rem);letter-spacing:.08em;box-shadow:inset 0 0 18px rgba(82,198,94,.18),0 0 16px rgba(82,198,94,.14);
+    text-shadow:0 0 10px var(--digit-shadow);min-width:5.3em;text-align:center
+  }
+  .period-chip{padding:9px 14px;border-radius:999px;font-size:clamp(1rem,2.2vw,1.35rem);font-weight:900;background:#fff2ba;border:3px solid #e2af49;color:#7a4a10;white-space:nowrap}
+  .period-chip.pm{background:#dbe4ff;border-color:#6b7fd0;color:#2a4089}
+
+  .window-stage:not(.show-digital) .digital-holder{display:none}
+  .window-stage:not(.show-clock) .clock-holder{display:none}
+  .window-stage.show-clock.show-digital .clock-holder{left:31%}
+  .window-stage.show-clock.show-digital .digital-holder{left:76%}
+  .window-stage.show-clock.show-digital .clock{width:min(43dvh,43vw,360px)}
+  .window-stage.show-clock.show-digital .digital-panel{min-width:0;width:min(320px,39vw);padding:10px 8px}
+  .window-stage.show-clock.show-digital .digital-time{font-size:clamp(1.3rem,3.3vw,2.5rem);min-width:0}
+  .window-stage.show-clock.show-digital .digital-row{gap:5px}
+  .window-stage:not(.show-clock) .digital-holder{bottom:calc(var(--sill-h) + 60px)}
+
+  .answer{
+    width:min(940px,96vw);min-height:clamp(68px,10dvh,106px);display:flex;align-items:center;justify-content:center;
+    text-align:center;background:#fff;border:5px solid #c7dff2;border-radius:20px;padding:10px 16px;position:relative
+  }
+  .sentence{font-size:clamp(1.35rem,3.5vw,3.3rem);font-weight:900;line-height:1.14;color:#184f8b;text-wrap:balance}
+  .answer.hidden-answer .sentence{visibility:hidden}
+  .answer.hidden-answer::after{content:"What time is it?";position:absolute;font-size:clamp(1.3rem,3vw,2.4rem);font-weight:900;color:#59738b}
+
+  footer{background:#fff;border-top:2px solid var(--line);padding:8px 10px max(8px,env(safe-area-inset-bottom));display:flex;flex-wrap:wrap;justify-content:center;gap:7px}
+  button{min-height:40px;padding:10px 12px;border:1px solid #b8d6ea;border-radius:11px;background:#eaf6ff;color:#18496b;font-size:clamp(.78rem,1.2vw,1rem);font-weight:800;cursor:pointer;touch-action:manipulation}
+  button.random{background:#ffedcf;border-color:#eeb974;color:#885010}
+  button:focus-visible,.back:focus-visible{outline:3px solid #ef8c24;outline-offset:2px}
+  .period-flip{background:#fff4d9;border-color:#efc571;color:#7a4816;transition:transform .2s}
+  .period-flip.flipped{background:#dfe7ff;border-color:#8c9dde;color:#2a428a}
+  .icon-button{min-width:42px;font-size:1.35rem;padding:6px 12px}
+  .mode-button.active{background:#1e618e;color:white;border-color:#1e618e}
+  .divider{align-self:center;width:2px;height:28px;background:#ccdde8;margin:0 2px}
+
+  @media (max-width:820px){
+    .window-frame{aspect-ratio:15 / 11}
+    .clock{width:min(46dvh,68vw,380px)}
+    .digital-panel{min-width:min(92vw,360px)}
+  }
+  @media (max-width:680px){
+    header{padding:6px 12px}
+    .window-stage{padding-inline:6px}
+    .window-frame{aspect-ratio:5 / 4}
+    .clock{width:min(40dvh,76vw,320px)}
+    .digital-panel{padding:10px 12px 12px}
+    .divider{display:none}
+    button{padding:8px 9px;min-height:38px}
+    .window-stage:not(.show-clock) .digital-holder{bottom:calc(var(--sill-h) + 24px)}
+  }
+  @media (max-height:720px) and (orientation:landscape){
+    header{padding-block:4px} h1{font-size:1.4rem}
+    main{grid-template-rows:minmax(0,1fr) auto}
+    .answer{display:none}
+    .window-stage{width:min(1020px,100%)}
+    .window-frame{aspect-ratio:16 / 8.5}
+    .clock{width:min(54dvh,38vw,320px)}
+    .digital-panel{min-width:290px}
+    .window-stage:not(.show-clock) .digital-holder{bottom:calc(var(--sill-h) + 8px)}
+    footer{padding:5px 8px}
+    button{min-height:34px;padding:5px 8px}
+  }
+</style>
+</head>
+<body>
+<header>
+  <h1>What time is it?</h1>
+  <a class="back" href="index.html">← ESL Games</a>
+</header>
+
+<main>
+  <section class="scene-shell">
+    <div class="window-stage show-clock" id="windowStage">
+      <div class="window-frame">
+        <div class="window-view day" id="windowView" aria-hidden="true">
+          <div class="scene-label" id="sceneLabel">Morning</div>
+          <div class="sun" id="sun"></div>
+          <div class="moon" id="moon"></div>
+          <div class="stars">
+            <span class="star" style="left:12%;top:16%"></span>
+            <span class="star" style="left:24%;top:10%"></span>
+            <span class="star" style="left:37%;top:22%"></span>
+            <span class="star" style="left:58%;top:12%"></span>
+            <span class="star" style="left:72%;top:18%"></span>
+            <span class="star" style="left:84%;top:10%"></span>
+            <span class="star" style="left:66%;top:31%"></span>
+            <span class="star" style="left:18%;top:30%"></span>
+          </div>
+          <div class="cloud one"></div>
+          <div class="cloud two"></div>
+          <div class="horizon"></div>
+        </div>
+        <div class="window-cross-v" aria-hidden="true"></div>
+        <div class="window-cross-h" aria-hidden="true"></div>
+      </div>
+
+      <div class="window-sill" aria-hidden="true"></div>
+
+      <div class="clock-holder">
+        <div class="clock" id="clock" role="img" aria-label="Clock showing 01:00 a.m.">
+          <div class="hand hour-hand" id="hourHand"></div>
+          <div class="hand minute-hand" id="minuteHand"></div>
+          <div class="centre-dot"></div>
+        </div>
+      </div>
+
+      <div class="digital-holder">
+        <div class="digital-panel" aria-label="Digital time display">
+          <div class="digital-heading">24-hour digital display</div>
+          <div class="digital-row">
+            <div class="digital-time" id="digitalTime">01:00</div>
+            <div class="period-chip" id="periodChip">a.m.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="answer" id="answer">
+    <div class="sentence" id="sentence">It’s one.</div>
+  </section>
+</main>
+
+<footer aria-label="Teacher controls">
+  <button type="button" data-change="60">+1h</button>
+  <button type="button" data-change="-60">−1h</button>
+  <button type="button" data-change="15">+15m</button>
+  <button type="button" data-change="-15">−15m</button>
+  <span class="divider" aria-hidden="true"></span>
+  <button type="button" class="random" data-random="60">🎲 Hour</button>
+  <button type="button" class="random" data-random="15">🎲 15m</button>
+  <button type="button" class="random" data-random="5">🎲 5m</button>
+  <span class="divider" aria-hidden="true"></span>
+  <button type="button" id="textBtn">Hide words</button>
+  <button type="button" id="oclockBtn" aria-pressed="false">Use o’clock: Off</button>
+  <button type="button" class="mode-button active" id="clockBtn" aria-pressed="true">Display: clock</button>
+  <button type="button" class="mode-button" id="digitalBtn" aria-pressed="false">Display: digital</button>
+  <button type="button" class="period-flip" id="periodBtn" title="Flip a.m. and p.m.">⇄ a.m./p.m.</button>
+  <button type="button" class="icon-button" id="resetBtn" title="Reset" aria-label="Reset">↺</button>
+</footer>
+
 <script>
-(()=>{'use strict';
-const $=id=>document.getElementById(id),clock=$('clock'),answer=$('answer'),sentence=$('sentence'),chip=$('periodChip'),modeBtn=$('modeBtn'),answerBtn=$('answerBtn');
-const words=['twelve','one','two','three','four','five','six','seven','eight','nine','ten','eleven'],digits=['','one','two','three','four','five','six','seven','eight','nine'];
-let minutes=60,mode24=false,revealed=true;
-const norm=n=>(n%1440+1440)%1440,pad=n=>String(n).padStart(2,'0');
-const word=n=>n<10?digits[n]:n<20?['ten','eleven','twelve','thirteen','fourteen','fifteen','sixteen','seventeen','eighteen','nineteen'][n-10]:['','','twenty','thirty','forty','fifty'][Math.floor(n/10)]+(n%10?' '+digits[n%10]:'');
-function number(value,deg,radius,css){const el=document.createElement('span');el.className='num '+css;el.textContent=value;const rad=(deg-90)*Math.PI/180;el.style.left=(50+Math.cos(rad)*radius*100)+'%';el.style.top=(50+Math.sin(rad)*radius*100)+'%';clock.appendChild(el)}
-for(let i=1;i<=12;i++)number(i,i*30,.39,'normal');
-for(let i=0;i<24;i++)number(pad(i),i*15,.426,'small'+(i<6||i>=18?' dark':''));
-function speak(h,m){const hour=words[h%12];if(m===0)return 'It’s '+hour+' o’clock';return 'It’s '+hour+' '+(m<10?'oh '+word(m):word(m))}
-function update(){const h=Math.floor(minutes/60),m=minutes%60,period=h<12?'a.m.':'p.m.';
-$('hourHand').style.transform='translateX(-50%) rotate('+(mode24?h*15+m*.25:(h%12)*30+m*.5)+'deg)';
-$('minuteHand').style.transform='translateX(-50%) rotate('+(m*6)+'deg)';
-sentence.textContent=speak(h,m);chip.textContent=period;chip.classList.toggle('pm',period==='p.m.');
-clock.classList.toggle('twentyfour',mode24);clock.setAttribute('aria-label','Clock showing '+pad(h)+':'+pad(m));
-answer.classList.toggle('hidden-answer',!revealed);answerBtn.textContent=revealed?'Hide answer':'Reveal answer';
-modeBtn.textContent=mode24?'12-hour dial':'24-hour dial';modeBtn.classList.toggle('active',mode24);
-}
-function change(n){minutes=norm(minutes+n);update()}function random(step){minutes=Math.floor(Math.random()*(1440/step))*step;update()}
-document.querySelectorAll('[data-step]').forEach(b=>b.addEventListener('click',()=>change(+b.dataset.step)));
-document.querySelectorAll('[data-random]').forEach(b=>b.addEventListener('click',()=>random(+b.dataset.random)));
-answerBtn.addEventListener('click',()=>{revealed=!revealed;update()});modeBtn.addEventListener('click',()=>{mode24=!mode24;update()});
-$('switchBtn').addEventListener('click',()=>change(720));$('resetBtn').addEventListener('click',()=>{minutes=60;mode24=false;revealed=true;update()});
-document.addEventListener('keydown',e=>{if(/^(INPUT|SELECT|TEXTAREA)$/.test(e.target.tagName)||e.altKey||e.ctrlKey||e.metaKey)return;
-const actions={ArrowRight:()=>change(15),ArrowLeft:()=>change(-15),ArrowUp:()=>change(60),ArrowDown:()=>change(-60),' ':()=>random(15),Enter:()=>random(60),t:()=>{revealed=!revealed;update()},c:()=>{mode24=!mode24;update()}};
-if(actions[e.key]){e.preventDefault();actions[e.key]()}});update();
+(() => {
+  'use strict';
+
+  const $ = (id) => document.getElementById(id);
+  const clock = $('clock');
+  const hourHand = $('hourHand');
+  const minuteHand = $('minuteHand');
+  const digitalTime = $('digitalTime');
+  const periodChip = $('periodChip');
+  const sentence = $('sentence');
+  const answer = $('answer');
+  const textBtn = $('textBtn');
+  const clockBtn = $('clockBtn');
+  const digitalBtn = $('digitalBtn');
+  const oclockBtn = $('oclockBtn');
+  const periodBtn = $('periodBtn');
+  const sun = $('sun');
+  const moon = $('moon');
+  const windowView = $('windowView');
+  const sceneLabel = $('sceneLabel');
+  const windowStage = $('windowStage');
+
+  const hourWords = ['twelve','one','two','three','four','five','six','seven','eight','nine','ten','eleven'];
+  const unitWords = ['','one','two','three','four','five','six','seven','eight','nine'];
+  const teenWords = ['ten','eleven','twelve','thirteen','fourteen','fifteen','sixteen','seventeen','eighteen','nineteen'];
+  const tensWords = ['','','twenty','thirty','forty','fifty'];
+
+  let totalMinutes = 60;
+  let showAnswer = true;
+  let showClock = true;
+  let showDigital = false;
+  let useOClock = false;
+
+  function buildNumbers() {
+    for (let i = 1; i <= 12; i += 1) {
+      const el = document.createElement('div');
+      el.className = 'number';
+      el.textContent = i;
+      const angle = (i * 30 - 90) * Math.PI / 180;
+      const radius = 39;
+      el.style.left = (50 + radius * Math.cos(angle)) + '%';
+      el.style.top = (50 + radius * Math.sin(angle)) + '%';
+      clock.appendChild(el);
+    }
+  }
+
+  function pad(n) {
+    return String(n).padStart(2, '0');
+  }
+
+  function normalise(n) {
+    return (n % 1440 + 1440) % 1440;
+  }
+
+  function minuteWords(n) {
+    if (n < 10) return unitWords[n];
+    if (n < 20) return teenWords[n - 10];
+    return tensWords[Math.floor(n / 10)] + (n % 10 ? '-' + unitWords[n % 10] : '');
+  }
+
+  function spokenTime(hour24, minute) {
+    const hourWord = hourWords[hour24 % 12];
+    if (minute === 0) return useOClock ? `It’s ${hourWord} o’clock.` : `It’s ${hourWord}.`;
+    if (minute < 10) return `It’s ${hourWord} oh ${minuteWords(minute)}.`;
+    return `It’s ${hourWord} ${minuteWords(minute)}.`;
+  }
+
+  function sceneType(hour24) {
+    if (hour24 >= 5 && hour24 < 7) return 'dawn';
+    if (hour24 >= 7 && hour24 < 17) return 'day';
+    if (hour24 >= 17 && hour24 < 19) return 'dusk';
+    return 'night';
+  }
+
+  function sceneName(type) {
+    return ({ dawn:'Dawn', day: (Math.floor(totalMinutes/60) < 12 ? 'Morning' : 'Afternoon'), dusk:'Dusk', night:'Night' })[type];
+  }
+
+  function updateDisplayMode() {
+    windowStage.classList.toggle('show-clock', showClock);
+    windowStage.classList.toggle('show-digital', showDigital);
+    clockBtn.classList.toggle('active', showClock);
+    digitalBtn.classList.toggle('active', showDigital);
+    clockBtn.setAttribute('aria-pressed',String(showClock));
+    digitalBtn.setAttribute('aria-pressed',String(showDigital));
+  }
+
+  function updateCelestialPositions(hour24,minute,type) {
+    const time = hour24 + minute / 60;
+    // Rising from the left horizon, reaching the centre at noon, setting on the right.
+    const sunProgress = Math.max(0,Math.min(1,(time - 5)/14));
+    const arc = Math.sin(sunProgress * Math.PI);
+    sun.style.left = (6 + sunProgress * 78) + '%';
+    sun.style.top = (52 - 43 * arc) + '%';
+    sun.style.right = 'auto';
+    // Moon follows the same arc overnight, passing overhead around midnight.
+    const nightHour = (time < 19 ? time + 24 : time);
+    const moonProgress = Math.max(0,Math.min(1,(nightHour - 19)/10));
+    moon.style.left = (6 + moonProgress * 78) + '%';
+    moon.style.top = (52 - 43 * Math.sin(moonProgress * Math.PI)) + '%';
+    moon.style.right = 'auto';
+    periodBtn.classList.toggle('flipped',hour24>=12);
+  }
+
+  function updateClock() {
+    const hour24 = Math.floor(totalMinutes / 60);
+    const minute = totalMinutes % 60;
+    const period = hour24 < 12 ? 'a.m.' : 'p.m.';
+    const hour12 = hour24 % 12;
+
+    hourHand.style.transform = `translateX(-50%) rotate(${hour12 * 30 + minute * 0.5}deg)`;
+    minuteHand.style.transform = `translateX(-50%) rotate(${minute * 6}deg)`;
+
+    digitalTime.textContent = `${pad(hour24)}:${pad(minute)}`;
+    periodChip.textContent = period;
+    periodChip.classList.toggle('pm', period === 'p.m.');
+
+    sentence.textContent = spokenTime(hour24, minute);
+    answer.classList.toggle('hidden-answer', !showAnswer);
+    textBtn.textContent = showAnswer ? 'Hide words' : 'Show words';
+    textBtn.setAttribute('aria-pressed', String(!showAnswer));
+
+    const type = sceneType(hour24);
+    windowView.classList.remove('dawn','day','dusk','night');
+    windowView.classList.add(type);
+    sceneLabel.textContent = sceneName(type);
+    updateCelestialPositions(hour24,minute,type);
+
+    clock.setAttribute('aria-label', `Clock showing ${pad(hour24)}:${pad(minute)} ${period}`);
+    updateDisplayMode();
+  }
+
+  function changeTime(amount) {
+    totalMinutes = normalise(totalMinutes + amount);
+    updateClock();
+  }
+
+  function randomTime(step) {
+    totalMinutes = Math.floor(Math.random() * (1440 / step)) * step;
+    updateClock();
+  }
+
+  document.querySelectorAll('[data-change]').forEach((button) => {
+    button.addEventListener('click', () => changeTime(Number(button.dataset.change)));
+  });
+
+  document.querySelectorAll('[data-random]').forEach((button) => {
+    button.addEventListener('click', () => randomTime(Number(button.dataset.random)));
+  });
+
+  textBtn.addEventListener('click', () => {
+    showAnswer = !showAnswer;
+    updateClock();
+  });
+
+  clockBtn.addEventListener('click', () => {
+    showClock = !showClock;
+    if (!showClock && !showDigital) showDigital = true;
+    updateClock();
+  });
+  digitalBtn.addEventListener('click', () => {
+    showDigital = !showDigital;
+    if (!showClock && !showDigital) showClock = true;
+    updateClock();
+  });
+  oclockBtn.addEventListener('click', () => {
+    useOClock = !useOClock;
+    oclockBtn.textContent = 'Use o’clock: ' + (useOClock ? 'On' : 'Off');
+    oclockBtn.setAttribute('aria-pressed',String(useOClock));
+    updateClock();
+  });
+
+  $('periodBtn').addEventListener('click', () => changeTime(720));
+
+  $('resetBtn').addEventListener('click', () => {
+    totalMinutes = 60;
+    showAnswer = true;
+    showClock = true;
+    showDigital = false;
+    useOClock = false;
+    oclockBtn.textContent = 'Use o’clock: Off';
+    oclockBtn.setAttribute('aria-pressed','false');
+    updateClock();
+  });
+
+  document.addEventListener('keydown', (event) => {
+    if (/^(INPUT|TEXTAREA|SELECT)$/.test(event.target.tagName) || event.altKey || event.ctrlKey || event.metaKey) return;
+
+    const actions = {
+      ArrowRight: () => changeTime(15),
+      ArrowLeft: () => changeTime(-15),
+      ArrowUp: () => changeTime(60),
+      ArrowDown: () => changeTime(-60),
+      ' ': () => randomTime(15),
+      Enter: () => randomTime(60),
+      t: () => { showAnswer = !showAnswer; updateClock(); },
+      d: () => { showDigital=!showDigital; if (!showDigital && !showClock) showClock=true; updateClock(); }
+    };
+
+    const action = actions[event.key];
+    if (action) {
+      event.preventDefault();
+      action();
+    }
+  });
+
+  buildNumbers();
+  updateClock();
 })();
-</script></body></html>
+</script>
+</body>
+</html>
