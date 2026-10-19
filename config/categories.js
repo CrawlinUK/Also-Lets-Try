@@ -25,6 +25,17 @@
       displayModes: ["text"],
       showPictureSentenceMode: false
     } : {}),
+    ...(id === "shapes" ? {
+      // Activate the same colour palette, 1–5 shape counts, and text
+      // options as Book 1 Unit 7, without adding cards to the category.
+      shapePractice: category.shapePractice,
+      showPictureSentenceMode: false,
+      displayModeLabels: {
+        pictureText: "Picture + word",
+        picture: "Picture only",
+        text: "Word only"
+      }
+    } : {}),
     cards
   };
 })();
