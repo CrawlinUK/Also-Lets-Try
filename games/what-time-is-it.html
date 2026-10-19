@@ -105,7 +105,6 @@
   .moon{display:none;right:13%;top:12%;background:#f5f0d8;box-shadow:0 0 24px rgba(255,255,255,.15)}
   .moon::after{content:"";position:absolute;inset:12% 0 12% 24%;background:var(--sky-night-1);border-radius:50%}
   .window-view.night .moon{display:block}
-  .window-view.dusk .moon{display:block;opacity:.4}
   .window-view.night .sun{display:none}
   .window-view.dawn .sun,
   .window-view.dusk .sun{top:44%;right:12%}
@@ -154,7 +153,7 @@
     display:flex;justify-content:center;width:min(100%,640px);
   }
   .clock-holder{bottom:calc(var(--sill-h) + 23px)}
-  .digital-holder{bottom:calc(var(--sill-h) + 22px)}
+  .digital-holder{bottom:calc(var(--sill-h) + 12px)}
 
   .clock{
     position:relative;width:min(54dvh,60vw,440px);aspect-ratio:1;border-radius:50%;
@@ -180,25 +179,40 @@
     border:2px solid #d7e6ef;min-width:min(92vw,420px)
   }
   .digital-heading{font-size:clamp(.9rem,1.4vw,1.05rem);font-weight:900;color:#37526a;letter-spacing:.03em;text-transform:uppercase}
-  .digital-row{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:10px}
+  .digital-row{display:flex;align-items:center;justify-content:center;gap:0}
   .digital-time{
+    display:flex;align-items:baseline;justify-content:center;gap:.15em;
     padding:10px 16px;border-radius:12px;background:linear-gradient(180deg,#1b2c3f,#121e2c);
     color:var(--digit-on);font-family:"Courier New",Courier,monospace;font-weight:900;font-variant-numeric:tabular-nums;
-    font-size:clamp(2rem,5vw,3.25rem);letter-spacing:.08em;box-shadow:inset 0 0 18px rgba(82,198,94,.18),0 0 16px rgba(82,198,94,.14);
-    text-shadow:0 0 10px var(--digit-shadow);min-width:5.3em;text-align:center
+    font-size:clamp(2rem,5vw,3.25rem);letter-spacing:.05em;box-shadow:inset 0 0 18px rgba(82,198,94,.18),0 0 16px rgba(82,198,94,.14);
+    text-shadow:0 0 10px var(--digit-shadow);white-space:nowrap;
   }
-  .period-chip{padding:9px 14px;border-radius:999px;font-size:clamp(1rem,2.2vw,1.35rem);font-weight:900;background:#fff2ba;border:3px solid #e2af49;color:#7a4a10;white-space:nowrap}
-  .period-chip.pm{background:#dbe4ff;border-color:#6b7fd0;color:#2a4089}
+  .digital-period{font-size:.39em;letter-spacing:0;color:#fff3ae;text-shadow:none}
+  .digital-panel{border-bottom:6px solid #8c6240;box-shadow:0 4px 2px #6b492b,0 8px 12px #1c355328}
 
+  /* A pair of unobtrusive edge rails leaves the window uncluttered. */
+  .adjust-rail{position:fixed;z-index:20;top:50%;transform:translateY(-50%);display:grid;gap:9px}
+  .adjust-rail.left{left:clamp(5px,1.3vw,22px)}
+  .adjust-rail.right{right:clamp(5px,1.3vw,22px)}
+  .adjust-rail button{min-width:clamp(55px,6.2vw,90px);min-height:clamp(48px,6vw,72px);border-radius:15px;background:#fff;box-shadow:0 4px 12px #1b3e6030;font-size:clamp(.9rem,1.5vw,1.25rem)}
+  .settings-wrap{position:relative}
+  .settings-menu{position:absolute;bottom:calc(100% + 9px);left:0;z-index:35;width:min(310px,90vw);background:white;border:2px solid #c3d9e9;border-radius:15px;padding:12px;box-shadow:0 12px 30px #193f6040;display:grid;gap:9px}
+  .settings-menu[hidden]{display:none}
+  .settings-menu button{width:100%;text-align:left}
+  .settings-menu strong{color:#204867}
+  .settings-menu button[aria-pressed="true"]{background:#dcefff;border-color:#4683b8}
+  .compact-steps{display:none;grid-template-columns:repeat(2,minmax(0,1fr));gap:5px;padding-bottom:8px;border-bottom:1px solid #cadce8}
+  .compact-steps button{font-size:1rem}
+  @media(max-width:1100px){.adjust-rail{display:none}.compact-steps{display:grid}}
   .window-stage:not(.show-digital) .digital-holder{display:none}
   .window-stage:not(.show-clock) .clock-holder{display:none}
   .window-stage.show-clock.show-digital .clock-holder{left:31%}
-  .window-stage.show-clock.show-digital .digital-holder{left:76%}
+  .window-stage.show-clock.show-digital .digital-holder{left:75%;bottom:calc(var(--sill-h) + 12px)}
   .window-stage.show-clock.show-digital .clock{width:min(43dvh,43vw,360px)}
   .window-stage.show-clock.show-digital .digital-panel{min-width:0;width:min(320px,39vw);padding:10px 8px}
-  .window-stage.show-clock.show-digital .digital-time{font-size:clamp(1.3rem,3.3vw,2.5rem);min-width:0}
+  .window-stage.show-clock.show-digital .digital-time{font-size:clamp(1.3rem,3.3vw,2.5rem)}
   .window-stage.show-clock.show-digital .digital-row{gap:5px}
-  .window-stage:not(.show-clock) .digital-holder{bottom:calc(var(--sill-h) + 60px)}
+  .window-stage:not(.show-clock) .digital-holder{bottom:calc(var(--sill-h) + 12px)}
 
   .answer{
     width:min(940px,96vw);min-height:clamp(68px,10dvh,106px);display:flex;align-items:center;justify-content:center;
@@ -231,7 +245,7 @@
     .digital-panel{padding:10px 12px 12px}
     .divider{display:none}
     button{padding:8px 9px;min-height:38px}
-    .window-stage:not(.show-clock) .digital-holder{bottom:calc(var(--sill-h) + 24px)}
+    .window-stage:not(.show-clock) .digital-holder{bottom:calc(var(--sill-h) + 12px)}
   }
   @media (max-height:720px) and (orientation:landscape){
     header{padding-block:4px} h1{font-size:1.4rem}
@@ -241,7 +255,7 @@
     .window-frame{aspect-ratio:16 / 8.5}
     .clock{width:min(54dvh,38vw,320px)}
     .digital-panel{min-width:290px}
-    .window-stage:not(.show-clock) .digital-holder{bottom:calc(var(--sill-h) + 8px)}
+    .window-stage:not(.show-clock) .digital-holder{bottom:calc(var(--sill-h) + 12px)}
     footer{padding:5px 8px}
     button{min-height:34px;padding:5px 8px}
   }
@@ -293,8 +307,7 @@
         <div class="digital-panel" aria-label="Digital time display">
           <div class="digital-heading">24-hour digital display</div>
           <div class="digital-row">
-            <div class="digital-time" id="digitalTime">01:00</div>
-            <div class="period-chip" id="periodChip">a.m.</div>
+            <div class="digital-time"><span id="digitalTime">01:00</span><span class="digital-period" id="periodChip">a.m.</span></div>
           </div>
         </div>
       </div>
@@ -306,21 +319,33 @@
   </section>
 </main>
 
+<aside class="adjust-rail left" aria-label="Adjust hours">
+  <button type="button" data-change="60" aria-label="Add one hour">+1h</button>
+  <button type="button" data-change="-60" aria-label="Subtract one hour">−1h</button>
+</aside>
+<aside class="adjust-rail right" aria-label="Adjust minutes">
+  <button type="button" data-change="15" aria-label="Add fifteen minutes">+15m</button>
+  <button type="button" data-change="-15" aria-label="Subtract fifteen minutes">−15m</button>
+</aside>
 <footer aria-label="Teacher controls">
-  <button type="button" data-change="60">+1h</button>
-  <button type="button" data-change="-60">−1h</button>
-  <button type="button" data-change="15">+15m</button>
-  <button type="button" data-change="-15">−15m</button>
-  <span class="divider" aria-hidden="true"></span>
-  <button type="button" class="random" data-random="60">🎲 Hour</button>
-  <button type="button" class="random" data-random="15">🎲 15m</button>
-  <button type="button" class="random" data-random="5">🎲 5m</button>
-  <span class="divider" aria-hidden="true"></span>
+  <div class="settings-wrap" id="settingsWrap">
+    <button type="button" id="settingsBtn" aria-controls="settingsMenu" aria-expanded="false" aria-label="Open clock settings">☷ Settings</button>
+    <div class="settings-menu" id="settingsMenu" hidden>
+      <strong>Clock options</strong>
+      <div class="compact-steps" aria-label="Time adjustment">
+        <button type="button" data-change="60">+1h</button><button type="button" data-change="-60">−1h</button>
+        <button type="button" data-change="15">+15m</button><button type="button" data-change="-15">−15m</button>
+      </div>
+      <button type="button" id="oclockBtn" aria-pressed="true">Use o’clock: On</button>
+      <button type="button" id="clockBtn" aria-pressed="true">Display: clock ✓</button>
+      <button type="button" id="digitalBtn" aria-pressed="false">Display: digital</button>
+    </div>
+  </div>
+  <button type="button" class="random" data-random="60" aria-label="Random whole hour" title="Random hour">🎲 1h</button>
+  <button type="button" class="random" data-random="15" aria-label="Random quarter hour" title="Random 15 minutes">🎲 15m</button>
+  <button type="button" class="random" data-random="5" aria-label="Random five-minute time" title="Random 5 minutes">🎲 5m</button>
   <button type="button" id="textBtn">Hide words</button>
-  <button type="button" id="oclockBtn" aria-pressed="false">Use o’clock: Off</button>
-  <button type="button" class="mode-button active" id="clockBtn" aria-pressed="true">Display: clock</button>
-  <button type="button" class="mode-button" id="digitalBtn" aria-pressed="false">Display: digital</button>
-  <button type="button" class="period-flip" id="periodBtn" title="Flip a.m. and p.m.">⇄ a.m./p.m.</button>
+  <button type="button" class="period-flip" id="periodBtn" aria-label="Flip a.m. and p.m.">⇄ a.m./p.m.</button>
   <button type="button" class="icon-button" id="resetBtn" title="Reset" aria-label="Reset">↺</button>
 </footer>
 
@@ -356,7 +381,7 @@
   let showAnswer = true;
   let showClock = true;
   let showDigital = false;
-  let useOClock = false;
+  let useOClock = true;
 
   function buildNumbers() {
     for (let i = 1; i <= 12; i += 1) {
@@ -410,6 +435,8 @@
     digitalBtn.classList.toggle('active', showDigital);
     clockBtn.setAttribute('aria-pressed',String(showClock));
     digitalBtn.setAttribute('aria-pressed',String(showDigital));
+    clockBtn.textContent = 'Display: clock' + (showClock ? ' ✓' : '');
+    digitalBtn.textContent = 'Display: digital' + (showDigital ? ' ✓' : '');
   }
 
   function updateCelestialPositions(hour24,minute,type) {
@@ -498,15 +525,29 @@
   });
 
   $('periodBtn').addEventListener('click', () => changeTime(720));
+  const settingsBtn = $('settingsBtn');
+  const settingsMenu = $('settingsMenu');
+  const settingsWrap = $('settingsWrap');
+  function setSettings(open) {
+    settingsMenu.hidden = !open;
+    settingsBtn.setAttribute('aria-expanded', String(open));
+  }
+  settingsBtn.addEventListener('click', () => setSettings(settingsMenu.hidden));
+  document.addEventListener('pointerdown', event => {
+    if (!settingsWrap.contains(event.target)) setSettings(false);
+  });
+  document.addEventListener('keydown', event => {
+    if (event.key === 'Escape') setSettings(false);
+  });
 
   $('resetBtn').addEventListener('click', () => {
     totalMinutes = 60;
     showAnswer = true;
     showClock = true;
     showDigital = false;
-    useOClock = false;
-    oclockBtn.textContent = 'Use o’clock: Off';
-    oclockBtn.setAttribute('aria-pressed','false');
+    useOClock = true;
+    oclockBtn.textContent = 'Use o’clock: On';
+    oclockBtn.setAttribute('aria-pressed','true');
     updateClock();
   });
 
