@@ -2485,12 +2485,12 @@ html.shared-unit-template .shape-practice-visual[data-shape-count="5"] .shape-pr
   grid-row: 3;
 }
 
-html.shared-unit-template[data-unit="7"] .answer-area {
+html.shared-unit-template.shape-practice-mode .answer-area {
   padding-left: 92px;
   padding-right: 92px;
 }
 
-html.shared-unit-template[data-unit="7"] .settings-preview-picture.shape-practice-visual {
+html.shared-unit-template.shape-practice-mode .settings-preview-picture.shape-practice-visual {
   padding: 5%;
 }
 
