@@ -14,17 +14,15 @@
 .category-link strong{font-size:25px}
 .category-link .word-samples{max-width:100%;margin-top:5px;color:var(--muted);font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 a.category-link:hover,a.category-link:focus-visible{outline:3px solid #8cccf8;outline-offset:2px}
-.category-unavailable{opacity:.63;cursor:default}
-/* A single diagonal stroke marks unfinished categories, without placeholder text or links. */
-.category-unavailable::after{content:"";position:absolute;inset:0;pointer-events:none;border-radius:inherit;background:linear-gradient(to bottom right,transparent calc(50% - 1.25px),rgba(38,55,68,.68) calc(50% - 1px),rgba(38,55,68,.68) calc(50% + 1px),transparent calc(50% + 1.25px))}
+
 .category-menu .intro{margin:0 0 24px;color:var(--muted);font-size:18px}
 @media(max-width:800px){.category-menu main{padding:20px 14px}.category-menu .grid{grid-template-columns:1fr}}
 </style>
 </head>
 <body class="category-menu">
 <header><button class="back" id="back" type="button">◀ Back</button><h1>Categories</h1></header>
-<main id="categoryMain"><p class="intro">Choose a working vocabulary category. Unfinished topics are crossed out.</p><section class="grid" id="categoryGrid"></section></main>
-<script src="js/lets-try-data.js?v=20261019-category-ready-v1"></script>
+<main id="categoryMain"><p class="intro">Choose a category to practise the picture cards currently in the vocabulary database.</p><section class="grid" id="categoryGrid"></section></main>
+<script src="js/lets-try-data.js?v=20261019-picture-categories-v2"></script>
 <script>
 (function(){
   "use strict";
@@ -35,27 +33,23 @@ a.category-link:hover,a.category-link:focus-visible{outline:3px solid #8cccf8;ou
   // The menu draws directly from the same category records as the flashcard decks.
   const previews = [];
   Object.entries(data.categories).forEach(([id,definition])=>{
-    const ready = data.isCategoryReady(id);
-    const card = document.createElement(ready ? "a" : "div");
-    card.className = "category-link" + (ready ? "" : " category-unavailable");
-    if(ready){
-      card.href = "unit.html?book=categories&unit=1&category=" + encodeURIComponent(id);
-    }else{
-      card.setAttribute("aria-label", definition.label + " — not yet available");
-    }
+    // Every mapped picture is immediately usable, even in a partial category.
+    const pictureItems = data.getCategoryPictureItems(id);
+    if (!pictureItems.length) return;
+    const card = document.createElement("a");
+    card.className = "category-link";
+    card.href = "unit.html?book=categories&unit=1&category=" + encodeURIComponent(id);
     const title = document.createElement("strong");
     title.textContent = definition.label;
     card.append(title);
-    if(ready){
-      const wordField = definition.card && definition.card.wordField;
-      const words = definition.items.slice(0,3).map(item=>
-        (wordField && item[wordField]) || item.word || item.id.replace(/-/g," ")
-      );
-      const samples = document.createElement("span");
-      samples.className = "word-samples";
-      card.append(samples);
-      previews.push({samples,words});
-    }
+    const wordField = definition.card && definition.card.wordField;
+    const words = pictureItems.slice(0,3).map(item =>
+      (wordField && item[wordField]) || item.word || item.id.replace(/-/g," ")
+    );
+    const samples = document.createElement("span");
+    samples.className = "word-samples";
+    card.append(samples);
+    previews.push({samples,words});
     grid.append(card);
   });
 
