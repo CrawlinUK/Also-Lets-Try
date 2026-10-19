@@ -23,7 +23,13 @@
     const alternateField = options.alternateField || profile.alternateField || "word";
     const answerField = options.teacherAnswerField || profile.teacherAnswerField || "word";
 
-    return category.items.map((entry) => {
+    // Standalone Categories may be partially illustrated. Do not let missing
+    // artwork block the picture cards that already exist. Textbook/unit cards
+    // keep their full original category contents and selection behaviour.
+    const entries = options.onlyWithPictures
+      ? database.getCategoryPictureItems(categoryId)
+      : category.items;
+    return entries.map((entry) => {
       const word = (profile.wordField && entry[profile.wordField]) || entry.word || entry.id.replace(/-/g, " ");
       const grammarWord = options.grammarForm && entry.forms && entry.forms[options.grammarForm]
         ? entry.forms[options.grammarForm] : word;
