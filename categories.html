@@ -31,7 +31,6 @@ a.category-link:hover,a.category-link:focus-visible{outline:3px solid #8cccf8;ou
   document.getElementById("back").addEventListener("click",()=>{location.href="index.html";});
 
   // The menu draws directly from the same category records as the flashcard decks.
-  const previews = [];
   Object.entries(data.categories).forEach(([id,definition])=>{
     // Every mapped picture is immediately usable, even in a partial category.
     const pictureItems = data.getCategoryPictureItems(id);
@@ -49,24 +48,11 @@ a.category-link:hover,a.category-link:focus-visible{outline:3px solid #8cccf8;ou
     const samples = document.createElement("span");
     samples.className = "word-samples";
     card.append(samples);
-    previews.push({samples,words});
+    samples.textContent = words.join(", ");
     grid.append(card);
   });
 
-  // Fit whole vocabulary words: 3 where possible, otherwise 2 or 1.
-  // Recalculate on rotation/resizing and after the handwriting font loads.
-  function fitSamples(){
-    for(const {samples,words} of previews){
-      for(let count=words.length;count>0;count--){
-        samples.textContent=words.slice(0,count).join(", ");
-        if(samples.scrollWidth<=samples.clientWidth||count===1)break;
-      }
-    }
-  }
-  requestAnimationFrame(fitSamples);
-  if(document.fonts&&document.fonts.ready)document.fonts.ready.then(fitSamples);
-  if(typeof ResizeObserver==="function")new ResizeObserver(fitSamples).observe(grid);
-  else window.addEventListener("resize",fitSamples);
+  // CSS ellipsis handles clipping naturally on every viewport size.
 })();
 </script>
 </body>
