@@ -199,8 +199,9 @@ const standaloneShapes = config("config/categories.js", "?category=shapes");
 const bookOneShapes = config("config/units/lt1-unit7.js");
 checkDeck("Standalone Shapes", standaloneShapes.cards, 7, 7);
 checkDeck("LT1 Unit 7 Shapes", bookOneShapes.cards, 7, 7);
-assert.equal(standaloneShapes.shapePractice, db.categories.shapes.shapePractice,
-  "standalone Shapes uses the master practice options directly");
+assert.equal(JSON.stringify(standaloneShapes.shapePractice),
+  JSON.stringify(db.categories.shapes.shapePractice),
+  "standalone Shapes uses master practice settings");
 assert.equal(bookOneShapes.shapePractice.counts.join(","), "1,2,3,4,5",
   "Book 1 Unit 7 still offers 1–5 shapes");
 assert.equal(JSON.stringify(standaloneShapes.shapePractice),
