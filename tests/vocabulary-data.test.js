@@ -49,28 +49,33 @@ function checkDeck(label, cards, expectedCount, expectedSelected) {
   assert.ok(cards.every(card => card.visual && card.word), label + " card content");
 }
 
-// The viewer must retain its metadata helper. When this function was
-// accidentally deleted, the first card click threw and no images appeared.
-// Standalone Categories show category names, sample words and honest unavailable tiles.
+// Standalone Categories come directly from picture mappings in the master
+// database. Missing picture entries are hidden, not displayed as placeholders.
 const categoryMenuSource = source("categories.html");
 const sharedCssSource = source("css/lets-try.css");
-assert.match(categoryMenuSource, /definition\.items\.slice\(0,3\)/, "category tiles use first three shared words");
-assert.match(categoryMenuSource, /data\.isCategoryReady\(id\)/,
-  "menu derives ready/unready state from the central vocabulary data");
-assert.doesNotMatch(categoryMenuSource, /const supported\s*=/,
-  "menu must not maintain a second category allowlist");
+assert.match(categoryMenuSource, /data\.getCategoryPictureItems\(id\)/,
+  "menu lists only categories with picture cards");
+assert.match(categoryMenuSource, /if \(!pictureItems\.length\) return;/,
+  "categories with no pictures are hidden");
+assert.match(categoryMenuSource, /pictureItems\.slice\(0,3\)/,
+  "menu previews the first three mapped picture words");
+assert.doesNotMatch(categoryMenuSource, /const supported\s*=|category-unavailable/,
+  "no manual allowlist or crossed-out placeholders remain");
+assert.match(categoryMenuSource, /samples\.scrollWidth<=samples\.clientWidth/,
+  "whole sample words fit the available width");
 const standaloneLoaderSource = source("config/categories.js");
-assert.match(standaloneLoaderSource, /data\.isCategoryReady\(id\)/,
-  "standalone category loader checks the same central readiness setting");
-assert.doesNotMatch(standaloneLoaderSource, /const supported\s*=/,
-  "standalone category loader must not duplicate the ready list");
+assert.match(standaloneLoaderSource, /data\.hasCategoryPictures\(id\)/,
+  "standalone category loader uses the central picture mapping");
+assert.match(standaloneLoaderSource, /onlyWithPictures: true/,
+  "standalone decks exclude unfinished picture entries");
+assert.doesNotMatch(standaloneLoaderSource, /const supported\s*=|isCategoryReady/,
+  "standalone loader has no subjective readiness switch");
 assert.match(standaloneLoaderSource, /cards\.find\(card => card\.visual\?\.src\)\?\.visual\?\.aspectRatio/,
-  "newly enabled decks inherit their canonical picture proportions");
-assert.match(categoryMenuSource, /samples\.scrollWidth<=samples\.clientWidth/, "whole words fit available width");
-assert.match(categoryMenuSource, /category-unavailable::after/, "unavailable tiles have diagonal stroke");
-assert.doesNotMatch(categoryMenuSource, /Open flashcards|Page coming soon/, "no placeholder status text");
-assert.match(sharedCssSource, /data-book="categories"\] \.site-title \.unit-word/, "hide Unit label only for Categories");
-assert.match(sharedCssSource, /data-book="categories"\] \.site-title \.unit-number/, "hide unit number only for Categories");
+  "decks inherit global image proportions");
+assert.match(sharedCssSource, /data-book="categories"\] \.site-title \.unit-word/,
+  "hide Unit label only for Categories");
+assert.match(sharedCssSource, /data-book="categories"\] \.site-title \.unit-number/,
+  "hide unit number only for Categories");
 
 const viewerSource = source("vocabulary-viewer.html");
 assert.match(viewerSource, /function row\(label,value\)/,
@@ -122,32 +127,47 @@ for (const side of ["cropTop","cropRight","cropBottom","cropLeft"]) {
 }
 
 assert.equal(Object.keys(db.categories).length, 24, "vocabulary category count");
-// Publishable standalone decks are controlled by one per-category flag, not
-// by hard-coded lists in either menu or loader. Textbook vocabulary is separate.
-const readyAtStart = Object.keys(db.categories).filter(id => db.isCategoryReady(id));
-assert.deepEqual(readyAtStart, [
-  "worldGreetings", "englishGreetings", "feelings", "sports", "food", "fruit"
-], "the same six tested standalone decks are initially published");
-assert.ok(Object.values(db.categories).every(cat => typeof cat.ready === "boolean"),
-  "every category has an explicit ready flag");
-assert.equal(db.isCategoryReady("doesNotExist"), false, "unknown categories stay disabled");
-assert.equal(db.isCategoryReady("numbers"), false, "unmapped numbers stay disabled");
-assert.equal(db.isCategoryReady("englishGreetings"), true, "intentionally text-only deck is allowed");
-db.categories.vegetables.ready = true;
-assert.equal(db.isCategoryReady("vegetables"), true, "enabling mapped vegetables needs no menu change");
-const newlyPublished = context("?category=vegetables");
-newlyPublished.LETS_TRY_DATA.categories.vegetables.ready = true;
-vm.runInContext(source("config/categories.js"), newlyPublished);
-checkDeck("Newly published Vegetables",
-  newlyPublished.window.LETS_TRY_UNIT_CONFIG.cards, 9, 9);
-db.categories.vegetables.ready = false;
-assert.equal(db.isCategoryReady("vegetables"), false, "switching readiness off disables a deck");
-assert.throws(() => config("config/categories.js", "?category=vegetables"),
-  /not yet available/, "unready decks cannot be opened by URL");
-db.categories.numbers.ready = true;
-assert.equal(db.isCategoryReady("numbers"), false,
-  "a ready flag alone never publishes a deck with missing image support");
-db.categories.numbers.ready = false;
+const visiblePictureCategories = Object.keys(db.categories)
+  .filter(id => db.hasCategoryPictures(id));
+assert.equal(visiblePictureCategories.length, 18,
+  "all eighteen picture categories appear, without a ready flag");
+assert.deepEqual(visiblePictureCategories, [
+  "worldGreetings", "feelings", "sports", "food", "fruit",
+  "vegetables", "shapes", "animals", "nature", "bodyParts",
+  "describingWords", "weather", "clothes", "playActivities",
+  "days", "dailyTimes", "clockTimes", "stationery"
+], "all mapped categories appear in database order");
+assert.ok(Object.values(db.categories).every(cat => !Object.hasOwn(cat, "ready")),
+  "no subjective ready fields remain in the master");
+assert.equal(db.hasCategoryPictures("doesNotExist"), false, "unknown categories are hidden");
+assert.equal(db.hasCategoryPictures("englishGreetings"), false,
+  "text-only Greetings are excluded from the picture-only menu");
+assert.equal(db.hasCategoryPictures("numbers"), false, "unmapped Numbers are hidden");
+assert.throws(() => config("config/categories.js", "?category=numbers"),
+  /no mapped picture cards/, "URLs cannot open decks with no mapped pictures");
+for (const id of visiblePictureCategories) {
+  const total = db.getCategoryPictureItems(id).length;
+  checkDeck("Standalone/" + id,
+    config("config/categories.js", "?category=" + id).cards, total, total);
+}
+// Simulate a partly drawn sheet: one existing picture plus an unfinished word.
+// The complete word remains in the master, but isn't sent to the standalone deck.
+const partial = context("?category=nature");
+partial.LETS_TRY_DATA.categories.nature.items.push({
+  id: "not-yet-illustrated", defaultIn: [], word: "not yet illustrated"
+});
+assert.equal(partial.LETS_TRY_DATA.getCategory("nature").items.length, 2);
+assert.equal(partial.LETS_TRY_DATA.getCategoryPictureItems("nature").length, 1);
+assert.equal(partial.LETS_TRY_DATA.hasCategoryPictures("nature"), true,
+  "one mapped picture is enough to expose a category");
+vm.runInContext(source("config/categories.js"), partial);
+checkDeck("Partially pictured Nature",
+  partial.window.LETS_TRY_UNIT_CONFIG.cards, 1, 1);
+const unfiltered = partial.LETS_TRY_CARD_FACTORY.makeCategoryCards("nature",
+  { defaults: "all", onlyWithPictures: true });
+assert.equal(unfiltered.length, 1,
+  "factory can select only pictured cards without changing master data");
+
 for (const categoryId of [
   "worldGreetings", "feelings", "sports", "food", "fruit", "vegetables",
   "shapes", "animals", "nature", "bodyParts", "describingWords", "weather",
@@ -172,10 +192,7 @@ for (const [id, position] of Object.entries(stationeryCells)) {
 }
 
 
-for (const [id, total] of [["worldGreetings", 14], ["englishGreetings", 8], ["feelings", 9], ["sports", 12], ["food", 16], ["fruit", 11]]) {
-  checkDeck("Categories/" + id,
-    config("config/categories.js", "?category=" + id).cards, total, total);
-}
+
 checkDeck("LT1 Unit 1", config("config/units/lt1-unit1.js").cards, 14, 9);
 checkDeck("LT1 Unit 2", config("config/units/lt1-unit2.js").cards, 9, 6);
 checkDeck("LT2 Unit 1", config("config/units/lt2-unit1.js").cards, 14, 11);
@@ -296,4 +313,4 @@ assert.equal(unit4.cards.filter(card => card.category === "clockTimes" && card.t
   "LT2 Unit 4 clocks must remain optional");
 assert.ok(unit4.cards.every(card => card.visual?.position), "LT2 Unit 4 sprite positions");
 
-console.log("Vocabulary checks passed: 24 central readiness flags, standalone decks, shared ratios, unit settings, Unit 2 selections, and prior decks.");
+console.log("Vocabulary checks passed: 18 mapped standalone picture categories, partial decks, original textbook units, and unit phrase settings.");
