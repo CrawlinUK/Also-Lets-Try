@@ -45,7 +45,7 @@ const word=n=>n<10?digits[n]:n<20?['ten','eleven','twelve','thirteen','fourteen'
 function number(value,deg,radius,css){const el=document.createElement('span');el.className='num '+css;el.textContent=value;const rad=(deg-90)*Math.PI/180;el.style.left=(50+Math.cos(rad)*radius*100)+'%';el.style.top=(50+Math.sin(rad)*radius*100)+'%';clock.appendChild(el)}
 for(let i=1;i<=12;i++)number(i,i*30,.39,'normal');
 for(let i=0;i<24;i++)number(pad(i),i*15,.426,'small'+(i<6||i>=18?' dark':''));
-function speak(h,m){const now=words[h%12],next=words[(h+1)%12];if(!m)return 'It’s '+now+' o’clock';if(m===15)return 'It’s quarter past '+now;if(m===30)return 'It’s half past '+now;if(m===45)return 'It’s quarter to '+next;if(m<30)return 'It’s '+word(m)+' past '+now;return 'It’s '+word(60-m)+' to '+next}
+function speak(h,m){const hour=words[h%12];if(m===0)return 'It’s '+hour+' o’clock';return 'It’s '+hour+' '+(m<10?'oh '+word(m):word(m))}
 function update(){const h=Math.floor(minutes/60),m=minutes%60,period=(m>30?(h+1)%24:h)<12?'a.m.':'p.m.';
 $('hourHand').style.transform='translateX(-50%) rotate('+(mode24?h*15+m*.25:(h%12)*30+m*.5)+'deg)';
 $('minuteHand').style.transform='translateX(-50%) rotate('+(m*6)+'deg)';
