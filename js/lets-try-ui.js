@@ -83,50 +83,14 @@
 
   function fitDisplayText() {
     const element = document.getElementById("displayText");
-    if (!element || element.hidden || !element.parentElement) return;
-
+    if (!element) return;
     element.style.removeProperty("font-size");
-    const available = Math.max(0, element.parentElement.clientWidth - 4);
-    if (!available) return;
-
-    const base = parseFloat(getComputedStyle(element).fontSize);
-    if (!Number.isFinite(base)) return;
-
-    if (element.scrollWidth <= available) return;
-
-    let low = Math.max(38, base * 0.52);
-    let high = base;
-
-    for (let i = 0; i < 9; i += 1) {
-      const mid = (low + high) / 2;
-      element.style.fontSize = mid + "px";
-      if (element.scrollWidth > available) high = mid;
-      else low = mid;
-    }
-
-    element.style.fontSize = low + "px";
   }
 
   function fitGuessWord() {
     const element = document.querySelector(".guess-main-word");
-    if (!element || !element.parentElement) return;
-
+    if (!element) return;
     element.style.removeProperty("font-size");
-    const available = Math.max(0, element.parentElement.clientWidth - 28);
-    if (!available) return;
-
-    const base = parseFloat(getComputedStyle(element).fontSize);
-    if (!Number.isFinite(base) || element.scrollWidth <= available) return;
-
-    let low = Math.max(28, base * .46);
-    let high = base;
-    for (let i = 0; i < 9; i += 1) {
-      const mid = (low + high) / 2;
-      element.style.fontSize = mid + "px";
-      if (element.scrollWidth > available) high = mid;
-      else low = mid;
-    }
-    element.style.fontSize = low + "px";
   }
 
   function updateTimer() {
