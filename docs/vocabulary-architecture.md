@@ -26,6 +26,16 @@ The current database is ordinary JavaScript, not SQL or JSON yet:
   viewer. Text-only or generated visuals (Greetings, Numbers, Colours,
   Alphabet) require a separate policy if we later want them in this
   picture-based menu.
+- `schoolPlaces` uses the 4×4 `images/schoolRooms.webp` sheet (16
+  square 500×500 cells on a 2000×2000 canvas). Each picture position is
+  recorded explicitly in `assets.knownCells.schoolRooms` in the **physical**
+  row order, independent of the category word order. School office names
+  with apostrophes are defined once in the category entries. Let’s Try! 2
+  Unit 8 now uses these shared visuals and retains its optional classroom
+  wording switch that removes “school” from principal/nurse office names.
+  Since all 16 are illustrated, School Places appears automatically on
+  the Categories menu.
+
 - The master `shapes.shapePractice` profile contains its default shape
   colours, palette order and 1–5 count options. Both the standalone Shapes
   deck and Let’s Try! 1 Unit 7 enable those **same** options. Shape SVG
