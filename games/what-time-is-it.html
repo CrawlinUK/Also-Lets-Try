@@ -46,7 +46,7 @@ function number(value,deg,radius,css){const el=document.createElement('span');el
 for(let i=1;i<=12;i++)number(i,i*30,.39,'normal');
 for(let i=0;i<24;i++)number(pad(i),i*15,.426,'small'+(i<6||i>=18?' dark':''));
 function speak(h,m){const hour=words[h%12];if(m===0)return 'It’s '+hour+' o’clock';return 'It’s '+hour+' '+(m<10?'oh '+word(m):word(m))}
-function update(){const h=Math.floor(minutes/60),m=minutes%60,period=(m>30?(h+1)%24:h)<12?'a.m.':'p.m.';
+function update(){const h=Math.floor(minutes/60),m=minutes%60,period=h<12?'a.m.':'p.m.';
 $('hourHand').style.transform='translateX(-50%) rotate('+(mode24?h*15+m*.25:(h%12)*30+m*.5)+'deg)';
 $('minuteHand').style.transform='translateX(-50%) rotate('+(m*6)+'deg)';
 sentence.textContent=speak(h,m);chip.textContent=period;chip.classList.toggle('pm',period==='p.m.');
