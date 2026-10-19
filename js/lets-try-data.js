@@ -348,7 +348,7 @@
         item("school-principals-office", ["2-8"], { word: "school principal’s office" }),
         item("school-nurses-office", ["2-8"], { word: "school nurse’s office" }),
         item("lunch-room", ["2-8"]), item("cooking-room", ["2-8"]), item("classroom", ["2-8"]),
-        item("restroom", ["2-8"]), item("entrance", ["2-8"]), item("school-office", ["2-8"]),
+        item("restroom", []), item("entrance", []), item("school-office", ["2-8"]),
         item("computer-room", ["2-8"]), item("music-room", ["2-8"]),
         item("arts-and-crafts-room", ["2-8"]), item("science-room", ["2-8"]),
         item("gym", ["2-8"]), item("playground", ["2-8"])
