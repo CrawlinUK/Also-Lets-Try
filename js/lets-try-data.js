@@ -343,8 +343,10 @@
     schoolPlaces: {
       label: "School places",
       items: [
-        item("library", ["2-8"]), item("teachers-office", ["2-8"]),
-        item("school-principals-office", ["2-8"]), item("school-nurses-office", ["2-8"]),
+        item("library", ["2-8"]),
+        item("teachers-office", ["2-8"], { word: "teachers’ office" }),
+        item("school-principals-office", ["2-8"], { word: "school principal’s office" }),
+        item("school-nurses-office", ["2-8"], { word: "school nurse’s office" }),
         item("lunch-room", ["2-8"]), item("cooking-room", ["2-8"]), item("classroom", ["2-8"]),
         item("restroom", ["2-8"]), item("entrance", ["2-8"]), item("school-office", ["2-8"]),
         item("computer-room", ["2-8"]), item("music-room", ["2-8"]),
@@ -541,6 +543,16 @@
         logicalCategories: ["playActivities"],
         status: "mapped",
         note: "Row-major: play tag, play cards, play dodgeball, make a snowman."
+      },
+      schoolRooms: {
+        file: "images/schoolRooms.webp",
+        cellAspectRatio: "1 / 1",
+        backgroundSize: "400% 400%",
+        grid: "4x4",
+        physicalCells: 16,
+        logicalCategories: ["schoolPlaces"],
+        status: "mapped",
+        note: "4×4, 2000×2000 pixels, 500×500 cells. Order is the physical image layout, not vocabulary order."
       }
     },
 
@@ -750,6 +762,25 @@
         "play-cards": "100% 0%",
         "play-dodgeball": "0% 100%",
         "make-a-snowman": "100% 100%"
+      },
+      // schoolRooms.webp actual 4×4 order; do not infer from CATEGORIES.
+      schoolRooms: {
+        entrance: "0% 0%",
+        "music-room": "33.333% 0%",
+        classroom: "66.667% 0%",
+        "arts-and-crafts-room": "100% 0%",
+        restroom: "0% 33.333%",
+        "cooking-room": "33.333% 33.333%",
+        "lunch-room": "66.667% 33.333%",
+        "computer-room": "100% 33.333%",
+        playground: "0% 66.667%",
+        library: "33.333% 66.667%",
+        "science-room": "66.667% 66.667%",
+        "school-principals-office": "100% 66.667%",
+        gym: "0% 100%",
+        "teachers-office": "33.333% 100%",
+        "school-office": "66.667% 100%",
+        "school-nurses-office": "100% 100%"
       }
     },
 
@@ -925,7 +956,8 @@
     bodyParts: "bodyParts", describingWords: "adjectives",
     days: "days", weather: "weather", clothes: "clothes",
     playActivities: "playActivities", stationery: "stationery",
-    dailyTimes: "timeActivities", clockTimes: "clocks"
+    dailyTimes: "timeActivities", clockTimes: "clocks",
+    schoolPlaces: "schoolRooms"
   });
   const EXTRA_ANIMAL_IMAGE_IDS = new Set([
     "crow", "moth", "owl", "starfish", "jellyfish", "seahorse"
@@ -1045,7 +1077,7 @@
   }
 
   global.LETS_TRY_DATA = Object.freeze({
-    version: 19,
+    version: 20,
     assetUrl,
     categories: CATEGORIES,
     assets: ASSETS,
