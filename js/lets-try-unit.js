@@ -1518,8 +1518,11 @@
           - (parseFloat(styles.paddingTop) || 0)
           - (parseFloat(styles.paddingBottom) || 0)
         ));
-        // Update the probe on every new card, but never reset the visible
-        // text to huge size during a ResizeObserver callback.
+
+        // The separate probe provides a target size at the natural font.
+        // Crucially, verify that target against the ACTUAL displayed text
+        // before sizing the picture. Browsers may initially report provisional
+        // font metrics; a resize used to hide this by triggering another fit.
         if (textMeasure.textContent !== text.textContent) {
           textMeasure.textContent = text.textContent;
         }
@@ -1528,30 +1531,53 @@
         const naturalWidth = Math.max(
           textMeasure.getBoundingClientRect().width, textMeasure.scrollWidth
         );
-        if (!(naturalSize > 0) || !(naturalWidth > 0)) return;
-
-        // Prefer one readable line; shrink to fit it within the *actual*
-        // stage width. A one-line label also cannot consume the image's
-        // vertical allowance when the window or font changes.
-        const widthFit = Math.floor(
-          naturalSize * availableWidth / naturalWidth * .94
-        );
+        if (!(naturalSize > 0)) return;
         const heightFit = Math.floor(
           availableHeight * (state.displayMode === "text" ? .72 : .26) / 1.16
         );
         const minimum = 22;
-        const fontSize = Math.min(naturalSize, Math.max(
+        const widthFit = naturalWidth > 0
+          ? Math.floor(naturalSize * availableWidth / naturalWidth * .94)
+          : naturalSize;
+        const fitted = Math.min(naturalSize, Math.max(
           minimum, Math.min(widthFit, heightFit)
         ));
-        const oneLineFits = naturalWidth * fontSize / naturalSize
-          <= availableWidth * .995;
-        const nextFontSize = fontSize >= naturalSize - 1
-          ? "" : fontSize + "px";
-        const nextWhiteSpace = oneLineFits ? "nowrap" : "normal";
-        const nextMaxWidth = Math.floor(availableWidth) + "px";
-        if (text.style.fontSize !== nextFontSize) text.style.fontSize = nextFontSize;
-        if (text.style.whiteSpace !== nextWhiteSpace) text.style.whiteSpace = nextWhiteSpace;
-        if (text.style.maxWidth !== nextMaxWidth) text.style.maxWidth = nextMaxWidth;
+        const initialSize = fitted < naturalSize - 1 ? fitted + "px" : "";
+        if (text.style.fontSize !== initialSize) text.style.fontSize = initialSize;
+        if (text.style.whiteSpace !== "nowrap") text.style.whiteSpace = "nowrap";
+        const maxTextWidth = Math.floor(availableWidth) + "px";
+        if (text.style.maxWidth !== maxTextWidth) {
+          text.style.maxWidth = maxTextWidth;
+        }
+
+        // The visible text may have different font metrics than the probe
+        // during font loading or first render. Measure its full uncut ink
+        // width with a DOM Range, including the overflow hidden by the card.
+        const inkRange = document.createRange();
+        inkRange.selectNodeContents(text);
+        function actualTextWidth() {
+          return Math.max(
+            inkRange.getBoundingClientRect().width,
+            text.scrollWidth
+          );
+        }
+        let actualWidth = actualTextWidth();
+        for (let attempt = 0; attempt < 4 && actualWidth > availableWidth * .99; attempt++) {
+          const currentSize = parseFloat(getComputedStyle(text).fontSize);
+          if (!(currentSize > minimum)) break;
+          const smallerSize = Math.max(minimum,
+            Math.floor(currentSize * availableWidth / actualWidth * .94)
+          );
+          if (!(smallerSize < currentSize)) break;
+          text.style.fontSize = smallerSize + "px";
+          actualWidth = actualTextWidth();
+        }
+        if (typeof inkRange.detach === "function") inkRange.detach();
+        // Only exceptionally long text on narrow devices needs wrapping.
+        // Once it wraps, the following picture fit measures the new height.
+        if (actualWidth > availableWidth * .99) {
+          text.style.whiteSpace = "normal";
+        }
       }
 
       // Fit each flashcard picture into the space left after its text.
