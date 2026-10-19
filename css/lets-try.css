@@ -660,7 +660,9 @@ html.shared-unit-template {
       /* These values are replaced from UNIT_CONFIG when the page loads. */
       --unit-colour: #999999;
       --unit-number-colour: #bbbbbb;
-      --display-size: clamp(68px, 8vw, 138px);
+      /* Fluid classroom typography: viewport width drives the size continuously,
+         while rem/maximum limits keep it readable on tablets and large displays. */
+      --display-size: clamp(3.5rem, calc(6.8vw + .4rem), 8.625rem);
       --answer-gap: 18px;
     }
 
@@ -1455,8 +1457,10 @@ html.shared-unit-template .answer-area {
 }
 
 html.shared-unit-template .display-text {
-  max-width: 100%;
-  white-space: nowrap;
+  max-width: calc(100% - 24px);
+  white-space: normal;
+  overflow-wrap: anywhere;
+  text-wrap: balance;
 }
 
 /* Unit 2 uses portrait artwork, so reserve enough vertical room for
@@ -2192,10 +2196,13 @@ html.shared-unit-template .guess-main-word {
   max-width: calc(100% - 20px);
   padding: .10em .08em .16em;
   overflow: hidden;
-  font-size: clamp(42px, 6vw, 88px);
+  font-size: clamp(2.625rem, calc(5.4vw + .35rem), 5.5rem);
   font-weight: 900;
   line-height: 1.10;
   text-align: center;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  text-wrap: balance;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
@@ -2770,8 +2777,8 @@ html.shared-unit-template .school-shortening-button{
 html.shared-unit-template .school-shortening-button[aria-pressed="true"]{
   background:#def3e7;border-color:#32a46d
 }
-/* Preserve right-hand punctuation; the shared text fit measures long phrases
-   and provides a little extra breathing room at each edge. */
+/* Preserve right-hand punctuation and give fluid text a little breathing room
+   at each edge. */
 html.shared-unit-template .display-text{
   box-sizing:border-box;
   padding-inline:.08em;
@@ -2779,8 +2786,8 @@ html.shared-unit-template .display-text{
 
 
 /* Long words/sentences must never be cut off at the stage edge.
-   JavaScript measures text at its natural size in a separate hidden node;
-   ordinary wrapping remains the fallback while fonts/layout finish loading. */
+   CSS owns the responsive font size; wrapping is the safe fallback for unusually
+   long phrases instead of freezing the text to a JavaScript-calculated pixel size. */
 html.shared-unit-template .flashcard .answer-area > .display-text:not([aria-hidden="true"]) {
   min-width: 0;
   max-width: calc(100% - 24px);
