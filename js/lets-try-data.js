@@ -214,6 +214,25 @@
 
     shapes: {
       label: "Shapes",
+      // One set of practice options for both the standalone category and
+      // Let's Try! 1 Unit 7. Classroom controls read this shared profile.
+      shapePractice: {
+        colourCategoryId: "colours",
+        counts: [1, 2, 3, 4, 5],
+        defaultColours: {
+          circle: "purple",
+          triangle: "green",
+          square: "red",
+          rectangle: "white",
+          heart: "pink",
+          diamond: "blue",
+          star: "yellow"
+        },
+        colourOrder: [
+          "green", "black", "blue", "yellow", "purple", "pink", "red", "white",
+          "orange", "brown", "light-blue", "light-green", "gray"
+        ]
+      },
       items: [
         item("circle", ["1-7"]),
         item("triangle", ["1-7"]),
@@ -916,10 +935,23 @@
     const imagePath = ASSETS.images[categoryId] && ASSETS.images[categoryId][itemId];
     const vectorPath = ASSETS.vectors[categoryId] && ASSETS.vectors[categoryId][itemId];
     const standalonePath = imagePath || vectorPath;
-    if (standalonePath) return {
-      src: assetUrl(standalonePath), size: "contain", position: "center",
-      flip: false, cropTop: 0
-    };
+    if (standalonePath) {
+      // A shape's SVG can be recoloured and repeated by the shared classroom
+      // renderer. Keep its standalone-file geometry for the database editor.
+      if (categoryId === "shapes" && vectorPath) return {
+        type: "shape-svg",
+        shapeId: itemId,
+        src: assetUrl(vectorPath),
+        defaultColourName: CATEGORIES.shapes.shapePractice.defaultColours[itemId],
+        aspectRatio: "1 / 1",
+        size: "contain", position: "center",
+        flip: false, cropTop: 0, cropRight: 0, cropBottom: 0, cropLeft: 0
+      };
+      return {
+        src: assetUrl(standalonePath), size: "contain", position: "center",
+        flip: false, cropTop: 0
+      };
+    }
 
     let sheetId = CATEGORY_IMAGE_SHEETS[categoryId];
     if (categoryId === "food" && itemId === "sausage") sheetId = "fruit";
