@@ -26,6 +26,12 @@ The current database is ordinary JavaScript, not SQL or JSON yet:
   viewer. Text-only or generated visuals (Greetings, Numbers, Colours,
   Alphabet) require a separate policy if we later want them in this
   picture-based menu.
+- The master `shapes.shapePractice` profile contains its default shape
+  colours, palette order and 1–5 count options. Both the standalone Shapes
+  deck and Let’s Try! 1 Unit 7 enable those **same** options. Shape SVG
+  artwork is identified centrally as `shape-svg`, allowing the shared
+  classroom renderer to recolour and repeat it without duplicating cards.
+  Other categories do not inherit the Shapes controls.
 - `config/units/lt1-unit5.js` is now a **declarative** unit containing
   only settings, categories (`sports`, `food`, `fruit`) and the grammar form.
   `js/lets-try-unit-loader.js` automatically creates its card list.
