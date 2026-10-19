@@ -306,6 +306,8 @@ assert.match(classroomSource, /document\.fonts\.addEventListener\("loadingdone"/
   "refit after handwriting font finishes loading");
 assert.match(classroomSource, /if \(artworkFitScheduled\) return;/,
   "refit requests should be coalesced into one animation frame");
+assert.match(classroomSource, /requestAnimationFrame\(\(\) => \{\s*artworkFitScheduled = false;\s*fitFlashcardArtwork\(\);/,
+  "verify the text again on the next layout frame without requiring window resize");
 assert.match(classroomSource, /inkRange\.getBoundingClientRect\(\)\.width/,
   "the actual visible sentence, not only the probe, is checked for clipping");
 assert.match(classroomSource, /actualWidth > availableWidth \* \.99/,
