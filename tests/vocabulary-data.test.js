@@ -306,9 +306,13 @@ assert.match(classroomSource, /document\.fonts\.addEventListener\("loadingdone"/
   "refit after handwriting font finishes loading");
 assert.match(classroomSource, /if \(artworkFitScheduled\) return;/,
   "refit requests should be coalesced into one animation frame");
-assert.match(classroomSource, /const oneLineFits =/,
-  "choose a single-line fit when room allows");
-assert.match(classroomSource, /Math\.max\(minimum, Math\.min\(widthFit, heightFit\)\)/,
+assert.match(classroomSource, /inkRange\.getBoundingClientRect\(\)\.width/,
+  "the actual visible sentence, not only the probe, is checked for clipping");
+assert.match(classroomSource, /actualWidth > availableWidth \* \.99/,
+  "any initial overflow forces smaller handwriting before image sizing");
+assert.match(classroomSource, /text\.style\.whiteSpace = "normal"/,
+  "wrap only when the sentence cannot fit even at the readable minimum");
+assert.match(classroomSource, /Math\.min\(widthFit, heightFit\)/,
   "text fitting accounts for both stage width and available height");
 assert.match(classroomSource, /dimensions\.height - verticalPadding - textHeight - gap - 24/,
   "picture must reserve space for the complete sentence and padding");
@@ -334,9 +338,17 @@ assert.ok(lt2Unit4.cards.every(card => card.sentence.startsWith("It’s ")),
 assert.equal(lt2Unit4.displayModeLabels.pictureSentence,"Picture + It’s",
   "LT2 Unit 4 phrase setting");
 const lt2Unit8 = config("config/units/lt2-unit8.js");
-checkDeck("LT2 Unit 8 with School Rooms artwork", lt2Unit8.cards, 16, 16);
+checkDeck("LT2 Unit 8 with School Rooms artwork", lt2Unit8.cards, 16, 14);
 assert.ok(lt2Unit8.cards.every(card => card.visual.src?.includes("schoolRooms.webp")),
   "all sixteen Unit 8 cards use the global School Rooms sheet");
+for (const id of ["restroom","entrance"]) {
+  const card = lt2Unit8.cards.find(entry => entry.id === id);
+  assert.ok(card, id + " remains available as a Unit 8 card");
+  assert.equal(card.textbook, false, id + " starts unselected in Unit 8");
+}
+assert.equal(config("config/categories.js","?category=schoolPlaces")
+  .cards.filter(card => card.textbook).length,16,
+  "standalone School Places still defaults to all sixteen pictures");
 assert.equal(lt2Unit8.schoolShortenSetting,true,"LT2 Unit 8 offers optional school shortening");
 assert.ok(lt2Unit8.cards.some(c => c.word==="school principal’s office"),
   "LT2 Unit 8 master office names remain intact");
