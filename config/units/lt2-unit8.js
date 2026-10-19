@@ -7,19 +7,8 @@
   const category = LETS_TRY_DATA.getCategory(categoryId);
   const defaults = new Set(LETS_TRY_DATA.getUnitDefaults(bookId, unitNumber)[categoryId] || []);
 
-  const labels = Object.freeze({
-    "teachers-office": "teachers’ office",
-    "school-principals-office": "school principal’s office",
-    "school-nurses-office": "school nurse’s office",
-    "arts-and-crafts-room": "arts and crafts room"
-  });
-
-  function label(id) {
-    return labels[id] || String(id).replace(/-/g, " ");
-  }
-
   const cards = category.items.map((entry) => {
-    const word = label(entry.id);
+    const word = entry.word || entry.id.replace(/-/g, " ");
     return {
       id: entry.id,
       category: categoryId,
@@ -29,7 +18,8 @@
       optionLabel: word,
       teacherAnswer: word,
       textbook: defaults.has(entry.id),
-      visual: { type: "text", text: word, aspectRatio: "1 / 1" }
+      visual: LETS_TRY_DATA.getWordVisual(categoryId, entry.id)
+        || { type: "text", text: word, aspectRatio: "1 / 1" }
     };
   });
 
