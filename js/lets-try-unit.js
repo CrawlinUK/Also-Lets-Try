@@ -11,6 +11,11 @@
         || [...new Set(UNIT_CONFIG.cards.map((card) => card.category).filter(Boolean))];
       const PLACEHOLDER_IMAGE = "";
       const SHAPE_PRACTICE = UNIT_CONFIG.shapePractice || null;
+      // This class scopes the shape practice layout to whichever lesson or
+      // standalone category actually enables the shared controls.
+      document.documentElement.classList.toggle(
+        "shape-practice-mode", Boolean(SHAPE_PRACTICE)
+      );
       const SHAPE_NUMBER_WORDS = Object.freeze({
         1: "one",
         2: "two",
