@@ -1477,107 +1477,15 @@
         elements.nextButton.classList.add("game-action");
       }
 
-      // Measure text independently of the answer-area flex layout.
-      // The hidden probe must NEVER be a flex child of the answer area:
-      // it can otherwise influence its intrinsic size and make the picture
-      // and multi-line text extend beyond the visible stage.
-      const textMeasure = document.createElement("div");
-      textMeasure.className = "display-text";
-      textMeasure.setAttribute("aria-hidden", "true");
-      Object.assign(textMeasure.style, {
-        position: "fixed",
-        left: "-100000px",
-        top: "0",
-        width: "max-content",
-        maxWidth: "none",
-        minWidth: "0",
-        height: "auto",
-        whiteSpace: "nowrap",
-        overflowWrap: "normal",
-        textWrap: "nowrap",
-        visibility: "hidden",
-        pointerEvents: "none"
-      });
-      // Same font rules as the flashcard but outside its layout.
-      elements.flashcard.append(textMeasure);
-
+      // Responsive typography is owned by CSS viewport units/clamp().
+      // Clear any stale inline values left by older builds, then let the browser
+      // recalculate fluid text continuously as the viewport changes.
       function fitFlashcardText() {
         const text = elements.displayText;
-        const area = elements.answerArea;
-        if (!text.textContent || getComputedStyle(text).display === "none") return;
-        const dimensions = area.getBoundingClientRect();
-        if (dimensions.width < 80 || dimensions.height < 80) return;
-        const styles = getComputedStyle(area);
-        const availableWidth = Math.max(60, (
-          dimensions.width
-          - (parseFloat(styles.paddingLeft) || 0)
-          - (parseFloat(styles.paddingRight) || 0) - 36
-        ) * .94);
-        const availableHeight = Math.max(50, (
-          dimensions.height
-          - (parseFloat(styles.paddingTop) || 0)
-          - (parseFloat(styles.paddingBottom) || 0)
-        ));
-
-        // The separate probe provides a target size at the natural font.
-        // Crucially, verify that target against the ACTUAL displayed text
-        // before sizing the picture. Browsers may initially report provisional
-        // font metrics; a resize used to hide this by triggering another fit.
-        if (textMeasure.textContent !== text.textContent) {
-          textMeasure.textContent = text.textContent;
-        }
-        const measureStyles = getComputedStyle(textMeasure);
-        const naturalSize = parseFloat(measureStyles.fontSize);
-        const naturalWidth = Math.max(
-          textMeasure.getBoundingClientRect().width, textMeasure.scrollWidth
-        );
-        if (!(naturalSize > 0)) return;
-        const heightFit = Math.floor(
-          availableHeight * (state.displayMode === "text" ? .72 : .26) / 1.16
-        );
-        const minimum = 22;
-        const widthFit = naturalWidth > 0
-          ? Math.floor(naturalSize * availableWidth / naturalWidth * .94)
-          : naturalSize;
-        const fitted = Math.min(naturalSize, Math.max(
-          minimum, Math.min(widthFit, heightFit)
-        ));
-        const initialSize = fitted < naturalSize - 1 ? fitted + "px" : "";
-        if (text.style.fontSize !== initialSize) text.style.fontSize = initialSize;
-        if (text.style.whiteSpace !== "nowrap") text.style.whiteSpace = "nowrap";
-        const maxTextWidth = Math.floor(availableWidth) + "px";
-        if (text.style.maxWidth !== maxTextWidth) {
-          text.style.maxWidth = maxTextWidth;
-        }
-
-        // The visible text may have different font metrics than the probe
-        // during font loading or first render. Measure its full uncut ink
-        // width with a DOM Range, including the overflow hidden by the card.
-        const inkRange = document.createRange();
-        inkRange.selectNodeContents(text);
-        function actualTextWidth() {
-          return Math.max(
-            inkRange.getBoundingClientRect().width,
-            text.scrollWidth
-          );
-        }
-        let actualWidth = actualTextWidth();
-        for (let attempt = 0; attempt < 4 && actualWidth > availableWidth * .99; attempt++) {
-          const currentSize = parseFloat(getComputedStyle(text).fontSize);
-          if (!(currentSize > minimum)) break;
-          const smallerSize = Math.max(minimum,
-            Math.floor(currentSize * availableWidth / actualWidth * .94)
-          );
-          if (!(smallerSize < currentSize)) break;
-          text.style.fontSize = smallerSize + "px";
-          actualWidth = actualTextWidth();
-        }
-        if (typeof inkRange.detach === "function") inkRange.detach();
-        // Only exceptionally long text on narrow devices needs wrapping.
-        // Once it wraps, the following picture fit measures the new height.
-        if (actualWidth > availableWidth * .99) {
-          text.style.whiteSpace = "normal";
-        }
+        if (!text) return;
+        text.style.removeProperty("font-size");
+        text.style.removeProperty("white-space");
+        text.style.removeProperty("max-width");
       }
 
       // Fit each flashcard picture into the space left after its text.
