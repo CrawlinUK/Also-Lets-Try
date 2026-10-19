@@ -9,15 +9,9 @@
     Object.values(LETS_TRY_DATA.getUnitDefaults(UNIT_BOOK_ID, UNIT_NUMBER)).flat()
   );
 
-  const DEFAULT_SHAPE_COLOURS = Object.freeze({
-    circle: "purple",
-    triangle: "green",
-    square: "red",
-    rectangle: "white",
-    heart: "pink",
-    diamond: "blue",
-    star: "yellow"
-  });
+  // Category and textbook unit share the same master practice settings.
+  const SHARED_SHAPE_PRACTICE = LETS_TRY_DATA.getCategory("shapes").shapePractice;
+  const DEFAULT_SHAPE_COLOURS = SHARED_SHAPE_PRACTICE.defaultColours;
 
   function shapeVisual(id) {
     const file = LETS_TRY_DATA.assets.vectors.shapes[id];
@@ -73,15 +67,7 @@
 
     pictureAspectRatio: "1 / 1",
 
-    shapePractice: {
-      colourCategoryId: "colours",
-      counts: [1, 2, 3, 4, 5],
-      defaultColours: DEFAULT_SHAPE_COLOURS,
-      colourOrder: [
-        "green", "black", "blue", "yellow", "purple", "pink", "red", "white",
-        "orange", "brown", "light-blue", "light-green", "gray"
-      ]
-    },
+    shapePractice: SHARED_SHAPE_PRACTICE,
 
     autoSeconds: 3,
     autoSecondsMinimum: 1,
