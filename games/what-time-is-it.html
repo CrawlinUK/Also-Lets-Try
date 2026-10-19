@@ -442,7 +442,7 @@
     periodChip.textContent = period;
     periodChip.classList.toggle('pm', period === 'p.m.');
 
-    sentence.textContent = spokenTime(hour24, minute);
+    sentence.textContent = spokenTime(hour24, minute).replace(/\.$/, '') + ' ' + period;
     answer.classList.toggle('hidden-answer', !showAnswer);
     textBtn.textContent = showAnswer ? 'Hide words' : 'Show words';
     textBtn.setAttribute('aria-pressed', String(!showAnswer));
