@@ -854,6 +854,12 @@
         categories: Object.freeze(["alphabet"]),
         description: "Shuffle, hide and reveal letters for alphabet practice."
       }),
+      clockPractice: Object.freeze({
+        name: "What Time Is It?",
+        path: "games/what-time-is-it.html",
+        categories: Object.freeze(["clocks", "time"]),
+        description: "Ask and reveal random times, with 12-hour and 24-hour dials."
+      }),
       numberRoller: Object.freeze({
         name: "Number Roller",
         path: "games/number-roller.html",
@@ -878,6 +884,8 @@
     byCategory: Object.freeze({
       alphabet: Object.freeze(["alphabetBoard"]),
       numbers: Object.freeze(["numberRoller"]),
+      clockTimes: Object.freeze(["clockPractice"]),
+      dailyTimes: Object.freeze(["clockPractice"]),
       colours: Object.freeze([]),
       shapes: Object.freeze(["colourShapeRoller"])
     })
