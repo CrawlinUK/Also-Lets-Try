@@ -129,13 +129,13 @@ for (const side of ["cropTop","cropRight","cropBottom","cropLeft"]) {
 assert.equal(Object.keys(db.categories).length, 24, "vocabulary category count");
 const visiblePictureCategories = Object.keys(db.categories)
   .filter(id => db.hasCategoryPictures(id));
-assert.equal(visiblePictureCategories.length, 18,
-  "all eighteen picture categories appear, without a ready flag");
+assert.equal(visiblePictureCategories.length, 19,
+  "all nineteen picture categories appear, without a ready flag");
 assert.deepEqual(visiblePictureCategories, [
   "worldGreetings", "feelings", "sports", "food", "fruit",
   "vegetables", "shapes", "animals", "nature", "bodyParts",
   "describingWords", "weather", "clothes", "playActivities",
-  "days", "dailyTimes", "clockTimes", "stationery"
+  "days", "dailyTimes", "clockTimes", "stationery", "schoolPlaces"
 ], "all mapped categories appear in database order");
 assert.ok(Object.values(db.categories).every(cat => !Object.hasOwn(cat, "ready")),
   "no subjective ready fields remain in the master");
@@ -143,6 +143,30 @@ assert.equal(db.hasCategoryPictures("doesNotExist"), false, "unknown categories 
 assert.equal(db.hasCategoryPictures("englishGreetings"), false,
   "text-only Greetings are excluded from the picture-only menu");
 assert.equal(db.hasCategoryPictures("numbers"), false, "unmapped Numbers are hidden");
+assert.equal(db.getCategoryPictureItems("schoolPlaces").length, 16,
+  "all sixteen school places are mapped from the new 4×4 sprite sheet");
+const roomPositions = {
+  entrance: "0% 0%", "music-room": "33.333% 0%",
+  classroom: "66.667% 0%", "arts-and-crafts-room": "100% 0%",
+  restroom: "0% 33.333%", "cooking-room": "33.333% 33.333%",
+  "lunch-room": "66.667% 33.333%", "computer-room": "100% 33.333%",
+  playground: "0% 66.667%", library: "33.333% 66.667%",
+  "science-room": "66.667% 66.667%", "school-principals-office": "100% 66.667%",
+  gym: "0% 100%", "teachers-office": "33.333% 100%",
+  "school-office": "66.667% 100%", "school-nurses-office": "100% 100%"
+};
+for (const [id, position] of Object.entries(roomPositions)) {
+  const visual = db.getWordVisual("schoolPlaces", id);
+  assert.ok(visual.src.includes("schoolRooms.webp"), id + " uses schoolRooms.webp");
+  assert.equal(visual.size, "400% 400%", id + " has 4×4 sprite size");
+  assert.equal(visual.aspectRatio, "1 / 1", id + " is square");
+  assert.equal(visual.position, position, id + " is in the correct physical cell");
+}
+assert.equal(db.getItem("schoolPlaces","school-principals-office").word,
+  "school principal’s office", "master stores correctly punctuated office name");
+assert.equal(db.getItem("schoolPlaces","school-nurses-office").word,
+  "school nurse’s office", "master stores the nurse's office name");
+
 assert.throws(() => config("config/categories.js", "?category=numbers"),
   /no mapped picture cards/, "URLs cannot open decks with no mapped pictures");
 for (const id of visiblePictureCategories) {
@@ -310,6 +334,9 @@ assert.ok(lt2Unit4.cards.every(card => card.sentence.startsWith("It’s ")),
 assert.equal(lt2Unit4.displayModeLabels.pictureSentence,"Picture + It’s",
   "LT2 Unit 4 phrase setting");
 const lt2Unit8 = config("config/units/lt2-unit8.js");
+checkDeck("LT2 Unit 8 with School Rooms artwork", lt2Unit8.cards, 16, 16);
+assert.ok(lt2Unit8.cards.every(card => card.visual.src?.includes("schoolRooms.webp")),
+  "all sixteen Unit 8 cards use the global School Rooms sheet");
 assert.equal(lt2Unit8.schoolShortenSetting,true,"LT2 Unit 8 offers optional school shortening");
 assert.ok(lt2Unit8.cards.some(c => c.word==="school principal’s office"),
   "LT2 Unit 8 master office names remain intact");
@@ -347,4 +374,4 @@ assert.equal(unit4.cards.filter(card => card.category === "clockTimes" && card.t
   "LT2 Unit 4 clocks must remain optional");
 assert.ok(unit4.cards.every(card => card.visual?.position), "LT2 Unit 4 sprite positions");
 
-console.log("Vocabulary checks passed: 18 mapped standalone picture categories, partial decks, original textbook units, and unit phrase settings.");
+console.log("Vocabulary checks passed: 19 mapped picture categories including 16 school rooms, partial decks, textbook units and phrase settings.");
