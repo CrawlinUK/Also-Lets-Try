@@ -193,6 +193,39 @@ for (const [id, position] of Object.entries(stationeryCells)) {
 
 
 
+// Standalone Shapes must use EXACTLY the same shared number/colour controls
+// and original seven artworks as Let's Try! 1 Unit 7.
+const standaloneShapes = config("config/categories.js", "?category=shapes");
+const bookOneShapes = config("config/units/lt1-unit7.js");
+checkDeck("Standalone Shapes", standaloneShapes.cards, 7, 7);
+checkDeck("LT1 Unit 7 Shapes", bookOneShapes.cards, 7, 7);
+assert.equal(standaloneShapes.shapePractice, db.categories.shapes.shapePractice,
+  "standalone Shapes uses the master practice options directly");
+assert.equal(bookOneShapes.shapePractice.counts.join(","), "1,2,3,4,5",
+  "Book 1 Unit 7 still offers 1–5 shapes");
+assert.equal(JSON.stringify(standaloneShapes.shapePractice),
+  JSON.stringify(bookOneShapes.shapePractice),
+  "both Shapes decks use identical number and colour settings");
+assert.equal(standaloneShapes.showPictureSentenceMode, false,
+  "standalone Shapes does not add a redundant phrase option");
+for (let i = 0; i < standaloneShapes.cards.length; i++) {
+  const a = standaloneShapes.cards[i];
+  const b = bookOneShapes.cards[i];
+  assert.equal(a.id, b.id, "same shape card order");
+  assert.equal(a.visual.type, "shape-svg", "standalone shape supports recolouring and counting");
+  assert.equal(a.visual.shapeId, b.visual.shapeId, "same shape identifier");
+  assert.equal(a.visual.src, b.visual.src, "same original artwork");
+  assert.equal(a.visual.defaultColourName, b.visual.defaultColourName,
+    "same default shape colour");
+}
+assert.match(source("js/lets-try-unit.js"), /"shape-practice-mode", Boolean\(SHAPE_PRACTICE\)/,
+  "shared renderer activates layout by practice configuration");
+assert.match(sharedCssSource, /html\.shared-unit-template\.shape-practice-mode \.answer-area/,
+  "palette side padding is shared by unit and category pages");
+assert.doesNotMatch(sharedCssSource,
+  /html\.shared-unit-template\[data-unit="7"\] \.answer-area/,
+  "shape layout is not accidentally applied to unrelated Unit 7 pages");
+
 checkDeck("LT1 Unit 1", config("config/units/lt1-unit1.js").cards, 14, 9);
 checkDeck("LT1 Unit 2", config("config/units/lt1-unit2.js").cards, 9, 6);
 checkDeck("LT2 Unit 1", config("config/units/lt2-unit1.js").cards, 14, 11);
