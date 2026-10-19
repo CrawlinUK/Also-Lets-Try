@@ -1637,12 +1637,17 @@
 
       let artworkFitScheduled = false;
       function scheduleFlashcardArtworkFit() {
-        // Collapse repeated resize/observer callbacks into one measurement.
+        // Changes of cards or the display mode can precede the final layout
+        // and web-font metrics. Fit once, then verify in the next frame after
+        // everything has had a chance to settle (without a resize event).
         if (artworkFitScheduled) return;
         artworkFitScheduled = true;
         requestAnimationFrame(() => {
-          artworkFitScheduled = false;
           fitFlashcardArtwork();
+          requestAnimationFrame(() => {
+            artworkFitScheduled = false;
+            fitFlashcardArtwork();
+          });
         });
       }
 
