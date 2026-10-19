@@ -4,10 +4,10 @@
   const id = new URLSearchParams(location.search).get("category");
   const data = LETS_TRY_DATA;
   const category = data.getCategory(id);
-  if (!data.isCategoryReady(id)) throw new Error("Category is not yet available: " + id);
+  if (!data.hasCategoryPictures(id)) throw new Error("Category has no mapped picture cards: " + id);
 
   // Shared vocabulary profiles and artwork mappings build these cards.
-  const cards = LETS_TRY_CARD_FACTORY.makeCategoryCards(id, { defaults: "all" });
+  const cards = LETS_TRY_CARD_FACTORY.makeCategoryCards(id, { defaults: "all", onlyWithPictures: true });
   window.LETS_TRY_UNIT_CATEGORY_IDS = [id];
   window.LETS_TRY_UNIT_CONFIG = {
     bookId: "categories", unitNumber: "", unitTitle: category.label,
