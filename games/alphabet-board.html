@@ -312,6 +312,25 @@
     footer { font-size: .86rem; padding-bottom: 6px; }
     .hint { font-size: .82rem; }
   }
+
+  /* iPad-safe board sizing: fit all 26 letters inside the visible viewport. */
+  html, body { height: 100dvh; }
+  body { min-height: 0; gap: clamp(3px, .7dvh, 10px); }
+  .board-wrap { min-height: 0; overflow: hidden; }
+  @media (orientation: landscape) and (min-width: 700px) {
+    .board { height: 100%; max-height: 100%; grid-template-columns: repeat(7,minmax(0,1fr)); grid-template-rows: repeat(4,minmax(0,1fr)); gap: clamp(3px,.6dvh,8px); }
+    .tile { aspect-ratio: auto; }
+    .letter { font-size: clamp(30px,7dvh,78px); }
+  }
+  body.board-focus { grid-template-rows: minmax(0,1fr); gap: 0; }
+  body.board-focus header, body.board-focus footer { display:none; }
+  body.board-focus .board-wrap { padding: 4px; }
+  body.board-focus .board { height:100%; max-height:100%; grid-template-columns:repeat(7,minmax(0,1fr)); grid-template-rows:repeat(4,minmax(0,1fr)); gap: 4px; }
+  body.board-focus .tile { aspect-ratio:auto; }
+  body.board-focus .letter { font-size:clamp(30px,9dvh,94px); }
+  #focusBoard { position:fixed; right:10px; bottom:10px; z-index:10; border-radius:14px; padding:7px 11px; font-size:18px; background:var(--bg2); }
+  body.board-focus #focusBoard { opacity:.55; }
+  body.board-focus #focusBoard:focus-visible,body.board-focus #focusBoard:hover { opacity:1; }
 </style>
 </head>
 <body>
@@ -344,6 +363,7 @@
     <div id="hints" class="hint" aria-live="polite">Hidden: none</div>
   </footer>
 
+  <button id="focusBoard" type="button" aria-label="Expand alphabet board" title="Expand alphabet board">⛶</button>
   <div id="songOverlay" aria-hidden="true">
     <div id="songMessage"><span id="finishStar">★</span><span id="songText">3</span></div>
   </div>
@@ -352,6 +372,13 @@
 <script src="../js/lets-try-data.js?v=20261009-config-structure"></script>
 <script>
 (() => {
+  const focusBoard = document.getElementById('focusBoard');
+  focusBoard.addEventListener('click', () => {
+    const active = document.body.classList.toggle('board-focus');
+    focusBoard.textContent = active ? '↙' : '⛶';
+    focusBoard.setAttribute('aria-label', active ? 'Exit expanded board' : 'Expand alphabet board');
+    focusBoard.title = active ? 'Exit expanded board' : 'Expand alphabet board';
+  });
   const A2Z = [...'ABCDEFGHIJKLMNOPQRSTUVWXYZ'];
   const gameConfig = window.ALPHABET_BOARD_CONFIG;
   if (!gameConfig) throw new Error('Alphabet Board configuration could not load.');
