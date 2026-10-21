@@ -358,13 +358,28 @@
     dailyRoutine: {
       label: "Daily routine",
       items: [
-        item("wake-up", ["2-9"]), item("wash-my-face", ["2-9"]), item("brush-my-teeth", ["2-9"]),
-        item("put-away-my-futon", ["2-9"]), item("have-breakfast", ["2-9"]),
-        item("check-my-school-bag", ["2-9"]), item("leave-my-house", ["2-9"]),
-        item("take-out-the-garbage", ["2-9"]), item("go-to-school", ["2-9"]),
-        item("go-home", ["2-9"]), item("do-my-homework", ["2-9"]),
-        item("finish-my-dinner", ["2-9"]), item("dream-a-wonderful-dream", ["2-9"])
+        item("wake-up", ["2-9"]),
+        item("wash-my-face", ["2-9"]),
+        item("brush-my-teeth", ["2-9"]),
+        item("comb-my-hair"),
+        item("put-away-my-futon", ["2-9"]),
+        item("get-dressed"),
+        item("have-breakfast", ["2-9"]),
+        item("check-my-school-bag", ["2-9"]),
+        item("leave-my-house", ["2-9"]),
+        item("take-out-the-garbage", ["2-9"]),
+        item("go-to-school", ["2-9"]),
+        item("study-english"),
+        item("spend-all-day-at-school"),
+        item("go-home", ["2-9"]),
+        item("do-my-homework", ["2-9"]),
+        item("play-with-my-friends"),
+        item("finish-my-dinner", ["2-9"]),
+        item("take-a-bath"),
+        item("go-to-bed"),
+        item("dream-a-wonderful-dream", ["2-9"])
       ]
+
     }
   };
 
@@ -543,6 +558,16 @@
         logicalCategories: ["playActivities"],
         status: "mapped",
         note: "Row-major: play tag, play cards, play dodgeball, make a snowman."
+      },
+      myDay: {
+        file: "images/myDay.webp",
+        cellAspectRatio: "1 / 1",
+        backgroundSize: "500% 400%",
+        grid: "5x4",
+        physicalCells: 20,
+        logicalCategories: ["dailyRoutine"],
+        status: "mapped",
+        note: "20 activities, in numbered source order, left-to-right and top-to-bottom."
       },
       schoolRooms: {
         file: "images/schoolRooms.webp",
@@ -764,6 +789,28 @@
         "make-a-snowman": "100% 100%"
       },
       // schoolRooms.webp actual 4×4 order; do not infer from CATEGORIES.
+      myDay: {
+        "wake-up": "0% 0%",
+        "wash-my-face": "25% 0%",
+        "brush-my-teeth": "50% 0%",
+        "comb-my-hair": "75% 0%",
+        "put-away-my-futon": "100% 0%",
+        "get-dressed": "0% 33.333%",
+        "have-breakfast": "25% 33.333%",
+        "check-my-school-bag": "50% 33.333%",
+        "leave-my-house": "75% 33.333%",
+        "take-out-the-garbage": "100% 33.333%",
+        "go-to-school": "0% 66.667%",
+        "study-english": "25% 66.667%",
+        "spend-all-day-at-school": "50% 66.667%",
+        "go-home": "75% 66.667%",
+        "do-my-homework": "100% 66.667%",
+        "play-with-my-friends": "0% 100%",
+        "finish-my-dinner": "25% 100%",
+        "take-a-bath": "50% 100%",
+        "go-to-bed": "75% 100%",
+        "dream-a-wonderful-dream": "100% 100%"
+      },
       schoolRooms: {
         entrance: "0% 0%",
         "music-room": "33.333% 0%",
@@ -965,7 +1012,7 @@
     days: "days", weather: "weather", clothes: "clothes",
     playActivities: "playActivities", stationery: "stationery",
     dailyTimes: "timeActivities", clockTimes: "clocks",
-    schoolPlaces: "schoolRooms"
+    schoolPlaces: "schoolRooms", dailyRoutine: "myDay"
   });
   const EXTRA_ANIMAL_IMAGE_IDS = new Set([
     "crow", "moth", "owl", "starfish", "jellyfish", "seahorse"
