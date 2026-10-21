@@ -369,7 +369,7 @@
         item("leave-my-house", ["2-9"]),
         item("take-out-the-garbage", ["2-9"]),
         item("go-to-school", ["2-9"]),
-        item("study-english"),
+        item("study-english", [], { word: "study English" }),
         item("spend-all-day-at-school"),
         item("go-home", ["2-9"]),
         item("do-my-homework", ["2-9"]),
