@@ -12,7 +12,7 @@
   }
 
   const cards = category.items.map((entry) => {
-    const word = label(entry.id);
+    const word = entry.word || label(entry.id);
     return {
       id: entry.id,
       category: categoryId,
