@@ -22,7 +22,8 @@
       optionLabel: word,
       teacherAnswer: word,
       textbook: defaults.has(entry.id),
-      visual: { type: "text", text: word, aspectRatio: "1 / 1" }
+      visual: LETS_TRY_DATA.getWordVisual(categoryId, entry.id)
+        || { type: "text", text: word, aspectRatio: "1 / 1" }
     };
   });
 
