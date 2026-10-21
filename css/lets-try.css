@@ -1456,6 +1456,14 @@ html.shared-unit-template .answer-area {
   padding: 0 12px 4px;
 }
 
+/* LT1 Unit 7: long quantity/colour/shape phrases need a smaller text ceiling
+   than ordinary vocabulary cards on landscape tablets. */
+html.shared-unit-template[data-book="lt1"][data-unit="7"] .display-text {
+  font-size: calc(clamp(2rem, 4.3vw, 4.5rem) * var(--text-scale, 1));
+  line-height: 1.08;
+  overflow-wrap: normal;
+}
+
 html.shared-unit-template .display-text {
   max-width: calc(100% - 24px);
   white-space: normal;
