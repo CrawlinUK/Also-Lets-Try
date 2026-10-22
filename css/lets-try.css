@@ -3056,7 +3056,7 @@ html.shared-unit-template .flash-board-swatch {
 
 /* Flash Board ink belongs behind movable cards, not over their faces.
    The drawing surface still receives pointer input in pencil mode. */
-html.shared-unit-template .flash-board-ink { z-index:1; }
+html.shared-unit-template .flash-board-ink { z-index:0; }
 html.shared-unit-template .flash-board-card { z-index:2; }
 html.shared-unit-template .flash-board-tools { z-index:110; }
 html.shared-unit-template .flash-board:has(.flash-board-ink.drawing) .flash-board-card {
