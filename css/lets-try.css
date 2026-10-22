@@ -817,6 +817,48 @@ html.shared-unit-template .game-picture {
       display: none;
     }
 
+    /* Missing / Keyword: use the available board area for the artwork itself.
+       Tiles remain full-size tap targets, while only the image gets a frame. */
+    html.shared-unit-template .game-grid {
+      gap: clamp(3px, .55vw, 9px);
+    }
+
+    html.shared-unit-template .game-tile {
+      padding: 2px;
+      background: transparent;
+      border: 0;
+      border-radius: 8px;
+    }
+
+    html.shared-unit-template .game-picture {
+      width: 100%;
+      max-width: 100%;
+      max-height: 100%;
+      border: 2px solid rgba(255, 255, 255, .95);
+      border-radius: 2px;
+      box-shadow: 0 4px 10px rgba(25, 38, 33, .18);
+      filter: none;
+    }
+
+    @supports (width: 1cqw) {
+      html.shared-unit-template .game-tile .game-picture {
+        width: min(100cqw, calc(100cqh * var(--visual-ratio, 1)));
+        max-width: 100cqw;
+        max-height: 100cqh;
+      }
+    }
+
+    html.shared-unit-template .game-tile.covered {
+      background: #eef2f4;
+      border: 2px dashed var(--line);
+      border-radius: 10px;
+    }
+
+    html.shared-unit-template .game-tile:focus-visible {
+      outline: 3px solid var(--unit-colour);
+      outline-offset: -3px;
+    }
+
     html.shared-unit-template .game-tile.selected {
       padding: 0;
       border: 6px solid var(--unit-colour);
