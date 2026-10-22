@@ -2953,3 +2953,52 @@ html.shared-unit-template .flash-board-card.word-only .flash-board-word {
     font-size: clamp(1.2rem, 4vw, 2rem);
   }
 }
+
+/* Flash Board phase 1: each picture preserves its source aspect ratio;
+   captions overlay the media instead of reducing artwork height. */
+html.shared-unit-template .flash-board-card.visual-card {
+  padding:0;
+  display:block;
+}
+html.shared-unit-template .flash-board-media {
+  position:relative;
+  width:100%;
+  height:100%;
+  overflow:hidden;
+  border-radius:inherit;
+  background:#fff;
+}
+html.shared-unit-template .flash-board-card .flash-board-media > .flash-board-picture {
+  position:absolute;
+  inset:0;
+  display:block;
+  width:100%;
+  height:100%;
+  max-width:none;
+  max-height:none;
+  flex:none;
+  border:0;
+  box-shadow:none;
+  background-repeat:no-repeat;
+  background-position:center;
+  /* Keep sprites' existing sizing; overriding background-size would break
+     the crop coordinates of a sheet. */
+}
+html.shared-unit-template .flash-board-caption {
+  position:absolute;
+  left:0;
+  right:0;
+  bottom:0;
+  z-index:1;
+  background:rgba(255,255,255,.60);
+  color:#111;
+  padding:5px 7px;
+  font-family:"HandwritingWeCan","Century Gothic",sans-serif;
+  font-size:clamp(.85rem,1.2vw,1.35rem);
+  font-weight:800;
+  line-height:1.12;
+  text-align:center;
+  text-wrap:balance;
+  overflow-wrap:anywhere;
+  pointer-events:none;
+}
