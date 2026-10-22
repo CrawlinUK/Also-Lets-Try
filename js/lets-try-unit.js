@@ -2181,7 +2181,8 @@
         const pen = document.createElement("button");
         pen.type = "button";
         pen.className = "flash-board-tool";
-        pen.innerHTML = '<img src="images/ui/Alsodrawing.svg" alt="" aria-hidden="true">';
+        pen.innerHTML = '<span class="flash-board-coloured-pen" aria-hidden="true"></span>';
+        pen.style.setProperty("--pen-colour", state.flashBoardPenColour);
         pen.title = "Draw (tap again for colours)";
         pen.setAttribute("aria-label", "Drawing tool");
         pen.setAttribute("aria-pressed", "false");
@@ -2208,6 +2209,8 @@
           currentTool = tool;
           pen.classList.toggle("active", tool === "draw");
           eraser.classList.toggle("active", tool === "erase");
+          moveCards.classList.toggle("active", tool === "move");
+          moveCards.setAttribute("aria-pressed", String(tool === "move"));
           pen.setAttribute("aria-pressed", String(tool === "draw"));
           eraser.setAttribute("aria-pressed", String(tool === "erase"));
           drawingSurface.classList.toggle("drawing", tool !== "move");
@@ -2249,6 +2252,7 @@
           swatch.setAttribute("aria-label", name);
           swatch.addEventListener("click", () => {
             state.flashBoardPenColour = colour;
+            pen.style.setProperty("--pen-colour", colour);
             palette.hidden = true;
             setTool("draw");
           });
@@ -2269,6 +2273,7 @@
         moveCards.innerHTML = '<img src="images/ui/Alsocards.svg" alt="" aria-hidden="true">';
         moveCards.title = "Move cards";
         moveCards.setAttribute("aria-label", "Move cards");
+        moveCards.setAttribute("aria-pressed", "true");
         moveCards.addEventListener("click", () => {
           palette.hidden = true;
           eraseMenu.hidden = true;
@@ -2293,6 +2298,7 @@
         undoButton = makeHistoryButton("Undo drawing", "↶", state.flashBoardUndo, state.flashBoardRedo);
         redoButton = makeHistoryButton("Redo drawing", "↷", state.flashBoardRedo, state.flashBoardUndo);
         toolRail.append(pen, palette, eraser, eraseMenu, undoButton, redoButton, moveCards);
+        setTool("move");
         updateInkHistoryButtons();
         toolRail.id = "flashBoardTools";
         document.getElementById("flashBoardTools")?.remove();
