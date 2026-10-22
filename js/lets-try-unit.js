@@ -2009,6 +2009,9 @@
           tile.setAttribute("role", "group");
           tile.setAttribute("aria-label", card.word || "Flash card");
           if (!textOnly) tile.classList.add("visual-card");
+          const flagSprite = !textOnly && card.category === "worldGreetings"
+            && String(card.visual?.src || "").includes("flags.svg");
+          if (flagSprite) tile.classList.add("flag-sprite-card");
           if (card.visual?.type === "text") tile.classList.add("letter-visual-card");
           tile.style.zIndex = String(layers.get(card.id) || index + 1);
           const word = document.createElement("span");
@@ -2096,7 +2099,14 @@
             if (!textOnly) {
               const size = visualSize(card);
               tile.style.width = size.width + "%";
-              tile.style.height = size.height + "%";
+              if (tile.classList.contains("flag-sprite-card")) {
+                // The sprite's 640×480 cell must exactly match the rendered
+                // card, including after leaving and re-entering Flash Board.
+                tile.style.aspectRatio = "4 / 3";
+                tile.style.height = "auto";
+              } else {
+                tile.style.height = size.height + "%";
+              }
             }
             const row = Math.floor(index / columns);
             const rowCount = Math.min(columns, count - row * columns);
