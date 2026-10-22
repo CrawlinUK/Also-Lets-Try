@@ -3115,3 +3115,20 @@ html.shared-unit-template .flash-board-eraser-menu button {
   font-size:13px;
 }
 html.shared-unit-template .flash-board-eraser-menu button:hover { background:#dceaf3; }
+
+/* Custom classroom SVGs and future eraser-mode icon placeholders. */
+html.shared-unit-template .flash-board-tool img {
+  display:block;width:25px;height:25px;object-fit:contain;margin:auto;
+  pointer-events:none;
+}
+html.shared-unit-template .flash-board-tool:disabled {
+  opacity:.32;cursor:default;
+}
+html.shared-unit-template .flash-board-eraser-menu button {
+  display:flex;align-items:center;gap:8px;white-space:nowrap;
+}
+html.shared-unit-template .flash-board-placeholder-icon {
+  display:inline-grid;place-items:center;width:25px;height:25px;
+  flex:0 0 25px;border:1px dashed #aebec7;border-radius:5px;
+  color:#415366;font-size:18px;line-height:1;
+}
