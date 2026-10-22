@@ -2861,3 +2861,12 @@ html.shared-unit-template .game-grid > .game-tile {
   min-width: 0;
   min-height: 0;
 }
+/* Two half-tracks must not create an extra gap inside a single card.
+   Keep spacing between pictures rather than between the half-tracks. */
+html.shared-unit-template .game-grid {
+  column-gap: 0;
+}
+html.shared-unit-template .game-grid > .game-tile {
+  width: calc(100% - clamp(3px, .55vw, 9px));
+  justify-self: center;
+}
