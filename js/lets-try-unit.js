@@ -1612,6 +1612,7 @@
         const shape = gridShape(count);
         grid.style.setProperty("--grid-cols", shape.columns);
         grid.style.setProperty("--grid-rows", shape.rows);
+        grid.dataset.cardCount = String(count);
       }
 
 
