@@ -3002,3 +3002,22 @@ html.shared-unit-template .flash-board-caption {
   overflow-wrap:anywhere;
   pointer-events:none;
 }
+
+/* Flash Board alphabet: use a centred glyph, not the image-card layout.
+   The same rule works for upper and lower case and does not affect numbers. */
+html.shared-unit-template .flash-board-card.letter-visual-card .flash-board-picture.text-visual {
+  display:grid;
+  place-items:center;
+  box-sizing:border-box;
+  font-size:clamp(2rem, min(8vw, 13vh), 7rem);
+  font-weight:500;
+  line-height:1;
+  overflow:hidden;
+  padding:0.06em;
+  aspect-ratio:auto;
+}
+/* A 4:3 sprite cell must use the exact geometry of one flag;
+   background-position then maps each source cell edge to the card edge. */
+html.shared-unit-template .flash-board-card.visual-card .flash-board-media {
+  isolation:isolate;
+}
