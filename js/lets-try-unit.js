@@ -586,6 +586,8 @@
         countdownTimer: null,
         missingOrder: [],
         hiddenMissingIds: new Set(),
+        flashBoardInk: [],
+        flashBoardPenColour: "#e53935",
         flashBoardPositions: new Map(),
         flashBoardLayers: new Map(),
         flashBoardLayerCounter: 0,
@@ -2090,6 +2092,117 @@
         });
 
         elements.gameArea.replaceChildren(board);
+
+        // An SVG ink layer stores strokes in board-relative coordinates,
+        // so strokes stay aligned when the teaching display is resized.
+        const ns = "http://www.w3.org/2000/svg";
+        const inkLayer = document.createElementNS(ns, "svg");
+        inkLayer.setAttribute("viewBox", "0 0 1000 1000");
+        inkLayer.setAttribute("preserveAspectRatio", "none");
+        inkLayer.classList.add("flash-board-ink");
+        inkLayer.setAttribute("aria-label", "Drawing surface");
+        const inkGroup = document.createElementNS(ns, "g");
+        inkLayer.append(inkGroup);
+        board.append(inkLayer);
+
+        const renderInk = () => {
+          inkGroup.replaceChildren();
+          state.flashBoardInk.forEach(stroke => {
+            const path = document.createElementNS(ns, "path");
+            path.setAttribute("d", stroke.points.map((p,i) =>
+              (i ? "L" : "M") + p[0].toFixed(2) + " " + p[1].toFixed(2)
+            ).join(" "));
+            path.setAttribute("fill", "none");
+            path.setAttribute("stroke", stroke.colour);
+            path.setAttribute("stroke-width", "4");
+            path.setAttribute("stroke-linecap", "round");
+            path.setAttribute("stroke-linejoin", "round");
+            inkGroup.append(path);
+          });
+        };
+        const toolRail = document.createElement("div");
+        toolRail.className = "flash-board-tools";
+        const pen = document.createElement("button");
+        pen.type = "button";
+        pen.className = "flash-board-tool";
+        pen.textContent = "✎";
+        pen.title = "Draw (tap again for colours)";
+        pen.setAttribute("aria-label", "Drawing tool");
+        pen.setAttribute("aria-pressed", "false");
+        const palette = document.createElement("div");
+        palette.className = "flash-board-palette";
+        palette.hidden = true;
+        const colours = [
+          ["Red","#e53935"],["Blue","#1976d2"],["Green","#22a447"],
+          ["Yellow","#fdd835"],["Purple","#8746c7"],["Orange","#fb8c00"],
+          ["Black","#161616"]
+        ];
+        let drawing = false;
+        const setDrawing = (active) => {
+          drawing = active;
+          pen.classList.toggle("active", active);
+          pen.setAttribute("aria-pressed", String(active));
+          inkLayer.classList.toggle("drawing", active);
+        };
+        colours.forEach(([name, colour]) => {
+          const swatch = document.createElement("button");
+          swatch.type = "button";
+          swatch.className = "flash-board-swatch";
+          swatch.style.backgroundColor = colour;
+          swatch.title = name;
+          swatch.setAttribute("aria-label", name);
+          swatch.addEventListener("click", () => {
+            state.flashBoardPenColour = colour;
+            palette.hidden = true;
+            setDrawing(true);
+          });
+          palette.append(swatch);
+        });
+        pen.addEventListener("click", () => {
+          if (!drawing) {
+            palette.hidden = true;
+            setDrawing(true);
+          } else {
+            palette.hidden = !palette.hidden;
+          }
+        });
+        const moveCards = document.createElement("button");
+        moveCards.type = "button";
+        moveCards.className = "flash-board-tool";
+        moveCards.textContent = "↔";
+        moveCards.title = "Move cards";
+        moveCards.setAttribute("aria-label", "Move cards");
+        moveCards.addEventListener("click", () => {
+          palette.hidden = true;
+          setDrawing(false);
+        });
+        toolRail.append(pen, palette, moveCards);
+        board.append(toolRail);
+        const pointOf = (event) => {
+          const rect = inkLayer.getBoundingClientRect();
+          return [
+            Math.max(0, Math.min(1000, (event.clientX - rect.left) / rect.width * 1000)),
+            Math.max(0, Math.min(1000, (event.clientY - rect.top) / rect.height * 1000))
+          ];
+        };
+        let activeStroke = null;
+        inkLayer.addEventListener("pointerdown", event => {
+          if (!drawing || (event.pointerType === "mouse" && event.button !== 0)) return;
+          event.preventDefault();
+          inkLayer.setPointerCapture(event.pointerId);
+          activeStroke = { colour: state.flashBoardPenColour, points: [pointOf(event)] };
+          state.flashBoardInk.push(activeStroke);
+          renderInk();
+        });
+        inkLayer.addEventListener("pointermove", event => {
+          if (!activeStroke) return;
+          activeStroke.points.push(pointOf(event));
+          renderInk();
+        });
+        const stopStroke = () => { activeStroke = null; };
+        inkLayer.addEventListener("pointerup", stopStroke);
+        inkLayer.addEventListener("pointercancel", stopStroke);
+        renderInk();
         // Measure the actual text-only cards before positioning them. The
         // cards follow a loose initial arrangement, not fixed-size grid slots.
         const positionInitialCards = () => {
