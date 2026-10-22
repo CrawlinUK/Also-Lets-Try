@@ -3053,3 +3053,12 @@ html.shared-unit-template .flash-board-swatch {
   width:28px;height:28px;border-radius:50%;border:2px solid #fff;
   outline:1px solid #bac8cf;cursor:pointer;
 }
+
+/* Flash Board ink belongs behind movable cards, not over their faces.
+   The drawing surface still receives pointer input in pencil mode. */
+html.shared-unit-template .flash-board-ink { z-index:1; }
+html.shared-unit-template .flash-board-card { z-index:2; }
+html.shared-unit-template .flash-board-tools { z-index:110; }
+html.shared-unit-template .flash-board:has(.flash-board-ink.drawing) .flash-board-card {
+  pointer-events:none;
+}
