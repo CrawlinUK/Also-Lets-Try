@@ -1415,6 +1415,7 @@
       }
 
       function render() {
+        if (state.gameMode !== "flashboard") document.getElementById("flashBoardTools")?.remove();
         if (elements.schoolShortenButton) {
           elements.schoolShortenButton.setAttribute("aria-pressed", String(state.schoolShortened));
           elements.schoolShortenButton.textContent = state.schoolShortened
@@ -2182,7 +2183,9 @@
           setDrawing(false);
         });
         toolRail.append(pen, palette, moveCards);
-        board.append(toolRail);
+        toolRail.id = "flashBoardTools";
+        document.getElementById("flashBoardTools")?.remove();
+        document.body.append(toolRail);
         const pointOf = (event) => {
           const rect = inkLayer.getBoundingClientRect();
           return [
