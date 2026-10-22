@@ -28,7 +28,7 @@
       if (!appHost) {
         throw new Error("Shared unit app host was not found.");
       }
-      appHost.innerHTML = "<header class=\"site-header\">\n    <div class=\"site-header-inner\">\n      <button class=\"menu-button\" id=\"menuButton\" type=\"button\" aria-label=\"Return to unit menu\"></button>\n\n      <div class=\"site-title\">\n        <span class=\"unit-word\">Unit</span>\n        <span class=\"unit-number\" id=\"unitNumber\"></span>\n        <span class=\"unit-name\" id=\"unitName\"></span>\n      </div>\n\n      <div class=\"game-title\" id=\"gameTitle\" aria-live=\"polite\"></div>\n    </div>\n  </header>\n\n  <main class=\"app\" id=\"appScreen\">\n    <section class=\"flashcard\" id=\"flashcard\" aria-live=\"polite\">\n      <div class=\"flashcard-stage\">\n        <div class=\"answer-area\" id=\"answerArea\">\n          <div class=\"picture-frame\" id=\"pictureFrame\">\n            <div class=\"card-picture\" id=\"cardPicture\" role=\"img\"></div>\n          </div>\n          <div class=\"display-text\" id=\"displayText\"></div>\n        </div>\n\n        <div class=\"game-area\" id=\"gameArea\" hidden></div>\n      </div>\n\n    </section>\n\n    <button class=\"side-nav side-previous\" id=\"previousButton\" type=\"button\" aria-label=\"Previous card\"></button>\n    <button class=\"side-nav side-next\" id=\"nextButton\" type=\"button\" aria-label=\"Next card\"></button>\n    <aside class=\"missing-answer-hints\" id=\"missingAnswerHints\" aria-label=\"Teacher Missing Game answers\" hidden></aside>\n    <aside class=\"guess-word-list\" id=\"guessWordList\" aria-label=\"Guess game word list\" hidden></aside>\n\n    <nav class=\"control-bar\" aria-label=\"Flashcard controls\">\n      <div class=\"card-counter\">\n        <strong id=\"counter\">1 / 1</strong>\n        <span id=\"modeLabel\">Flashcard mode</span>\n      </div>\n\n      <button class=\"control shuffle\" id=\"shuffleButton\" type=\"button\">Shuffle</button>\n      <button class=\"control quiet\" id=\"phraseSwitchButton\" type=\"button\" hidden></button>\n\n      <div class=\"game-menu-wrap\">\n        <button class=\"control quiet game-menu-button\" id=\"gameButton\" type=\"button\"\n                aria-haspopup=\"true\" aria-expanded=\"false\">Game</button>\n        <div class=\"game-menu\" id=\"gameMenu\" hidden></div>\n      </div>\n\n      <div class=\"floating-timer timer-control\" id=\"floatingTimer\" aria-label=\"Automatic timer\">\n        <button id=\"timerDownButton\" type=\"button\" aria-label=\"Decrease timer\">−</button>\n        <span class=\"timer-value\" id=\"timerValue\">3 sec</span>\n        <button id=\"timerUpButton\" type=\"button\" aria-label=\"Increase timer\">+</button>\n      </div>\n\n      <button class=\"floating-auto\" id=\"autoButton\" type=\"button\"\n              aria-label=\"Start automatic flashcards\" title=\"Start automatic flashcards\"></button>\n\n      <button class=\"control quiet settings-icon-button\" id=\"settingsButton\" type=\"button\" aria-label=\"Settings\">Settings</button>\n    </nav>\n\n    <div class=\"keyboard-help collapsed\" id=\"keyboardHelp\">\n      <div class=\"keyboard-help-text\">\n        ← / → = previous / next<br>\n        Space / Enter = next<br>\n        A = start / stop auto<br>\n        R = shuffle<br>\n        G = games<br>\n        ↑ / ↓ = timer up / down<br>\n        Esc = close menus / help\n      </div>\n      <div class=\"keyboard-help-icon\">!</div>\n    </div>\n  </main>\n\n  <div class=\"image-diagnostic-toolbar\" id=\"imageDiagnosticToolbar\" hidden>\n    <strong class=\"image-diagnostic-card-label\" id=\"imageDiagnosticCardLabel\">Image diagnosis</strong>\n    <label class=\"image-diagnostic-zoom-control\">\n      <span>Zoom</span>\n      <input id=\"imageDiagnosticZoomRange\" type=\"range\" min=\"25\" max=\"400\" value=\"100\" step=\"1\" aria-label=\"Diagnostic image zoom\">\n      <span class=\"image-diagnostic-number-wrap\">\n        <input id=\"imageDiagnosticZoomNumber\" type=\"number\" min=\"25\" max=\"400\" value=\"100\" step=\"0.1\" inputmode=\"decimal\" aria-label=\"Diagnostic image zoom percent\">\n        <span>%</span>\n      </span>\n    </label>\n  </div>\n\n  <div class=\"scrim\" id=\"scrim\"></div>\n\n  <div class=\"guess-setup\" id=\"guessSetup\" role=\"dialog\" aria-modal=\"true\" aria-labelledby=\"guessSetupTitle\" hidden>\n    <div class=\"guess-setup-card\">\n      <button class=\"guess-setup-close\" id=\"guessSetupClose\" type=\"button\" aria-label=\"Close Guess setup\">×</button>\n      <h2 id=\"guessSetupTitle\">Guess</h2>\n      <section class=\"guess-category-section\" id=\"guessCategorySection\">\n        <p>Please choose a category</p>\n        <div class=\"guess-category-options\" id=\"guessCategoryOptions\"></div>\n      </section>\n      <section class=\"guess-mode-section\">\n        <p>Choose a screen mode</p>\n        <div class=\"guess-mode-options\">\n          <button type=\"button\" data-guess-mode=\"showWord\">Show Word</button>\n          <button type=\"button\" data-guess-mode=\"hideWord\">Hide Word<small>All words will be listed on the left.</small></button>\n        </div>\n      </section>\n    </div>\n  </div>\n\n  <aside class=\"settings-panel\" id=\"settingsPanel\" aria-label=\"Settings\">\n    <div class=\"settings-heading\">\n      <h2>Settings</h2>\n      <button class=\"close-button\" id=\"closeSettingsButton\" type=\"button\" aria-label=\"Close settings\">×</button>\n    </div>\n\n    <section class=\"setting-section display-mode-section\">\n      <h3>Display mode</h3>\n      <div class=\"segmented display-mode-options\">\n        <label>\n          <input type=\"radio\" name=\"displayMode\" value=\"pictureText\" checked>\n          <span id=\"pictureTextLabel\">Picture + text</span>\n        </label>\n        <label>\n          <input type=\"radio\" name=\"displayMode\" value=\"picture\">\n          <span id=\"pictureOnlyLabel\">Picture only</span>\n        </label>\n        <label class=\"picture-sentence-option\" id=\"pictureSentenceOption\">\n          <input type=\"radio\" name=\"displayMode\" value=\"pictureSentence\">\n          <span id=\"pictureSentenceLabel\">Picture + sentence</span>\n        </label>\n        <label>\n          <input type=\"radio\" name=\"displayMode\" value=\"text\">\n          <span id=\"textOnlyLabel\">Text only</span>\n        </label>\n      </div>\n    </section>\n\n    <div class=\"settings-preview\" id=\"settingsPreview\" aria-label=\"Display preview\">\n      <div class=\"settings-preview-picture\" id=\"settingsPreviewPicture\" role=\"img\"></div>\n      <div class=\"settings-preview-text\" id=\"settingsPreviewText\"></div>\n    </div>\n\n    <section class=\"setting-section selection-section\">\n      <div class=\"setting-actions setting-actions-top\">\n        <button id=\"selectAllButton\" type=\"button\">Select all</button>\n        <button id=\"resetButton\" type=\"button\">Reset</button>\n      </div>\n      <p class=\"message\" id=\"message\"></p>\n      <div class=\"category-word-groups\" id=\"cardOptionGrid\"></div>\n    </section>\n\n    <section class=\"setting-section secondary-setting-section\">\n      <h3>Image / text size</h3>\n      <div class=\"balance-labels\" aria-hidden=\"true\">\n        <span id=\"balancePictureLabel\">Image</span>\n        <span id=\"balanceTextLabel\">Text</span>\n      </div>\n      <div class=\"balance-slider\">\n        <span>◀</span>\n        <input id=\"sizeBalanceRange\" type=\"range\" min=\"0\" max=\"100\" value=\"50\" step=\"5\"\n               aria-label=\"Image and text size balance\">\n        <span>▶</span>\n      </div>\n    </section>\n\n    <section class=\"setting-section secondary-setting-section\">\n      <h3>Missing Game teacher hint answer size</h3>\n      <div class=\"missing-answer-size-row\">\n        <input id=\"missingAnswerSizeRange\" type=\"range\" min=\"8\" max=\"24\" value=\"10\" step=\"1\"\n               aria-label=\"Missing Game teacher hint answer size\">\n        <output class=\"missing-answer-size-value\" id=\"missingAnswerSizeValue\" for=\"missingAnswerSizeRange\">10 px</output>\n      </div>\n    </section>\n\n    <section class=\"setting-section secondary-setting-section image-diagnostic-setting\">\n      <h3>Image diagnosis</h3>\n      <div class=\"image-diagnostic-actions\">\n        <button id=\"imageDiagnosticToggle\" type=\"button\" aria-pressed=\"false\">Image diagnosis</button>\n        <button id=\"imageDiagnosticExport\" type=\"button\">Export changes</button>\n      </div>\n      <p class=\"image-diagnostic-note\">Temporary development tool — this diagnostic tool will be removed on release/completion.</p>\n    </section>\n  </aside>";
+      appHost.innerHTML = "<header class=\"site-header\">\n    <div class=\"site-header-inner\">\n      <button class=\"menu-button\" id=\"menuButton\" type=\"button\" aria-label=\"Return to unit menu\"></button>\n\n      <div class=\"site-title\">\n        <span class=\"unit-word\">Unit</span>\n        <span class=\"unit-number\" id=\"unitNumber\"></span>\n        <span class=\"unit-name\" id=\"unitName\"></span>\n      </div>\n\n      <div class=\"game-title\" id=\"gameTitle\" aria-live=\"polite\"></div>\n    </div>\n  </header>\n\n  <main class=\"app\" id=\"appScreen\">\n    <section class=\"flashcard\" id=\"flashcard\" aria-live=\"polite\">\n      <div class=\"flashcard-stage\">\n        <div class=\"answer-area\" id=\"answerArea\">\n          <div class=\"picture-frame\" id=\"pictureFrame\">\n            <div class=\"card-picture\" id=\"cardPicture\" role=\"img\"></div>\n          </div>\n          <div class=\"display-text\" id=\"displayText\"></div>\n        </div>\n\n        <div class=\"game-area\" id=\"gameArea\" hidden></div>\n      </div>\n\n    </section>\n\n    <button class=\"side-nav side-previous\" id=\"previousButton\" type=\"button\" aria-label=\"Previous card\"></button>\n    <button class=\"side-nav side-next\" id=\"nextButton\" type=\"button\" aria-label=\"Next card\"></button>\n    <aside class=\"missing-answer-hints\" id=\"missingAnswerHints\" aria-label=\"Teacher Missing Game answers\" hidden></aside>\n    <aside class=\"guess-word-list\" id=\"guessWordList\" aria-label=\"Guess game word list\" hidden></aside>\n\n    <nav class=\"control-bar\" aria-label=\"Flashcard controls\">\n      <div class=\"card-counter\">\n        <strong id=\"counter\">1 / 1</strong>\n        <span id=\"modeLabel\">Flashcard mode</span>\n      </div>\n\n      <button class=\"control shuffle\" id=\"shuffleButton\" type=\"button\">Shuffle</button>\n      <button class=\"control quiet\" id=\"phraseSwitchButton\" type=\"button\" hidden></button>\n\n      <div class=\"game-menu-wrap\">\n        <button class=\"control quiet game-menu-button\" id=\"gameButton\" type=\"button\"\n                aria-haspopup=\"true\" aria-expanded=\"false\">Tools</button>\n        <div class=\"game-menu\" id=\"gameMenu\" hidden></div>\n      </div>\n\n      <div class=\"floating-timer timer-control\" id=\"floatingTimer\" aria-label=\"Automatic timer\">\n        <button id=\"timerDownButton\" type=\"button\" aria-label=\"Decrease timer\">−</button>\n        <span class=\"timer-value\" id=\"timerValue\">3 sec</span>\n        <button id=\"timerUpButton\" type=\"button\" aria-label=\"Increase timer\">+</button>\n      </div>\n\n      <button class=\"floating-auto\" id=\"autoButton\" type=\"button\"\n              aria-label=\"Start automatic flashcards\" title=\"Start automatic flashcards\"></button>\n\n      <button class=\"control quiet settings-icon-button\" id=\"settingsButton\" type=\"button\" aria-label=\"Settings\">Settings</button>\n    </nav>\n\n    <div class=\"keyboard-help collapsed\" id=\"keyboardHelp\">\n      <div class=\"keyboard-help-text\">\n        ← / → = previous / next<br>\n        Space / Enter = next<br>\n        A = start / stop auto<br>\n        R = shuffle<br>\n        G = tools<br>\n        ↑ / ↓ = timer up / down<br>\n        Esc = close menus / help\n      </div>\n      <div class=\"keyboard-help-icon\">!</div>\n    </div>\n  </main>\n\n  <div class=\"image-diagnostic-toolbar\" id=\"imageDiagnosticToolbar\" hidden>\n    <strong class=\"image-diagnostic-card-label\" id=\"imageDiagnosticCardLabel\">Image diagnosis</strong>\n    <label class=\"image-diagnostic-zoom-control\">\n      <span>Zoom</span>\n      <input id=\"imageDiagnosticZoomRange\" type=\"range\" min=\"25\" max=\"400\" value=\"100\" step=\"1\" aria-label=\"Diagnostic image zoom\">\n      <span class=\"image-diagnostic-number-wrap\">\n        <input id=\"imageDiagnosticZoomNumber\" type=\"number\" min=\"25\" max=\"400\" value=\"100\" step=\"0.1\" inputmode=\"decimal\" aria-label=\"Diagnostic image zoom percent\">\n        <span>%</span>\n      </span>\n    </label>\n  </div>\n\n  <div class=\"scrim\" id=\"scrim\"></div>\n\n  <div class=\"guess-setup\" id=\"guessSetup\" role=\"dialog\" aria-modal=\"true\" aria-labelledby=\"guessSetupTitle\" hidden>\n    <div class=\"guess-setup-card\">\n      <button class=\"guess-setup-close\" id=\"guessSetupClose\" type=\"button\" aria-label=\"Close Guess setup\">×</button>\n      <h2 id=\"guessSetupTitle\">Guess</h2>\n      <section class=\"guess-category-section\" id=\"guessCategorySection\">\n        <p>Please choose a category</p>\n        <div class=\"guess-category-options\" id=\"guessCategoryOptions\"></div>\n      </section>\n      <section class=\"guess-mode-section\">\n        <p>Choose a screen mode</p>\n        <div class=\"guess-mode-options\">\n          <button type=\"button\" data-guess-mode=\"showWord\">Show Word</button>\n          <button type=\"button\" data-guess-mode=\"hideWord\">Hide Word<small>All words will be listed on the left.</small></button>\n        </div>\n      </section>\n    </div>\n  </div>\n\n  <aside class=\"settings-panel\" id=\"settingsPanel\" aria-label=\"Settings\">\n    <div class=\"settings-heading\">\n      <h2>Settings</h2>\n      <button class=\"close-button\" id=\"closeSettingsButton\" type=\"button\" aria-label=\"Close settings\">×</button>\n    </div>\n\n    <section class=\"setting-section display-mode-section\">\n      <h3>Display mode</h3>\n      <div class=\"segmented display-mode-options\">\n        <label>\n          <input type=\"radio\" name=\"displayMode\" value=\"pictureText\" checked>\n          <span id=\"pictureTextLabel\">Picture + text</span>\n        </label>\n        <label>\n          <input type=\"radio\" name=\"displayMode\" value=\"picture\">\n          <span id=\"pictureOnlyLabel\">Picture only</span>\n        </label>\n        <label class=\"picture-sentence-option\" id=\"pictureSentenceOption\">\n          <input type=\"radio\" name=\"displayMode\" value=\"pictureSentence\">\n          <span id=\"pictureSentenceLabel\">Picture + sentence</span>\n        </label>\n        <label>\n          <input type=\"radio\" name=\"displayMode\" value=\"text\">\n          <span id=\"textOnlyLabel\">Text only</span>\n        </label>\n      </div>\n    </section>\n\n    <div class=\"settings-preview\" id=\"settingsPreview\" aria-label=\"Display preview\">\n      <div class=\"settings-preview-picture\" id=\"settingsPreviewPicture\" role=\"img\"></div>\n      <div class=\"settings-preview-text\" id=\"settingsPreviewText\"></div>\n    </div>\n\n    <section class=\"setting-section selection-section\">\n      <div class=\"setting-actions setting-actions-top\">\n        <button id=\"selectAllButton\" type=\"button\">Select all</button>\n        <button id=\"resetButton\" type=\"button\">Reset</button>\n      </div>\n      <p class=\"message\" id=\"message\"></p>\n      <div class=\"category-word-groups\" id=\"cardOptionGrid\"></div>\n    </section>\n\n    <section class=\"setting-section secondary-setting-section\">\n      <h3>Image / text size</h3>\n      <div class=\"balance-labels\" aria-hidden=\"true\">\n        <span id=\"balancePictureLabel\">Image</span>\n        <span id=\"balanceTextLabel\">Text</span>\n      </div>\n      <div class=\"balance-slider\">\n        <span>◀</span>\n        <input id=\"sizeBalanceRange\" type=\"range\" min=\"0\" max=\"100\" value=\"50\" step=\"5\"\n               aria-label=\"Image and text size balance\">\n        <span>▶</span>\n      </div>\n    </section>\n\n    <section class=\"setting-section secondary-setting-section\">\n      <h3>Missing Game teacher hint answer size</h3>\n      <div class=\"missing-answer-size-row\">\n        <input id=\"missingAnswerSizeRange\" type=\"range\" min=\"8\" max=\"24\" value=\"10\" step=\"1\"\n               aria-label=\"Missing Game teacher hint answer size\">\n        <output class=\"missing-answer-size-value\" id=\"missingAnswerSizeValue\" for=\"missingAnswerSizeRange\">10 px</output>\n      </div>\n    </section>\n\n    <section class=\"setting-section secondary-setting-section image-diagnostic-setting\">\n      <h3>Image diagnosis</h3>\n      <div class=\"image-diagnostic-actions\">\n        <button id=\"imageDiagnosticToggle\" type=\"button\" aria-pressed=\"false\">Image diagnosis</button>\n        <button id=\"imageDiagnosticExport\" type=\"button\">Export changes</button>\n      </div>\n      <p class=\"image-diagnostic-note\">Temporary development tool — this diagnostic tool will be removed on release/completion.</p>\n    </section>\n  </aside>";
 
       // These two phrases belong in Unit 2 Settings, not in the footer.
       const phraseOptionAnchor = document.getElementById("pictureSentenceOption");
@@ -586,6 +586,7 @@
         countdownTimer: null,
         missingOrder: [],
         hiddenMissingIds: new Set(),
+        flashBoardPositions: new Map(),
         keywordOrder: [],
         keywordSelectedIds: new Set(),
         guessCategoryId: null,
@@ -832,7 +833,8 @@
         [
           ["missing", "Missing game"],
           ["keyword", "Keyword game"],
-          ["guess", "Guess"]
+          ["guess", "Guess"],
+          ["flashboard", "Flash Board"]
         ].forEach(([id, label]) => {
           if (builtInGameEnabled(id)) {
             fragment.append(makeGameMenuButton(label, { game: id }));
@@ -1431,6 +1433,12 @@
           return;
         }
 
+        if (state.gameMode === "flashboard") {
+          renderFlashBoard();
+          syncImageDiagnosticToolbar();
+          return;
+        }
+
         if (state.gameMode === "guess") {
           renderGuess();
           syncImageDiagnosticToolbar();
@@ -1931,6 +1939,122 @@
         renderMissing();
       }
 
+      // Free placement is deliberately independent of Missing/Keyword ordering.
+      function renderFlashBoard() {
+        showGridGameLayout();
+        elements.missingAnswerHints.hidden = true;
+        elements.gameTitle.textContent = "Flash Board";
+        elements.nextButton.hidden = true;
+        elements.shuffleButton.textContent = "Reset layout";
+
+        const cards = selectedCards();
+        const board = document.createElement("div");
+        board.className = "flash-board";
+        board.setAttribute("aria-label", "Freely arrange selected flash cards");
+
+        const positions = state.flashBoardPositions;
+        const count = cards.length;
+        const columns = Math.max(1, Math.ceil(Math.sqrt(count * 1.5)));
+        const rows = Math.max(1, Math.ceil(count / columns));
+        const gap = 8;
+        // Percent positions allow the board to respond to resizing without
+        // changing the separate sequence used in other games.
+        const cardWidth = Math.min(38, (100 - 2 * gap / 8) / columns * .94);
+        const cardHeight = Math.min(48, 96 / rows * .93);
+        const initial = (index) => {
+          const row = Math.floor(index / columns);
+          const items = Math.min(columns, count - row * columns);
+          const col = index % columns;
+          return {
+            x: (100 - items * cardWidth) / 2 + col * cardWidth,
+            y: (100 - rows * cardHeight) / 2 + row * cardHeight
+          };
+        };
+
+        cards.forEach((card, index) => {
+          const tile = document.createElement("div");
+          tile.className = "flash-board-card";
+          tile.tabIndex = 0;
+          tile.setAttribute("role", "group");
+          tile.setAttribute("aria-label", card.word || "Flash card");
+          tile.style.width = cardWidth + "%";
+          tile.style.height = cardHeight + "%";
+          const picture = document.createElement("div");
+          picture.className = "flash-board-picture game-picture";
+          applyVisual(picture, card);
+          const word = document.createElement("span");
+          word.className = "flash-board-word";
+          word.textContent = card.word || "";
+          const mode = state.displayMode;
+          if (mode !== "text") tile.append(picture);
+          if (mode !== "picture") tile.append(word);
+          const saved = positions.get(card.id) || initial(index);
+          const clampPosition = (x,y) => ({
+            x: Math.max(0, Math.min(100-cardWidth,x)),
+            y: Math.max(0, Math.min(100-cardHeight,y))
+          });
+          const place = (pos) => {
+            const safe = clampPosition(pos.x,pos.y);
+            tile.style.left = safe.x + "%";
+            tile.style.top = safe.y + "%";
+            return safe;
+          };
+          let last = place(saved);
+          positions.set(card.id, last);
+          tile.addEventListener("pointerdown", (event) => {
+            if (event.button !== 0 && event.pointerType === "mouse") return;
+            event.preventDefault();
+            const rect = board.getBoundingClientRect();
+            const original = { ...last };
+            const startX = event.clientX, startY = event.clientY;
+            tile.setPointerCapture(event.pointerId);
+            tile.classList.add("dragging");
+            const move = (e) => {
+              if (rect.width <= 0 || rect.height <= 0) return;
+              const x = original.x + (e.clientX - startX) / rect.width * 100;
+              const y = original.y + (e.clientY - startY) / rect.height * 100;
+              place({ x, y });
+            };
+            const finish = (e) => {
+              tile.removeEventListener("pointermove", move);
+              tile.removeEventListener("pointerup", finish);
+              tile.removeEventListener("pointercancel", cancel);
+              tile.classList.remove("dragging");
+              const dx = (e.clientX - startX) / rect.width * 100;
+              const dy = (e.clientY - startY) / rect.height * 100;
+              const proposed = { x: original.x + dx, y: original.y + dy };
+              const valid = proposed.x >= 0 && proposed.y >= 0
+                && proposed.x + cardWidth <= 100 && proposed.y + cardHeight <= 100;
+              last = place(valid ? proposed : original);
+              positions.set(card.id,last);
+            };
+            const cancel = () => {
+              tile.removeEventListener("pointermove",move);
+              tile.removeEventListener("pointerup",finish);
+              tile.removeEventListener("pointercancel",cancel);
+              tile.classList.remove("dragging");
+              place(original);
+            };
+            tile.addEventListener("pointermove",move);
+            tile.addEventListener("pointerup",finish);
+            tile.addEventListener("pointercancel",cancel);
+          });
+          tile.addEventListener("keydown", (event) => {
+            const steps = {ArrowLeft:[-2,0],ArrowRight:[2,0],ArrowUp:[0,-2],ArrowDown:[0,2]};
+            if (!steps[event.key]) return;
+            event.preventDefault();
+            const [dx,dy] = steps[event.key];
+            last = place({ x:last.x+dx,y:last.y+dy });
+            positions.set(card.id,last);
+          });
+          board.append(tile);
+        });
+        elements.gameArea.replaceChildren(board);
+        elements.counter.textContent = count + " / " + count;
+        elements.modeLabel.textContent = "Flash Board";
+        requestAnimationFrame(alignSideNavigation);
+      }
+
       function renderKeyword() {
         elements.missingAnswerHints.hidden = true;
         showGridGameLayout();
@@ -2014,6 +2138,10 @@
           return;
         }
 
+        if (mode === "flashboard") {
+          state.flashBoardPositions = new Map();
+        }
+
         if (mode === "keyword") {
           state.keywordOrder = selectedCards().map((card) => card.id);
           state.keywordSelectedIds.clear();
@@ -2043,6 +2171,11 @@
 
       function shuffleAction() {
         stopAuto();
+        if (state.gameMode === "flashboard") {
+          state.flashBoardPositions.clear();
+          renderFlashBoard();
+          return;
+        }
 
         if (state.gameMode === "missing") {
           const original = state.missingOrder.length
