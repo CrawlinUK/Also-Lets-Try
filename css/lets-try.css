@@ -3087,3 +3087,31 @@ html.shared-unit-template .flash-board-tools {
   html.shared-unit-template .flash-board-tools { right:3px;padding:3px;gap:4px; }
   html.shared-unit-template .flash-board-tool { width:35px;height:35px;font-size:22px; }
 }
+
+/* Flash Board eraser options share the same compact side rail. */
+html.shared-unit-template .flash-board-eraser-menu {
+  position:absolute;
+  right:calc(100% + 8px);
+  top:48px;
+  display:flex;
+  flex-direction:column;
+  min-width:135px;
+  gap:3px;
+  padding:6px;
+  border:1px solid #cbd7dd;
+  border-radius:10px;
+  background:#fff;
+  box-shadow:0 4px 12px #243a4b2d;
+}
+html.shared-unit-template .flash-board-eraser-menu[hidden] { display:none; }
+html.shared-unit-template .flash-board-eraser-menu button {
+  padding:8px 10px;
+  border:0;
+  border-radius:7px;
+  background:#f2f6f8;
+  color:#213248;
+  text-align:left;
+  cursor:pointer;
+  font-size:13px;
+}
+html.shared-unit-template .flash-board-eraser-menu button:hover { background:#dceaf3; }
