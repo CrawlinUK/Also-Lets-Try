@@ -2927,3 +2927,11 @@ html.shared-unit-template .flash-board-word {
   flex:0 0 auto;
 }
 html.shared-unit-template .flash-board-card:focus-visible { outline:3px solid var(--unit-colour); }
+
+/* Animate an out-of-bounds card back to its last valid position. */
+html.shared-unit-template .flash-board-card.returning {
+  transition: left 260ms cubic-bezier(.22,.8,.3,1), top 260ms cubic-bezier(.22,.8,.3,1);
+}
+@media (prefers-reduced-motion: reduce) {
+  html.shared-unit-template .flash-board-card.returning { transition: none; }
+}
