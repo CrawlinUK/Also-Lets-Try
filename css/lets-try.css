@@ -2845,3 +2845,21 @@ html.shared-unit-template .flashcard .answer-area > .display-text:not([aria-hidd
   overflow-wrap: anywhere;
   text-wrap: balance;
 }
+
+/* Compact landscape tablets: ten square pictures fit more evenly in 4×3.
+   Only Missing/Keyword grids with exactly ten cards are affected. */
+@media (orientation: landscape) and (min-width: 700px) and (max-width: 1500px) {
+  html.shared-unit-template .game-grid[data-card-count="10"] {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    grid-template-rows: repeat(3, minmax(0, 1fr));
+    gap: clamp(3px, .55vw, 8px);
+  }
+
+  html.shared-unit-template .game-grid[data-card-count="10"] > .game-tile:nth-child(9) {
+    grid-column: 2;
+  }
+
+  html.shared-unit-template .game-grid[data-card-count="10"] > .game-tile:nth-child(10) {
+    grid-column: 3;
+  }
+}
