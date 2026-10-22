@@ -587,6 +587,8 @@
         missingOrder: [],
         hiddenMissingIds: new Set(),
         flashBoardInk: [],
+        flashBoardUndo: [],
+        flashBoardRedo: [],
         flashBoardPenColour: "#e53935",
         flashBoardPositions: new Map(),
         flashBoardLayers: new Map(),
@@ -2150,12 +2152,36 @@
             inkGroup.append(path);
           });
         };
+        // History stores complete stroke records, including partial-erase masks.
+        // One gesture is a single undoable action.
+        const copyInk = () => state.flashBoardInk.map(stroke => ({
+          colour: stroke.colour,
+          points: stroke.points.map(p => [...p]),
+          erasures: (stroke.erasures || []).map(p => [...p])
+        }));
+        let pendingHistory = null;
+        const beginInkAction = () => { pendingHistory = copyInk(); };
+        const commitInkAction = () => {
+          if (!pendingHistory) return;
+          if (JSON.stringify(pendingHistory) !== JSON.stringify(state.flashBoardInk)) {
+            state.flashBoardUndo.push(pendingHistory);
+            if (state.flashBoardUndo.length > 80) state.flashBoardUndo.shift();
+            state.flashBoardRedo.length = 0;
+          }
+          pendingHistory = null;
+          updateInkHistoryButtons();
+        };
+        let undoButton, redoButton;
+        const updateInkHistoryButtons = () => {
+          if (undoButton) undoButton.disabled = !state.flashBoardUndo.length;
+          if (redoButton) redoButton.disabled = !state.flashBoardRedo.length;
+        };
         const toolRail = document.createElement("div");
         toolRail.className = "flash-board-tools";
         const pen = document.createElement("button");
         pen.type = "button";
         pen.className = "flash-board-tool";
-        pen.textContent = "✎";
+        pen.innerHTML = '<img src="images/ui/Alsodrawing.svg" alt="" aria-hidden="true">';
         pen.title = "Draw (tap again for colours)";
         pen.setAttribute("aria-label", "Drawing tool");
         pen.setAttribute("aria-pressed", "false");
@@ -2172,7 +2198,7 @@
         const eraser = document.createElement("button");
         eraser.type = "button";
         eraser.className = "flash-board-tool";
-        eraser.textContent = "⌫";
+        eraser.innerHTML = '<img src="images/ui/AlsoEraser.svg" alt="" aria-hidden="true">';
         eraser.title = "Erase (tap again for options)";
         eraser.setAttribute("aria-label", "Eraser");
         const eraseMenu = document.createElement("div");
@@ -2186,17 +2212,25 @@
           eraser.setAttribute("aria-pressed", String(tool === "erase"));
           drawingSurface.classList.toggle("drawing", tool !== "move");
         };
-        const menuOption = (label, action) => {
+        const menuOption = (label, icon, action) => {
           const button = document.createElement("button");
           button.type = "button";
-          button.textContent = label;
+          const symbol = document.createElement("span");
+          symbol.className = "flash-board-placeholder-icon";
+          symbol.textContent = icon;
+          symbol.setAttribute("aria-hidden", "true");
+          const words = document.createElement("span");
+          words.textContent = label;
+          button.append(symbol, words);
           button.addEventListener("click", action);
           eraseMenu.append(button);
         };
-        menuOption("Erase parts", () => { eraserMode = "part"; eraseMenu.hidden = true; setTool("erase"); });
-        menuOption("Whole stroke", () => { eraserMode = "whole"; eraseMenu.hidden = true; setTool("erase"); });
-        menuOption("Clear all", () => {
+        menuOption("Erase parts", "◌", () => { eraserMode = "part"; eraseMenu.hidden = true; setTool("erase"); });
+        menuOption("Whole stroke", "〰", () => { eraserMode = "whole"; eraseMenu.hidden = true; setTool("erase"); });
+        menuOption("Clear all", "✕", () => {
+          beginInkAction();
           state.flashBoardInk.length = 0;
+          commitInkAction();
           eraseMenu.hidden = true;
           renderInk();
           setTool("erase");
@@ -2232,7 +2266,7 @@
         const moveCards = document.createElement("button");
         moveCards.type = "button";
         moveCards.className = "flash-board-tool";
-        moveCards.textContent = "↔";
+        moveCards.innerHTML = '<img src="images/ui/Alsocards.svg" alt="" aria-hidden="true">';
         moveCards.title = "Move cards";
         moveCards.setAttribute("aria-label", "Move cards");
         moveCards.addEventListener("click", () => {
@@ -2240,7 +2274,26 @@
           eraseMenu.hidden = true;
           setTool("move");
         });
-        toolRail.append(pen, palette, eraser, eraseMenu, moveCards);
+        const makeHistoryButton = (label, symbol, stack, otherStack) => {
+          const button = document.createElement("button");
+          button.type = "button";
+          button.className = "flash-board-tool";
+          button.textContent = symbol;
+          button.title = label;
+          button.setAttribute("aria-label", label);
+          button.addEventListener("click", () => {
+            if (!stack.length) return;
+            otherStack.push(copyInk());
+            state.flashBoardInk = stack.pop();
+            renderInk();
+            updateInkHistoryButtons();
+          });
+          return button;
+        };
+        undoButton = makeHistoryButton("Undo drawing", "↶", state.flashBoardUndo, state.flashBoardRedo);
+        redoButton = makeHistoryButton("Redo drawing", "↷", state.flashBoardRedo, state.flashBoardUndo);
+        toolRail.append(pen, palette, eraser, eraseMenu, undoButton, redoButton, moveCards);
+        updateInkHistoryButtons();
         toolRail.id = "flashBoardTools";
         document.getElementById("flashBoardTools")?.remove();
         document.body.append(toolRail);
@@ -2289,6 +2342,7 @@
           event.preventDefault();
           drawingSurface.setPointerCapture(event.pointerId);
           const point = pointOf(event);
+          beginInkAction();
           if (currentTool === "draw") {
             activeStroke = { colour: state.flashBoardPenColour, points: [point] };
             state.flashBoardInk.push(activeStroke);
@@ -2304,7 +2358,11 @@
             renderInk();
           } else if (erasing && eraserMode === "part") applyEraser(pointOf(event));
         });
-        const stopStroke = () => { activeStroke = null; erasing = false; };
+        const stopStroke = () => {
+          if (activeStroke || erasing) commitInkAction();
+          activeStroke = null;
+          erasing = false;
+        };
         drawingSurface.addEventListener("pointerup", stopStroke);
         drawingSurface.addEventListener("pointercancel", stopStroke);
         renderInk();
