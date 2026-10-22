@@ -587,6 +587,8 @@
         missingOrder: [],
         hiddenMissingIds: new Set(),
         flashBoardPositions: new Map(),
+        flashBoardLayers: new Map(),
+        flashBoardLayerCounter: 0,
         keywordOrder: [],
         keywordSelectedIds: new Set(),
         guessCategoryId: null,
@@ -1953,6 +1955,12 @@
         board.setAttribute("aria-label", "Freely arrange selected flash cards");
 
         const positions = state.flashBoardPositions;
+        const layers = state.flashBoardLayers;
+        const bringToFront = (tile, id) => {
+          const layer = ++state.flashBoardLayerCounter;
+          layers.set(id, layer);
+          tile.style.zIndex = String(layer);
+        };
         const count = cards.length;
         const columns = Math.max(1, Math.ceil(Math.sqrt(count * 1.5)));
         const rows = Math.max(1, Math.ceil(count / columns));
@@ -1979,6 +1987,7 @@
           tile.setAttribute("aria-label", card.word || "Flash card");
           tile.style.width = cardWidth + "%";
           tile.style.height = cardHeight + "%";
+          tile.style.zIndex = String(layers.get(card.id) || (index + 1));
           const picture = document.createElement("div");
           picture.className = "flash-board-picture game-picture";
           applyVisual(picture, card);
@@ -2001,13 +2010,16 @@
           };
           let last = place(saved);
           positions.set(card.id, last);
+          tile.addEventListener("focus", () => bringToFront(tile, card.id));
           tile.addEventListener("pointerdown", (event) => {
             if (event.button !== 0 && event.pointerType === "mouse") return;
             event.preventDefault();
+            bringToFront(tile, card.id);
             const rect = board.getBoundingClientRect();
             const original = { ...last };
             const startX = event.clientX, startY = event.clientY;
             tile.setPointerCapture(event.pointerId);
+            tile.classList.remove("returning");
             tile.classList.add("dragging");
             const move = (e) => {
               if (rect.width <= 0 || rect.height <= 0) return;
@@ -2025,7 +2037,12 @@
               const proposed = { x: original.x + dx, y: original.y + dy };
               const valid = proposed.x >= 0 && proposed.y >= 0
                 && proposed.x + cardWidth <= 100 && proposed.y + cardHeight <= 100;
-              last = place(valid ? proposed : original);
+              if (valid) {
+                last = place(proposed);
+              } else {
+                tile.classList.add("returning");
+                place(original);
+              }
               positions.set(card.id,last);
             };
             const cancel = () => {
@@ -2033,16 +2050,23 @@
               tile.removeEventListener("pointerup",finish);
               tile.removeEventListener("pointercancel",cancel);
               tile.classList.remove("dragging");
+              tile.classList.add("returning");
               place(original);
             };
             tile.addEventListener("pointermove",move);
             tile.addEventListener("pointerup",finish);
             tile.addEventListener("pointercancel",cancel);
           });
+          tile.addEventListener("transitionend", (event) => {
+            if (event.propertyName === "left" || event.propertyName === "top") {
+              tile.classList.remove("returning");
+            }
+          });
           tile.addEventListener("keydown", (event) => {
             const steps = {ArrowLeft:[-2,0],ArrowRight:[2,0],ArrowUp:[0,-2],ArrowDown:[0,2]};
             if (!steps[event.key]) return;
             event.preventDefault();
+            bringToFront(tile, card.id);
             const [dx,dy] = steps[event.key];
             last = place({ x:last.x+dx,y:last.y+dy });
             positions.set(card.id,last);
@@ -2140,6 +2164,8 @@
 
         if (mode === "flashboard") {
           state.flashBoardPositions = new Map();
+          state.flashBoardLayers = new Map();
+          state.flashBoardLayerCounter = 0;
         }
 
         if (mode === "keyword") {
@@ -2173,6 +2199,8 @@
         stopAuto();
         if (state.gameMode === "flashboard") {
           state.flashBoardPositions.clear();
+          state.flashBoardLayers.clear();
+          state.flashBoardLayerCounter = 0;
           renderFlashBoard();
           return;
         }
