@@ -1969,6 +1969,17 @@
         const textOnly = state.displayMode === "text";
         const cardWidth = Math.min(38, cellWidth * .94);
         const cardHeight = Math.min(48, cellHeight * .93);
+        const visualSize = (card) => {
+          const ratio = visualRatio(card);
+          const boardRatio = (board.clientWidth || 1200) / (board.clientHeight || 700);
+          const maxWidth = cardWidth;
+          const maxHeight = cardHeight;
+          // Convert the artwork's pixel ratio into board percentage coordinates.
+          const heightFromWidth = maxWidth * boardRatio / ratio;
+          return heightFromWidth <= maxHeight
+            ? { width: maxWidth, height: heightFromWidth }
+            : { width: maxHeight * ratio / boardRatio, height: maxHeight };
+        };
         const entries = [];
         const clamp = (value, min, max) => Math.max(min, Math.min(max, value));
         const dimensions = (tile) => {
@@ -1998,18 +2009,32 @@
           tile.setAttribute("role", "group");
           tile.setAttribute("aria-label", card.word || "Flash card");
           if (!textOnly) {
-            tile.style.width = cardWidth + "%";
-            tile.style.height = cardHeight + "%";
+            const size = visualSize(card);
+            tile.style.width = size.width + "%";
+            tile.style.height = size.height + "%";
+            tile.classList.add("visual-card");
           }
           tile.style.zIndex = String(layers.get(card.id) || index + 1);
-          const picture = document.createElement("div");
-          picture.className = "flash-board-picture game-picture";
-          applyVisual(picture, card);
           const word = document.createElement("span");
           word.className = "flash-board-word";
           word.textContent = card.word || "";
-          if (!textOnly) tile.append(picture);
-          if (state.displayMode !== "picture") tile.append(word);
+          if (textOnly) {
+            tile.append(word);
+          } else {
+            const media = document.createElement("div");
+            media.className = "flash-board-media";
+            const picture = document.createElement("div");
+            picture.className = "flash-board-picture game-picture";
+            applyVisual(picture, card);
+            media.append(picture);
+            if (state.displayMode !== "picture") {
+              const caption = document.createElement("span");
+              caption.className = "flash-board-caption";
+              caption.textContent = card.word || "";
+              media.append(caption);
+            }
+            tile.append(media);
+          }
           const saved = positions.get(card.id);
           const entry = { card, tile, index, saved, last: null };
           entries.push(entry);
