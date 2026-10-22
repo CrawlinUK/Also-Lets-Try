@@ -2846,20 +2846,38 @@ html.shared-unit-template .flashcard .answer-area > .display-text:not([aria-hidd
   text-wrap: balance;
 }
 
-/* Compact landscape tablets: ten square pictures fit more evenly in 4×3.
-   Only Missing/Keyword grids with exactly ten cards are affected. */
-@media (orientation: landscape) and (min-width: 700px) and (max-width: 1500px) {
+/* Missing/Keyword layouts: flex rows centre any incomplete final row.
+   Preserve the large clickable tile but size its picture to the available
+   rectangle; no forced square cells and no resizing loops. */
+html.shared-unit-template .game-grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-content: center;
+  gap: clamp(3px, .55vw, 9px);
+}
+html.shared-unit-template .game-grid > .game-tile {
+  flex: 0 0 calc((100% - (var(--grid-cols) - 1) * clamp(3px, .55vw, 9px))) / var(--grid-cols));
+  height: calc((100% - (var(--grid-rows) - 1) * clamp(3px, .55vw, 9px))) / var(--grid-rows));
+}
+
+/* Ten-card layout: maximise artwork sizes at each screen width.
+   Wide screens 5×2, medium 4–4–2, narrow 3–3–3–1, phones 2×5. */
+@media (max-width: 1500px) {
   html.shared-unit-template .game-grid[data-card-count="10"] {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-    grid-template-rows: repeat(3, minmax(0, 1fr));
-    gap: clamp(3px, .55vw, 8px);
+    --grid-cols: 4 !important;
+    --grid-rows: 3 !important;
   }
-
-  html.shared-unit-template .game-grid[data-card-count="10"] > .game-tile:nth-child(9) {
-    grid-column: 2;
+}
+@media (max-width: 689px) {
+  html.shared-unit-template .game-grid[data-card-count="10"] {
+    --grid-cols: 3 !important;
+    --grid-rows: 4 !important;
   }
-
-  html.shared-unit-template .game-grid[data-card-count="10"] > .game-tile:nth-child(10) {
-    grid-column: 3;
+}
+@media (max-width: 439px) {
+  html.shared-unit-template .game-grid[data-card-count="10"] {
+    --grid-cols: 2 !important;
+    --grid-rows: 5 !important;
   }
 }
