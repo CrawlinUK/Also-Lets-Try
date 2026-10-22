@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="svgCanvas" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+          
+          
+          
+          <g id="artwork"><rect fill="none" stroke="#000000" stroke-width="1" stroke-linejoin="round" stroke-linecap="round" x="2" y="2" width="20" height="20"/><rect fill="none" stroke="#000000" stroke-width="1" stroke-linejoin="round" stroke-linecap="round" x="8.65421352696712" y="2" width="6.7009431009916405" height="20"/><rect fill="none" stroke="#000000" stroke-width="1" stroke-linejoin="round" stroke-linecap="round" x="8.65421352696712" y="2" width="6.7009431009916405" height="20" transform="translate(0.03723760267721232 -0.009491937937330164) rotate(90 12.004685401916504 12)"/><path d="M 11.27 19.77 L 11.11 18.33 Q 12.02 18.33 12.21 17.23 Q 11.85 16.53 11.15 16.64 Q 10.53 16.68 10.43 17.36" fill="none" stroke="#000000" stroke-width="0.5" stroke-linejoin="round" stroke-linecap="round" transform="translate(-6.074840279890477 -6.9159720109522365)"/><ellipse fill="#000000" stroke="none" stroke-width="0.5" stroke-linejoin="round" stroke-linecap="round" cx="4.102707421746364" cy="20.350715543583874" rx="0.30374194100332225" ry="0.350471448687533" transform="translate(1.3084271372071798 -6.5421356860359)"/></g>
+          
+        </svg>
