@@ -2103,7 +2103,12 @@
         inkLayer.setAttribute("aria-label", "Drawing surface");
         const inkGroup = document.createElementNS(ns, "g");
         inkLayer.append(inkGroup);
-        board.append(inkLayer);
+        // Paint the ink beneath the cards. A separate transparent input layer
+        // sits above cards only while the pencil is active.
+        board.prepend(inkLayer);
+        const drawingSurface = document.createElement("div");
+        drawingSurface.className = "flash-board-drawing-surface";
+        board.append(drawingSurface);
 
         const renderInk = () => {
           inkGroup.replaceChildren();
@@ -2142,7 +2147,7 @@
           drawing = active;
           pen.classList.toggle("active", active);
           pen.setAttribute("aria-pressed", String(active));
-          inkLayer.classList.toggle("drawing", active);
+          drawingSurface.classList.toggle("drawing", active);
         };
         colours.forEach(([name, colour]) => {
           const swatch = document.createElement("button");
@@ -2186,22 +2191,22 @@
           ];
         };
         let activeStroke = null;
-        inkLayer.addEventListener("pointerdown", event => {
+        drawingSurface.addEventListener("pointerdown", event => {
           if (!drawing || (event.pointerType === "mouse" && event.button !== 0)) return;
           event.preventDefault();
-          inkLayer.setPointerCapture(event.pointerId);
+          drawingSurface.setPointerCapture(event.pointerId);
           activeStroke = { colour: state.flashBoardPenColour, points: [pointOf(event)] };
           state.flashBoardInk.push(activeStroke);
           renderInk();
         });
-        inkLayer.addEventListener("pointermove", event => {
+        drawingSurface.addEventListener("pointermove", event => {
           if (!activeStroke) return;
           activeStroke.points.push(pointOf(event));
           renderInk();
         });
         const stopStroke = () => { activeStroke = null; };
-        inkLayer.addEventListener("pointerup", stopStroke);
-        inkLayer.addEventListener("pointercancel", stopStroke);
+        drawingSurface.addEventListener("pointerup", stopStroke);
+        drawingSurface.addEventListener("pointercancel", stopStroke);
         renderInk();
         // Measure the actual text-only cards before positioning them. The
         // cards follow a loose initial arrangement, not fixed-size grid slots.
