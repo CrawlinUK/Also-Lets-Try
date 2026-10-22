@@ -1962,6 +1962,7 @@
           tile.style.zIndex = String(layer);
         };
         const count = cards.length;
+        state.flashBoardLayerCounter = Math.max(state.flashBoardLayerCounter, count);
         const columns = Math.max(1, Math.ceil(Math.sqrt(count * 1.5)));
         const rows = Math.max(1, Math.ceil(count / columns));
         const gap = 8;
