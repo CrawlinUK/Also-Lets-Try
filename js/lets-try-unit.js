@@ -1971,10 +1971,10 @@
         const cardHeight = Math.min(48, cellHeight * .93);
         const visualSize = (card) => {
           const ratio = visualRatio(card);
-          const boardRatio = (board.clientWidth || 1200) / (board.clientHeight || 700);
+          // Always measure the actual board, never a guessed viewport ratio.
+          const boardRatio = board.clientWidth / board.clientHeight;
           const maxWidth = cardWidth;
           const maxHeight = cardHeight;
-          // Convert the artwork's pixel ratio into board percentage coordinates.
           const heightFromWidth = maxWidth * boardRatio / ratio;
           return heightFromWidth <= maxHeight
             ? { width: maxWidth, height: heightFromWidth }
@@ -2008,12 +2008,8 @@
           tile.tabIndex = 0;
           tile.setAttribute("role", "group");
           tile.setAttribute("aria-label", card.word || "Flash card");
-          if (!textOnly) {
-            const size = visualSize(card);
-            tile.style.width = size.width + "%";
-            tile.style.height = size.height + "%";
-            tile.classList.add("visual-card");
-          }
+          if (!textOnly) tile.classList.add("visual-card");
+          if (card.visual?.type === "text") tile.classList.add("letter-visual-card");
           tile.style.zIndex = String(layers.get(card.id) || index + 1);
           const word = document.createElement("span");
           word.className = "flash-board-word";
@@ -2097,6 +2093,11 @@
           if (!board.isConnected || !board.clientWidth || !board.clientHeight) return;
           entries.forEach((entry) => {
             const { card, tile, index } = entry;
+            if (!textOnly) {
+              const size = visualSize(card);
+              tile.style.width = size.width + "%";
+              tile.style.height = size.height + "%";
+            }
             const row = Math.floor(index / columns);
             const rowCount = Math.min(columns, count - row * columns);
             const col = index % columns;
