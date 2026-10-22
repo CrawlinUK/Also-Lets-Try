@@ -3059,6 +3059,17 @@ html.shared-unit-template .flash-board-swatch {
 html.shared-unit-template .flash-board-ink { z-index:0; }
 html.shared-unit-template .flash-board-card { z-index:2; }
 html.shared-unit-template .flash-board-tools { z-index:110; }
-html.shared-unit-template .flash-board:has(.flash-board-ink.drawing) .flash-board-card {
+/* Ink is rendered behind cards; only the transparent capture surface
+   rises above cards during drawing. */
+html.shared-unit-template .flash-board-drawing-surface {
+  position:absolute;
+  inset:0;
+  z-index:100;
   pointer-events:none;
+  touch-action:none;
+  background:transparent;
+}
+html.shared-unit-template .flash-board-drawing-surface.drawing {
+  pointer-events:auto;
+  cursor:crosshair;
 }
