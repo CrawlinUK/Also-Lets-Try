@@ -2113,16 +2113,40 @@
 
         const renderInk = () => {
           inkGroup.replaceChildren();
-          state.flashBoardInk.forEach(stroke => {
+          state.flashBoardInk.forEach((stroke, index) => {
             const path = document.createElementNS(ns, "path");
-            path.setAttribute("d", stroke.points.map((p,i) =>
+            const pathData = stroke.points.map((p,i) =>
               (i ? "L" : "M") + p[0].toFixed(2) + " " + p[1].toFixed(2)
-            ).join(" "));
+            ).join(" ");
+            path.setAttribute("d", pathData);
             path.setAttribute("fill", "none");
             path.setAttribute("stroke", stroke.colour);
             path.setAttribute("stroke-width", "4");
             path.setAttribute("stroke-linecap", "round");
             path.setAttribute("stroke-linejoin", "round");
+            const removed = stroke.erasures || [];
+            if (removed.length) {
+              const mask = document.createElementNS(ns, "mask");
+              const maskId = "fb-ink-" + index;
+              mask.id = maskId;
+              mask.setAttribute("maskUnits", "userSpaceOnUse");
+              mask.setAttribute("x", "0"); mask.setAttribute("y", "0");
+              mask.setAttribute("width", "1000"); mask.setAttribute("height", "1000");
+              const white = document.createElementNS(ns, "rect");
+              white.setAttribute("width", "1000"); white.setAttribute("height", "1000");
+              white.setAttribute("fill", "white");
+              mask.append(white);
+              removed.forEach(erase => {
+                const dot = document.createElementNS(ns, "circle");
+                dot.setAttribute("cx", String(erase[0]));
+                dot.setAttribute("cy", String(erase[1]));
+                dot.setAttribute("r", "15");
+                dot.setAttribute("fill", "black");
+                mask.append(dot);
+              });
+              inkGroup.append(mask);
+              path.setAttribute("mask", "url(#" + maskId + ")");
+            }
             inkGroup.append(path);
           });
         };
@@ -2143,13 +2167,45 @@
           ["Yellow","#fdd835"],["Purple","#8746c7"],["Orange","#fb8c00"],
           ["Black","#161616"]
         ];
-        let drawing = false;
-        const setDrawing = (active) => {
-          drawing = active;
-          pen.classList.toggle("active", active);
-          pen.setAttribute("aria-pressed", String(active));
-          drawingSurface.classList.toggle("drawing", active);
+        let currentTool = "move";
+        let eraserMode = "part";
+        const eraser = document.createElement("button");
+        eraser.type = "button";
+        eraser.className = "flash-board-tool";
+        eraser.textContent = "⌫";
+        eraser.title = "Erase (tap again for options)";
+        eraser.setAttribute("aria-label", "Eraser");
+        const eraseMenu = document.createElement("div");
+        eraseMenu.className = "flash-board-eraser-menu";
+        eraseMenu.hidden = true;
+        const setTool = (tool) => {
+          currentTool = tool;
+          pen.classList.toggle("active", tool === "draw");
+          eraser.classList.toggle("active", tool === "erase");
+          pen.setAttribute("aria-pressed", String(tool === "draw"));
+          eraser.setAttribute("aria-pressed", String(tool === "erase"));
+          drawingSurface.classList.toggle("drawing", tool !== "move");
         };
+        const menuOption = (label, action) => {
+          const button = document.createElement("button");
+          button.type = "button";
+          button.textContent = label;
+          button.addEventListener("click", action);
+          eraseMenu.append(button);
+        };
+        menuOption("Erase parts", () => { eraserMode = "part"; eraseMenu.hidden = true; setTool("erase"); });
+        menuOption("Whole stroke", () => { eraserMode = "whole"; eraseMenu.hidden = true; setTool("erase"); });
+        menuOption("Clear all", () => {
+          state.flashBoardInk.length = 0;
+          eraseMenu.hidden = true;
+          renderInk();
+          setTool("erase");
+        });
+        eraser.addEventListener("click", () => {
+          palette.hidden = true;
+          if (currentTool !== "erase") { eraseMenu.hidden = true; setTool("erase"); }
+          else eraseMenu.hidden = !eraseMenu.hidden;
+        });
         colours.forEach(([name, colour]) => {
           const swatch = document.createElement("button");
           swatch.type = "button";
@@ -2160,14 +2216,15 @@
           swatch.addEventListener("click", () => {
             state.flashBoardPenColour = colour;
             palette.hidden = true;
-            setDrawing(true);
+            setTool("draw");
           });
           palette.append(swatch);
         });
         pen.addEventListener("click", () => {
-          if (!drawing) {
+          if (currentTool !== "draw") {
             palette.hidden = true;
-            setDrawing(true);
+            eraseMenu.hidden = true;
+            setTool("draw");
           } else {
             palette.hidden = !palette.hidden;
           }
@@ -2180,9 +2237,10 @@
         moveCards.setAttribute("aria-label", "Move cards");
         moveCards.addEventListener("click", () => {
           palette.hidden = true;
-          setDrawing(false);
+          eraseMenu.hidden = true;
+          setTool("move");
         });
-        toolRail.append(pen, palette, moveCards);
+        toolRail.append(pen, palette, eraser, eraseMenu, moveCards);
         toolRail.id = "flashBoardTools";
         document.getElementById("flashBoardTools")?.remove();
         document.body.append(toolRail);
@@ -2194,20 +2252,59 @@
           ];
         };
         let activeStroke = null;
+        let erasing = false;
+        const nearStroke = (stroke, p) => {
+          const pts = stroke.points;
+          for (let i = 0; i < pts.length; i++) {
+            const a = pts[i], b = pts[i+1] || a;
+            const vx = b[0]-a[0], vy = b[1]-a[1];
+            const t = Math.max(0, Math.min(1,
+              ((p[0]-a[0])*vx+(p[1]-a[1])*vy)/(vx*vx+vy*vy || 1)));
+            const dx = p[0]-(a[0]+t*vx), dy = p[1]-(a[1]+t*vy);
+            if (dx*dx+dy*dy < 18*18) return true;
+          }
+          return false;
+        };
+        const applyEraser = point => {
+          if (eraserMode === "whole") {
+            // Hit the original path, even when an earlier erase hid part of it.
+            for (let i=state.flashBoardInk.length-1; i>=0; i--) {
+              if (nearStroke(state.flashBoardInk[i], point)) {
+                state.flashBoardInk.splice(i,1);
+                break;
+              }
+            }
+          } else {
+            state.flashBoardInk.forEach(stroke => {
+              if (nearStroke(stroke, point)) {
+                if (!stroke.erasures) stroke.erasures = [];
+                stroke.erasures.push(point);
+              }
+            });
+          }
+          renderInk();
+        };
         drawingSurface.addEventListener("pointerdown", event => {
-          if (!drawing || (event.pointerType === "mouse" && event.button !== 0)) return;
+          if (currentTool === "move" || (event.pointerType === "mouse" && event.button !== 0)) return;
           event.preventDefault();
           drawingSurface.setPointerCapture(event.pointerId);
-          activeStroke = { colour: state.flashBoardPenColour, points: [pointOf(event)] };
-          state.flashBoardInk.push(activeStroke);
-          renderInk();
+          const point = pointOf(event);
+          if (currentTool === "draw") {
+            activeStroke = { colour: state.flashBoardPenColour, points: [point] };
+            state.flashBoardInk.push(activeStroke);
+            renderInk();
+          } else {
+            erasing = true;
+            applyEraser(point);
+          }
         });
         drawingSurface.addEventListener("pointermove", event => {
-          if (!activeStroke) return;
-          activeStroke.points.push(pointOf(event));
-          renderInk();
+          if (activeStroke) {
+            activeStroke.points.push(pointOf(event));
+            renderInk();
+          } else if (erasing && eraserMode === "part") applyEraser(pointOf(event));
         });
-        const stopStroke = () => { activeStroke = null; };
+        const stopStroke = () => { activeStroke = null; erasing = false; };
         drawingSurface.addEventListener("pointerup", stopStroke);
         drawingSurface.addEventListener("pointercancel", stopStroke);
         renderInk();
