@@ -1953,7 +1953,6 @@
         const board = document.createElement("div");
         board.className = "flash-board";
         board.setAttribute("aria-label", "Freely arrange selected flash cards");
-
         const positions = state.flashBoardPositions;
         const layers = state.flashBoardLayers;
         const bringToFront = (tile, id) => {
@@ -1965,116 +1964,129 @@
         state.flashBoardLayerCounter = Math.max(state.flashBoardLayerCounter, count);
         const columns = Math.max(1, Math.ceil(Math.sqrt(count * 1.5)));
         const rows = Math.max(1, Math.ceil(count / columns));
-        const gap = 8;
-        // Percent positions allow the board to respond to resizing without
-        // changing the separate sequence used in other games.
-        const cardWidth = Math.min(38, (100 - 2 * gap / 8) / columns * .94);
-        const cardHeight = Math.min(48, 96 / rows * .93);
-        const initial = (index) => {
-          const row = Math.floor(index / columns);
-          const items = Math.min(columns, count - row * columns);
-          const col = index % columns;
+        const cellWidth = 100 / columns;
+        const cellHeight = 100 / rows;
+        const textOnly = state.displayMode === "text";
+        const cardWidth = Math.min(38, cellWidth * .94);
+        const cardHeight = Math.min(48, cellHeight * .93);
+        const entries = [];
+        const clamp = (value, min, max) => Math.max(min, Math.min(max, value));
+        const dimensions = (tile) => {
+          const width = board.clientWidth || 1;
+          const height = board.clientHeight || 1;
           return {
-            x: (100 - items * cardWidth) / 2 + col * cardWidth,
-            y: (100 - rows * cardHeight) / 2 + row * cardHeight
+            width: tile.offsetWidth / width * 100,
+            height: tile.offsetHeight / height * 100
           };
+        };
+        const place = (tile, position) => {
+          const size = dimensions(tile);
+          const safe = {
+            x: clamp(position.x, 0, Math.max(0, 100 - size.width)),
+            y: clamp(position.y, 0, Math.max(0, 100 - size.height))
+          };
+          tile.style.left = safe.x + "%";
+          tile.style.top = safe.y + "%";
+          return safe;
         };
 
         cards.forEach((card, index) => {
           const tile = document.createElement("div");
           tile.className = "flash-board-card";
+          if (textOnly) tile.classList.add("word-only");
           tile.tabIndex = 0;
           tile.setAttribute("role", "group");
           tile.setAttribute("aria-label", card.word || "Flash card");
-          tile.style.width = cardWidth + "%";
-          tile.style.height = cardHeight + "%";
-          tile.style.zIndex = String(layers.get(card.id) || (index + 1));
+          if (!textOnly) {
+            tile.style.width = cardWidth + "%";
+            tile.style.height = cardHeight + "%";
+          }
+          tile.style.zIndex = String(layers.get(card.id) || index + 1);
           const picture = document.createElement("div");
           picture.className = "flash-board-picture game-picture";
           applyVisual(picture, card);
           const word = document.createElement("span");
           word.className = "flash-board-word";
           word.textContent = card.word || "";
-          const mode = state.displayMode;
-          if (mode !== "text") tile.append(picture);
-          if (mode !== "picture") tile.append(word);
-          const saved = positions.get(card.id) || initial(index);
-          const clampPosition = (x,y) => ({
-            x: Math.max(0, Math.min(100-cardWidth,x)),
-            y: Math.max(0, Math.min(100-cardHeight,y))
-          });
-          const place = (pos) => {
-            const safe = clampPosition(pos.x,pos.y);
-            tile.style.left = safe.x + "%";
-            tile.style.top = safe.y + "%";
-            return safe;
-          };
-          let last = place(saved);
-          positions.set(card.id, last);
+          if (!textOnly) tile.append(picture);
+          if (state.displayMode !== "picture") tile.append(word);
+          const saved = positions.get(card.id);
+          const entry = { card, tile, index, saved, last: null };
+          entries.push(entry);
+          board.append(tile);
+
           tile.addEventListener("focus", () => bringToFront(tile, card.id));
           tile.addEventListener("pointerdown", (event) => {
             if (event.button !== 0 && event.pointerType === "mouse") return;
             event.preventDefault();
             bringToFront(tile, card.id);
             const rect = board.getBoundingClientRect();
-            const original = { ...last };
-            const startX = event.clientX, startY = event.clientY;
+            if (!rect.width || !rect.height) return;
+            const original = { ...entry.last };
+            const startX = event.clientX;
+            const startY = event.clientY;
             tile.setPointerCapture(event.pointerId);
-            tile.classList.remove("returning");
             tile.classList.add("dragging");
             const move = (e) => {
-              if (rect.width <= 0 || rect.height <= 0) return;
-              const x = original.x + (e.clientX - startX) / rect.width * 100;
-              const y = original.y + (e.clientY - startY) / rect.height * 100;
-              place({ x, y });
+              const next = {
+                x: original.x + (e.clientX - startX) / rect.width * 100,
+                y: original.y + (e.clientY - startY) / rect.height * 100
+              };
+              entry.last = place(tile, next);
             };
-            const finish = (e) => {
+            const cleanup = () => {
               tile.removeEventListener("pointermove", move);
               tile.removeEventListener("pointerup", finish);
               tile.removeEventListener("pointercancel", cancel);
               tile.classList.remove("dragging");
-              const dx = (e.clientX - startX) / rect.width * 100;
-              const dy = (e.clientY - startY) / rect.height * 100;
-              const proposed = { x: original.x + dx, y: original.y + dy };
-              const valid = proposed.x >= 0 && proposed.y >= 0
-                && proposed.x + cardWidth <= 100 && proposed.y + cardHeight <= 100;
-              if (valid) {
-                last = place(proposed);
-              } else {
-                tile.classList.add("returning");
-                place(original);
-              }
-              positions.set(card.id,last);
+            };
+            const finish = (e) => {
+              move(e);
+              cleanup();
+              positions.set(card.id, entry.last);
             };
             const cancel = () => {
-              tile.removeEventListener("pointermove",move);
-              tile.removeEventListener("pointerup",finish);
-              tile.removeEventListener("pointercancel",cancel);
-              tile.classList.remove("dragging");
-              tile.classList.add("returning");
-              place(original);
+              cleanup();
+              entry.last = place(tile, original);
+              positions.set(card.id, entry.last);
             };
-            tile.addEventListener("pointermove",move);
-            tile.addEventListener("pointerup",finish);
-            tile.addEventListener("pointercancel",cancel);
-          });
-          tile.addEventListener("transitionend", (event) => {
-            if (event.propertyName === "left" || event.propertyName === "top") {
-              tile.classList.remove("returning");
-            }
+            tile.addEventListener("pointermove", move);
+            tile.addEventListener("pointerup", finish);
+            tile.addEventListener("pointercancel", cancel);
           });
           tile.addEventListener("keydown", (event) => {
-            const steps = {ArrowLeft:[-2,0],ArrowRight:[2,0],ArrowUp:[0,-2],ArrowDown:[0,2]};
+            const steps = { ArrowLeft: [-2,0], ArrowRight: [2,0], ArrowUp: [0,-2], ArrowDown: [0,2] };
             if (!steps[event.key]) return;
             event.preventDefault();
             bringToFront(tile, card.id);
             const [dx,dy] = steps[event.key];
-            last = place({ x:last.x+dx,y:last.y+dy });
-            positions.set(card.id,last);
+            entry.last = place(tile, { x: entry.last.x + dx, y: entry.last.y + dy });
+            positions.set(card.id, entry.last);
           });
-          board.append(tile);
         });
+
         elements.gameArea.replaceChildren(board);
+        // Measure the actual text-only cards before positioning them. The
+        // cards follow a loose initial arrangement, not fixed-size grid slots.
+        const positionInitialCards = () => {
+          if (!board.isConnected || !board.clientWidth || !board.clientHeight) return;
+          entries.forEach((entry) => {
+            const { card, tile, index } = entry;
+            const row = Math.floor(index / columns);
+            const rowCount = Math.min(columns, count - row * columns);
+            const col = index % columns;
+            const size = dimensions(tile);
+            const rowWidth = rowCount * cellWidth;
+            const rowStart = (100 - rowWidth) / 2;
+            const initial = {
+              x: rowStart + col * cellWidth + (cellWidth - size.width) / 2,
+              y: row * cellHeight + (cellHeight - size.height) / 2
+            };
+            entry.last = place(tile, entry.saved || initial);
+            positions.set(card.id, entry.last);
+          });
+        };
+        requestAnimationFrame(positionInitialCards);
         elements.counter.textContent = count + " / " + count;
         elements.modeLabel.textContent = "Flash Board";
         requestAnimationFrame(alignSideNavigation);
