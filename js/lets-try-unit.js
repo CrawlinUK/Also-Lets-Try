@@ -1589,32 +1589,71 @@
         requestAnimationFrame(alignSideNavigation);
       }
 
-      function gridShape(count) {
-        let columns;
-        if (count <= 1) columns = 1;
-        else if (count <= 4) columns = 2;
-        else if (count <= 6) columns = 3;
-        else if (count <= 8) columns = 4;
-        else if (count === 9) columns = 3;
-        else if (count <= 20) columns = 5;
-        else if (count === 21) columns = 7;
-        else if (count <= 28) columns = 7;
-        else if (count <= 32) columns = 8;
-        else columns = 9;
-
-        return {
-          columns,
-          rows: Math.max(1, Math.ceil(count / columns))
-        };
+      function visualRatio(card) {
+        const raw = card?.visual?.aspectRatio || UNIT_CONFIG.pictureAspectRatio || "1 / 1";
+        const parts = String(raw).split("/").map(Number);
+        const ratio = parts.length === 2 ? parts[0] / parts[1] : Number(raw);
+        return Number.isFinite(ratio) && ratio > 0 ? ratio : 1;
       }
 
-      function setGridShape(grid, count) {
-        const shape = gridShape(count);
-        grid.style.setProperty("--grid-cols", shape.columns);
-        grid.style.setProperty("--grid-rows", shape.rows);
+      // Test all feasible grids against the measured drawing area, not just card count.
+      // The score rewards large, undistorted images; incomplete rows are centred.
+      function optimalGameShape(width, height, cards) {
+        const count = cards.length;
+        if (!count) return { columns: 1, rows: 1 };
+        const gap = Math.max(3, Math.min(9, width * .0055));
+        let best = null;
+        for (let columns = 1; columns <= count; columns++) {
+          const rows = Math.ceil(count / columns);
+          const cellWidth = (width - gap * (columns - 1)) / columns;
+          const cellHeight = (height - gap * (rows - 1)) / rows;
+          if (cellWidth <= 0 || cellHeight <= 0) continue;
+          const areas = cards.map(card => {
+            const ratio = visualRatio(card);
+            const w = Math.min(cellWidth - 4, (cellHeight - 4) * ratio);
+            const h = w / ratio;
+            return Math.max(0, w * h);
+          });
+          const minArea = Math.min(...areas);
+          const avgArea = areas.reduce((sum, area) => sum + area, 0) / count;
+          const score = minArea * .72 + avgArea * .28;
+          if (!best || score > best.score + .01 ||
+              (Math.abs(score - best.score) <= .01 && rows < best.rows)) {
+            best = { columns, rows, score };
+          }
+        }
+        return best || { columns: 1, rows: count };
+      }
+
+      function setGridShape(grid, cards) {
+        const count = cards.length;
         grid.dataset.cardCount = String(count);
+        let lastWidth = -1, lastHeight = -1;
+        const update = () => {
+          if (!grid.isConnected) return;
+          const width = grid.clientWidth, height = grid.clientHeight;
+          if (width <= 0 || height <= 0 ||
+              (Math.abs(lastWidth - width) < 1 && Math.abs(lastHeight - height) < 1)) return;
+          lastWidth = width; lastHeight = height;
+          const shape = optimalGameShape(width, height, cards);
+          grid.style.setProperty("--grid-cols", shape.columns);
+          grid.style.setProperty("--grid-slots", shape.columns * 2);
+          grid.style.setProperty("--grid-rows", shape.rows);
+          const remainder = count % shape.columns;
+          [...grid.children].forEach((tile, index) => {
+            tile.style.gridColumnStart = (remainder && index === count - remainder)
+              ? String(shape.columns - remainder + 1) : "";
+          });
+        };
+        // Observing the drawing area avoids recomputing on every frame or
+        // on changes to individual image sizes.
+        const observer = new ResizeObserver(() => {
+          if (!grid.isConnected) { observer.disconnect(); return; }
+          update();
+        });
+        observer.observe(grid);
+        requestAnimationFrame(update);
       }
-
 
       function reverseText(value) {
         return Array.from(String(value)).reverse().join("");
@@ -1840,7 +1879,7 @@
 
         const grid = document.createElement("div");
         grid.className = "game-grid";
-        setGridShape(grid, cards.length);
+        
 
         state.missingOrder.forEach((id) => {
           const card = cardMap.get(id);
@@ -1868,6 +1907,7 @@
         });
 
         elements.gameArea.replaceChildren(grid);
+        setGridShape(grid, cards);
         updateMissingAnswerHints();
         elements.counter.textContent = `${cards.length - state.hiddenMissingIds.size} / ${cards.length}`;
         elements.modeLabel.textContent = "Missing game";
@@ -1900,7 +1940,7 @@
 
         const grid = document.createElement("div");
         grid.className = "game-grid";
-        setGridShape(grid, cards.length);
+        
 
         state.keywordOrder.forEach((id) => {
           const card = cardMap.get(id);
@@ -1928,6 +1968,7 @@
         });
 
         elements.gameArea.replaceChildren(grid);
+        setGridShape(grid, cards);
         elements.counter.textContent = `${state.keywordSelectedIds.size} / ${cards.length}`;
         elements.modeLabel.textContent = "Keywords selected";
         elements.shuffleButton.textContent = "Randomise";
