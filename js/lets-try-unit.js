@@ -1640,9 +1640,17 @@
           grid.style.setProperty("--grid-slots", shape.columns * 2);
           grid.style.setProperty("--grid-rows", shape.rows);
           const remainder = count % shape.columns;
+          const fullRows = Math.floor(count / shape.columns);
           [...grid.children].forEach((tile, index) => {
-            tile.style.gridColumnStart = (remainder && index === count - remainder)
-              ? String(shape.columns - remainder + 1) : "";
+            const row = Math.floor(index / shape.columns);
+            const position = index % shape.columns;
+            const isLastPartialRow = remainder > 0 && row === fullRows;
+            // Each card spans two half-width tracks; only the final row
+            // receives a half-track offset to centre its remaining cards.
+            const start = 1 + position * 2
+              + (isLastPartialRow ? shape.columns - remainder : 0);
+            tile.style.gridColumn = start + " / span 2";
+            tile.style.gridRow = String(row + 1);
           });
         };
         // Observing the drawing area avoids recomputing on every frame or
