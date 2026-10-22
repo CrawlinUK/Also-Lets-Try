@@ -3132,3 +3132,12 @@ html.shared-unit-template .flash-board-placeholder-icon {
   flex:0 0 25px;border:1px dashed #aebec7;border-radius:5px;
   color:#415366;font-size:18px;line-height:1;
 }
+
+/* Tint the supplied pencil SVG to show the currently selected ink colour. */
+html.shared-unit-template .flash-board-coloured-pen {
+  display:block;width:25px;height:25px;margin:auto;
+  background-color:var(--pen-colour,#e53935);
+  -webkit-mask:url("../images/ui/Alsodrawing.svg") center / contain no-repeat;
+  mask:url("../images/ui/Alsodrawing.svg") center / contain no-repeat;
+  pointer-events:none;
+}
