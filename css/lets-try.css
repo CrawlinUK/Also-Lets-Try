@@ -3271,3 +3271,29 @@ html.shared-unit-template .flash-board-text-actions button {
 }
 html.shared-unit-template .flash-board-text-actions button:first-child {background:#fff;}
 html.shared-unit-template .flash-board-text-actions button:last-child {background:#347cca;color:white;}
+
+/* v58: Explicit text-box rectangles and full-board drawing capture. */
+html.shared-unit-template .flash-board.text-mode .flash-board-text-layer {
+  z-index:105;
+  pointer-events:auto;
+  cursor:crosshair;
+  touch-action:none;
+}
+html.shared-unit-template .flash-board-user-text {
+  background:rgba(255,255,255,.70);
+  border:2px solid #a7b9c6;
+  border-radius:7px;
+  overflow:hidden;
+  white-space:pre-wrap;
+  box-shadow:0 2px 5px #1e354322;
+}
+html.shared-unit-template .flash-board.text-mode .flash-board-user-text {
+  cursor:grab;
+}
+html.shared-unit-template .flash-board-text-panel textarea {
+  width:100%;min-height:90px;box-sizing:border-box;
+  border:2px solid #64bacc;border-radius:12px;
+  padding:12px 13px;font-size:24px;
+  background:#fff;color:#172b3b;
+  font-family:inherit;resize:vertical;
+}
