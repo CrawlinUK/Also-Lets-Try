@@ -2635,6 +2635,43 @@
           input.placeholder="Type your word or phrase";
           input.value=item.text;
           input.setAttribute("aria-label","Text for Flash Board");
+          const formatting=document.createElement("div");
+          formatting.className="flash-board-text-format";
+          const sizeLabel=document.createElement("label");
+          sizeLabel.textContent="Size";
+          const fontSize=document.createElement("select");
+          fontSize.setAttribute("aria-label","Text font size");
+          [16,20,24,28,32,40,48,60,72].forEach(size=>{
+            const option=document.createElement("option");
+            option.value=String(size);
+            option.textContent=size+" px";
+            fontSize.append(option);
+          });
+          fontSize.value=String(item.fontSize||32);
+          sizeLabel.append(fontSize);
+          const boldButton=document.createElement("button");
+          boldButton.type="button";boldButton.textContent="B";
+          boldButton.className="flash-board-format-bold";
+          boldButton.title="Bold";
+          const italicButton=document.createElement("button");
+          italicButton.type="button";italicButton.textContent="I";
+          italicButton.className="flash-board-format-italic";
+          italicButton.title="Italic";
+          let bold=item.bold!==false, italic=Boolean(item.italic);
+          const refreshFormats=()=>{
+            boldButton.classList.toggle("active",bold);
+            italicButton.classList.toggle("active",italic);
+            boldButton.setAttribute("aria-pressed",String(bold));
+            italicButton.setAttribute("aria-pressed",String(italic));
+            input.style.fontSize=fontSize.value+"px";
+            input.style.fontWeight=bold?"800":"400";
+            input.style.fontStyle=italic?"italic":"normal";
+          };
+          boldButton.addEventListener("click",()=>{bold=!bold;refreshFormats();});
+          italicButton.addEventListener("click",()=>{italic=!italic;refreshFormats();});
+          fontSize.addEventListener("change",refreshFormats);
+          formatting.append(sizeLabel,boldButton,italicButton);
+          refreshFormats();
           const actions=document.createElement("div");
           actions.className="flash-board-text-actions";
           const confirm=document.createElement("button");
@@ -2644,6 +2681,9 @@
           const finish=save=>{
             if(save){
               item.text=input.value.trim();
+              item.fontSize=Number(fontSize.value);
+              item.bold=bold;
+              item.italic=italic;
               if(item.text){
                 if(isNew)state.flashBoardTexts.push(item);
                 selectedTextId=item.id;
@@ -2658,7 +2698,7 @@
             if(event.key==="Escape"){event.preventDefault();finish(false);}
           });
           actions.append(cancel,confirm);
-          panel.append(heading,input,actions);overlay.append(panel);
+          panel.append(heading,formatting,input,actions);overlay.append(panel);
           document.body.append(overlay);
           // On tablets, the fixed editor is independent of the board geometry.
           requestAnimationFrame(()=>input.focus());
@@ -2675,6 +2715,9 @@
             el.style.left=item.x+"%";el.style.top=item.y+"%";
             el.style.width=item.w+"%";el.style.height=item.h+"%";
             el.textContent=item.text;
+            el.style.fontSize=(item.fontSize||32)+"px";
+            el.style.fontWeight=item.bold===false?"400":"800";
+            el.style.fontStyle=item.italic?"italic":"normal";
             el.classList.toggle("text-selected",selectedTextId===item.id && currentTool==="text");
             el.style.pointerEvents=(currentTool==="text" || currentTool==="move")?"auto":"none";
             let down=null,moved=false;
