@@ -2168,8 +2168,10 @@
         const alignBin=()=>{
           if(!board.isConnected || !bin.isConnected)return;
           const rect=board.getBoundingClientRect();
-          bin.style.top=Math.round(rect.top)+"px";
-          bin.style.height=Math.round(rect.height)+"px";
+          // Leave the top-left Back navigation unobstructed.
+          const top=Math.round(rect.top+52);
+          bin.style.top=top+"px";
+          bin.style.height=Math.max(120,Math.round(rect.bottom-top))+"px";
           bin.style.bottom="auto";
         };
         alignBin();
