@@ -3332,3 +3332,25 @@ html.shared-unit-template .flash-board.plural-mode .flash-board-text-layer {poin
 /* Flash Board toolbar groups: Move / drawing + history / text / actions. */
 html.shared-unit-template .flash-board-tools .flash-board-remove { margin-top:0; border-top:1px solid #c9d7df; }
 html.shared-unit-template .flash-board-tools .flash-board-tool[aria-label="Order cards"] { margin-top:13px; }
+
+/* Flash Board text editor formatting row. */
+html.shared-unit-template .flash-board-text-format {
+  display:flex;flex-wrap:wrap;align-items:center;gap:9px;
+}
+html.shared-unit-template .flash-board-text-format label {
+  display:flex;align-items:center;gap:6px;
+  color:#334a59;font-size:14px;font-weight:600;
+}
+html.shared-unit-template .flash-board-text-format select {
+  padding:8px 10px;border:1px solid #b7cbd8;border-radius:9px;
+  font-size:16px;background:#fff;color:#182b38;
+}
+html.shared-unit-template .flash-board-text-format button {
+  width:39px;height:39px;border:1px solid #b7cbd8;border-radius:9px;
+  background:#fff;color:#23384c;font-size:19px;cursor:pointer;
+}
+html.shared-unit-template .flash-board-text-format .flash-board-format-bold {font-weight:900;}
+html.shared-unit-template .flash-board-text-format .flash-board-format-italic {font-style:italic;font-family:Georgia,serif;}
+html.shared-unit-template .flash-board-text-format button.active {
+  background:#dbebfa;border-color:#2780d0;color:#145693;
+}
