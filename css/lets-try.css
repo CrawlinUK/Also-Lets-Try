@@ -3328,3 +3328,7 @@ html.shared-unit-template .flash-board.text-mode .flash-board-user-text {
 /* S now targets Flash Board vocabulary cards, not custom text boxes. */
 html.shared-unit-template .flash-board.plural-mode .flash-board-card {cursor:pointer;}
 html.shared-unit-template .flash-board.plural-mode .flash-board-text-layer {pointer-events:none;}
+
+/* Flash Board toolbar groups: Move / drawing + history / text / actions. */
+html.shared-unit-template .flash-board-tools .flash-board-remove { margin-top:0; border-top:1px solid #c9d7df; }
+html.shared-unit-template .flash-board-tools .flash-board-tool[aria-label="Order cards"] { margin-top:13px; }
