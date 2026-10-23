@@ -2292,42 +2292,59 @@
           eraseMenu.hidden = true;
           setTool("move");
           if (!entries.length || !board.clientWidth || !board.clientHeight) return;
-          const slots = entries.map((entry, index) => {
-            const row = Math.floor(index / columns);
-            const rowCount = Math.min(columns, count - row * columns);
-            const col = index % columns;
-            const rowStart = (100 - rowCount * cellWidth) / 2;
+          // Group cards into the rows the teacher has already made.
+          // Then preserve left-to-right order within each row. Do not
+          // independently match cards to nearest grid slots: that can
+          // scramble a deliberately arranged 6+4 layout into 4+4+2.
+          const items = entries.map((entry, index) => {
+            const pos = entry.last || {x:0,y:0};
+            const size = dimensions(entry.tile);
             return {
-              index,
-              x: rowStart + (col + .5) * cellWidth,
-              y: (row + .5) * cellHeight
+              entry, index, width:size.width, height:size.height,
+              cx:pos.x + size.width/2, cy:pos.y + size.height/2
             };
           });
-          const pending = entries.map((entry, index) => {
-            const position = entry.last || {x:0,y:0};
-            const size = dimensions(entry.tile);
-            return { entry, index,
-              x: position.x + size.width / 2,
-              y: position.y + size.height / 2 };
-          });
-          const options = [];
-          pending.forEach(item => slots.forEach(slot => {
-            const dx = (item.x - slot.x) * board.clientWidth / 100;
-            const dy = (item.y - slot.y) * board.clientHeight / 100;
-            options.push({item,slot,distance:dx*dx+dy*dy});
-          }));
-          options.sort((a,b) => a.distance-b.distance || a.item.index-b.item.index || a.slot.index-b.slot.index);
-          const usedCards = new Set(), usedSlots = new Set();
-          options.forEach(({item,slot}) => {
-            if (usedCards.has(item.index) || usedSlots.has(slot.index)) return;
-            usedCards.add(item.index);
-            usedSlots.add(slot.index);
-            const size = dimensions(item.entry.tile);
-            item.entry.last = place(item.entry.tile, {
-              x:slot.x-size.width/2,
-              y:slot.y-size.height/2
+          const median = values => {
+            const sorted = [...values].sort((a,b)=>a-b);
+            return sorted[Math.floor(sorted.length/2)] || 0;
+          };
+          const cardHeight = median(items.map(item => item.height));
+          const rowTolerance = Math.max(6, cardHeight * .65);
+          items.sort((a,b)=>a.cy-b.cy || a.cx-b.cx);
+          const groupedRows = [];
+          items.forEach(item => {
+            // Join the closest row only if its vertical centre is close.
+            let nearest = null, distance = Infinity;
+            groupedRows.forEach(row => {
+              const delta = Math.abs(row.cy-item.cy);
+              if (delta < distance) { nearest=row; distance=delta; }
             });
-            positions.set(item.entry.card.id, item.entry.last);
+            if (nearest && distance <= rowTolerance) {
+              nearest.items.push(item);
+              nearest.cy = nearest.items.reduce((sum,c)=>sum+c.cy,0)/nearest.items.length;
+            } else groupedRows.push({cy:item.cy,items:[item]});
+          });
+          groupedRows.sort((a,b)=>a.cy-b.cy);
+          const rowCount = groupedRows.length;
+          const maxHeight = Math.max(...items.map(item=>item.height));
+          const verticalGap = Math.max(1.8, Math.min(4, (100-rowCount*maxHeight)/Math.max(1,rowCount+1)));
+          const totalHeight = rowCount*maxHeight+(rowCount-1)*verticalGap;
+          const topStart = Math.max(0, (100-totalHeight)/2);
+          groupedRows.forEach((row, rowIndex) => {
+            row.items.sort((a,b)=>a.cx-b.cx || a.index-b.index);
+            const totalWidth = row.items.reduce((sum,item)=>sum+item.width,0);
+            const freeSpace = Math.max(0,100-totalWidth);
+            const desiredGap = Math.min(5, freeSpace/Math.max(1,row.items.length+1));
+            const occupied = totalWidth + desiredGap*(row.items.length-1);
+            let left = Math.max(0,(100-occupied)/2);
+            row.items.forEach(item => {
+              item.entry.last = place(item.entry.tile,{
+                x:left,
+                y:topStart+rowIndex*(maxHeight+verticalGap)+(maxHeight-item.height)/2
+              });
+              positions.set(item.entry.card.id,item.entry.last);
+              left += item.width+desiredGap;
+            });
           });
         });
         const makeHistoryButton = (label, symbol, stack, otherStack) => {
