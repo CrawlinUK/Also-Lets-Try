@@ -1962,6 +1962,8 @@
         const board = document.createElement("div");
         board.className = "flash-board";
         board.setAttribute("aria-label", "Freely arrange selected flash cards");
+        board.addEventListener("contextmenu", event => event.preventDefault());
+        board.addEventListener("selectstart", event => event.preventDefault());
         const positions = state.flashBoardPositions;
         const layers = state.flashBoardLayers;
         const bringToFront = (tile, id) => {
