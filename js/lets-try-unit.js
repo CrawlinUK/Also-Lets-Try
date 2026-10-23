@@ -2574,8 +2574,8 @@
           panel.className="flash-board-text-panel";
           const heading=document.createElement("strong");
           heading.textContent=isNew?"Add text":"Edit text";
-          const input=document.createElement("input");
-          input.type="text";
+          const input=document.createElement("textarea");
+          input.rows=3;
           input.autocomplete="off";
           input.spellcheck=false;
           input.placeholder="Type your word or phrase";
@@ -2600,7 +2600,7 @@
           confirm.addEventListener("click",()=>finish(true));
           cancel.addEventListener("click",()=>finish(false));
           input.addEventListener("keydown",event=>{
-            if(event.key==="Enter"){event.preventDefault();finish(true);}
+            if(event.key==="Enter" && (event.ctrlKey || event.metaKey)){event.preventDefault();finish(true);}
             if(event.key==="Escape"){event.preventDefault();finish(false);}
           });
           actions.append(cancel,confirm);
@@ -2653,15 +2653,15 @@
           suffixButton.disabled=!selectedTextId;
         };
         let textStart=null;
-        board.addEventListener("pointerdown",event=>{
-          if(currentTool!=="text"||event.target!==board || event.button!==0)return;
+        textLayer.addEventListener("pointerdown",event=>{
+          if(currentTool!=="text"||event.target!==textLayer || (event.pointerType==="mouse" && event.button!==0))return;
           if(document.getElementById("flashBoardTextDialog"))return;
           event.preventDefault();
           const rect=board.getBoundingClientRect();
           textStart={x:(event.clientX-rect.left)/rect.width*100,y:(event.clientY-rect.top)/rect.height*100};
-          board.setPointerCapture(event.pointerId);
+          textLayer.setPointerCapture(event.pointerId);
         });
-        board.addEventListener("pointerup",event=>{
+        textLayer.addEventListener("pointerup",event=>{
           if(currentTool!=="text"||!textStart)return;
           event.preventDefault();
           const rect=board.getBoundingClientRect();
@@ -2673,7 +2673,7 @@
           textStart=null;
           editText({id:makeTextId(),text:"",suffix:false,x,y,w,h},true);
         });
-        board.addEventListener("pointercancel",()=>{textStart=null;});
+        textLayer.addEventListener("pointercancel",()=>{textStart=null;});
         const makeHistoryButton = (label, symbol, stack, otherStack) => {
           const button = document.createElement("button");
           button.type = "button";
