@@ -2390,7 +2390,8 @@
           board.classList.toggle("text-mode",tool === "text");
           textToolButton?.classList.toggle("active",tool === "text");
           textToolButton?.setAttribute("aria-pressed",String(tool === "text"));
-          if (tool !== "text") { selectedTextId=null; renderTexts(); }
+          if (tool !== "text") selectedTextId=null;
+          renderTexts();
           updateSelection();
         };
         const menuOption = (label, icon, action) => {
