@@ -3211,3 +3211,11 @@ html.shared-unit-template .flash-board * {
     bottom:clamp(72px,9vh,90px);
   }
 }
+
+/* Flash Board: selection is only indicated in red during Remove mode. */
+html.shared-unit-template .flash-board-card.selected:not(.removal-target) {
+  outline:none;
+}
+html.shared-unit-template .flash-board-bin-item.being-dragged {
+  visibility:hidden;
+}
