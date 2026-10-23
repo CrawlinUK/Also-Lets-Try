@@ -591,6 +591,7 @@
         flashBoardRedo: [],
         flashBoardPenColour: "#e53935",
         flashBoardPositions: new Map(),
+        flashBoardBinned: new Set(),
         flashBoardLayers: new Map(),
         flashBoardLayerCounter: 0,
         keywordOrder: [],
@@ -1417,7 +1418,10 @@
       }
 
       function render() {
-        if (state.gameMode !== "flashboard") document.getElementById("flashBoardTools")?.remove();
+        if (state.gameMode !== "flashboard") {
+          document.getElementById("flashBoardTools")?.remove();
+          document.getElementById("flashBoardBin")?.remove();
+        }
         if (elements.schoolShortenButton) {
           elements.schoolShortenButton.setAttribute("aria-pressed", String(state.schoolShortened));
           elements.schoolShortenButton.textContent = state.schoolShortened
@@ -1986,6 +1990,38 @@
             : { width: maxHeight * ratio / boardRatio, height: maxHeight };
         };
         const entries = [];
+        let selectedEntry = null;
+        let bin, binList, removeButton;
+        const binned = state.flashBoardBinned;
+        const within = (element,x,y) => {
+          const r=element.getBoundingClientRect();
+          return x>=r.left && x<=r.right && y>=r.top && y<=r.bottom;
+        };
+        const updateSelection = () => {
+          entries.forEach(entry => entry.tile.classList.toggle("selected", entry===selectedEntry && !binned.has(entry.card.id)));
+          if (removeButton) removeButton.disabled = !selectedEntry || binned.has(selectedEntry.card.id);
+        };
+        const updateCounter = () => { elements.counter.textContent = (count-binned.size)+" / "+count; };
+        let renderBin = () => {};
+        const sendToBin = entry => {
+          if (binned.has(entry.card.id)) return;
+          binned.add(entry.card.id);
+          entry.tile.hidden=true;
+          if (selectedEntry===entry) selectedEntry=null;
+          updateSelection(); renderBin(); updateCounter();
+        };
+        const restoreCard = (entry,x,y) => {
+          binned.delete(entry.card.id);
+          entry.tile.hidden=false;
+          entry.last=place(entry.tile,{
+            x:(x-board.getBoundingClientRect().left)/board.clientWidth*100-dimensions(entry.tile).width/2,
+            y:(y-board.getBoundingClientRect().top)/board.clientHeight*100-dimensions(entry.tile).height/2
+          });
+          positions.set(entry.card.id,entry.last);
+          bringToFront(entry.tile,entry.card.id);
+          selectedEntry=entry;
+          updateSelection(); renderBin(); updateCounter();
+        };
         const clamp = (value, min, max) => Math.max(min, Math.min(max, value));
         const dimensions = (tile) => {
           const width = board.clientWidth || 1;
@@ -2044,7 +2080,7 @@
           entries.push(entry);
           board.append(tile);
 
-          tile.addEventListener("focus", () => bringToFront(tile, card.id));
+          tile.addEventListener("focus", () => { bringToFront(tile, card.id); selectedEntry=entry; updateSelection(); });
           tile.addEventListener("pointerdown", (event) => {
             if (event.button !== 0 && event.pointerType === "mouse") return;
             event.preventDefault();
@@ -2052,6 +2088,7 @@
             const rect = board.getBoundingClientRect();
             if (!rect.width || !rect.height) return;
             const original = { ...entry.last };
+            const startPosition = {x:event.clientX,y:event.clientY};
             const startX = event.clientX;
             const startY = event.clientY;
             tile.setPointerCapture(event.pointerId);
@@ -2072,7 +2109,17 @@
             const finish = (e) => {
               move(e);
               cleanup();
-              positions.set(card.id, entry.last);
+              if (bin && (within(bin,e.clientX,e.clientY) ||
+                  (e.clientX < board.getBoundingClientRect().left && e.clientY >= bin.getBoundingClientRect().top))) {
+                entry.last=place(tile,original);
+                positions.set(card.id,entry.last);
+                sendToBin(entry);
+              } else {
+                positions.set(card.id,entry.last);
+                if (Math.hypot(e.clientX-startPosition.x,e.clientY-startPosition.y)<9) {
+                  selectedEntry=entry; updateSelection();
+                }
+              }
             };
             const cancel = () => {
               cleanup();
@@ -2095,6 +2142,95 @@
         });
 
         elements.gameArea.replaceChildren(board);
+        document.getElementById("flashBoardBin")?.remove();
+        bin=document.createElement("aside");
+        bin.id="flashBoardBin";
+        bin.className="flash-board-bin";
+        bin.setAttribute("aria-label","Card bin");
+        const binHeading=document.createElement("div");
+        binHeading.className="flash-board-bin-heading";
+        binHeading.textContent="Bin";
+        binList=document.createElement("div");
+        binList.className="flash-board-bin-list";
+        bin.append(binHeading,binList);
+        document.body.append(bin);
+        renderBin=() => {
+          binList.replaceChildren();
+          const stored=entries.filter(entry=>binned.has(entry.card.id));
+          const available=Math.max(120,binList.clientHeight || window.innerHeight*.58);
+          const previewHeight=100;
+          const step=stored.length>1 ? Math.max(8,Math.min(previewHeight*.5,(available-previewHeight)/(stored.length-1))) : 0;
+          stored.forEach((entry,i)=>{
+            const item=document.createElement("button");
+            item.type="button";
+            item.className="flash-board-bin-item";
+            item.style.top=(i*step)+"px";
+            item.style.zIndex=String(i+1);
+            item.title=entry.card.word+" — hold and drag to restore";
+            item.setAttribute("aria-label","Restore "+entry.card.word);
+            const preview=entry.tile.cloneNode(true);
+            preview.removeAttribute("tabindex");
+            preview.removeAttribute("role");
+            preview.classList.remove("selected","dragging");
+            preview.hidden=false;
+            const width=entry.tile.offsetWidth || 160;
+            const height=entry.tile.offsetHeight || 200;
+            preview.style.left="0";preview.style.top="0";
+            preview.style.width=width+"px";preview.style.height=height+"px";
+            preview.style.aspectRatio="auto";
+            const scale=Math.min(64/width,previewHeight/height);
+            preview.style.transform="scale("+scale+")";
+            preview.style.transformOrigin="top left";
+            item.append(preview);
+            item.addEventListener("pointerdown",event=>{
+              if(event.pointerType==="mouse" && event.button!==0)return;
+              event.preventDefault();
+              item.setPointerCapture(event.pointerId);
+              let ghost=null;
+              let held=false;
+              const createGhost=()=>{
+                if(ghost)return;
+                held=true;
+                ghost=entry.tile.cloneNode(true);
+                ghost.hidden=false;
+                ghost.classList.add("flash-board-return-ghost");
+                ghost.classList.remove("selected");
+                ghost.style.width=width+"px";
+                ghost.style.height=height+"px";
+                ghost.style.aspectRatio="auto";
+                ghost.style.left="0";ghost.style.top="0";
+                document.body.append(ghost);
+              };
+              const moveGhost=e=>{
+                if(!ghost)return;
+                ghost.style.transform="translate("+(e.clientX-width/2)+"px,"+(e.clientY-height/2)+"px)";
+              };
+              const timer=setTimeout(()=>{createGhost();moveGhost(event)},240);
+              const move=e=>{if(held)moveGhost(e);};
+              const end=e=>{
+                clearTimeout(timer);
+                item.removeEventListener("pointermove",move);
+                item.removeEventListener("pointerup",end);
+                item.removeEventListener("pointercancel",end);
+                ghost?.remove();
+                if(held && e.type==="pointerup" && within(board,e.clientX,e.clientY)) restoreCard(entry,e.clientX,e.clientY);
+              };
+              item.addEventListener("pointermove",move);
+              item.addEventListener("pointerup",end);
+              item.addEventListener("pointercancel",end);
+            });
+            // Keyboard alternative to long-press dragging.
+            item.addEventListener("keydown",event=>{
+              if(event.key!=="Enter" && event.key!==" ")return;
+              event.preventDefault();
+              const r=board.getBoundingClientRect();
+              restoreCard(entry,r.left+r.width/2,r.top+r.height/2);
+            });
+            binList.append(item);
+          });
+          bin.classList.toggle("has-cards",stored.length>0);
+        };
+
 
         // An SVG ink layer stores strokes in board-relative coordinates,
         // so strokes stay aligned when the teaching display is resized.
@@ -2296,7 +2432,9 @@
           // Then preserve left-to-right order within each row. Do not
           // independently match cards to nearest grid slots: that can
           // scramble a deliberately arranged 6+4 layout into 4+4+2.
-          const items = entries.map((entry, index) => {
+          const activeEntries=entries.filter(entry=>!binned.has(entry.card.id));
+          if (!activeEntries.length) return;
+          const items = activeEntries.map((entry, index) => {
             const pos = entry.last || {x:0,y:0};
             const size = dimensions(entry.tile);
             return {
@@ -2347,6 +2485,15 @@
             });
           });
         });
+        removeButton=document.createElement("button");
+        removeButton.type="button";
+        removeButton.className="flash-board-tool flash-board-remove";
+        removeButton.textContent="⊖";
+        removeButton.title="Remove selected card to bin";
+        removeButton.setAttribute("aria-label","Remove selected card to bin");
+        removeButton.addEventListener("click",()=>{
+          if(selectedEntry)sendToBin(selectedEntry);
+        });
         const makeHistoryButton = (label, symbol, stack, otherStack) => {
           const button = document.createElement("button");
           button.type = "button";
@@ -2365,7 +2512,7 @@
         };
         undoButton = makeHistoryButton("Undo drawing", "↶", state.flashBoardUndo, state.flashBoardRedo);
         redoButton = makeHistoryButton("Redo drawing", "↷", state.flashBoardRedo, state.flashBoardUndo);
-        toolRail.append(pen, palette, eraser, eraseMenu, undoButton, redoButton, moveCards, orderButton);
+        toolRail.append(moveCards, pen, palette, eraser, eraseMenu, undoButton, redoButton, orderButton, removeButton);
         setTool("move");
         updateInkHistoryButtons();
         toolRail.id = "flashBoardTools";
@@ -2469,11 +2616,12 @@
               y: row * cellHeight + (cellHeight - size.height) / 2
             };
             entry.last = place(tile, entry.saved || initial);
+            tile.hidden=binned.has(card.id);
             positions.set(card.id, entry.last);
           });
         };
-        requestAnimationFrame(positionInitialCards);
-        elements.counter.textContent = count + " / " + count;
+        requestAnimationFrame(()=>{positionInitialCards();renderBin();updateSelection();updateCounter();});
+        updateCounter();
         elements.modeLabel.textContent = "Flash Board";
         requestAnimationFrame(alignSideNavigation);
       }
@@ -2563,6 +2711,7 @@
 
         if (mode === "flashboard") {
           state.flashBoardPositions = new Map();
+          state.flashBoardBinned = new Set();
           state.flashBoardLayers = new Map();
           state.flashBoardLayerCounter = 0;
         }
@@ -2598,6 +2747,7 @@
         stopAuto();
         if (state.gameMode === "flashboard") {
           state.flashBoardPositions.clear();
+          state.flashBoardBinned.clear();
           state.flashBoardLayers.clear();
           state.flashBoardLayerCounter = 0;
           renderFlashBoard();
