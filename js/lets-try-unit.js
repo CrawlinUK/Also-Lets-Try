@@ -2115,7 +2115,8 @@
                 if (pluralCards.has(card.id)) pluralCards.delete(card.id);
                 else pluralCards.add(card.id);
                 const label=cardLabel(card);
-                tile.querySelector(".flash-board-word, .flash-board-caption").textContent=label;
+                const caption=tile.querySelector(".flash-board-word, .flash-board-caption");
+                if (caption) caption.textContent=label;
                 renderBin();
               }
               return;
