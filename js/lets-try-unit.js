@@ -2005,6 +2005,7 @@
         let renderBin = () => {};
         const sendToBin = entry => {
           if (binned.has(entry.card.id)) return;
+          entry.binSize={width:entry.tile.offsetWidth || entry.binSize?.width || 160,height:entry.tile.offsetHeight || entry.binSize?.height || 200};
           binned.add(entry.card.id);
           entry.tile.hidden=true;
           if (selectedEntry===entry) selectedEntry=null;
@@ -2173,8 +2174,8 @@
             preview.removeAttribute("role");
             preview.classList.remove("selected","dragging");
             preview.hidden=false;
-            const width=entry.tile.offsetWidth || 160;
-            const height=entry.tile.offsetHeight || 200;
+            const width=entry.binSize?.width || entry.tile.offsetWidth || 160;
+            const height=entry.binSize?.height || entry.tile.offsetHeight || 200;
             preview.style.left="0";preview.style.top="0";
             preview.style.width=width+"px";preview.style.height=height+"px";
             preview.style.aspectRatio="auto";
@@ -2616,6 +2617,7 @@
               y: row * cellHeight + (cellHeight - size.height) / 2
             };
             entry.last = place(tile, entry.saved || initial);
+            entry.binSize={width:tile.offsetWidth,height:tile.offsetHeight};
             tile.hidden=binned.has(card.id);
             positions.set(card.id, entry.last);
           });
