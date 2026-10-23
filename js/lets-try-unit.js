@@ -1962,15 +1962,42 @@
 
         const cards = selectedCards();
         const pluralCards = state.flashBoardPluralCards;
-        const pluralEligible = card => /^(?:fruit|food|animals|animal|schoolSupplies|stationery|shapes|colours|colors|sports|vegetables)$/i.test(card.category || "")
-          && /^[A-Za-z]+$/.test(card.word || "") && !/s$/i.test(card.word);
-        const cardLabel = card => {
-          if (!pluralCards.has(card.id)) return card.word || "";
-          const word = card.word || "";
-          if (/[^aeiou]y$/i.test(word)) return word.slice(0,-1)+"ies";
-          if (/(ch|sh|x|z)$/i.test(word)) return word+"es";
+        // S is a board-wide display toggle, not a tool for individual cards.
+        // Only explicitly eligible noun categories and known count nouns change.
+        const irregularPlurals = {
+          mouse:"mice",goose:"geese",child:"children",person:"people",
+          man:"men",woman:"women",foot:"feet",tooth:"teeth",
+          sheep:"sheep",deer:"deer",fish:"fish",ox:"oxen",
+          leaf:"leaves",knife:"knives",wolf:"wolves",life:"lives",
+          tomato:"tomatoes",potato:"potatoes"
+        };
+        const nonCountWords = new Set([
+          "milk","water","juice","orange juice","tea","coffee","rice",
+          "bread","cheese","butter","meat","beef","pork","chicken",
+          "fish","sushi","spaghetti","pizza","homework","information",
+          "music","soccer","baseball","basketball","tennis","swimming",
+          "table tennis","volleyball","dodgeball","ice cream"
+        ]);
+        const nounCategories = new Set([
+          "fruit","food","animals","animal","vegetables","shapes",
+          "schoolSupplies","stationery","schoolItems","classroomObjects"
+        ]);
+        const pluralEligible = card => {
+          const word=String(card.word||"").trim().toLowerCase();
+          const category=String(card.category||"");
+          return nounCategories.has(category) && /^[a-z][a-z -]*$/.test(word)
+            && !nonCountWords.has(word) && (!/s$/.test(word) || !!irregularPlurals[word]);
+        };
+        const pluralForm = word => {
+          const key=word.toLowerCase();
+          if (irregularPlurals[key])return irregularPlurals[key];
+          if (/[^aeiou]y$/i.test(word))return word.slice(0,-1)+"ies";
+          if (/(ch|sh|x|z|s)$/i.test(word))return word+"es";
+          if (/fe$/i.test(word))return word.slice(0,-2)+"ves";
           return word+"s";
         };
+        const cardLabel = card => pluralCards.has(card.id) && pluralEligible(card)
+          ? pluralForm(card.word) : (card.word||"");
         const board = document.createElement("div");
         board.className = "flash-board";
         board.setAttribute("aria-label", "Freely arrange selected flash cards");
@@ -2110,17 +2137,7 @@
             if (event.button !== 0 && event.pointerType === "mouse") return;
             event.preventDefault();
             if (removalMode) { sendToBin(entry); return; }
-            if (currentTool === "plural") {
-              if (pluralEligible(card)) {
-                if (pluralCards.has(card.id)) pluralCards.delete(card.id);
-                else pluralCards.add(card.id);
-                const label=cardLabel(card);
-                const caption=tile.querySelector(".flash-board-word, .flash-board-caption");
-                if (caption) caption.textContent=label;
-                renderBin();
-              }
-              return;
-            }
+
             bringToFront(tile, card.id);
             const rect = board.getBoundingClientRect();
             if (!rect.width || !rect.height) return;
@@ -2411,9 +2428,7 @@
           pen.setAttribute("aria-pressed", String(tool === "draw"));
           eraser.setAttribute("aria-pressed", String(tool === "erase"));
           drawingSurface.classList.toggle("drawing", (tool === "draw" || tool === "erase") && !removalMode);
-          suffixButton?.classList.toggle("active",tool === "plural");
-          suffixButton?.setAttribute("aria-pressed",String(tool === "plural"));
-          board.classList.toggle("plural-mode",tool === "plural");
+          // The S button stays independent of the active manipulation tool.
           board.classList.toggle("text-mode",tool === "text");
           textToolButton?.classList.toggle("active",tool === "text");
           textToolButton?.setAttribute("aria-pressed",String(tool === "text"));
@@ -2585,15 +2600,25 @@
         suffixButton.type="button";
         suffixButton.className="flash-board-tool flash-board-suffix";
         suffixButton.textContent="S";
-        suffixButton.title="Plural flashcards: tap a suitable card to toggle singular/plural";
-        suffixButton.setAttribute("aria-label","Toggle plural flashcard mode");
-        suffixButton.setAttribute("aria-pressed","false");
+        suffixButton.title="Toggle plural forms for applicable flashcards";
+        suffixButton.setAttribute("aria-label","Pluralise applicable flashcards");
+        suffixButton.setAttribute("aria-pressed",String(cards.some(card=>pluralCards.has(card.id))));
         suffixButton.addEventListener("click",()=>{
-          removalMode=false;
-          palette.hidden=true;
-          eraseMenu.hidden=true;
-          setTool(currentTool === "plural" ? "move" : "plural");
+          const eligible=cards.filter(pluralEligible);
+          const enabled=eligible.some(card=>pluralCards.has(card.id));
+          eligible.forEach(card=>{
+            if(enabled)pluralCards.delete(card.id);
+            else pluralCards.add(card.id);
+          });
+          suffixButton.classList.toggle("active",!enabled);
+          suffixButton.setAttribute("aria-pressed",String(!enabled));
+          entries.forEach(entry=>{
+            const caption=entry.tile.querySelector(".flash-board-word, .flash-board-caption");
+            if(caption)caption.textContent=cardLabel(entry.card);
+          });
+          renderBin();
         });
+        suffixButton.classList.toggle("active",cards.some(card=>pluralCards.has(card.id)));
         const editText=(item,isNew=false)=>{
           document.getElementById("flashBoardTextDialog")?.remove();
           const overlay=document.createElement("div");
@@ -2765,7 +2790,7 @@
         };
         undoButton = makeHistoryButton("Undo drawing", "↶", state.flashBoardUndo, state.flashBoardRedo);
         redoButton = makeHistoryButton("Redo drawing", "↷", state.flashBoardRedo, state.flashBoardUndo);
-        toolRail.append(moveCards, pen, palette, eraser, eraseMenu, textToolButton, suffixButton, undoButton, redoButton, orderButton, removeButton);
+        toolRail.append(moveCards, pen, palette, eraser, eraseMenu, undoButton, redoButton, textToolButton, suffixButton, orderButton, removeButton);
         setTool("move");
         updateInkHistoryButtons();
         toolRail.id = "flashBoardTools";
