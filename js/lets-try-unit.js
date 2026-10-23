@@ -1971,10 +1971,12 @@
         };
         const count = cards.length;
         state.flashBoardLayerCounter = Math.max(state.flashBoardLayerCounter, count);
-        const columns = count === 12 ? 4 : Math.max(1, Math.ceil(Math.sqrt(count * 1.5)));
-        const rows = Math.max(1, Math.ceil(count / columns));
-        const cellWidth = 100 / columns;
-        const cellHeight = 100 / rows;
+        // Share Missing/Keyword's responsive, card-aspect-aware grid logic.
+        // The shape is resolved from the real board dimensions below.
+        let columns = 1;
+        let rows = count || 1;
+        let cellWidth = 100;
+        let cellHeight = 100 / rows;
         const textOnly = state.displayMode === "text";
         const cardWidth = Math.min(38, cellWidth * .94);
         const cardHeight = Math.min(48, cellHeight * .93);
@@ -2610,6 +2612,11 @@
         // cards follow a loose initial arrangement, not fixed-size grid slots.
         const positionInitialCards = () => {
           if (!board.isConnected || !board.clientWidth || !board.clientHeight) return;
+          const shape = optimalGameShape(board.clientWidth, board.clientHeight, cards);
+          columns = shape.columns;
+          rows = shape.rows;
+          cellWidth = 100 / columns;
+          cellHeight = 100 / rows;
           entries.forEach((entry) => {
             const { card, tile, index } = entry;
             if (!textOnly) {
