@@ -2390,7 +2390,7 @@
           board.classList.toggle("text-mode",tool === "text");
           textToolButton?.classList.toggle("active",tool === "text");
           textToolButton?.setAttribute("aria-pressed",String(tool === "text"));
-          if (tool !== "text") selectedTextId=null;
+          if (tool !== "text" && tool !== "move") selectedTextId=null;
           renderTexts();
           updateSelection();
         };
@@ -2623,10 +2623,10 @@
             el.style.width=item.w+"%";el.style.height=item.h+"%";
             el.textContent=item.text+(item.suffix && !item.text.endsWith("s")?"s":"");
             el.classList.toggle("text-selected",selectedTextId===item.id && currentTool==="text");
-            el.style.pointerEvents=currentTool==="text"?"auto":"none";
+            el.style.pointerEvents=(currentTool==="text" || currentTool==="move")?"auto":"none";
             let down=null,moved=false;
             el.addEventListener("pointerdown",event=>{
-              if(currentTool!=="text")return;
+              if(currentTool!=="text" && currentTool!=="move")return;
               event.preventDefault();event.stopPropagation();
               el.setPointerCapture(event.pointerId);
               down={x:event.clientX,y:event.clientY,initialX:item.x,initialY:item.y};
@@ -2644,16 +2644,57 @@
             el.addEventListener("pointerup",event=>{
               if(!down)return;down=null;
               if(!moved){
-                if(selectedTextId===item.id)editText(item);
+                if(currentTool==="text" && selectedTextId===item.id)editText(item);
                 else {selectedTextId=item.id;renderTexts();}
               }else{selectedTextId=item.id;renderTexts();}
             });
             el.addEventListener("pointercancel",()=>{down=null;});
+            if(currentTool==="text" && selectedTextId===item.id){
+              const handle=document.createElement("span");
+              handle.className="flash-board-text-resizer";
+              handle.title="Resize text box";
+              handle.addEventListener("pointerdown",event=>{
+                event.preventDefault();event.stopPropagation();
+                handle.setPointerCapture(event.pointerId);
+                const origin={x:event.clientX,y:event.clientY,w:item.w,h:item.h};
+                const move=e=>{
+                  item.w=Math.max(5,Math.min(100-item.x,origin.w+(e.clientX-origin.x)/board.clientWidth*100));
+                  item.h=Math.max(5,Math.min(100-item.y,origin.h+(e.clientY-origin.y)/board.clientHeight*100));
+                  el.style.width=item.w+"%";el.style.height=item.h+"%";
+                };
+                const stop=()=>{
+                  handle.removeEventListener("pointermove",move);
+                  handle.removeEventListener("pointerup",stop);
+                  handle.removeEventListener("pointercancel",stop);
+                };
+                handle.addEventListener("pointermove",move);
+                handle.addEventListener("pointerup",stop);
+                handle.addEventListener("pointercancel",stop);
+              });
+              el.append(handle);
+            }
             textLayer.append(el);
           });
+          textLayer.append(marquee);
           suffixButton.disabled=!selectedTextId;
         };
         let textStart=null;
+        const marquee=document.createElement("div");
+        marquee.className="flash-board-text-marquee";
+        marquee.hidden=true;
+        textLayer.append(marquee);
+        const refreshMarquee=(a,b)=>{
+          const x=Math.max(0,Math.min(100,Math.min(a.x,b.x)));
+          const y=Math.max(0,Math.min(100,Math.min(a.y,b.y)));
+          marquee.style.left=x+"%";marquee.style.top=y+"%";
+          marquee.style.width=Math.max(1,Math.abs(a.x-b.x))+"%";
+          marquee.style.height=Math.max(1,Math.abs(a.y-b.y))+"%";
+        };
+        textLayer.addEventListener("pointermove",event=>{
+          if(!textStart)return;
+          const r=board.getBoundingClientRect();
+          refreshMarquee(textStart,{x:(event.clientX-r.left)/r.width*100,y:(event.clientY-r.top)/r.height*100});
+        });
         textLayer.addEventListener("pointerdown",event=>{
           if(currentTool!=="text"||event.target!==textLayer || (event.pointerType==="mouse" && event.button!==0))return;
           if(document.getElementById("flashBoardTextDialog"))return;
@@ -2661,6 +2702,8 @@
           const rect=board.getBoundingClientRect();
           textStart={x:(event.clientX-rect.left)/rect.width*100,y:(event.clientY-rect.top)/rect.height*100};
           textLayer.setPointerCapture(event.pointerId);
+          marquee.hidden=false;
+          refreshMarquee(textStart,textStart);
         });
         textLayer.addEventListener("pointerup",event=>{
           if(currentTool!=="text"||!textStart)return;
@@ -2672,9 +2715,10 @@
           const w=Math.min(100-x,Math.max(12,Math.abs(textStart.x-end.x)));
           const h=Math.min(100-y,Math.max(8,Math.abs(textStart.y-end.y)));
           textStart=null;
+          marquee.hidden=true;
           editText({id:makeTextId(),text:"",suffix:false,x,y,w,h},true);
         });
-        textLayer.addEventListener("pointercancel",()=>{textStart=null;});
+        textLayer.addEventListener("pointercancel",()=>{textStart=null;marquee.hidden=true;});
         const makeHistoryButton = (label, symbol, stack, otherStack) => {
           const button = document.createElement("button");
           button.type = "button";
@@ -3395,6 +3439,8 @@
       });
 
       document.addEventListener("keydown", (event) => {
+        if (event.target?.closest?.("input, textarea, select, [contenteditable], #flashBoardTextDialog")) return;
+        if (document.getElementById("flashBoardTextDialog")) return;
         if (event.key === "Escape") {
           elements.keyboardHelp.classList.add("collapsed");
           closePanels();
