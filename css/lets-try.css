@@ -3324,3 +3324,7 @@ html.shared-unit-template .flash-board-text-resizer {
 html.shared-unit-template .flash-board.text-mode .flash-board-user-text {
   overflow:visible;
 }
+
+/* S now targets Flash Board vocabulary cards, not custom text boxes. */
+html.shared-unit-template .flash-board.plural-mode .flash-board-card {cursor:pointer;}
+html.shared-unit-template .flash-board.plural-mode .flash-board-text-layer {pointer-events:none;}
