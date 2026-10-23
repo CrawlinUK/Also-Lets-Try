@@ -3186,3 +3186,28 @@ html.shared-unit-template .flash-board-return-ghost {
   }
   html.shared-unit-template .flash-board-bin-item { width:52px; }
 }
+
+/* v52: make the bin fill the useful vertical space alongside the board. */
+html.shared-unit-template .flash-board-bin {
+  top:clamp(86px,13vh,124px);
+  bottom:clamp(82px,10vh,100px);
+}
+html.shared-unit-template .flash-board-card.removal-target {
+  outline:3px solid #e33a3a !important;
+  outline-offset:2px;
+  cursor:pointer;
+}
+html.shared-unit-template .flash-board-bin,
+html.shared-unit-template .flash-board-bin *,
+html.shared-unit-template .flash-board,
+html.shared-unit-template .flash-board * {
+  -webkit-touch-callout:none;
+  -webkit-user-select:none;
+  user-select:none;
+}
+@media (max-width:650px) {
+  html.shared-unit-template .flash-board-bin {
+    top:clamp(68px,11vh,110px);
+    bottom:clamp(72px,9vh,90px);
+  }
+}
