@@ -2387,6 +2387,7 @@
           pen.setAttribute("aria-pressed", String(tool === "draw"));
           eraser.setAttribute("aria-pressed", String(tool === "erase"));
           drawingSurface.classList.toggle("drawing", (tool === "draw" || tool === "erase" || tool === "text") && !removalMode);
+          board.classList.toggle("text-mode",tool === "text");
           textToolButton?.classList.toggle("active",tool === "text");
           textToolButton?.setAttribute("aria-pressed",String(tool === "text"));
           if (tool !== "text") { selectedTextId=null; renderTexts(); }
@@ -2652,15 +2653,15 @@
           suffixButton.disabled=!selectedTextId;
         };
         let textStart=null;
-        drawingSurface.addEventListener("pointerdown",event=>{
-          if(currentTool!=="text"||event.button!==0)return;
+        board.addEventListener("pointerdown",event=>{
+          if(currentTool!=="text"||event.target!==board || event.button!==0)return;
           if(document.getElementById("flashBoardTextDialog"))return;
           event.preventDefault();
           const rect=board.getBoundingClientRect();
           textStart={x:(event.clientX-rect.left)/rect.width*100,y:(event.clientY-rect.top)/rect.height*100};
-          drawingSurface.setPointerCapture(event.pointerId);
+          board.setPointerCapture(event.pointerId);
         });
-        drawingSurface.addEventListener("pointerup",event=>{
+        board.addEventListener("pointerup",event=>{
           if(currentTool!=="text"||!textStart)return;
           event.preventDefault();
           const rect=board.getBoundingClientRect();
@@ -2672,7 +2673,7 @@
           textStart=null;
           editText({id:makeTextId(),text:"",suffix:false,x,y,w,h},true);
         });
-        drawingSurface.addEventListener("pointercancel",()=>{textStart=null;});
+        board.addEventListener("pointercancel",()=>{textStart=null;});
         const makeHistoryButton = (label, symbol, stack, otherStack) => {
           const button = document.createElement("button");
           button.type = "button";
