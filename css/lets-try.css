@@ -3219,3 +3219,55 @@ html.shared-unit-template .flash-board-card.selected:not(.removal-target) {
 html.shared-unit-template .flash-board-bin-item.being-dragged {
   visibility:hidden;
 }
+
+/* Flash Board text objects remain below cards but above board ink. */
+html.shared-unit-template .flash-board-text-layer {
+  position:absolute;inset:0;z-index:1;pointer-events:none;
+}
+html.shared-unit-template .flash-board-user-text {
+  position:absolute;display:flex;align-items:center;justify-content:center;
+  box-sizing:border-box;padding:4px 8px;overflow:hidden;
+  font-family:"HandwritingWeCan","Century Gothic",sans-serif;
+  font-weight:800;font-size:clamp(17px,2.3vw,34px);
+  line-height:1.1;text-align:center;overflow-wrap:anywhere;
+  white-space:pre-wrap;touch-action:none;user-select:none;
+  cursor:grab;border:2px solid transparent;border-radius:7px;
+}
+html.shared-unit-template .flash-board-user-text.text-selected {
+  border-color:#3388d5;outline:1px dashed #c2deee;
+}
+html.shared-unit-template .flash-board.text-mode .flash-board-card {
+  pointer-events:none;
+}
+html.shared-unit-template .flash-board.text-mode .flash-board-drawing-surface {
+  pointer-events:none;
+}
+html.shared-unit-template .flash-board.text-mode { cursor:crosshair; }
+html.shared-unit-template .flash-board-suffix { font-weight:800;font-size:21px; }
+html.shared-unit-template .flash-board-text-dialog {
+  position:fixed;inset:0;z-index:20000;
+  display:flex;align-items:flex-start;justify-content:center;
+  padding:clamp(30px,12vh,100px) 16px 16px;
+  background:#142a3c77;box-sizing:border-box;
+}
+html.shared-unit-template .flash-board-text-panel {
+  width:min(580px,96vw);background:white;border-radius:17px;
+  padding:22px;box-sizing:border-box;box-shadow:0 12px 32px #152b4255;
+  display:flex;flex-direction:column;gap:14px;
+}
+html.shared-unit-template .flash-board-text-panel strong {font-size:20px;}
+html.shared-unit-template .flash-board-text-panel input {
+  width:100%;box-sizing:border-box;border:2px solid #64bacc;
+  border-radius:12px;padding:14px 13px;font-size:24px;
+  background:#fff;color:#172b3b;
+}
+html.shared-unit-template .flash-board-text-actions {
+  display:flex;gap:10px;justify-content:flex-end;
+}
+html.shared-unit-template .flash-board-text-actions button {
+  border:1px solid #beced8;border-radius:10px;
+  padding:10px 20px;font-size:17px;cursor:pointer;
+  background:#edf3f6;color:#243444;
+}
+html.shared-unit-template .flash-board-text-actions button:first-child {background:#fff;}
+html.shared-unit-template .flash-board-text-actions button:last-child {background:#347cca;color:white;}
