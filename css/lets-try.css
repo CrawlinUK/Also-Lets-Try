@@ -3297,3 +3297,30 @@ html.shared-unit-template .flash-board-text-panel textarea {
   background:#fff;color:#172b3b;
   font-family:inherit;resize:vertical;
 }
+
+/* Text creation preview and resize affordance (v59). */
+html.shared-unit-template .flash-board-text-marquee {
+  position:absolute;
+  box-sizing:border-box;
+  border:2px dashed #2382d4;
+  background:rgba(55,150,231,.10);
+  pointer-events:none;
+  z-index:10;
+}
+html.shared-unit-template .flash-board-text-marquee[hidden] {display:none !important;}
+html.shared-unit-template .flash-board-text-resizer {
+  position:absolute;
+  width:18px;height:18px;
+  right:0;bottom:0;
+  transform:translate(20%,20%);
+  border:2px solid white;
+  border-radius:4px;
+  background:#2382d4;
+  box-shadow:0 0 0 1px #2369a2;
+  cursor:nwse-resize;
+  touch-action:none;
+  pointer-events:auto;
+}
+html.shared-unit-template .flash-board.text-mode .flash-board-user-text {
+  overflow:visible;
+}
