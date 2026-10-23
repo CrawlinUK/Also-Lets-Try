@@ -2003,7 +2003,7 @@
           return x>=r.left && x<=r.right && y>=r.top && y<=r.bottom;
         };
         const updateSelection = () => {
-          entries.forEach(entry => entry.tile.classList.toggle("selected", entry===selectedEntry && !binned.has(entry.card.id)));
+          entries.forEach(entry => entry.tile.classList.remove("selected"));
           entries.forEach(entry => entry.tile.classList.toggle("removal-target", removalMode && !binned.has(entry.card.id)));
           if (removeButton) {
             removeButton.classList.toggle("active", removalMode);
@@ -2029,7 +2029,7 @@
           });
           positions.set(entry.card.id,entry.last);
           bringToFront(entry.tile,entry.card.id);
-          selectedEntry=entry;
+          selectedEntry=null;
           updateSelection(); renderBin(); updateCounter();
         };
         const clamp = (value, min, max) => Math.max(min, Math.min(max, value));
@@ -2165,12 +2165,23 @@
         binList.className="flash-board-bin-list";
         bin.append(binHeading,binList);
         document.body.append(bin);
+        const alignBin=()=>{
+          if(!board.isConnected || !bin.isConnected)return;
+          const rect=board.getBoundingClientRect();
+          bin.style.top=Math.round(rect.top)+"px";
+          bin.style.height=Math.round(rect.height)+"px";
+          bin.style.bottom="auto";
+        };
+        alignBin();
+        requestAnimationFrame(alignBin);
+        const binObserver=new ResizeObserver(alignBin);
+        binObserver.observe(board);
         bin.addEventListener("contextmenu",e=>e.preventDefault());
         bin.addEventListener("selectstart",e=>e.preventDefault());
         renderBin=() => {
           binList.replaceChildren();
           const stored=entries.filter(entry=>binned.has(entry.card.id));
-          const available=Math.max(120,binList.clientHeight || window.innerHeight*.58);
+          const available=Math.max(120,binList.clientHeight || board.clientHeight);
           const previewHeight=100;
           const step=stored.length>1 ? Math.max(8,Math.min(previewHeight*.5,(available-previewHeight)/(stored.length-1))) : 0;
           stored.forEach((entry,i)=>{
@@ -2187,7 +2198,7 @@
             preview.addEventListener("contextmenu",e=>e.preventDefault());
             preview.removeAttribute("tabindex");
             preview.removeAttribute("role");
-            preview.classList.remove("selected","dragging");
+            preview.classList.remove("selected","dragging","removal-target");
             preview.hidden=false;
             const width=entry.binSize?.width || entry.tile.offsetWidth || 160;
             const height=entry.binSize?.height || entry.tile.offsetHeight || 200;
@@ -2210,7 +2221,8 @@
                 ghost=entry.tile.cloneNode(true);
                 ghost.hidden=false;
                 ghost.classList.add("flash-board-return-ghost");
-                ghost.classList.remove("selected");
+                ghost.classList.remove("selected","removal-target");
+                item.classList.add("being-dragged");
                 ghost.style.width=width+"px";
                 ghost.style.height=height+"px";
                 ghost.style.aspectRatio="auto";
@@ -2229,6 +2241,7 @@
                 item.removeEventListener("pointerup",end);
                 item.removeEventListener("pointercancel",end);
                 ghost?.remove();
+                item.classList.remove("being-dragged");
                 if(held && e.type==="pointerup" && within(board,e.clientX,e.clientY)) restoreCard(entry,e.clientX,e.clientY);
               };
               item.addEventListener("pointermove",move);
@@ -2649,7 +2662,7 @@
             positions.set(card.id, entry.last);
           });
         };
-        requestAnimationFrame(()=>{positionInitialCards();renderBin();updateSelection();updateCounter();});
+        requestAnimationFrame(()=>{positionInitialCards();alignBin();renderBin();updateSelection();updateCounter();});
         updateCounter();
         elements.modeLabel.textContent = "Flash Board";
         requestAnimationFrame(alignSideNavigation);
