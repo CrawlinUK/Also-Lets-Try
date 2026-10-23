@@ -593,6 +593,7 @@
         flashBoardPositions: new Map(),
         flashBoardBinned: new Set(),
         flashBoardTexts: [],
+        flashBoardPluralCards: new Set(),
         flashBoardLayers: new Map(),
         flashBoardLayerCounter: 0,
         keywordOrder: [],
@@ -1960,6 +1961,16 @@
         elements.shuffleButton.textContent = "Reset layout";
 
         const cards = selectedCards();
+        const pluralCards = state.flashBoardPluralCards;
+        const pluralEligible = card => /^(?:fruit|food|animals|animal|schoolSupplies|stationery|shapes|colours|colors|sports|vegetables)$/i.test(card.category || "")
+          && /^[A-Za-z]+$/.test(card.word || "") && !/s$/i.test(card.word);
+        const cardLabel = card => {
+          if (!pluralCards.has(card.id)) return card.word || "";
+          const word = card.word || "";
+          if (/[^aeiou]y$/i.test(word)) return word.slice(0,-1)+"ies";
+          if (/(ch|sh|x|z)$/i.test(word)) return word+"es";
+          return word+"s";
+        };
         const board = document.createElement("div");
         board.className = "flash-board";
         board.setAttribute("aria-label", "Freely arrange selected flash cards");
@@ -2071,7 +2082,7 @@
           tile.style.zIndex = String(layers.get(card.id) || index + 1);
           const word = document.createElement("span");
           word.className = "flash-board-word";
-          word.textContent = card.word || "";
+          word.textContent = cardLabel(card);
           if (textOnly) {
             tile.append(word);
           } else {
@@ -2084,7 +2095,7 @@
             if (state.displayMode !== "picture") {
               const caption = document.createElement("span");
               caption.className = "flash-board-caption";
-              caption.textContent = card.word || "";
+              caption.textContent = cardLabel(card);
               media.append(caption);
             }
             tile.append(media);
@@ -2099,6 +2110,16 @@
             if (event.button !== 0 && event.pointerType === "mouse") return;
             event.preventDefault();
             if (removalMode) { sendToBin(entry); return; }
+            if (currentTool === "plural") {
+              if (pluralEligible(card)) {
+                if (pluralCards.has(card.id)) pluralCards.delete(card.id);
+                else pluralCards.add(card.id);
+                const label=cardLabel(card);
+                tile.querySelector(".flash-board-word, .flash-board-caption").textContent=label;
+                renderBin();
+              }
+              return;
+            }
             bringToFront(tile, card.id);
             const rect = board.getBoundingClientRect();
             if (!rect.width || !rect.height) return;
@@ -2208,6 +2229,8 @@
             preview.removeAttribute("role");
             preview.classList.remove("selected","dragging","removal-target");
             preview.hidden=false;
+            const previewLabel=preview.querySelector(".flash-board-caption, .flash-board-word");
+            if (previewLabel) previewLabel.textContent=cardLabel(entry.card);
             const width=entry.binSize?.width || entry.tile.offsetWidth || 160;
             const height=entry.binSize?.height || entry.tile.offsetHeight || 200;
             preview.style.left="0";preview.style.top="0";
@@ -2386,7 +2409,10 @@
           moveCards.setAttribute("aria-pressed", String(tool === "move"));
           pen.setAttribute("aria-pressed", String(tool === "draw"));
           eraser.setAttribute("aria-pressed", String(tool === "erase"));
-          drawingSurface.classList.toggle("drawing", (tool === "draw" || tool === "erase" || tool === "text") && !removalMode);
+          drawingSurface.classList.toggle("drawing", (tool === "draw" || tool === "erase") && !removalMode);
+          suffixButton?.classList.toggle("active",tool === "plural");
+          suffixButton?.setAttribute("aria-pressed",String(tool === "plural"));
+          board.classList.toggle("plural-mode",tool === "plural");
           board.classList.toggle("text-mode",tool === "text");
           textToolButton?.classList.toggle("active",tool === "text");
           textToolButton?.setAttribute("aria-pressed",String(tool === "text"));
@@ -2558,13 +2584,14 @@
         suffixButton.type="button";
         suffixButton.className="flash-board-tool flash-board-suffix";
         suffixButton.textContent="S";
-        suffixButton.title="Add or remove final s on selected text";
-        suffixButton.setAttribute("aria-label","Toggle final s on selected text");
+        suffixButton.title="Plural flashcards: tap a suitable card to toggle singular/plural";
+        suffixButton.setAttribute("aria-label","Toggle plural flashcard mode");
+        suffixButton.setAttribute("aria-pressed","false");
         suffixButton.addEventListener("click",()=>{
-          if(!selectedTextId)return;
-          const item=state.flashBoardTexts.find(t=>t.id===selectedTextId);
-          if(!item)return;
-          item.suffix=!item.suffix;renderTexts();
+          removalMode=false;
+          palette.hidden=true;
+          eraseMenu.hidden=true;
+          setTool(currentTool === "plural" ? "move" : "plural");
         });
         const editText=(item,isNew=false)=>{
           document.getElementById("flashBoardTextDialog")?.remove();
@@ -2621,7 +2648,7 @@
             el.className="flash-board-user-text";
             el.style.left=item.x+"%";el.style.top=item.y+"%";
             el.style.width=item.w+"%";el.style.height=item.h+"%";
-            el.textContent=item.text+(item.suffix && !item.text.endsWith("s")?"s":"");
+            el.textContent=item.text;
             el.classList.toggle("text-selected",selectedTextId===item.id && currentTool==="text");
             el.style.pointerEvents=(currentTool==="text" || currentTool==="move")?"auto":"none";
             let down=null,moved=false;
@@ -2676,7 +2703,7 @@
             textLayer.append(el);
           });
           textLayer.append(marquee);
-          suffixButton.disabled=!selectedTextId;
+          // Plural mode changes vocabulary flashcards, never teacher-created text.
         };
         let textStart=null;
         const marquee=document.createElement("div");
