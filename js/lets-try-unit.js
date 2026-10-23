@@ -2169,7 +2169,9 @@
           if(!board.isConnected || !bin.isConnected)return;
           const rect=board.getBoundingClientRect();
           // Leave the top-left Back navigation unobstructed.
-          const top=Math.round(rect.top+52);
+          const back=document.getElementById("menuButton");
+          const backBottom=back ? back.getBoundingClientRect().bottom : rect.top+64;
+          const top=Math.round(Math.max(rect.top+6,backBottom+12));
           bin.style.top=top+"px";
           bin.style.height=Math.max(120,Math.round(rect.bottom-top))+"px";
           bin.style.bottom="auto";
