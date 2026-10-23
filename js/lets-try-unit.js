@@ -2279,6 +2279,57 @@
           eraseMenu.hidden = true;
           setTool("move");
         });
+        // Order cards into an invisible grid without changing their relative
+        // neighbourhoods. Match each card to a nearby available grid slot.
+        const orderButton = document.createElement("button");
+        orderButton.type = "button";
+        orderButton.className = "flash-board-tool";
+        orderButton.textContent = "▦";
+        orderButton.title = "Order cards into a tidy grid";
+        orderButton.setAttribute("aria-label", "Order cards");
+        orderButton.addEventListener("click", () => {
+          palette.hidden = true;
+          eraseMenu.hidden = true;
+          setTool("move");
+          if (!entries.length || !board.clientWidth || !board.clientHeight) return;
+          const slots = entries.map((entry, index) => {
+            const row = Math.floor(index / columns);
+            const rowCount = Math.min(columns, count - row * columns);
+            const col = index % columns;
+            const rowStart = (100 - rowCount * cellWidth) / 2;
+            return {
+              index,
+              x: rowStart + (col + .5) * cellWidth,
+              y: (row + .5) * cellHeight
+            };
+          });
+          const pending = entries.map((entry, index) => {
+            const position = entry.last || {x:0,y:0};
+            const size = dimensions(entry.tile);
+            return { entry, index,
+              x: position.x + size.width / 2,
+              y: position.y + size.height / 2 };
+          });
+          const options = [];
+          pending.forEach(item => slots.forEach(slot => {
+            const dx = (item.x - slot.x) * board.clientWidth / 100;
+            const dy = (item.y - slot.y) * board.clientHeight / 100;
+            options.push({item,slot,distance:dx*dx+dy*dy});
+          }));
+          options.sort((a,b) => a.distance-b.distance || a.item.index-b.item.index || a.slot.index-b.slot.index);
+          const usedCards = new Set(), usedSlots = new Set();
+          options.forEach(({item,slot}) => {
+            if (usedCards.has(item.index) || usedSlots.has(slot.index)) return;
+            usedCards.add(item.index);
+            usedSlots.add(slot.index);
+            const size = dimensions(item.entry.tile);
+            item.entry.last = place(item.entry.tile, {
+              x:slot.x-size.width/2,
+              y:slot.y-size.height/2
+            });
+            positions.set(item.entry.card.id, item.entry.last);
+          });
+        });
         const makeHistoryButton = (label, symbol, stack, otherStack) => {
           const button = document.createElement("button");
           button.type = "button";
@@ -2297,7 +2348,7 @@
         };
         undoButton = makeHistoryButton("Undo drawing", "↶", state.flashBoardUndo, state.flashBoardRedo);
         redoButton = makeHistoryButton("Redo drawing", "↷", state.flashBoardRedo, state.flashBoardUndo);
-        toolRail.append(pen, palette, eraser, eraseMenu, undoButton, redoButton, moveCards);
+        toolRail.append(pen, palette, eraser, eraseMenu, undoButton, redoButton, moveCards, orderButton);
         setTool("move");
         updateInkHistoryButtons();
         toolRail.id = "flashBoardTools";
