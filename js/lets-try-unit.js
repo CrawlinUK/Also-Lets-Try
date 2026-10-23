@@ -1980,9 +1980,9 @@
         let cellWidth = 100;
         let cellHeight = 100 / rows;
         const textOnly = state.displayMode === "text";
-        const cardWidth = Math.min(38, cellWidth * .94);
-        const cardHeight = Math.min(48, cellHeight * .93);
         const visualSize = (card) => {
+          const cardWidth = Math.min(38, cellWidth * .94);
+          const cardHeight = Math.min(48, cellHeight * .93);
           const ratio = visualRatio(card);
           // Always measure the actual board, never a guessed viewport ratio.
           const boardRatio = board.clientWidth / board.clientHeight;
