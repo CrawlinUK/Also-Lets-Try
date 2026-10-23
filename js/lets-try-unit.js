@@ -1971,7 +1971,7 @@
         };
         const count = cards.length;
         state.flashBoardLayerCounter = Math.max(state.flashBoardLayerCounter, count);
-        const columns = Math.max(1, Math.ceil(Math.sqrt(count * 1.5)));
+        const columns = count === 12 ? 4 : Math.max(1, Math.ceil(Math.sqrt(count * 1.5)));
         const rows = Math.max(1, Math.ceil(count / columns));
         const cellWidth = 100 / columns;
         const cellHeight = 100 / rows;
@@ -1992,6 +1992,7 @@
         const entries = [];
         let selectedEntry = null;
         let bin, binList, removeButton;
+        let removalMode = false;
         const binned = state.flashBoardBinned;
         const within = (element,x,y) => {
           const r=element.getBoundingClientRect();
@@ -1999,7 +2000,11 @@
         };
         const updateSelection = () => {
           entries.forEach(entry => entry.tile.classList.toggle("selected", entry===selectedEntry && !binned.has(entry.card.id)));
-          if (removeButton) removeButton.disabled = !selectedEntry || binned.has(selectedEntry.card.id);
+          entries.forEach(entry => entry.tile.classList.toggle("removal-target", removalMode && !binned.has(entry.card.id)));
+          if (removeButton) {
+            removeButton.classList.toggle("active", removalMode);
+            removeButton.setAttribute("aria-pressed", String(removalMode));
+          }
         };
         const updateCounter = () => { elements.counter.textContent = (count-binned.size)+" / "+count; };
         let renderBin = () => {};
@@ -2085,6 +2090,7 @@
           tile.addEventListener("pointerdown", (event) => {
             if (event.button !== 0 && event.pointerType === "mouse") return;
             event.preventDefault();
+            if (removalMode) { sendToBin(entry); return; }
             bringToFront(tile, card.id);
             const rect = board.getBoundingClientRect();
             if (!rect.width || !rect.height) return;
@@ -2155,6 +2161,8 @@
         binList.className="flash-board-bin-list";
         bin.append(binHeading,binList);
         document.body.append(bin);
+        bin.addEventListener("contextmenu",e=>e.preventDefault());
+        bin.addEventListener("selectstart",e=>e.preventDefault());
         renderBin=() => {
           binList.replaceChildren();
           const stored=entries.filter(entry=>binned.has(entry.card.id));
@@ -2169,7 +2177,10 @@
             item.style.zIndex=String(i+1);
             item.title=entry.card.word+" — hold and drag to restore";
             item.setAttribute("aria-label","Restore "+entry.card.word);
+            item.addEventListener("contextmenu",e=>e.preventDefault());
+            item.addEventListener("selectstart",e=>e.preventDefault());
             const preview=entry.tile.cloneNode(true);
+            preview.addEventListener("contextmenu",e=>e.preventDefault());
             preview.removeAttribute("tabindex");
             preview.removeAttribute("role");
             preview.classList.remove("selected","dragging");
@@ -2350,7 +2361,8 @@
           moveCards.setAttribute("aria-pressed", String(tool === "move"));
           pen.setAttribute("aria-pressed", String(tool === "draw"));
           eraser.setAttribute("aria-pressed", String(tool === "erase"));
-          drawingSurface.classList.toggle("drawing", tool !== "move");
+          drawingSurface.classList.toggle("drawing", tool !== "move" && !removalMode);
+          updateSelection();
         };
         const menuOption = (label, icon, action) => {
           const button = document.createElement("button");
@@ -2376,6 +2388,7 @@
           setTool("erase");
         });
         eraser.addEventListener("click", () => {
+          removalMode=false;
           palette.hidden = true;
           if (currentTool !== "erase") { eraseMenu.hidden = true; setTool("erase"); }
           else eraseMenu.hidden = !eraseMenu.hidden;
@@ -2396,6 +2409,7 @@
           palette.append(swatch);
         });
         pen.addEventListener("click", () => {
+          removalMode=false;
           if (currentTool !== "draw") {
             palette.hidden = true;
             eraseMenu.hidden = true;
@@ -2412,6 +2426,7 @@
         moveCards.setAttribute("aria-label", "Move cards");
         moveCards.setAttribute("aria-pressed", "true");
         moveCards.addEventListener("click", () => {
+          removalMode = false;
           palette.hidden = true;
           eraseMenu.hidden = true;
           setTool("move");
@@ -2490,10 +2505,13 @@
         removeButton.type="button";
         removeButton.className="flash-board-tool flash-board-remove";
         removeButton.textContent="⊖";
-        removeButton.title="Remove selected card to bin";
-        removeButton.setAttribute("aria-label","Remove selected card to bin");
+        removeButton.title="Tap cards to remove them to the bin";
+        removeButton.setAttribute("aria-label","Remove cards mode");
+        removeButton.setAttribute("aria-pressed","false");
         removeButton.addEventListener("click",()=>{
-          if(selectedEntry)sendToBin(selectedEntry);
+          removalMode=!removalMode;
+          if(removalMode) setTool("move");
+          updateSelection();
         });
         const makeHistoryButton = (label, symbol, stack, otherStack) => {
           const button = document.createElement("button");
