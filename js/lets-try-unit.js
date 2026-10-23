@@ -592,6 +592,7 @@
         flashBoardPenColour: "#e53935",
         flashBoardPositions: new Map(),
         flashBoardBinned: new Set(),
+        flashBoardTexts: [],
         flashBoardLayers: new Map(),
         flashBoardLayerCounter: 0,
         keywordOrder: [],
@@ -1997,6 +1998,8 @@
         let selectedEntry = null;
         let bin, binList, removeButton;
         let removalMode = false;
+        let textToolButton, suffixButton, selectedTextId = null, textDraft = null;
+        let renderTexts = () => {};
         const binned = state.flashBoardBinned;
         const within = (element,x,y) => {
           const r=element.getBoundingClientRect();
@@ -2005,6 +2008,7 @@
         const updateSelection = () => {
           entries.forEach(entry => entry.tile.classList.remove("selected"));
           entries.forEach(entry => entry.tile.classList.toggle("removal-target", removalMode && !binned.has(entry.card.id)));
+          if (textToolButton) textToolButton.classList.toggle("active", currentTool === "text");
           if (removeButton) {
             removeButton.classList.toggle("active", removalMode);
             removeButton.setAttribute("aria-pressed", String(removalMode));
@@ -2382,7 +2386,10 @@
           moveCards.setAttribute("aria-pressed", String(tool === "move"));
           pen.setAttribute("aria-pressed", String(tool === "draw"));
           eraser.setAttribute("aria-pressed", String(tool === "erase"));
-          drawingSurface.classList.toggle("drawing", tool !== "move" && !removalMode);
+          drawingSurface.classList.toggle("drawing", (tool === "draw" || tool === "erase" || tool === "text") && !removalMode);
+          textToolButton?.classList.toggle("active",tool === "text");
+          textToolButton?.setAttribute("aria-pressed",String(tool === "text"));
+          if (tool !== "text") { selectedTextId=null; renderTexts(); }
           updateSelection();
         };
         const menuOption = (label, icon, action) => {
@@ -2534,6 +2541,138 @@
           if(removalMode) setTool("move");
           updateSelection();
         });
+        textToolButton=document.createElement("button");
+        textToolButton.type="button";
+        textToolButton.className="flash-board-tool";
+        textToolButton.textContent="T";
+        textToolButton.title="Text: drag to draw a box; tap text to move or edit";
+        textToolButton.setAttribute("aria-label","Text tool");
+        textToolButton.setAttribute("aria-pressed","false");
+        textToolButton.addEventListener("click",()=>{
+          removalMode=false;palette.hidden=true;eraseMenu.hidden=true;
+          setTool("text");
+        });
+        suffixButton=document.createElement("button");
+        suffixButton.type="button";
+        suffixButton.className="flash-board-tool flash-board-suffix";
+        suffixButton.textContent="S";
+        suffixButton.title="Add or remove final s on selected text";
+        suffixButton.setAttribute("aria-label","Toggle final s on selected text");
+        suffixButton.addEventListener("click",()=>{
+          if(!selectedTextId)return;
+          const item=state.flashBoardTexts.find(t=>t.id===selectedTextId);
+          if(!item)return;
+          item.suffix=!item.suffix;renderTexts();
+        });
+        const editText=(item,isNew=false)=>{
+          document.getElementById("flashBoardTextDialog")?.remove();
+          const overlay=document.createElement("div");
+          overlay.id="flashBoardTextDialog";
+          overlay.className="flash-board-text-dialog";
+          const panel=document.createElement("div");
+          panel.className="flash-board-text-panel";
+          const heading=document.createElement("strong");
+          heading.textContent=isNew?"Add text":"Edit text";
+          const input=document.createElement("input");
+          input.type="text";
+          input.autocomplete="off";
+          input.spellcheck=false;
+          input.placeholder="Type your word or phrase";
+          input.value=item.text;
+          input.setAttribute("aria-label","Text for Flash Board");
+          const actions=document.createElement("div");
+          actions.className="flash-board-text-actions";
+          const confirm=document.createElement("button");
+          confirm.type="button";confirm.textContent="✓ Done";
+          const cancel=document.createElement("button");
+          cancel.type="button";cancel.textContent="Cancel";
+          const finish=save=>{
+            if(save){
+              item.text=input.value.trim();
+              if(item.text){
+                if(isNew)state.flashBoardTexts.push(item);
+                selectedTextId=item.id;
+              }
+            }
+            overlay.remove();renderTexts();
+          };
+          confirm.addEventListener("click",()=>finish(true));
+          cancel.addEventListener("click",()=>finish(false));
+          input.addEventListener("keydown",event=>{
+            if(event.key==="Enter"){event.preventDefault();finish(true);}
+            if(event.key==="Escape"){event.preventDefault();finish(false);}
+          });
+          actions.append(cancel,confirm);
+          panel.append(heading,input,actions);overlay.append(panel);
+          document.body.append(overlay);
+          // On tablets, the fixed editor is independent of the board geometry.
+          requestAnimationFrame(()=>input.focus());
+        };
+        const makeTextId=()=>String(Date.now())+"-"+Math.random().toString(36).slice(2);
+        const textLayer=document.createElement("div");
+        textLayer.className="flash-board-text-layer";
+        board.insertBefore(textLayer,drawingSurface);
+        renderTexts=()=>{
+          textLayer.replaceChildren();
+          state.flashBoardTexts.forEach(item=>{
+            const el=document.createElement("div");
+            el.className="flash-board-user-text";
+            el.style.left=item.x+"%";el.style.top=item.y+"%";
+            el.style.width=item.w+"%";el.style.height=item.h+"%";
+            el.textContent=item.text+(item.suffix && !item.text.endsWith("s")?"s":"");
+            el.classList.toggle("text-selected",selectedTextId===item.id && currentTool==="text");
+            el.style.pointerEvents=currentTool==="text"?"auto":"none";
+            let down=null,moved=false;
+            el.addEventListener("pointerdown",event=>{
+              if(currentTool!=="text")return;
+              event.preventDefault();event.stopPropagation();
+              el.setPointerCapture(event.pointerId);
+              down={x:event.clientX,y:event.clientY,initialX:item.x,initialY:item.y};
+              moved=false;
+            });
+            el.addEventListener("pointermove",event=>{
+              if(!down)return;
+              const dx=(event.clientX-down.x)/board.clientWidth*100;
+              const dy=(event.clientY-down.y)/board.clientHeight*100;
+              if(Math.abs(dx)+Math.abs(dy)>.4)moved=true;
+              item.x=Math.max(0,Math.min(100-item.w,down.initialX+dx));
+              item.y=Math.max(0,Math.min(100-item.h,down.initialY+dy));
+              el.style.left=item.x+"%";el.style.top=item.y+"%";
+            });
+            el.addEventListener("pointerup",event=>{
+              if(!down)return;down=null;
+              if(!moved){
+                if(selectedTextId===item.id)editText(item);
+                else {selectedTextId=item.id;renderTexts();}
+              }else{selectedTextId=item.id;renderTexts();}
+            });
+            el.addEventListener("pointercancel",()=>{down=null;});
+            textLayer.append(el);
+          });
+          suffixButton.disabled=!selectedTextId;
+        };
+        let textStart=null;
+        drawingSurface.addEventListener("pointerdown",event=>{
+          if(currentTool!=="text"||event.button!==0)return;
+          if(document.getElementById("flashBoardTextDialog"))return;
+          event.preventDefault();
+          const rect=board.getBoundingClientRect();
+          textStart={x:(event.clientX-rect.left)/rect.width*100,y:(event.clientY-rect.top)/rect.height*100};
+          drawingSurface.setPointerCapture(event.pointerId);
+        });
+        drawingSurface.addEventListener("pointerup",event=>{
+          if(currentTool!=="text"||!textStart)return;
+          event.preventDefault();
+          const rect=board.getBoundingClientRect();
+          const end={x:(event.clientX-rect.left)/rect.width*100,y:(event.clientY-rect.top)/rect.height*100};
+          const x=Math.max(0,Math.min(98,Math.min(textStart.x,end.x)));
+          const y=Math.max(0,Math.min(96,Math.min(textStart.y,end.y)));
+          const w=Math.min(100-x,Math.max(12,Math.abs(textStart.x-end.x)));
+          const h=Math.min(100-y,Math.max(8,Math.abs(textStart.y-end.y)));
+          textStart=null;
+          editText({id:makeTextId(),text:"",suffix:false,x,y,w,h},true);
+        });
+        drawingSurface.addEventListener("pointercancel",()=>{textStart=null;});
         const makeHistoryButton = (label, symbol, stack, otherStack) => {
           const button = document.createElement("button");
           button.type = "button";
@@ -2552,7 +2691,7 @@
         };
         undoButton = makeHistoryButton("Undo drawing", "↶", state.flashBoardUndo, state.flashBoardRedo);
         redoButton = makeHistoryButton("Redo drawing", "↷", state.flashBoardRedo, state.flashBoardUndo);
-        toolRail.append(moveCards, pen, palette, eraser, eraseMenu, undoButton, redoButton, orderButton, removeButton);
+        toolRail.append(moveCards, pen, palette, eraser, eraseMenu, textToolButton, suffixButton, undoButton, redoButton, orderButton, removeButton);
         setTool("move");
         updateInkHistoryButtons();
         toolRail.id = "flashBoardTools";
@@ -2599,7 +2738,7 @@
           renderInk();
         };
         drawingSurface.addEventListener("pointerdown", event => {
-          if (currentTool === "move" || (event.pointerType === "mouse" && event.button !== 0)) return;
+          if (currentTool === "move" || currentTool === "text" || (event.pointerType === "mouse" && event.button !== 0)) return;
           event.preventDefault();
           drawingSurface.setPointerCapture(event.pointerId);
           const point = pointOf(event);
@@ -2627,6 +2766,7 @@
         drawingSurface.addEventListener("pointerup", stopStroke);
         drawingSurface.addEventListener("pointercancel", stopStroke);
         renderInk();
+        renderTexts();
         // Measure the actual text-only cards before positioning them. The
         // cards follow a loose initial arrangement, not fixed-size grid slots.
         const positionInitialCards = () => {
