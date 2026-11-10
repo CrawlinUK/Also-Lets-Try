@@ -2691,20 +2691,26 @@
             overlay.remove();
             setTool("move");
           });
+          let editorClosed=false;
           const finish=save=>{
+            if(editorClosed)return;
+            editorClosed=true;
             if(save){
-              item.text=input.value.trim();
-              item.fontSize=Number(fontSize.value);
-              item.bold=bold;
-              item.italic=italic;
-              if(item.text){
+              const value=input.value.trim();
+              if(value){
+                item.text=value;
+                item.fontSize=Number(fontSize.value);
+                item.bold=bold;
+                item.italic=italic;
                 if(isNew)state.flashBoardTexts.push(item);
-                selectedTextId=item.id;
               }
             }
+            input.blur();
             overlay.remove();
-            if(save) { selectedTextId=null; setTool("move"); }
-            else renderTexts();
+            selectedTextId=null;
+            // Close the editor first, then leave Text mode even when the
+            // entered text was empty. This prevents accidental new boxes.
+            setTool("move");
           };
           confirm.addEventListener("click",()=>finish(true));
           cancel.addEventListener("click",()=>finish(false));
