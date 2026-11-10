@@ -913,6 +913,12 @@
         categories: Object.freeze(["numbers"]),
         description: "Roll through numbers, switch to dot groups, or choose a random number."
       }),
+      classroomRoulette: Object.freeze({
+        name: "Classroom Roulette",
+        path: "games/classroom-roulette/",
+        categories: Object.freeze(["numbers", "classroom game"]),
+        description: "Spin a wheel or reel to choose class numbers, manage attendance and track selections."
+      }),
       colourShapeRoller: Object.freeze({
         name: "Colour & Shape Roller",
         path: "games/colour-shape-roller.html",
@@ -930,7 +936,7 @@
 
     byCategory: Object.freeze({
       alphabet: Object.freeze(["alphabetBoard"]),
-      numbers: Object.freeze(["numberRoller"]),
+      numbers: Object.freeze(["numberRoller", "classroomRoulette"]),
       clockTimes: Object.freeze(["clockPractice"]),
       dailyTimes: Object.freeze(["clockPractice"]),
       colours: Object.freeze([]),
