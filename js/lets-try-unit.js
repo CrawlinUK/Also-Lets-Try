@@ -2921,7 +2921,8 @@
           eraseMenu.hidden=true;
           sizeMenu.hidden=!sizeMenu.hidden;
         });
-        toolRail.append(sizeButton,sizeMenu);
+        toolRail.insertBefore(sizeButton,removeButton);
+        toolRail.insertBefore(sizeMenu,removeButton);
         const pointOf = (event) => {
           const rect = inkLayer.getBoundingClientRect();
           return [
@@ -2962,6 +2963,98 @@
           }
           renderInk();
         };
+        // Apple-style hold-to-snap for basic, deliberately drawn shapes.
+        // Work in physical board pixels to avoid distortion on wide screens;
+        // store the resulting geometry in the same 0–1000 ink coordinates.
+        const recogniseInkShape = source => {
+          if(source.length<4)return null;
+          const sx=board.clientWidth/1000,sy=board.clientHeight/1000;
+          if(!sx || !sy)return null;
+          const points=source.map(p=>[p[0]*sx,p[1]*sy]);
+          const distance=(a,b)=>Math.hypot(a[0]-b[0],a[1]-b[1]);
+          const start=points[0],end=points[points.length-1];
+          const minX=Math.min(...points.map(p=>p[0]));
+          const maxX=Math.max(...points.map(p=>p[0]));
+          const minY=Math.min(...points.map(p=>p[1]));
+          const maxY=Math.max(...points.map(p=>p[1]));
+          const width=maxX-minX,height=maxY-minY,diagonal=Math.hypot(width,height);
+          const travelled=points.slice(1).reduce((sum,p,i)=>sum+distance(p,points[i]),0);
+          if(diagonal<28 || travelled<30)return null;
+          const back=p=>[p[0]/sx,p[1]/sy];
+          const straightError=(pts,a,b)=>{
+            const len=distance(a,b)||1;
+            return pts.reduce((sum,p)=>sum+Math.abs((b[0]-a[0])*(a[1]-p[1])-(a[0]-p[0])*(b[1]-a[1]))/len,0)/pts.length;
+          };
+          const endDistance=distance(start,end);
+          if(endDistance>42 && endDistance/travelled>.90 &&
+             straightError(points,start,end)<Math.max(6,endDistance*.065))
+            return [back(start),back(end)];
+          // Closed loops: a rectangle hugs its four edges; a circle or oval
+          // follows an ellipse with similar radial distances.
+          if(width>28 && height>28 && endDistance<diagonal*.23 && travelled>diagonal*1.75){
+            const cx=(minX+maxX)/2,cy=(minY+maxY)/2;
+            const edgeError=points.reduce((sum,p)=>sum+Math.min(
+              Math.abs(p[0]-minX),Math.abs(p[0]-maxX),
+              Math.abs(p[1]-minY),Math.abs(p[1]-maxY)
+            ),0)/points.length/Math.min(width,height);
+            const ovalError=points.reduce((sum,p)=>{
+              const radial=Math.hypot((p[0]-cx)/(width/2),(p[1]-cy)/(height/2));
+              return sum+Math.abs(radial-1);
+            },0)/points.length;
+            // Prefer rectangular corners only when the stroke clearly
+            // follows straight edges; otherwise fit a smooth ellipse.
+            if(edgeError<.115 && edgeError<ovalError*.8){
+              const corners=[[minX,minY],[maxX,minY],[maxX,maxY],[minX,maxY],[minX,minY]];
+              return corners.map(back);
+            }
+            if(ovalError<.23){
+              return Array.from({length:65},(_,i)=>{
+                const angle=2*Math.PI*i/64;
+                return back([cx+width/2*Math.cos(angle),cy+height/2*Math.sin(angle)]);
+              });
+            }
+          }
+          // Hand-drawn arrows usually have a long straight shaft followed by
+          // a shorter hooked stroke. Recognise the tip and reconstruct two
+          // symmetric arrowhead wings.
+          let tipIndex=0,shaft=0;
+          points.forEach((p,i)=>{
+            const d=distance(start,p);
+            if(d>shaft){shaft=d;tipIndex=i;}
+          });
+          if(shaft>55 && tipIndex>points.length*.30 &&
+             tipIndex<points.length-2 && distance(end,points[tipIndex])<shaft*.48 &&
+             straightError(points.slice(0,tipIndex+1),start,points[tipIndex])<shaft*.08){
+            const tip=points[tipIndex],vx=(tip[0]-start[0])/shaft,vy=(tip[1]-start[1])/shaft;
+            const side=Math.abs((end[0]-tip[0])*(-vy)+(end[1]-tip[1])*vx);
+            if(side>shaft*.08){
+              const head=Math.min(36,shaft*.26);
+              const wingA=[tip[0]-vx*head-vy*head*.60,tip[1]-vy*head+vx*head*.60];
+              const wingB=[tip[0]-vx*head+vy*head*.60,tip[1]-vy*head-vx*head*.60];
+              return [start,tip,wingA,tip,wingB].map(back);
+            }
+          }
+          return null;
+        };
+        let shapeHoldTimer=null;
+        const clearShapeHold=()=>{
+          if(shapeHoldTimer!==null)clearTimeout(shapeHoldTimer);
+          shapeHoldTimer=null;
+        };
+        const scheduleShapeHold=()=>{
+          clearShapeHold();
+          if(!activeStroke || activeStroke.snapped || activeStroke.points.length<4)return;
+          // Hold after finishing the gesture; release immediately for freehand.
+          shapeHoldTimer=setTimeout(()=>{
+            shapeHoldTimer=null;
+            if(!activeStroke || currentTool!=="draw")return;
+            const snapped=recogniseInkShape(activeStroke.points);
+            if(!snapped)return;
+            activeStroke.points=snapped;
+            activeStroke.snapped=true;
+            renderInk();
+          },1500);
+        };
         drawingSurface.addEventListener("pointerdown", event => {
           if (currentTool === "move" || currentTool === "text" || (event.pointerType === "mouse" && event.button !== 0)) return;
           event.preventDefault();
@@ -2969,6 +3062,7 @@
           const point = pointOf(event);
           beginInkAction();
           if (currentTool === "draw") {
+            clearShapeHold();
             activeStroke = { colour: state.flashBoardPenColour, points: [point] };
             state.flashBoardInk.push(activeStroke);
             renderInk();
@@ -2979,11 +3073,14 @@
         });
         drawingSurface.addEventListener("pointermove", event => {
           if (activeStroke) {
+            if(activeStroke.snapped)return;
             activeStroke.points.push(pointOf(event));
             renderInk();
+            scheduleShapeHold();
           } else if (erasing && eraserMode === "part") applyEraser(pointOf(event));
         });
         const stopStroke = () => {
+          clearShapeHold();
           if (activeStroke || erasing) commitInkAction();
           activeStroke = null;
           erasing = false;
