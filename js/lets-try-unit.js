@@ -590,6 +590,7 @@
         flashBoardUndo: [],
         flashBoardRedo: [],
         flashBoardPenColour: "#e53935",
+        flashBoardCardScale: 1,
         flashBoardPositions: new Map(),
         flashBoardBinned: new Set(),
         flashBoardTexts: [],
@@ -2020,8 +2021,8 @@
         let cellHeight = 100 / rows;
         const textOnly = state.displayMode === "text";
         const visualSize = (card) => {
-          const cardWidth = Math.min(38, cellWidth * .94);
-          const cardHeight = Math.min(48, cellHeight * .93);
+          const cardWidth = Math.min(75, Math.min(38, cellWidth * .94) * state.flashBoardCardScale);
+          const cardHeight = Math.min(80, Math.min(48, cellHeight * .93) * state.flashBoardCardScale);
           const ratio = visualRatio(card);
           // Always measure the actual board, never a guessed viewport ratio.
           const boardRatio = board.clientWidth / board.clientHeight;
@@ -2860,6 +2861,67 @@
         toolRail.id = "flashBoardTools";
         document.getElementById("flashBoardTools")?.remove();
         document.body.append(toolRail);
+        // Size applies to every flashcard, without disturbing their centres.
+        // Kept separate from text boxes and drawing marks.
+        const applyCardScale = value => {
+          state.flashBoardCardScale = Math.max(.7, Math.min(1.5, Math.round(value * 100) / 100));
+          if (!board.clientWidth || !board.clientHeight) return;
+          entries.forEach(entry => {
+            const {tile,card} = entry;
+            const wasHidden = tile.hidden;
+            if (wasHidden) tile.hidden = false;
+            const before = dimensions(tile);
+            const centre = entry.last ? {
+              x:entry.last.x + before.width / 2,
+              y:entry.last.y + before.height / 2
+            } : {x:50,y:50};
+            if (!textOnly) {
+              const size = visualSize(card);
+              tile.style.width = size.width + "%";
+              if (tile.classList.contains("flag-sprite-card")) {
+                tile.style.aspectRatio = "4 / 3";
+                tile.style.height = "auto";
+              } else tile.style.height = size.height + "%";
+            } else {
+              const word=tile.querySelector(".flash-board-word");
+              if(word) word.style.fontSize =
+                (Math.max(18,Math.min(48,window.innerWidth*.028))*state.flashBoardCardScale)+"px";
+            }
+            const after=dimensions(tile);
+            entry.binSize={width:tile.offsetWidth,height:tile.offsetHeight};
+            entry.last=place(tile,{x:centre.x-after.width/2,y:centre.y-after.height/2});
+            positions.set(card.id,entry.last);
+            if (wasHidden) tile.hidden=true;
+          });
+          renderBin();
+        };
+        const sizeButton=document.createElement("button");
+        sizeButton.type="button";
+        sizeButton.className="flash-board-tool";
+        sizeButton.textContent="⤢";
+        sizeButton.title="Card size";
+        sizeButton.setAttribute("aria-label","Card size");
+        const sizeMenu=document.createElement("div");
+        sizeMenu.className="flash-board-size-menu";
+        sizeMenu.hidden=true;
+        [["Bigger",()=>applyCardScale(state.flashBoardCardScale+.15)],
+         ["Smaller",()=>applyCardScale(state.flashBoardCardScale-.15)],
+         ["Reset size",()=>applyCardScale(1)]].forEach(([label,action])=>{
+          const button=document.createElement("button");
+          button.type="button";
+          button.textContent=label;
+          button.addEventListener("click",()=>{
+            action();
+            // Keep the three controls open for repeated taps.
+          });
+          sizeMenu.append(button);
+        });
+        sizeButton.addEventListener("click",()=>{
+          palette.hidden=true;
+          eraseMenu.hidden=true;
+          sizeMenu.hidden=!sizeMenu.hidden;
+        });
+        toolRail.append(sizeButton,sizeMenu);
         const pointOf = (event) => {
           const rect = inkLayer.getBoundingClientRect();
           return [
@@ -2945,13 +3007,16 @@
               const size = visualSize(card);
               tile.style.width = size.width + "%";
               if (tile.classList.contains("flag-sprite-card")) {
-                // The sprite's 640×480 cell must exactly match the rendered
-                // card, including after leaving and re-entering Flash Board.
+                // Keep flag sprite cells at their source ratio at every size.
                 tile.style.aspectRatio = "4 / 3";
                 tile.style.height = "auto";
               } else {
                 tile.style.height = size.height + "%";
               }
+            } else {
+              const word = tile.querySelector(".flash-board-word");
+              if (word) word.style.fontSize =
+                (Math.max(18, Math.min(48, window.innerWidth * .028)) * state.flashBoardCardScale) + "px";
             }
             const row = Math.floor(index / columns);
             const rowCount = Math.min(columns, count - row * columns);
