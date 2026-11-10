@@ -3388,3 +3388,15 @@ html.shared-unit-template .flash-board-tools .flash-board-bin-icon {
 html.shared-unit-template .flash-board-suffix {
   font-size:20px;letter-spacing:-1px;
 }
+
+/* v64: the text editor must sit above the high-z-index canvas text layer.
+   Otherwise the canvas can intercept Done/Cancel taps on some devices. */
+html.shared-unit-template .flash-board-text-dialog {
+  z-index:2147483647;
+  pointer-events:auto;
+  isolation:isolate;
+}
+html.shared-unit-template .flash-board-text-panel,
+html.shared-unit-template .flash-board-text-panel button {
+  pointer-events:auto;
+}
