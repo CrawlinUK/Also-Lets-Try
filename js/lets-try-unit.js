@@ -2898,7 +2898,7 @@
         const sizeButton=document.createElement("button");
         sizeButton.type="button";
         sizeButton.className="flash-board-tool";
-        sizeButton.textContent="⤢";
+        sizeButton.innerHTML = '<span class="flash-board-action-symbol" aria-hidden="true">⤢</span><span class="flash-board-action-label">size</span>';
         sizeButton.title="Card size";
         sizeButton.setAttribute("aria-label","Card size");
         const sizeMenu=document.createElement("div");
