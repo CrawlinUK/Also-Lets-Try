@@ -3433,3 +3433,12 @@ html.shared-unit-template .flash-board-size-menu button:active,
 html.shared-unit-template .flash-board-size-menu button:hover {
   background:#dbeaf4;
 }
+
+html.shared-unit-template .flash-board-tools .flash-board-tool[aria-label="Card size"] {
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:0;
+  line-height:1;
+}
