@@ -3400,3 +3400,36 @@ html.shared-unit-template .flash-board-text-panel,
 html.shared-unit-template .flash-board-text-panel button {
   pointer-events:auto;
 }
+
+/* v65: size controls live in a compact flyout beside the Order/Remove group. */
+html.shared-unit-template .flash-board-size-menu {
+  position:absolute;
+  right:calc(100% + 8px);
+  bottom:42px;
+  display:flex;
+  flex-direction:column;
+  min-width:116px;
+  padding:6px;
+  gap:4px;
+  border:1px solid #cbd7dd;
+  border-radius:11px;
+  background:#fff;
+  box-shadow:0 4px 12px #243a4b2d;
+  z-index:130;
+}
+html.shared-unit-template .flash-board-size-menu[hidden] {display:none;}
+html.shared-unit-template .flash-board-size-menu button {
+  border:0;
+  border-radius:7px;
+  padding:9px 11px;
+  background:#eff5f8;
+  color:#213248;
+  text-align:left;
+  font-size:14px;
+  cursor:pointer;
+  touch-action:manipulation;
+}
+html.shared-unit-template .flash-board-size-menu button:active,
+html.shared-unit-template .flash-board-size-menu button:hover {
+  background:#dbeaf4;
+}
