@@ -436,7 +436,7 @@ body{background:radial-gradient(circle at 50% 44%,#ffffff 0%,#fff4d9 63%,#ffe4d0
       <div class="result-announce" id="resultAnnounce" aria-live="polite"></div>
       <div class="stage-info" id="poolInfo">
         <span id="todaySpins" class="today-spins">Spins today: 0</span>
-        <button type="button" id="notPickedButton" class="not-picked-btn" aria-controls="dailyPopover" aria-expanded="false">Numbers not yet picked: 35</button>
+        <button type="button" id="notPickedButton" class="not-picked-btn" aria-controls="dailyPopover" aria-expanded="false">35 numbers not yet selected.</button>
         <div class="daily-popover" id="dailyPopover" role="region" aria-label="Today’s selected and unselected numbers" hidden>
           <div class="daily-titlebar"><strong>Today’s numbers</strong><button type="button" class="daily-close" id="closeDailyPopover" aria-label="Close number list">✕ Close</button></div>
           <div id="dailyPopoverContent"></div>
@@ -723,7 +723,7 @@ function renderHeader(){
  const avail=eligible(g).length,total=g.max-g.min+1;
  const todayRows=spinsToday(g);
  $('todaySpins').textContent='Spins today: '+todayRows.length;
- $('notPickedButton').textContent='Numbers not yet picked: '+notPickedToday(g,todayRows).length;
+ $('notPickedButton').textContent=notPickedToday(g,todayRows).length+' numbers not yet selected.';
  if(dailyPopoverOpen)renderDailyPopover();
  $('sideTitle').textContent=g.name;syncQuickNumbers();
 }
