@@ -2508,7 +2508,7 @@
         const orderButton = document.createElement("button");
         orderButton.type = "button";
         orderButton.className = "flash-board-tool";
-        orderButton.textContent = "▦";
+        orderButton.innerHTML = '<span class="flash-board-action-symbol" aria-hidden="true">▦</span><span class="flash-board-action-label">order</span>';
         orderButton.title = "Order cards into a tidy grid";
         orderButton.setAttribute("aria-label", "Order cards");
         orderButton.addEventListener("click", () => {
@@ -2576,7 +2576,7 @@
         removeButton=document.createElement("button");
         removeButton.type="button";
         removeButton.className="flash-board-tool flash-board-remove";
-        removeButton.textContent="⊖";
+        removeButton.innerHTML = '<svg class="flash-board-bin-icon" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round"><path d="M4 7h16M9 4h6M6 7l1.1 13h9.8L18 7"/><path d="M9 10l.5 7M12 10v7M15 10l-.5 7" stroke-dasharray="1.3 1.5"/></svg><span class="flash-board-action-label">remove</span>';
         removeButton.title="Tap cards to remove them to the bin";
         removeButton.setAttribute("aria-label","Remove cards mode");
         removeButton.setAttribute("aria-pressed","false");
@@ -2599,7 +2599,7 @@
         suffixButton=document.createElement("button");
         suffixButton.type="button";
         suffixButton.className="flash-board-tool flash-board-suffix";
-        suffixButton.textContent="S";
+        suffixButton.textContent="Ss";
         suffixButton.title="Toggle plural forms for applicable flashcards";
         suffixButton.setAttribute("aria-label","Pluralise applicable flashcards");
         suffixButton.setAttribute("aria-pressed",String(cards.some(card=>pluralCards.has(card.id))));
@@ -2678,6 +2678,19 @@
           confirm.type="button";confirm.textContent="✓ Done";
           const cancel=document.createElement("button");
           cancel.type="button";cancel.textContent="Cancel";
+          const deleteButton=document.createElement("button");
+          deleteButton.type="button";
+          deleteButton.textContent="Delete text";
+          deleteButton.className="flash-board-text-delete";
+          deleteButton.setAttribute("aria-label","Delete this text box");
+          deleteButton.hidden=isNew;
+          deleteButton.addEventListener("click",()=>{
+            const index=state.flashBoardTexts.findIndex(text=>text.id===item.id);
+            if(index>=0)state.flashBoardTexts.splice(index,1);
+            selectedTextId=null;
+            overlay.remove();
+            setTool("move");
+          });
           const finish=save=>{
             if(save){
               item.text=input.value.trim();
@@ -2689,7 +2702,9 @@
                 selectedTextId=item.id;
               }
             }
-            overlay.remove();renderTexts();
+            overlay.remove();
+            if(save) { selectedTextId=null; setTool("move"); }
+            else renderTexts();
           };
           confirm.addEventListener("click",()=>finish(true));
           cancel.addEventListener("click",()=>finish(false));
@@ -2697,7 +2712,7 @@
             if(event.key==="Enter" && (event.ctrlKey || event.metaKey)){event.preventDefault();finish(true);}
             if(event.key==="Escape"){event.preventDefault();finish(false);}
           });
-          actions.append(cancel,confirm);
+          actions.append(deleteButton,cancel,confirm);
           panel.append(heading,formatting,input,actions);overlay.append(panel);
           document.body.append(overlay);
           // On tablets, the fixed editor is independent of the board geometry.
