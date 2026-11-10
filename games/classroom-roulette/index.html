@@ -4,8 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#fff5df">
-<!-- Classroom Roulette v0.28: 2.5-second result confirmation with independent physical coasting. -->
-<title>Classroom Roulette v0.28</title>
+<!-- Classroom Roulette v0.29: 2.5-second result confirmation with independent physical coasting. -->
+<title>Classroom Roulette v0.29</title>
 <style>
 :root{font-family:Arial,Helvetica,sans-serif;color-scheme:dark;--bg:#0c1426;--panel:#15233b;--surface:#203553;--edge:#405775;--text:#f5f8ff;--muted:#b5c5de;--mint:#6ee2cc;--gold:#ffdf8b;--blue:#74a9fa}
 *{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;background:#0c1426;color:var(--text)}body{overflow:hidden;background:radial-gradient(ellipse at 50% 42%,#263d61 0%,#101b31 58%,#091121 100%)}button,input,select{font:inherit}button{cursor:pointer}button:disabled{opacity:.47;cursor:default}button:focus-visible,input:focus-visible,select:focus-visible,.reel-stage:focus-visible{outline:3px solid var(--gold);outline-offset:3px}[hidden]{display:none!important}
@@ -356,6 +356,14 @@ body{background:radial-gradient(circle at 50% 44%,#ffffff 0%,#fff4d9 63%,#ffe4d0
 .physics-metrics dt:last-of-type,.physics-metrics dd:last-of-type{border-bottom:0}
 .drawer-nav button{font-size:clamp(10px,1vw,13px);padding-inline:2px}
 
+/* v0.29: Clear results beneath the recent-result numbers. */
+.recent-rail{transform:translateY(-35%)}
+.recent-clear{pointer-events:auto;width:76px;max-width:calc(100vw - 8px);margin-top:7px;padding:7px 3px;border:1px solid #e7b1c6;border-radius:9px;background:#fff9f1;color:#9e426d;font-size:11px;font-weight:900;line-height:1.15;box-shadow:0 2px 5px #87557e26;cursor:pointer;text-align:center}
+.recent-clear:hover:not(:disabled){background:#ffe8f0;border-color:#d95e9b}
+.recent-clear:focus-visible{outline:3px solid #ed9a37;outline-offset:2px}
+.recent-clear:disabled{opacity:.5;cursor:default}
+@media(max-width:720px){.recent-clear{width:66px;font-size:10px;padding:6px 2px}}
+@media(max-width:390px){.recent-clear{width:60px;font-size:9px}}
 /* v0.27: hidden physics door in Options, discreet on-stage shortcut */
 .drawer{isolation:isolate}
 #advancedPhysicsDoor{position:absolute;right:0;bottom:0;width:60px;height:60px;opacity:0;border:0;background:transparent;cursor:default;z-index:5;padding:0}
@@ -422,6 +430,7 @@ body{background:radial-gradient(circle at 50% 44%,#ffffff 0%,#fff4d9 63%,#ffe4d0
       </div>
       <aside class="recent-rail" id="recentRail" aria-label="Recently selected numbers">
         <div class="recent-label">Recent<br>results</div><div class="recent-list" id="recentList"></div>
+        <button type="button" class="recent-clear" id="clearRecentResults" title="Clear all results for the current class" aria-label="Clear all results for the current class">Clear<br>results</button>
       </aside>
       <div class="statusline" id="statusLine" aria-live="polite"></div>
       <div class="result-announce" id="resultAnnounce" aria-live="polite"></div>
@@ -516,7 +525,7 @@ body{background:radial-gradient(circle at 50% 44%,#ffffff 0%,#fff4d9 63%,#ffe4d0
       <p class="settings-note">The spring returns the pointer to centre. Only actual contact transfers force to the wheel. While the mouse holds the wheel, it acts like a fixed hand.</p>
       <div class="section">
         <h3>Save physics to the code</h3>
-        <p class="physics-save-note">The sliders are automatically saved in this browser. To make them the built-in defaults of the HTML file, download the code below and replace the section marked <code>&gt;-==PHYSICS==-&lt;</code> through <code>&gt;-==END PHYSICS==-&lt;</code> in <strong>Classroom_Roulette_v0.28.html</strong>.</p>
+        <p class="physics-save-note">The sliders are automatically saved in this browser. To make them the built-in defaults of the HTML file, download the code below and replace the section marked <code>&gt;-==PHYSICS==-&lt;</code> through <code>&gt;-==END PHYSICS==-&lt;</code> in <strong>Classroom_Roulette_v0.29.html</strong>.</p>
         <button type="button" id="savePhysicsCode" class="btn full">Save physics settings as code (.txt)</button>
         <p class="physics-save-note" id="physicsCodeHelp" role="status" aria-live="polite"></p>
       </div>
@@ -665,6 +674,7 @@ function renderControls(){
  $('hubBtn').setAttribute('aria-label',physics?'Push the wheel to spin':motion.kind==='free'?'Stop the reel':busy?'Reel spinning':avail?'Spin the reel':'No numbers left');
  $('reelHint').textContent=motion.kind==='reelDrag'?'HOLD OR PULL TO STOP':motion.kind==='reelPhysics'?'CLICK TO SPEED UP · HOLD TO STOP':motion.kind==='reelSettle'?'SLOWING DOWN…':avail?'CLICK OR PULL TO SPIN':'OPEN GROUP LIST';
  $('reelStage').setAttribute('aria-disabled',(!avail&&motion.kind==='idle')?'true':'false');
+ $('clearRecentResults').disabled=busy||!g.history.length;
  $('stageNoteText').textContent=physics?'Centre: push again to speed up · Grab the wheel to catch it':motion.kind==='reelDrag'?'Release to settle or flick':motion.kind==='reelPhysics'?'Click to speed up · Hold to catch · Pull to flick':'Click or pull to spin · Space to push';
  $('physicsShortcut').hidden=!physicsAccessRevealed;
  $('statusLine').textContent=motion.blocked!==null?'Number '+motion.blocked+' is unavailable — flick again':!avail&&motion.kind==='idle'?'Everyone has had a turn!':'';
@@ -702,6 +712,7 @@ function setDailyPopover(open){
 
 function renderRecent(){
  const list=$('recentList'),g=group();list.replaceChildren();
+ $('clearRecentResults').disabled=motion.kind!=='idle'||!g.history.length;
  const results=g.history.slice(-8).reverse();
  if(!results.length){const empty=document.createElement('div');empty.className='recent-empty';empty.textContent='—';list.append(empty);return}
  results.forEach((item,i)=>{const cell=document.createElement('div');cell.className='recent-number'+(i===0?' latest':'');cell.textContent=String(item.number);
@@ -1440,15 +1451,15 @@ function savePhysicsCode(){
   'const PHYSICS_DEFAULTS=Object.freeze('+JSON.stringify(cfg,null,2)+');',
   'const PHYSICS_DEBUG_DEFAULTS=Object.freeze('+JSON.stringify(dbg,null,2)+');',
   '// >-==END PHYSICS==-<' ].join('\n');
- const note='Classroom Roulette v0.28 — replace ONLY the marked physics section in the HTML file.\n'+
+ const note='Classroom Roulette v0.29 — replace ONLY the marked physics section in the HTML file.\n'+
   'Find: // >-==PHYSICS==-<\n'+
   'Replace through: // >-==END PHYSICS==-<\n'+
   'Existing browser-saved physics values override HTML defaults until Reset physics settings is used.\n\n';
  const blob=new Blob([note+body+'\n'],{type:'text/plain;charset=utf-8'});
  const url=URL.createObjectURL(blob),link=document.createElement('a');
- link.href=url;link.download='Classroom_Roulette_v0.28_PHYSICS_CODE.txt';
+ link.href=url;link.download='Classroom_Roulette_v0.29_PHYSICS_CODE.txt';
  document.body.append(link);link.click();link.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);
- $('physicsCodeHelp').textContent='Saved code file. In Classroom_Roulette_v0.28.html, replace the whole marked PHYSICS block (including both marker lines) with the downloaded block.';
+ $('physicsCodeHelp').textContent='Saved code file. In Classroom_Roulette_v0.29.html, replace the whole marked PHYSICS block (including both marker lines) with the downloaded block.';
  save();notice('Physics code downloaded; browser settings are also saved.');
 }
 function bindPhysicsControls(){buildPhysicsControls();
@@ -1492,7 +1503,17 @@ function deleteSchool(){if(state.schools.length===1){notice('You must keep at le
 function deleteGroup(){const s=school(),g=group();if(s.groups.length===1){notice('A group must have at least one sub-group.');return}if(!confirm('Delete '+g.name+' and its tallies and history? This cannot be undone.'))return;s.groups=s.groups.filter(x=>x.id!==g.id);state.groupId=s.groups[0].id;save();switchGroup();notice('Sub-group deleted.')}
 function exportData(){const b=new Blob([JSON.stringify({application:'Classroom Roulette',exportedAt:new Date().toISOString(),...state},null,2)],{type:'application/json'}),url=URL.createObjectURL(b),a=document.createElement('a');a.href=url;a.download='Classroom_Roulette_Backup_'+today()+'.json';document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);notice('Backup exported. Keep the JSON file somewhere safe.')}
 async function importData(file){if(!file)return;if(file.size>12*1024*1024){notice('The backup is too large (12 MB limit).');return}try{const json=JSON.parse(await file.text());const incoming=normalize(json);if(!confirm('Replace ALL current schools, groups and histories with this backup?'))return;state=upgradeDefaultNames(incoming);quickDirty=false;quickBoundGroupId=null;save();setIdlePosition();renderAll();closeDrawer();notice('Backup imported successfully.')}catch(e){notice('Could not import backup: '+(e.message||'invalid JSON'))}finally{$('importInput').value=''}}
-function clearRecords(){const g=group();if(!confirm('Clear ALL selection tallies and history for '+g.name+'? This cannot be undone.'))return;g.history=[];g.tally={};g.used=[];g.wheelRest=null;g.wheelRestNumber=null;save();setIdlePosition();renderAll();notice('History and tallies cleared for '+g.name+'.')}
+function clearRecords(){
+ if(motion.kind!=='idle')return;
+ const g=group();
+ if(!confirm('Clear all results for '+g.name+'? This removes recent results, today’s picks, selection counts and history. Class settings and attendance will be kept. This cannot be undone.'))return;
+ stopConfirmedCoast();
+ g.history=[];g.tally={};g.used=[];g.wheelRest=null;g.wheelRestNumber=null;
+ motion.confirmedNumber=null;motion.blocked=null;motion.lastAdjustableId=null;motion.adjusting=false;
+ setDailyPopover(false);
+ save();setIdlePosition();renderAll();
+ notice('All results cleared for '+g.name+'. Settings and attendance kept.');
+}
 function toggleAbsent(n){if(motion.kind!=='idle')return;motion.blocked=null;const g=group();if(g.permanent.includes(n))return;g.absent=g.absent.includes(n)?g.absent.filter(x=>x!==n):[...g.absent,n].sort((a,b)=>a-b);g.absenceDate=today();save();renderAll()}
 function clearAbsence(){if(motion.kind!=='idle')return;motion.blocked=null;const g=group();g.absent=[];g.absenceDate=today();save();renderAll();notice('Everyone marked present for today.')}
 function returnNumber(n){if(motion.kind!=='idle')return;motion.blocked=null;const g=group();g.used=g.used.filter(x=>x!==n);save();renderAll();notice('Number '+n+' returned to the pool. Its tallies are unchanged.')}
@@ -1500,6 +1521,7 @@ function shuffleWheel(){if(motion.kind!=='idle')return;stopConfirmedCoast();cons
 function bind(){
  bindPhysicsControls();
  $('quickForm').addEventListener('submit',e=>{e.preventDefault();applyQuick()});
+ $('clearRecentResults').addEventListener('click',clearRecords);
  $('notPickedButton').addEventListener('click',e=>{e.stopPropagation();setDailyPopover(!dailyPopoverOpen)});
  $('closeDailyPopover').addEventListener('click',e=>{e.stopPropagation();setDailyPopover(false);$('notPickedButton').focus()});
  document.addEventListener('pointerdown',e=>{if(dailyPopoverOpen&&!$('poolInfo').contains(e.target))setDailyPopover(false)});
