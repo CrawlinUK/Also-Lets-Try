@@ -32,7 +32,7 @@
     bookId,
     unitNumber: "3",
     unitTitle: "I like Mondays.",
-    browserTitle: "Let’s Try! 2 — I like Mondays.",
+    browserTitle: "Bk2U3 — I like Mondays.",
     unitColour: "#E84283",
     unitNumberColour: "#EF78A5",
     menuFile: "lets_try_2.html",
