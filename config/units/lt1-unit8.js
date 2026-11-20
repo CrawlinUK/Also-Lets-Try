@@ -144,7 +144,7 @@
     bookId: UNIT_BOOK_ID,
     unitNumber: "8",
     unitTitle: "What’s this?",
-    browserTitle: "Let’s Try! 1 — What’s this?",
+    browserTitle: "Bk1U8 — What’s this?",
 
     unitColour: "#0B7CC3",
     unitNumberColour: "#5AA9DA",
