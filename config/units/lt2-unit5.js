@@ -40,7 +40,7 @@
     bookId,
     unitNumber: "5",
     unitTitle: "Do you have a pen?",
-    browserTitle: "Let’s Try! 2 — Do you have a pen?",
+    browserTitle: "Bk2U5 — Do you have a pen?",
     unitColour: "#00ADA9",
     unitNumberColour: "#52C8C4",
     menuFile: "lets_try_2.html",
