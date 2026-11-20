@@ -54,7 +54,7 @@
     bookId: UNIT_BOOK_ID,
     unitNumber: "9",
     unitTitle: "Who are you?",
-    browserTitle: "Let’s Try! 1 — Who are you?",
+    browserTitle: "Bk1U9 — Who are you?",
 
     unitColour: "#14A83B",
     unitNumberColour: "#54BE6D",
