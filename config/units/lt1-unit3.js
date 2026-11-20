@@ -43,7 +43,7 @@
     bookId: "lt1",
     unitNumber: "3",
     unitTitle: "How many?",
-    browserTitle: "Let’s Try! Tools — How many?",
+    browserTitle: "Bk1U3 — How many?",
     unitColour: "#E84283",
     unitNumberColour: "#F06AA0",
     menuFile: "lets_try_1.html",
