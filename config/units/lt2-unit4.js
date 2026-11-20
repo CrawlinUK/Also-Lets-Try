@@ -48,7 +48,7 @@
     bookId,
     unitNumber: "4",
     unitTitle: "What time is it?",
-    browserTitle: "Let’s Try! 2 — What time is it?",
+    browserTitle: "Bk2U4 — What time is it?",
     unitColour: "#ED6D00",
     unitNumberColour: "#F28C45",
     menuFile: "lets_try_2.html",
