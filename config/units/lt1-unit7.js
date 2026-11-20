@@ -45,7 +45,7 @@
     bookId: UNIT_BOOK_ID,
     unitNumber: "7",
     unitTitle: "This is for you.",
-    browserTitle: "Let’s Try! 1 — This is for you.",
+    browserTitle: "Bk1U7 — This is for you.",
 
     unitColour: "#6F58A3",
     unitNumberColour: "#8E79BB",
