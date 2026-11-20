@@ -138,7 +138,7 @@
   const UNIT_CONFIG = {
       unitNumber: "4",
       unitTitle: "I like blue.",
-      browserTitle: "Let’s Try! Tools — I like blue.",
+      browserTitle: "Bk1U4 — I like blue.",
 
       /* Official textbook unit colour. */
       unitColour: "#ED6D00",
