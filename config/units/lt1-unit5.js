@@ -6,7 +6,7 @@
     bookId: "lt1",
     unitNumber: "5",
     unitTitle: "What do you like?",
-    browserTitle: "Let’s Try! Tools — What do you like?",
+    browserTitle: "Bk1U5 — What do you like?",
 
     unitColour: "#00ADA9",
     unitNumberColour: "#52C8C4",
