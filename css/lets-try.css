@@ -3442,3 +3442,13 @@ html.shared-unit-template .flash-board-tools .flash-board-tool[aria-label="Card 
   gap:0;
   line-height:1;
 }
+
+/* ALT-e: short public unit codes (Bk1U1 / Bk2U4) in the shared header. */
+html.shared-unit-template .site-title .unit-word {
+  font-size:clamp(24px,2.75vw,40px);
+  white-space:nowrap;
+}
+html.shared-unit-template .site-title .unit-number:empty {display:none;}
+@media(max-width:800px) {
+  html.shared-unit-template .site-title .unit-word {font-size:clamp(19px,3.5vw,30px);}
+}
