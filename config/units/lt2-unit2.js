@@ -64,7 +64,7 @@
     bookId,
     unitNumber: "2",
     unitTitle: "Let’s play cards.",
-    browserTitle: "Let’s Try! 2 — Let’s play cards.",
+    browserTitle: "Bk2U2 — Let’s play cards.",
     unitColour: "#F6AB00",
     unitNumberColour: "#F8C34A",
     menuFile: "lets_try_2.html",
