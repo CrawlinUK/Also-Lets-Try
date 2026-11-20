@@ -13,7 +13,7 @@
     bookId,
     unitNumber: "1",
     unitTitle: "Hello, world!",
-    browserTitle: "Let’s Try! 2 — Hello, world!",
+    browserTitle: "Bk2U1 — Hello, world!",
     unitColour: "#7FBE25",
     unitNumberColour: "#A8DC52",
     menuFile: "lets_try_2.html",
