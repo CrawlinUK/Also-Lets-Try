@@ -14,7 +14,7 @@
     bookId,
     unitNumber: "1",
     unitTitle: "Hello!",
-    browserTitle: "Let’s Try! Tools — Hello!",
+    browserTitle: "Bk1U1 — Hello!",
     unitColour: "#7FBE25",
     unitNumberColour: "#A8DC52",
     menuFile: "lets_try_1.html",
