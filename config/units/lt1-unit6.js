@@ -36,7 +36,7 @@
     bookId: UNIT_BOOK_ID,
     unitNumber: "6",
     unitTitle: "ALPHABET",
-    browserTitle: "Let’s Try! 1 — ALPHABET",
+    browserTitle: "Bk1U6 — ALPHABET",
 
     unitColour: "#E94643",
     unitNumberColour: "#EF7471",
