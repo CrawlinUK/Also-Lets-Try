@@ -78,7 +78,7 @@
     bookId,
     unitNumber: "7",
     unitTitle: "What do you want?",
-    browserTitle: "Let’s Try! 2 — What do you want?",
+    browserTitle: "Bk2U7 — What do you want?",
     unitColour: "#6F58A3",
     unitNumberColour: "#8E79BB",
     menuFile: "lets_try_2.html",
