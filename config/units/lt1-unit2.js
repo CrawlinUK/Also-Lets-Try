@@ -14,7 +14,7 @@
     bookId,
     unitNumber: "2",
     unitTitle: "How are you?",
-    browserTitle: "Let’s Try! Tools — How are you?",
+    browserTitle: "Bk1U2 — How are you?",
     unitColour: "#F6AB00",
     unitNumberColour: "#F6CA3F",
     menuFile: "lets_try_1.html",
