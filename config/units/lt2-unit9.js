@@ -32,7 +32,7 @@
     bookId,
     unitNumber: "9",
     unitTitle: "This is my day.",
-    browserTitle: "Let’s Try! 2 — This is my day.",
+    browserTitle: "Bk2U9 — This is my day.",
     unitColour: "#14A83B",
     unitNumberColour: "#54BE6D",
     menuFile: "lets_try_2.html",
