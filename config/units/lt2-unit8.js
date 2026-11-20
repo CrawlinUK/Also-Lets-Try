@@ -28,7 +28,7 @@
     bookId,
     unitNumber: "8",
     unitTitle: "This is my favorite place.",
-    browserTitle: "Let’s Try! 2 — This is my favorite place.",
+    browserTitle: "Bk2U8 — This is my favorite place.",
     unitColour: "#0B7CC3",
     unitNumberColour: "#5AA9DA",
     menuFile: "lets_try_2.html",
