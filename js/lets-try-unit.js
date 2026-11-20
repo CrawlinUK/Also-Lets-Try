@@ -884,10 +884,9 @@
         document.documentElement.style.setProperty("--unit-number-colour", UNIT_CONFIG.unitNumberColour);
         document.documentElement.style.setProperty("--picture-ratio", UNIT_CONFIG.pictureAspectRatio);
 
-        const headingPrefix = UNIT_CONFIG.bookId === "lt1" ? "Bk1U" : UNIT_CONFIG.bookId === "lt2" ? "Bk2U" : "";
         const unitWord = document.querySelector(".site-title .unit-word");
-        if (unitWord) unitWord.textContent = headingPrefix ? headingPrefix + UNIT_CONFIG.unitNumber : "";
-        elements.unitNumber.textContent = headingPrefix ? "" : UNIT_CONFIG.unitNumber;
+        if (unitWord) unitWord.textContent = "Unit";
+        elements.unitNumber.textContent = UNIT_CONFIG.unitNumber;
         elements.unitName.textContent = UNIT_CONFIG.unitTitle;
         syncPhraseSwitchButton();
         const displayLabels = UNIT_CONFIG.displayModeLabels || {};
