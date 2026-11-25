@@ -30,6 +30,9 @@ jobs:
       - name: Guessing Game checks
         if: ${{ !cancelled() && steps.syntax.outcome == 'success' }}
         run: node tests/guessing-game.test.js
+      - name: Flash Cards checks
+        if: ${{ !cancelled() && steps.syntax.outcome == 'success' }}
+        run: node tests/flash-cards.test.js
       - name: Vocabulary checks
         if: ${{ !cancelled() && steps.syntax.outcome == 'success' }}
         run: node tests/vocabulary-data.test.js

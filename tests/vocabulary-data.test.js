@@ -293,31 +293,32 @@ assert.match(classroomSource, /value="pictureIts"/,
   "It's phrase choice is in Settings");
 assert.match(classroomSource, /value="pictureLets"/,
   "Let's phrase choice is in Settings");
-assert.match(classroomSource, /function fitFlashcardText\(\)/,
+const flashCardsSource = source("js/activities/flash-cards.js");
+assert.match(flashCardsSource, /function fitFlashcardText\(\)/,
   "shared classroom text must fit the available width");
 // The text itself must NEVER be a ResizeObserver target: shrinking it
 // would trigger the callback again and make it pulse indefinitely.
-assert.doesNotMatch(classroomSource,
+assert.doesNotMatch(flashCardsSource,
   /artLayoutObserver\.observe\(elements\.displayText\)/,
   "do not observe the element being resized");
-assert.doesNotMatch(classroomSource, /lastTextFitKey/,
+assert.doesNotMatch(flashCardsSource, /lastTextFitKey/,
   "do not cache a width measurement made before layout or fonts settle");
 // Typography now uses fluid CSS instead of a hidden JavaScript measuring node.
 assert.match(sharedCssSource, /--display-size:\s*clamp\(/,
   "responsive display typography uses a viewport-aware size");
-assert.match(classroomSource, /text\.style\.removeProperty\("font-size"\)/,
+assert.match(flashCardsSource, /text\.style\.removeProperty\("font-size"\)/,
   "remove stale JavaScript font sizing");
-assert.match(classroomSource, /text\.style\.removeProperty\("white-space"\)/,
+assert.match(flashCardsSource, /text\.style\.removeProperty\("white-space"\)/,
   "CSS owns wrapping");
-assert.match(classroomSource, /document\.fonts\.addEventListener\("loadingdone"/,
+assert.match(flashCardsSource, /document\.fonts\.addEventListener\("loadingdone"/,
   "refit after handwriting font finishes loading");
-assert.match(classroomSource, /if \(artworkFitScheduled\) return;/,
+assert.match(flashCardsSource, /if \(artworkFitScheduled\) return;/,
   "refit requests should be coalesced into one animation frame");
-assert.match(classroomSource, /requestAnimationFrame\(\(\) => \{\s*artworkFitScheduled = false;\s*fitFlashcardArtwork\(\);/,
+assert.match(flashCardsSource, /requestAnimationFrame\(\(\) => \{\s*artworkFitScheduled = false;\s*fitFlashcardArtwork\(\);/,
   "verify the text again on the next layout frame without requiring window resize");
-assert.match(classroomSource, /Math\.min\(availableWidth, availableHeight \* ratio\)/,
+assert.match(flashCardsSource, /Math\.min\(availableWidth, availableHeight \* ratio\)/,
   "artwork fits both available dimensions while preserving proportions");
-assert.match(classroomSource, /dimensions\.height - verticalPadding - textHeight - gap - 24/,
+assert.match(flashCardsSource, /dimensions\.height - verticalPadding - textHeight - gap - 24/,
   "picture must reserve space for the complete sentence and padding");
 assert.match(sharedCssSource, /white-space: normal;[\s\S]*?overflow-wrap: anywhere;/,
   "long phrases must wrap rather than clip while awaiting refit");

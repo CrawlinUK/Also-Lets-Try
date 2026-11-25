@@ -240,6 +240,7 @@
 
       await loadScript("js/activities/grid-games.js");
       await loadScript("js/activities/guessing-game.js");
+      await loadScript("js/activities/flash-cards.js");
       await loadScript("js/classroom.js");
       await loadScript("js/classroom-ui.js");
 
