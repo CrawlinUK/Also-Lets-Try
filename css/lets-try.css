@@ -3509,3 +3509,11 @@ html.shared-unit-template .flash-board-tools .flash-board-label-toggle {
 html.shared-unit-template .flash-board-tools .flash-board-label-toggle .flash-board-action-symbol {
   font-size:18px;
 }
+
+/* Order supports desktop double-click and tablet double-tap. */
+html.shared-unit-template .flash-board-tools .flash-board-tool[aria-label^="Order cards"] {
+  touch-action:manipulation;
+  user-select:none;
+  -webkit-user-select:none;
+  -webkit-tap-highlight-color:transparent;
+}
