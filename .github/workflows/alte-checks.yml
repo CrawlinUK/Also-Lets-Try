@@ -27,6 +27,9 @@ jobs:
       - name: Grid Games checks
         if: ${{ !cancelled() && steps.syntax.outcome == 'success' }}
         run: node tests/grid-games.test.js
+      - name: Guessing Game checks
+        if: ${{ !cancelled() && steps.syntax.outcome == 'success' }}
+        run: node tests/guessing-game.test.js
       - name: Vocabulary checks
         if: ${{ !cancelled() && steps.syntax.outcome == 'success' }}
         run: node tests/vocabulary-data.test.js

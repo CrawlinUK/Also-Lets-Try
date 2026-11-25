@@ -2231,7 +2231,7 @@ html.shared-unit-template .guess-stage {
   width: 100%;
   height: 100%;
   display: grid;
-  grid-template-rows: minmax(0, 1fr) minmax(110px, 28%);
+  grid-template-rows: minmax(0, 1fr) auto;
   place-items: center;
   gap: 6px;
   padding: 14px 10px 8px;
@@ -2244,11 +2244,12 @@ html.shared-unit-template .guess-stage.hide-word {
 html.shared-unit-template .guess-main-word {
   align-self: start;
   max-width: calc(100% - 20px);
-  padding: .10em .08em .16em;
-  overflow: hidden;
-  font-size: clamp(2.625rem, calc(5.4vw + .35rem), 5.5rem);
+  /* Reserve room for handwriting ascenders and descenders. */
+  padding: .22em .08em .18em;
+  overflow: visible;
+  font-size: clamp(2rem, min(calc(5.4vw + .35rem), 10vh), 5.5rem);
   font-weight: 900;
-  line-height: 1.10;
+  line-height: 1.20;
   text-align: center;
   white-space: normal;
   overflow-wrap: anywhere;
@@ -2258,6 +2259,9 @@ html.shared-unit-template .guess-main-word {
 }
 
 html.shared-unit-template .guess-reveal-area {
+  container-type: size;
+  box-sizing: border-box;
+  min-width: 0;
   width: min(92%, 980px);
   height: 100%;
   min-height: 0;
@@ -2289,6 +2293,21 @@ html.shared-unit-template .guess-picture {
   aspect-ratio: var(--visual-ratio, 1);
   background-repeat: no-repeat;
   background-color: #ffffff;
+}
+
+/* Fit sprite cells to the actual reveal row, without overlapping the word. */
+@supports (width: 1cqw) {
+  html.shared-unit-template .guess-reveal-area .guess-picture {
+    width: min(96cqw, calc(96cqh * var(--visual-ratio, 1)), 720px);
+    max-width: 96cqw;
+    max-height: 96cqh;
+  }
+}
+
+html.shared-unit-template .guess-picture.text-visual {
+  padding: .18em .08em .16em;
+  line-height: 1.2;
+  overflow: visible;
 }
 
 html.shared-unit-template .guess-picture.number-svg-visual {
