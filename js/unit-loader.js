@@ -238,7 +238,7 @@
         installNumberSprite(await numberSvgPreloadPromise);
       }
 
-      await loadScript("js/activities/missing-game.js");
+      await loadScript("js/activities/grid-games.js");
       await loadScript("js/classroom.js");
       await loadScript("js/classroom-ui.js");
 

@@ -283,7 +283,7 @@
         guessRevealed: false,
       };
 
-      const missingGame = window.ALTE_MISSING_GAME.create({
+      const { missing: missingGame, keyword: keywordGame } = window.ALTE_GRID_GAMES.create({
         state, elements, selectedCards, showGridGameLayout, applyVisual,
         setGridShape, alignSideNavigation, shuffled, document, requestAnimationFrame
       });
@@ -1078,8 +1078,7 @@
 
       function resetGameState() {
         missingGame.reset();
-        state.keywordOrder = [];
-        state.keywordSelectedIds.clear();
+        keywordGame.reset();
         state.guessCategoryId = null;
         state.guessDeck = [];
         state.guessPosition = 0;
@@ -1116,7 +1115,7 @@
         }
 
         if (state.gameMode === "keyword") {
-          renderKeyword();
+          keywordGame.render();
           return;
         }
 
@@ -2894,66 +2893,6 @@
         requestAnimationFrame(alignSideNavigation);
       }
 
-      function renderKeyword() {
-        elements.missingAnswerHints.hidden = true;
-        showGridGameLayout();
-        elements.gameTitle.textContent = "Keyword game";
-        elements.nextButton.dataset.gameAction = "pick";
-        elements.nextButton.textContent = "PICK";
-        elements.nextButton.setAttribute("aria-label", "Randomly pick a keyword");
-
-        const cards = selectedCards();
-        const cardMap = new Map(cards.map((card) => [card.id, card]));
-
-        if (!state.keywordOrder.length || state.keywordOrder.length !== cards.length) {
-          state.keywordOrder = cards.map((card) => card.id);
-        }
-
-        const grid = document.createElement("div");
-        grid.className = "game-grid";
-        
-
-        state.keywordOrder.forEach((id) => {
-          const card = cardMap.get(id);
-          if (!card) return;
-
-          const tile = document.createElement("button");
-          tile.type = "button";
-          tile.className = "game-tile";
-          tile.classList.toggle("selected", state.keywordSelectedIds.has(id));
-
-          const picture = document.createElement("div");
-          picture.className = "game-picture";
-          applyVisual(picture, card);
-          picture.setAttribute("role", "img");
-          picture.setAttribute("aria-label", card.word);
-
-          tile.append(picture);
-          tile.addEventListener("click", () => {
-            if (state.keywordSelectedIds.has(id)) state.keywordSelectedIds.delete(id);
-            else state.keywordSelectedIds.add(id);
-            renderKeyword();
-          });
-
-          grid.append(tile);
-        });
-
-        elements.gameArea.replaceChildren(grid);
-        setGridShape(grid, cards);
-        elements.counter.textContent = `${state.keywordSelectedIds.size} / ${cards.length}`;
-        elements.modeLabel.textContent = "Keywords selected";
-        elements.shuffleButton.textContent = "Randomise";
-        requestAnimationFrame(alignSideNavigation);
-      }
-
-      function selectRandomKeyword() {
-        if (!state.keywordOrder.length) return;
-        const id = state.keywordOrder[Math.floor(Math.random() * state.keywordOrder.length)];
-        state.keywordSelectedIds.clear();
-        state.keywordSelectedIds.add(id);
-        renderKeyword();
-      }
-
       function setGameMode(mode) {
         stopAuto();
         closeGameMenu();
@@ -2983,8 +2922,7 @@
         }
 
         if (mode === "keyword") {
-          state.keywordOrder = selectedCards().map((card) => card.id);
-          state.keywordSelectedIds.clear();
+          keywordGame.prepare();
         }
 
         render();
@@ -3026,18 +2964,7 @@
         }
 
         if (state.gameMode === "keyword") {
-          const original = state.keywordOrder.length
-            ? [...state.keywordOrder]
-            : selectedCards().map((card) => card.id);
-          state.keywordOrder = shuffled(original);
-          if (
-            state.keywordOrder.length > 1 &&
-            state.keywordOrder.every((id, index) => id === original[index])
-          ) {
-            [state.keywordOrder[0], state.keywordOrder[1]] =
-              [state.keywordOrder[1], state.keywordOrder[0]];
-          }
-          renderKeyword();
+          keywordGame.randomise();
           return;
         }
 
@@ -3178,7 +3105,7 @@
       elements.nextButton.addEventListener("click", () => {
         elements.keyboardHelp.classList.add("collapsed");
         if (state.gameMode === "missing") missingGame.hideOneMore();
-        else if (state.gameMode === "keyword") selectRandomKeyword();
+        else if (state.gameMode === "keyword") keywordGame.selectRandomKeyword();
         else if (state.gameMode === "guess") nextGuessCard();
         else if (state.gameMode === "flashcards") {
           stopAuto();
@@ -3382,7 +3309,7 @@
         if (state.gameMode === "keyword") {
           if (event.key === "ArrowRight" || event.code === "Space" || event.key === "Enter") {
             event.preventDefault();
-            selectRandomKeyword();
+            keywordGame.selectRandomKeyword();
           } else if (event.key.toLowerCase() === "r") {
             shuffleAction();
           } else if (event.key.toLowerCase() === "g") {
