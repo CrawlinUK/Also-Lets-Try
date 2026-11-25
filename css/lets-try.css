@@ -3509,22 +3509,3 @@ html.shared-unit-template .flash-board-tools .flash-board-label-toggle {
 html.shared-unit-template .flash-board-tools .flash-board-label-toggle .flash-board-action-symbol {
   font-size:18px;
 }
-/* Remove the unused counter column, rather than merely hiding its content. */
-html.shared-unit-template.flash-board-mode .control-bar {
-  display:flex !important;
-  gap:10px;
-}
-html.shared-unit-template.flash-board-mode .control-bar > .shuffle,
-html.shared-unit-template.flash-board-mode .control-bar > .game-menu-wrap,
-html.shared-unit-template.flash-board-mode .control-bar > #phraseSwitchButton:not([hidden]) {
-  flex:1 1 0;
-  min-width:0;
-}
-html.shared-unit-template.flash-board-mode .control-bar > .settings-icon-button {
-  flex:0 0 68px;
-}
-@media(max-width:600px) {
-  html.shared-unit-template.flash-board-mode .control-bar > .settings-icon-button {
-    flex-basis:56px;
-  }
-}
