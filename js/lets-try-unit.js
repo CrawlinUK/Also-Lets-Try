@@ -2552,9 +2552,41 @@
         orderButton.type = "button";
         orderButton.className = "flash-board-tool";
         orderButton.innerHTML = '<span class="flash-board-action-symbol" aria-hidden="true">▦</span><span class="flash-board-action-label">order</span>';
-        orderButton.title = "Order cards into a tidy grid";
-        orderButton.setAttribute("aria-label", "Order cards");
-        orderButton.addEventListener("click", () => {
+        orderButton.title = "Click to tidy your arrangement; double-click to restore vocabulary order";
+        orderButton.setAttribute("aria-label", "Order cards: click to tidy, double-click for original order");
+        const orderByVocabulary=()=>{
+          // entries are in UNIT_CONFIG.cards order, not the order in which
+          // cards were moved or removed. Never restore binned cards here.
+          const remaining=entries.filter(entry=>!binned.has(entry.card.id));
+          if(!remaining.length || !board.clientWidth || !board.clientHeight)return;
+          const shape=optimalGameShape(board.clientWidth,board.clientHeight,remaining.map(entry=>entry.card));
+          const cols=shape.columns,rows=shape.rows;
+          const width=100/cols,height=100/rows;
+          remaining.forEach((entry,index)=>{
+            const row=Math.floor(index/cols);
+            const countInRow=Math.min(cols,remaining.length-row*cols);
+            const col=index%cols;
+            const size=dimensions(entry.tile);
+            const rowStart=(100-countInRow*width)/2;
+            entry.last=place(entry.tile,{
+              x:rowStart+col*width+(width-size.width)/2,
+              y:row*height+(height-size.height)/2
+            });
+            positions.set(entry.card.id,entry.last);
+          });
+        };
+        const handleOrderClick = event => {
+          if(event.detail>=2) {
+            palette.hidden=true;
+            eraseMenu.hidden=true;
+            setTool("move");
+            orderByVocabulary();
+            return;
+          }
+          // Single click preserves the teacher's existing row groups.
+          tidyCurrentRows();
+        };
+        const tidyCurrentRows=() => {
           palette.hidden = true;
           eraseMenu.hidden = true;
           setTool("move");
@@ -2615,6 +2647,12 @@
               left += item.width+desiredGap;
             });
           });
+        };
+        orderButton.addEventListener("click",handleOrderClick);
+        orderButton.addEventListener("dblclick",event=>{
+          // Fallback for desktop browsers where click detail differs.
+          event.preventDefault();
+          orderByVocabulary();
         });
         removeButton=document.createElement("button");
         removeButton.type="button";
