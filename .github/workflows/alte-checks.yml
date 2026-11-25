@@ -1,0 +1,29 @@
+name: ALT-e checks
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+      - 'part5/**'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Check JavaScript syntax
+        run: |
+          find js config tests -name '*.js' -print0 | xargs -0 -n 1 node --check
+          node --check sw.js
+      - name: Vocabulary checks
+        run: node tests/vocabulary-data.test.js
+      - name: Jobs category checks
+        run: node tests/jobs-category.test.js
