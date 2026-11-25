@@ -6,7 +6,7 @@
     ? new URL(document.currentScript.src)
     : new URL("js/unit-loader.js", location.href);
   const projectRoot = new URL("../", current);
-  const ASSET_VERSION = "20261125-alte-v75";
+  const ASSET_VERSION = "20261125-alte-v80";
 
   const params = new URLSearchParams(location.search);
   const requestedBook = (params.get("book") || "book1").toLowerCase();
