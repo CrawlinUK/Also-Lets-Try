@@ -283,6 +283,11 @@
         guessRevealed: false,
       };
 
+      const missingGame = window.ALTE_MISSING_GAME.create({
+        state, elements, selectedCards, showGridGameLayout, applyVisual,
+        setGridShape, alignSideNavigation, shuffled, document, requestAnimationFrame
+      });
+
       function isShapePracticeCard(card) {
         return Boolean(SHAPE_PRACTICE && card && card.category === "shapes");
       }
@@ -1072,8 +1077,7 @@
       }
 
       function resetGameState() {
-        state.missingOrder = [];
-        state.hiddenMissingIds.clear();
+        missingGame.reset();
         state.keywordOrder = [];
         state.keywordSelectedIds.clear();
         state.guessCategoryId = null;
@@ -1107,7 +1111,7 @@
         updateSettingsPreview();
 
         if (state.gameMode === "missing") {
-          renderMissing();
+          missingGame.render();
           return;
         }
 
@@ -1351,24 +1355,6 @@
         requestAnimationFrame(update);
       }
 
-      function reverseText(value) {
-        return Array.from(String(value)).reverse().join("");
-      }
-
-      function updateMissingAnswerHints() {
-        const cardMap = new Map(selectedCards().map((card) => [card.id, card]));
-        const lines = state.missingOrder
-          .map((id, index) => ({ card: cardMap.get(id), position: index + 1 }))
-          .filter((item) => item.card && state.hiddenMissingIds.has(item.card.id))
-          .map((item) => `${reverseText(item.card.teacherAnswer || item.card.word)}${item.position}`);
-        elements.missingAnswerHints.replaceChildren(...lines.map((line) => {
-          const row = document.createElement("div");
-          row.textContent = line;
-          return row;
-        }));
-        elements.missingAnswerHints.hidden = state.gameMode !== "missing" || lines.length === 0;
-      }
-
       function guessCardsForCategory(categoryId) {
         return selectedCards().filter((card) => card.category === categoryId);
       }
@@ -1557,66 +1543,6 @@
         elements.counter.textContent = `${state.guessPosition + 1} / ${state.guessDeck.length}`;
         elements.modeLabel.textContent = state.guessMode === "showWord" ? "Guess — Show Word" : "Guess — Hide Word";
         requestAnimationFrame(alignSideNavigation);
-      }
-
-      function renderMissing() {
-        showGridGameLayout();
-        elements.gameTitle.textContent = "What’s missing?";
-        elements.nextButton.dataset.gameAction = "hide";
-        elements.nextButton.textContent = "HIDE +";
-        elements.nextButton.setAttribute("aria-label", "Hide one more card");
-
-        const cards = selectedCards();
-        const cardMap = new Map(cards.map((card) => [card.id, card]));
-
-        if (!state.missingOrder.length || state.missingOrder.length !== cards.length) {
-          state.missingOrder = cards.map((card) => card.id);
-        }
-
-        const grid = document.createElement("div");
-        grid.className = "game-grid";
-        
-
-        state.missingOrder.forEach((id) => {
-          const card = cardMap.get(id);
-          if (!card) return;
-
-          const tile = document.createElement("button");
-          tile.type = "button";
-          tile.className = "game-tile";
-          tile.classList.toggle("covered", state.hiddenMissingIds.has(id));
-
-          const picture = document.createElement("div");
-          picture.className = "game-picture";
-          applyVisual(picture, card);
-          picture.setAttribute("role", "img");
-          picture.setAttribute("aria-label", card.word);
-
-          tile.append(picture);
-          tile.addEventListener("click", () => {
-            if (state.hiddenMissingIds.has(id)) state.hiddenMissingIds.delete(id);
-            else state.hiddenMissingIds.add(id);
-            renderMissing();
-          });
-
-          grid.append(tile);
-        });
-
-        elements.gameArea.replaceChildren(grid);
-        setGridShape(grid, cards);
-        updateMissingAnswerHints();
-        elements.counter.textContent = `${cards.length - state.hiddenMissingIds.size} / ${cards.length}`;
-        elements.modeLabel.textContent = "Missing game";
-        elements.shuffleButton.textContent = "Randomise";
-        requestAnimationFrame(alignSideNavigation);
-      }
-
-      function hideOneMore() {
-        const visible = state.missingOrder.filter((id) => !state.hiddenMissingIds.has(id));
-        if (!visible.length) return;
-        const id = visible[Math.floor(Math.random() * visible.length)];
-        state.hiddenMissingIds.add(id);
-        renderMissing();
       }
 
       // Free placement is deliberately independent of Missing/Keyword ordering.
@@ -3045,9 +2971,7 @@
         state.gameMode = mode;
 
         if (mode === "missing") {
-          state.missingOrder = selectedCards().map((card) => card.id);
-          state.hiddenMissingIds.clear();
-          hideOneMore();
+          missingGame.start();
           return;
         }
 
@@ -3097,18 +3021,7 @@
         }
 
         if (state.gameMode === "missing") {
-          const original = state.missingOrder.length
-            ? [...state.missingOrder]
-            : selectedCards().map((card) => card.id);
-          state.missingOrder = shuffled(original);
-          if (
-            state.missingOrder.length > 1 &&
-            state.missingOrder.every((id, index) => id === original[index])
-          ) {
-            [state.missingOrder[0], state.missingOrder[1]] =
-              [state.missingOrder[1], state.missingOrder[0]];
-          }
-          renderMissing();
+          missingGame.randomise();
           return;
         }
 
@@ -3264,7 +3177,7 @@
 
       elements.nextButton.addEventListener("click", () => {
         elements.keyboardHelp.classList.add("collapsed");
-        if (state.gameMode === "missing") hideOneMore();
+        if (state.gameMode === "missing") missingGame.hideOneMore();
         else if (state.gameMode === "keyword") selectRandomKeyword();
         else if (state.gameMode === "guess") nextGuessCard();
         else if (state.gameMode === "flashcards") {
@@ -3457,7 +3370,7 @@
         if (state.gameMode === "missing") {
           if (event.key === "ArrowRight" || event.code === "Space" || event.key === "Enter") {
             event.preventDefault();
-            hideOneMore();
+            missingGame.hideOneMore();
           } else if (event.key.toLowerCase() === "r") {
             shuffleAction();
           } else if (event.key.toLowerCase() === "g") {

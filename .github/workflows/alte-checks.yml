@@ -24,7 +24,11 @@ jobs:
         run: |
           find js config tests -name '*.js' -print0 | xargs -0 -n 1 node --check
           node --check sw.js
+      - name: Missing Game checks
+        if: ${{ !cancelled() && steps.syntax.outcome == 'success' }}
+        run: node tests/missing-game.test.js
       - name: Vocabulary checks
+        if: ${{ !cancelled() && steps.syntax.outcome == 'success' }}
         run: node tests/vocabulary-data.test.js
       - name: Jobs category checks
         if: ${{ !cancelled() && steps.syntax.outcome == 'success' }}
