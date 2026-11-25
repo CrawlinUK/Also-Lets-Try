@@ -42,6 +42,9 @@ jobs:
       - name: Settings checks
         if: ${{ !cancelled() && steps.syntax.outcome == 'success' }}
         run: node tests/settings.test.js
+      - name: Shared classroom checks
+        if: ${{ !cancelled() && steps.syntax.outcome == 'success' }}
+        run: node tests/shared-classroom.test.js
       - name: Vocabulary checks
         if: ${{ !cancelled() && steps.syntax.outcome == 'success' }}
         run: node tests/vocabulary-data.test.js

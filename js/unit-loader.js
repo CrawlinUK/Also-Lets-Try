@@ -244,6 +244,8 @@
       await loadScript("js/activities/drawing-tools.js");
       await loadScript("js/activities/flash-board.js");
       await loadScript("js/settings.js");
+      await loadScript("js/shared/presentation.js");
+      await loadScript("js/shared/grid-layout.js");
       await loadScript("js/classroom.js");
       await loadScript("js/classroom-ui.js");
 

@@ -80,7 +80,7 @@ assert.match(sharedCssSource, /data-book="categories"\] \.site-title \.unit-word
 assert.match(sharedCssSource, /data-book="categories"\] \.site-title \.unit-number/,
   "hide unit number only for Categories");
 
-assert.doesNotMatch(source("js/classroom.js"), /imageDiagnostic|imageDiagnosis|image-diagnostic|data-diagnostic/i,
+assert.doesNotMatch(source("js/classroom.js") + source("js/shared/presentation.js"), /imageDiagnostic|imageDiagnosis|image-diagnostic|data-diagnostic/i,
   "classroom must not expose developer image diagnosis controls");
 assert.doesNotMatch(sharedCssSource, /image-diagnostic|data-diagnostic/i,
   "remove obsolete classroom diagnosis styling");
@@ -115,7 +115,7 @@ assert.match(viewerSource, /id="closeTool"/, "Done hides editor controls");
 assert.doesNotMatch(viewerSource, /class="tool-tabs"/,
   "duplicated top tabs must not occupy picture space");
 
-assert.match(source("js/classroom.js"), /const cropEdges = \["cropTop", "cropRight", "cropBottom", "cropLeft"\]/,
+assert.match(source("js/shared/presentation.js"), /const cropEdges = \["cropTop", "cropRight", "cropBottom", "cropLeft"\]/,
   "classroom renderer handles all four crop edges");
 
 
