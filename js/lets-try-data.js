@@ -32,6 +32,16 @@
     return { id, defaultIn, ...extra };
   }
 
+  // Jobs: three sheets in physical row-major order; no textbook tags.
+  const JOB_SETS = [
+    ["artist","astronaut","baker","bus-driver","carpenter","doctor","game-designer","singer","teacher","zookeeper","comedian","tennis-player"],
+    ["cartoonist","pilot","pastry-chef","police-officer","farmer","dentist","pro-gamer","musician","nursery-school-teacher","vet","voice-actor","reporter"],
+    ["designer","flight-attendant","cook","firefighter","florist","nurse","youtuber","pianist","scientist","hairdresser","influencer","writer"]
+  ];
+  const JOB_SHEET_BY_ID = Object.fromEntries(JOB_SETS.flatMap((ids, index) =>
+    ids.map(id => [id, "jobSet" + (index + 1)])
+  ));
+
   const CATEGORIES = {
     worldGreetings: {
       label: "World greetings",
@@ -380,11 +390,29 @@
         item("dream-a-wonderful-dream", ["2-9"])
       ]
 
+    },
+
+    jobs: {
+      label: "Jobs",
+      items: JOB_SETS.flat().map(id =>
+        id === "youtuber" ? item(id, [], { word: "YouTuber" }) : item(id)
+      )
     }
   };
 
   const ASSETS = {
     sheets: {
+      ...Object.fromEntries(JOB_SETS.map((ids, index) => [
+        "jobSet" + (index + 1), {
+          file: "images/jobSet" + (index + 1) + ".webp",
+          cellAspectRatio: "1 / 1",
+          backgroundSize: "400% 300%",
+          grid: "4x3",
+          physicalCells: ids.length,
+          logicalCategories: ["jobs"],
+          status: "mapped"
+        }
+      ])),
       timeActivities: {
         file: "images/TimeActivities.webp",
         cellAspectRatio: "1 / 1",
@@ -582,6 +610,13 @@
     },
 
     knownCells: {
+      ...Object.fromEntries(JOB_SETS.map((ids, index) => [
+        "jobSet" + (index + 1),
+        Object.fromEntries(ids.map((id, cell) => [
+          id, ["0%", "33.333%", "66.667%", "100%"][cell % 4] +
+            " " + ["0%", "50%", "100%"][Math.floor(cell / 4)]
+        ]))
+      ])),
       dailyTimes: {
         "wake-up-time": "0% 0%", "breakfast-time": "25% 0%",
         "study-time": "50% 0%", "lunch-time": "75% 0%",
@@ -1046,7 +1081,7 @@
       };
     }
 
-    let sheetId = CATEGORY_IMAGE_SHEETS[categoryId];
+    let sheetId = categoryId === "jobs" ? JOB_SHEET_BY_ID[itemId] : CATEGORY_IMAGE_SHEETS[categoryId];
     if (categoryId === "food" && itemId === "sausage") sheetId = "fruit";
     if (categoryId === "animals" && EXTRA_ANIMAL_IMAGE_IDS.has(itemId)) sheetId = "animalsExtra";
     const sheet = ASSETS.sheets[sheetId];
@@ -1138,7 +1173,7 @@
   }
 
   global.LETS_TRY_DATA = Object.freeze({
-    version: 20,
+    version: 21,
     assetUrl,
     categories: CATEGORIES,
     assets: ASSETS,

@@ -26,6 +26,13 @@ The current database is ordinary JavaScript, not SQL or JSON yet:
   viewer. Text-only or generated visuals (Greetings, Numbers, Colours,
   Alphabet) require a separate policy if we later want them in this
   picture-based menu.
+- `jobs` is an independent category with 36 occupations and no textbook
+  tags. The three original `images/jobSet1.webp`, `images/jobSet2.webp`,
+  `images/jobSet3.webp` sheets are 1448×1086, with 4×3 square cells.
+  `JOB_SETS` preserves physical row order and the shared artwork resolver
+  chooses the matching sheet. All 36 are selected by default.
+  Run `node tests/jobs-category.test.js` after uploading the original sheets.
+
 - `schoolPlaces` uses the 4×4 `images/schoolRooms.webp` sheet (16
   square 500×500 cells on a 2000×2000 canvas). Each picture position is
   recorded explicitly in `assets.knownCells.schoolRooms` in the **physical**
