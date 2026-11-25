@@ -61,8 +61,11 @@ assert.match(categoryMenuSource, /pictureItems\.slice\(0,3\)/,
   "menu previews the first three mapped picture words");
 assert.doesNotMatch(categoryMenuSource, /const supported\s*=|category-unavailable/,
   "no manual allowlist or crossed-out placeholders remain");
-assert.match(categoryMenuSource, /samples\.scrollWidth<=samples\.clientWidth/,
-  "whole sample words fit the available width");
+// The category menu now uses CSS ellipsis rather than JavaScript width measurement.
+assert.match(categoryMenuSource, /\.word-samples\s*\{[^}]*white-space:\s*nowrap[^}]*overflow:\s*hidden[^}]*text-overflow:\s*ellipsis/,
+  "sample text is clipped with an ellipsis within the category card");
+assert.match(categoryMenuSource, /samples\.textContent\s*=\s*words\.join\(", "\)/,
+  "category samples contain the first three words");
 const standaloneLoaderSource = source("config/categories.js");
 assert.match(standaloneLoaderSource, /data\.hasCategoryPictures\(id\)/,
   "standalone category loader uses the central picture mapping");
