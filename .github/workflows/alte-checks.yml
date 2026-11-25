@@ -33,6 +33,9 @@ jobs:
       - name: Flash Cards checks
         if: ${{ !cancelled() && steps.syntax.outcome == 'success' }}
         run: node tests/flash-cards.test.js
+      - name: Flash Board checks
+        if: ${{ !cancelled() && steps.syntax.outcome == 'success' }}
+        run: node tests/flash-board.test.js
       - name: Vocabulary checks
         if: ${{ !cancelled() && steps.syntax.outcome == 'success' }}
         run: node tests/vocabulary-data.test.js
