@@ -11,3 +11,5 @@ for(const file of order){const source=read(file);assert.ok(source.trim().length>
 assert.equal(imports(read("menu.css"))[0],"theme.css");
 for(const token of ["ink","muted","surface","page","line","soft","shadow"])assert.match(read("theme.css"),new RegExp("--"+token+":"));
 console.log("CSS imports, shared tokens and cascade order passed.");
+
+assert.match(read("menu.css"), /\.unit\{[^}]*background:var\(--surface\);color:var\(--ink\)/, "unit cards must use matching theme background and text");
