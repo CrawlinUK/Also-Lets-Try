@@ -3471,3 +3471,23 @@ html.shared-unit-template .flash-board-tool.flash-board-suffix:disabled {
   opacity:.4;
   cursor:default;
 }
+
+/* Flash Board eraser cursor: same coordinate system as stroke masks. */
+html.shared-unit-template .flash-board-eraser-preview {
+  pointer-events:none;
+}
+html.shared-unit-template .flash-board-eraser-circle {
+  fill:rgba(47,132,214,.16);
+  stroke:#207ed1;
+  stroke-width:2.5;
+  stroke-dasharray:5 3;
+  vector-effect:non-scaling-stroke;
+}
+html.shared-unit-template .flash-board-eraser-highlight {
+  stroke:rgba(240,71,54,.85);
+  vector-effect:non-scaling-stroke;
+  pointer-events:none;
+}
+html.shared-unit-template .flash-board-drawing-surface.drawing {
+  touch-action:none;
+}
