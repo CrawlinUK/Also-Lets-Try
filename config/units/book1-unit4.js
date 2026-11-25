@@ -1,4 +1,4 @@
-/* LT1 Unit 4 — shared-template configuration.
+/* Book 1 Unit 4 — shared-template configuration.
    Card wording and visuals are preserved from the previous Unit 4 app. */
 (function () {
   "use strict";
@@ -147,7 +147,7 @@
       unitNumberColour: "#F28C45",
 
       /* Existing project menu page. */
-      menuFile: "lets_try_1.html",
+      menuFile: "book-1.html",
 
       /* Main wording and settings labels. */
       defaultPrompt: "I like...",
@@ -172,9 +172,9 @@
           alternate: "baseball",
           textbook: true,
           visual: {
-            src: LETS_TRY_DATA.assetUrl(LETS_TRY_DATA.assets.sheets.sports.file),
-            size: LETS_TRY_DATA.assets.sheets.sports.backgroundSize,
-            position: LETS_TRY_DATA.assets.knownCells.sports["baseball"],
+            src: ALTE_DATA.assetUrl(ALTE_DATA.assets.sheets.sports.file),
+            size: ALTE_DATA.assets.sheets.sports.backgroundSize,
+            position: ALTE_DATA.assets.knownCells.sports["baseball"],
             flip: false,
             cropTop: 0
           }
@@ -186,9 +186,9 @@
           alternate: "dodgeball",
           textbook: true,
           visual: {
-            src: LETS_TRY_DATA.assetUrl(LETS_TRY_DATA.assets.sheets.sports.file),
-            size: LETS_TRY_DATA.assets.sheets.sports.backgroundSize,
-            position: LETS_TRY_DATA.assets.knownCells.sports["dodgeball"],
+            src: ALTE_DATA.assetUrl(ALTE_DATA.assets.sheets.sports.file),
+            size: ALTE_DATA.assets.sheets.sports.backgroundSize,
+            position: ALTE_DATA.assets.knownCells.sports["dodgeball"],
             flip: false,
             cropTop: 0
           }
@@ -200,9 +200,9 @@
           alternate: "soccer",
           textbook: true,
           visual: {
-            src: LETS_TRY_DATA.assetUrl(LETS_TRY_DATA.assets.sheets.sports.file),
-            size: LETS_TRY_DATA.assets.sheets.sports.backgroundSize,
-            position: LETS_TRY_DATA.assets.knownCells.sports["soccer"],
+            src: ALTE_DATA.assetUrl(ALTE_DATA.assets.sheets.sports.file),
+            size: ALTE_DATA.assets.sheets.sports.backgroundSize,
+            position: ALTE_DATA.assets.knownCells.sports["soccer"],
             flip: false,
             cropTop: 0
           }
@@ -214,9 +214,9 @@
           alternate: "basketball",
           textbook: true,
           visual: {
-            src: LETS_TRY_DATA.assetUrl(LETS_TRY_DATA.assets.sheets.sports.file),
-            size: LETS_TRY_DATA.assets.sheets.sports.backgroundSize,
-            position: LETS_TRY_DATA.assets.knownCells.sports["basketball"],
+            src: ALTE_DATA.assetUrl(ALTE_DATA.assets.sheets.sports.file),
+            size: ALTE_DATA.assets.sheets.sports.backgroundSize,
+            position: ALTE_DATA.assets.knownCells.sports["basketball"],
             flip: false,
             cropTop: 0
           }
@@ -228,9 +228,9 @@
           alternate: "swimming",
           textbook: true,
           visual: {
-            src: LETS_TRY_DATA.assetUrl(LETS_TRY_DATA.assets.sheets.sports.file),
-            size: LETS_TRY_DATA.assets.sheets.sports.backgroundSize,
-            position: LETS_TRY_DATA.assets.knownCells.sports["swimming"],
+            src: ALTE_DATA.assetUrl(ALTE_DATA.assets.sheets.sports.file),
+            size: ALTE_DATA.assets.sheets.sports.backgroundSize,
+            position: ALTE_DATA.assets.knownCells.sports["swimming"],
             flip: false,
             cropTop: 0
           }
@@ -242,9 +242,9 @@
           alternate: "ice cream",
           textbook: true,
           visual: {
-            src: LETS_TRY_DATA.assetUrl(LETS_TRY_DATA.assets.sheets.foods.file),
-            size: LETS_TRY_DATA.assets.sheets.foods.backgroundSize,
-            position: LETS_TRY_DATA.assets.knownCells.foods["ice-cream"],
+            src: ALTE_DATA.assetUrl(ALTE_DATA.assets.sheets.foods.file),
+            size: ALTE_DATA.assets.sheets.foods.backgroundSize,
+            position: ALTE_DATA.assets.knownCells.foods["ice-cream"],
             flip: false,
             cropTop: 0
           }
@@ -256,9 +256,9 @@
           alternate: "pudding",
           textbook: true,
           visual: {
-            src: LETS_TRY_DATA.assetUrl(LETS_TRY_DATA.assets.sheets.foods.file),
-            size: LETS_TRY_DATA.assets.sheets.foods.backgroundSize,
-            position: LETS_TRY_DATA.assets.knownCells.foods["pudding"],
+            src: ALTE_DATA.assetUrl(ALTE_DATA.assets.sheets.foods.file),
+            size: ALTE_DATA.assets.sheets.foods.backgroundSize,
+            position: ALTE_DATA.assets.knownCells.foods["pudding"],
             flip: false,
             cropTop: 0
           }
@@ -270,9 +270,9 @@
           alternate: "milk",
           textbook: true,
           visual: {
-            src: LETS_TRY_DATA.assetUrl(LETS_TRY_DATA.assets.sheets.foods.file),
-            size: LETS_TRY_DATA.assets.sheets.foods.backgroundSize,
-            position: LETS_TRY_DATA.assets.knownCells.foods["milk"],
+            src: ALTE_DATA.assetUrl(ALTE_DATA.assets.sheets.foods.file),
+            size: ALTE_DATA.assets.sheets.foods.backgroundSize,
+            position: ALTE_DATA.assets.knownCells.foods["milk"],
             flip: false,
             cropTop: 0
           }
@@ -284,9 +284,9 @@
           alternate: "orange juice",
           textbook: true,
           visual: {
-            src: LETS_TRY_DATA.assetUrl(LETS_TRY_DATA.assets.sheets.foods.file),
-            size: LETS_TRY_DATA.assets.sheets.foods.backgroundSize,
-            position: LETS_TRY_DATA.assets.knownCells.foods["orange-juice"],
+            src: ALTE_DATA.assetUrl(ALTE_DATA.assets.sheets.foods.file),
+            size: ALTE_DATA.assets.sheets.foods.backgroundSize,
+            position: ALTE_DATA.assets.knownCells.foods["orange-juice"],
             flip: false,
             cropTop: 0
           }
@@ -298,9 +298,9 @@
           alternate: "hamburger",
           textbook: true,
           visual: {
-            src: LETS_TRY_DATA.assetUrl(LETS_TRY_DATA.assets.sheets.foods.file),
-            size: LETS_TRY_DATA.assets.sheets.foods.backgroundSize,
-            position: LETS_TRY_DATA.assets.knownCells.foods["hamburger"],
+            src: ALTE_DATA.assetUrl(ALTE_DATA.assets.sheets.foods.file),
+            size: ALTE_DATA.assets.sheets.foods.backgroundSize,
+            position: ALTE_DATA.assets.knownCells.foods["hamburger"],
             flip: false,
             cropTop: 0
           }
@@ -312,9 +312,9 @@
           alternate: "pizza",
           textbook: true,
           visual: {
-            src: LETS_TRY_DATA.assetUrl(LETS_TRY_DATA.assets.sheets.foods.file),
-            size: LETS_TRY_DATA.assets.sheets.foods.backgroundSize,
-            position: LETS_TRY_DATA.assets.knownCells.foods["pizza"],
+            src: ALTE_DATA.assetUrl(ALTE_DATA.assets.sheets.foods.file),
+            size: ALTE_DATA.assets.sheets.foods.backgroundSize,
+            position: ALTE_DATA.assets.knownCells.foods["pizza"],
             flip: false,
             cropTop: 0
           }
@@ -326,9 +326,9 @@
           alternate: "spaghetti",
           textbook: true,
           visual: {
-            src: LETS_TRY_DATA.assetUrl(LETS_TRY_DATA.assets.sheets.foods.file),
-            size: LETS_TRY_DATA.assets.sheets.foods.backgroundSize,
-            position: LETS_TRY_DATA.assets.knownCells.foods["spaghetti"],
+            src: ALTE_DATA.assetUrl(ALTE_DATA.assets.sheets.foods.file),
+            size: ALTE_DATA.assets.sheets.foods.backgroundSize,
+            position: ALTE_DATA.assets.knownCells.foods["spaghetti"],
             flip: false,
             cropTop: 0
           }
@@ -340,9 +340,9 @@
           alternate: "sushi",
           textbook: true,
           visual: {
-            src: LETS_TRY_DATA.assetUrl(LETS_TRY_DATA.assets.sheets.foods.file),
-            size: LETS_TRY_DATA.assets.sheets.foods.backgroundSize,
-            position: LETS_TRY_DATA.assets.knownCells.foods["sushi"],
+            src: ALTE_DATA.assetUrl(ALTE_DATA.assets.sheets.foods.file),
+            size: ALTE_DATA.assets.sheets.foods.backgroundSize,
+            position: ALTE_DATA.assets.knownCells.foods["sushi"],
             flip: false,
             cropTop: 0
           }
@@ -354,9 +354,9 @@
           alternate: "steak",
           textbook: true,
           visual: {
-            src: LETS_TRY_DATA.assetUrl(LETS_TRY_DATA.assets.sheets.foods.file),
-            size: LETS_TRY_DATA.assets.sheets.foods.backgroundSize,
-            position: LETS_TRY_DATA.assets.knownCells.foods["steak"],
+            src: ALTE_DATA.assetUrl(ALTE_DATA.assets.sheets.foods.file),
+            size: ALTE_DATA.assets.sheets.foods.backgroundSize,
+            position: ALTE_DATA.assets.knownCells.foods["steak"],
             flip: false,
             cropTop: 0
           }
@@ -368,9 +368,9 @@
           alternate: "salad",
           textbook: true,
           visual: {
-            src: LETS_TRY_DATA.assetUrl(LETS_TRY_DATA.assets.sheets.foods.file),
-            size: LETS_TRY_DATA.assets.sheets.foods.backgroundSize,
-            position: LETS_TRY_DATA.assets.knownCells.foods["salad"],
+            src: ALTE_DATA.assetUrl(ALTE_DATA.assets.sheets.foods.file),
+            size: ALTE_DATA.assets.sheets.foods.backgroundSize,
+            position: ALTE_DATA.assets.knownCells.foods["salad"],
             flip: false,
             cropTop: 0
           }
@@ -382,9 +382,9 @@
           alternate: "cake",
           textbook: true,
           visual: {
-            src: LETS_TRY_DATA.assetUrl(LETS_TRY_DATA.assets.sheets.foods.file),
-            size: LETS_TRY_DATA.assets.sheets.foods.backgroundSize,
-            position: LETS_TRY_DATA.assets.knownCells.foods["cake"],
+            src: ALTE_DATA.assetUrl(ALTE_DATA.assets.sheets.foods.file),
+            size: ALTE_DATA.assets.sheets.foods.backgroundSize,
+            position: ALTE_DATA.assets.knownCells.foods["cake"],
             flip: false,
             cropTop: 0
           }
@@ -396,9 +396,9 @@
           alternate: "egg",
           textbook: true,
           visual: {
-            src: LETS_TRY_DATA.assetUrl(LETS_TRY_DATA.assets.sheets.foods.file),
-            size: LETS_TRY_DATA.assets.sheets.foods.backgroundSize,
-            position: LETS_TRY_DATA.assets.knownCells.foods["egg"],
+            src: ALTE_DATA.assetUrl(ALTE_DATA.assets.sheets.foods.file),
+            size: ALTE_DATA.assets.sheets.foods.backgroundSize,
+            position: ALTE_DATA.assets.knownCells.foods["egg"],
             flip: false,
             cropTop: 0
           }
@@ -410,9 +410,9 @@
           alternate: "jam",
           textbook: true,
           visual: {
-            src: LETS_TRY_DATA.assetUrl(LETS_TRY_DATA.assets.sheets.foods.file),
-            size: LETS_TRY_DATA.assets.sheets.foods.backgroundSize,
-            position: LETS_TRY_DATA.assets.knownCells.foods["jam"],
+            src: ALTE_DATA.assetUrl(ALTE_DATA.assets.sheets.foods.file),
+            size: ALTE_DATA.assets.sheets.foods.backgroundSize,
+            position: ALTE_DATA.assets.knownCells.foods["jam"],
             flip: false,
             cropTop: 0
           }
@@ -424,9 +424,9 @@
           alternate: "noodles",
           textbook: true,
           visual: {
-            src: LETS_TRY_DATA.assetUrl(LETS_TRY_DATA.assets.sheets.foods.file),
-            size: LETS_TRY_DATA.assets.sheets.foods.backgroundSize,
-            position: LETS_TRY_DATA.assets.knownCells.foods["noodle"],
+            src: ALTE_DATA.assetUrl(ALTE_DATA.assets.sheets.foods.file),
+            size: ALTE_DATA.assets.sheets.foods.backgroundSize,
+            position: ALTE_DATA.assets.knownCells.foods["noodle"],
             flip: false,
             cropTop: 0
           }
@@ -438,9 +438,9 @@
           alternate: "rice ball",
           textbook: true,
           visual: {
-            src: LETS_TRY_DATA.assetUrl(LETS_TRY_DATA.assets.sheets.foods.file),
-            size: LETS_TRY_DATA.assets.sheets.foods.backgroundSize,
-            position: LETS_TRY_DATA.assets.knownCells.foods["rice-ball"],
+            src: ALTE_DATA.assetUrl(ALTE_DATA.assets.sheets.foods.file),
+            size: ALTE_DATA.assets.sheets.foods.backgroundSize,
+            position: ALTE_DATA.assets.knownCells.foods["rice-ball"],
             flip: false,
             cropTop: 0
           }
@@ -452,9 +452,9 @@
           alternate: "milk",
           textbook: false,
           visual: {
-            src: LETS_TRY_DATA.assetUrl(LETS_TRY_DATA.assets.sheets.foods.file),
-            size: LETS_TRY_DATA.assets.sheets.foods.backgroundSize,
-            position: LETS_TRY_DATA.assets.knownCells.foods["milk-red"],
+            src: ALTE_DATA.assetUrl(ALTE_DATA.assets.sheets.foods.file),
+            size: ALTE_DATA.assets.sheets.foods.backgroundSize,
+            position: ALTE_DATA.assets.knownCells.foods["milk-red"],
             flip: false,
             cropTop: 0
           }
@@ -466,9 +466,9 @@
           alternate: "onion",
           textbook: true,
           visual: {
-            src: LETS_TRY_DATA.assetUrl(LETS_TRY_DATA.assets.sheets.vegetables.file),
-            size: LETS_TRY_DATA.assets.sheets.vegetables.backgroundSize,
-            position: LETS_TRY_DATA.assets.knownCells.vegetables["onion"],
+            src: ALTE_DATA.assetUrl(ALTE_DATA.assets.sheets.vegetables.file),
+            size: ALTE_DATA.assets.sheets.vegetables.backgroundSize,
+            position: ALTE_DATA.assets.knownCells.vegetables["onion"],
             flip: false,
             cropTop: 0
           }
@@ -480,9 +480,9 @@
           alternate: "green pepper",
           textbook: true,
           visual: {
-            src: LETS_TRY_DATA.assetUrl(LETS_TRY_DATA.assets.sheets.vegetables.file),
-            size: LETS_TRY_DATA.assets.sheets.vegetables.backgroundSize,
-            position: LETS_TRY_DATA.assets.knownCells.vegetables["green-pepper"],
+            src: ALTE_DATA.assetUrl(ALTE_DATA.assets.sheets.vegetables.file),
+            size: ALTE_DATA.assets.sheets.vegetables.backgroundSize,
+            position: ALTE_DATA.assets.knownCells.vegetables["green-pepper"],
             flip: false,
             cropTop: 0
           }
@@ -494,9 +494,9 @@
           alternate: "cucumber",
           textbook: true,
           visual: {
-            src: LETS_TRY_DATA.assetUrl(LETS_TRY_DATA.assets.sheets.vegetables.file),
-            size: LETS_TRY_DATA.assets.sheets.vegetables.backgroundSize,
-            position: LETS_TRY_DATA.assets.knownCells.vegetables["cucumber"],
+            src: ALTE_DATA.assetUrl(ALTE_DATA.assets.sheets.vegetables.file),
+            size: ALTE_DATA.assets.sheets.vegetables.backgroundSize,
+            position: ALTE_DATA.assets.knownCells.vegetables["cucumber"],
             flip: false,
             cropTop: 0
           }
@@ -508,9 +508,9 @@
           alternate: "carrot",
           textbook: true,
           visual: {
-            src: LETS_TRY_DATA.assetUrl(LETS_TRY_DATA.assets.sheets.vegetables.file),
-            size: LETS_TRY_DATA.assets.sheets.vegetables.backgroundSize,
-            position: LETS_TRY_DATA.assets.knownCells.vegetables["carrot"],
+            src: ALTE_DATA.assetUrl(ALTE_DATA.assets.sheets.vegetables.file),
+            size: ALTE_DATA.assets.sheets.vegetables.backgroundSize,
+            position: ALTE_DATA.assets.knownCells.vegetables["carrot"],
             flip: false,
             cropTop: 0
           }
@@ -522,9 +522,9 @@
           alternate: "grapes",
           textbook: true,
           visual: {
-            src: LETS_TRY_DATA.assetUrl(LETS_TRY_DATA.assets.sheets.fruit.file),
-            size: LETS_TRY_DATA.assets.sheets.fruit.backgroundSize,
-            position: LETS_TRY_DATA.assets.knownCells.fruit["grapes"],
+            src: ALTE_DATA.assetUrl(ALTE_DATA.assets.sheets.fruit.file),
+            size: ALTE_DATA.assets.sheets.fruit.backgroundSize,
+            position: ALTE_DATA.assets.knownCells.fruit["grapes"],
             flip: false,
             cropTop: 0
           }
@@ -536,9 +536,9 @@
           alternate: "orange",
           textbook: true,
           visual: {
-            src: LETS_TRY_DATA.assetUrl(LETS_TRY_DATA.assets.sheets.fruit.file),
-            size: LETS_TRY_DATA.assets.sheets.fruit.backgroundSize,
-            position: LETS_TRY_DATA.assets.knownCells.fruit["orange"],
+            src: ALTE_DATA.assetUrl(ALTE_DATA.assets.sheets.fruit.file),
+            size: ALTE_DATA.assets.sheets.fruit.backgroundSize,
+            position: ALTE_DATA.assets.knownCells.fruit["orange"],
             flip: false,
             cropTop: 0
           }
@@ -550,9 +550,9 @@
           alternate: "pineapple",
           textbook: true,
           visual: {
-            src: LETS_TRY_DATA.assetUrl(LETS_TRY_DATA.assets.sheets.fruit.file),
-            size: LETS_TRY_DATA.assets.sheets.fruit.backgroundSize,
-            position: LETS_TRY_DATA.assets.knownCells.fruit["pineapple"],
+            src: ALTE_DATA.assetUrl(ALTE_DATA.assets.sheets.fruit.file),
+            size: ALTE_DATA.assets.sheets.fruit.backgroundSize,
+            position: ALTE_DATA.assets.knownCells.fruit["pineapple"],
             flip: false,
             cropTop: 0
           }
@@ -564,9 +564,9 @@
           alternate: "peach",
           textbook: true,
           visual: {
-            src: LETS_TRY_DATA.assetUrl(LETS_TRY_DATA.assets.sheets.fruit.file),
-            size: LETS_TRY_DATA.assets.sheets.fruit.backgroundSize,
-            position: LETS_TRY_DATA.assets.knownCells.fruit["peach"],
+            src: ALTE_DATA.assetUrl(ALTE_DATA.assets.sheets.fruit.file),
+            size: ALTE_DATA.assets.sheets.fruit.backgroundSize,
+            position: ALTE_DATA.assets.knownCells.fruit["peach"],
             flip: false,
             cropTop: 0
           }
@@ -578,9 +578,9 @@
           alternate: "melon",
           textbook: true,
           visual: {
-            src: LETS_TRY_DATA.assetUrl(LETS_TRY_DATA.assets.sheets.fruit.file),
-            size: LETS_TRY_DATA.assets.sheets.fruit.backgroundSize,
-            position: LETS_TRY_DATA.assets.knownCells.fruit["melon"],
+            src: ALTE_DATA.assetUrl(ALTE_DATA.assets.sheets.fruit.file),
+            size: ALTE_DATA.assets.sheets.fruit.backgroundSize,
+            position: ALTE_DATA.assets.knownCells.fruit["melon"],
             flip: false,
             cropTop: 0
           }
@@ -592,9 +592,9 @@
           alternate: "banana",
           textbook: true,
           visual: {
-            src: LETS_TRY_DATA.assetUrl(LETS_TRY_DATA.assets.sheets.fruit.file),
-            size: LETS_TRY_DATA.assets.sheets.fruit.backgroundSize,
-            position: LETS_TRY_DATA.assets.knownCells.fruit["banana"],
+            src: ALTE_DATA.assetUrl(ALTE_DATA.assets.sheets.fruit.file),
+            size: ALTE_DATA.assets.sheets.fruit.backgroundSize,
+            position: ALTE_DATA.assets.knownCells.fruit["banana"],
             flip: false,
             cropTop: 0
           }
@@ -606,9 +606,9 @@
           alternate: "kiwi",
           textbook: true,
           visual: {
-            src: LETS_TRY_DATA.assetUrl(LETS_TRY_DATA.assets.sheets.fruit.file),
-            size: LETS_TRY_DATA.assets.sheets.fruit.backgroundSize,
-            position: LETS_TRY_DATA.assets.knownCells.fruit["kiwi-fruit"],
+            src: ALTE_DATA.assetUrl(ALTE_DATA.assets.sheets.fruit.file),
+            size: ALTE_DATA.assets.sheets.fruit.backgroundSize,
+            position: ALTE_DATA.assets.knownCells.fruit["kiwi-fruit"],
             flip: false,
             cropTop: 0
           }
@@ -620,9 +620,9 @@
           alternate: "lemon",
           textbook: true,
           visual: {
-            src: LETS_TRY_DATA.assetUrl(LETS_TRY_DATA.assets.sheets.fruit.file),
-            size: LETS_TRY_DATA.assets.sheets.fruit.backgroundSize,
-            position: LETS_TRY_DATA.assets.knownCells.fruit["lemon"],
+            src: ALTE_DATA.assetUrl(ALTE_DATA.assets.sheets.fruit.file),
+            size: ALTE_DATA.assets.sheets.fruit.backgroundSize,
+            position: ALTE_DATA.assets.knownCells.fruit["lemon"],
             flip: false,
             cropTop: 0
           }
@@ -643,7 +643,7 @@
     return "food";
   }
 
-  UNIT_CONFIG.bookId = "lt1";
+  UNIT_CONFIG.bookId = "book1";
   UNIT_CONFIG.cards = UNIT_CONFIG.cards.map((card) => ({
     ...card,
     category: categoryFor(card),
@@ -682,7 +682,7 @@
       teacherAnswer: word,
       textbook: false,
       visual: {
-        src: LETS_TRY_DATA.assetUrl(sheet),
+        src: ALTE_DATA.assetUrl(sheet),
         size,
         position,
         flip: false,
@@ -692,10 +692,10 @@
     existingIds.add(id);
   }
 
-  const sharedSheets = LETS_TRY_DATA.assets.sheets;
-  const sharedCells = LETS_TRY_DATA.assets.knownCells;
+  const sharedSheets = ALTE_DATA.assets.sheets;
+  const sharedCells = ALTE_DATA.assets.knownCells;
 
-  LETS_TRY_DATA.getCategory("sports").items.forEach((entry) => {
+  ALTE_DATA.getCategory("sports").items.forEach((entry) => {
     addSpriteCard({
       id: entry.id,
       category: "sports",
@@ -705,7 +705,7 @@
     });
   });
 
-  LETS_TRY_DATA.getCategory("vegetables").items.forEach((entry) => {
+  ALTE_DATA.getCategory("vegetables").items.forEach((entry) => {
     addSpriteCard({
       id: entry.id,
       category: "vegetables",
@@ -715,7 +715,7 @@
     });
   });
 
-  LETS_TRY_DATA.getCategory("fruit").items.forEach((entry) => {
+  ALTE_DATA.getCategory("fruit").items.forEach((entry) => {
     addSpriteCard({
       id: entry.id,
       category: "fruit",
@@ -733,6 +733,6 @@
     position: sharedCells.fruit.sausage
   });
 
-  window.LETS_TRY_UNIT_CATEGORY_IDS = ["colours","sports","food","vegetables","fruit"];
-  window.LETS_TRY_UNIT_CONFIG = UNIT_CONFIG;
+  window.ALTE_UNIT_CATEGORY_IDS = ["colours","sports","food","vegetables","fruit"];
+  window.ALTE_UNIT_CONFIG = UNIT_CONFIG;
 })();

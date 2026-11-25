@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Also, let’s try English! — ALT-e</title>
-<link rel="stylesheet" href="css/lets-try-menu.css">
+<link rel="stylesheet" href="css/menu.css">
 </head>
 <body class="home-menu">
 <header><h1>Also, let’s try English! <small>ALT-e</small></h1></header>
@@ -14,10 +14,10 @@
     <p>Choose a book, browse by topic, or explore the classroom tools.</p>
   </section>
   <section class="grid">
-    <button class="card lt1" id="letsTry1">
+    <button class="card book1" id="book1Button">
       <span class="icon">📘</span><strong>Book 1</strong><span>Units 1–9</span>
     </button>
-    <button class="card lt2" id="letsTry2">
+    <button class="card book2" id="book2Button">
       <span class="icon">📙</span><strong>Book 2</strong><span>Units 1–9</span>
     </button>
     <button class="card categories" id="categories">
@@ -29,8 +29,8 @@
   </section>
 </main>
 <script>
-document.getElementById("letsTry1").addEventListener("click",()=>location.href="lets_try_1.html");
-document.getElementById("letsTry2").addEventListener("click",()=>location.href="lets_try_2.html");
+document.getElementById("book1Button").addEventListener("click",()=>location.href="book-1.html");
+document.getElementById("book2Button").addEventListener("click",()=>location.href="book-2.html");
 document.getElementById("categories").addEventListener("click",()=>location.href="categories.html");
 document.getElementById("games").addEventListener("click",()=>location.href="games/index.html");
 </script>

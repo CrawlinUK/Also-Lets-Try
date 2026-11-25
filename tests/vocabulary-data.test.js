@@ -16,24 +16,24 @@ function source(relativePath) {
 function context(search = "") {
   const scope = {
     window: {},
-    document: { currentScript: { src: "https://example.invalid/js/lets-try-data.js" } },
+    document: { currentScript: { src: "https://example.invalid/js/vocabulary-data.js" } },
     location: { href: "https://example.invalid/unit.html", search },
     URL,
     URLSearchParams
   };
   vm.createContext(scope);
-  vm.runInContext(source("js/lets-try-data.js"), scope);
-  scope.LETS_TRY_DATA = scope.window.LETS_TRY_DATA;
-  vm.runInContext(source("js/lets-try-card-factory.js"), scope);
-  scope.LETS_TRY_CARD_FACTORY = scope.window.LETS_TRY_CARD_FACTORY;
+  vm.runInContext(source("js/vocabulary-data.js"), scope);
+  scope.ALTE_DATA = scope.window.ALTE_DATA;
+  vm.runInContext(source("js/card-factory.js"), scope);
+  scope.ALTE_CARD_FACTORY = scope.window.ALTE_CARD_FACTORY;
   return scope;
 }
 function config(relativePath, search = "") {
   const scope = context(search);
   vm.runInContext(source(relativePath), scope);
-  const configuration = scope.window.LETS_TRY_UNIT_CONFIG;
+  const configuration = scope.window.ALTE_UNIT_CONFIG;
   if (!Array.isArray(configuration.cards) && Array.isArray(configuration.categories)) {
-    configuration.cards = scope.LETS_TRY_CARD_FACTORY.makeCardsForCategories(configuration.categories, {
+    configuration.cards = scope.ALTE_CARD_FACTORY.makeCardsForCategories(configuration.categories, {
       bookId: configuration.bookId,
       unitNumber: configuration.unitNumber,
       defaults: configuration.defaults || "tagged",
@@ -52,7 +52,7 @@ function checkDeck(label, cards, expectedCount, expectedSelected) {
 // Standalone Categories come directly from picture mappings in the master
 // database. Missing picture entries are hidden, not displayed as placeholders.
 const categoryMenuSource = source("categories.html");
-const sharedCssSource = source("css/lets-try.css");
+const sharedCssSource = source("css/classroom.css");
 assert.match(categoryMenuSource, /data\.getCategoryPictureItems\(id\)/,
   "menu lists only categories with picture cards");
 assert.match(categoryMenuSource, /if \(!pictureItems\.length\) return;/,
@@ -80,7 +80,7 @@ assert.match(sharedCssSource, /data-book="categories"\] \.site-title \.unit-word
 assert.match(sharedCssSource, /data-book="categories"\] \.site-title \.unit-number/,
   "hide unit number only for Categories");
 
-assert.doesNotMatch(source("js/lets-try-unit.js"), /imageDiagnostic|imageDiagnosis|image-diagnostic|data-diagnostic/i,
+assert.doesNotMatch(source("js/classroom.js"), /imageDiagnostic|imageDiagnosis|image-diagnostic|data-diagnostic/i,
   "classroom must not expose developer image diagnosis controls");
 assert.doesNotMatch(sharedCssSource, /image-diagnostic|data-diagnostic/i,
   "remove obsolete classroom diagnosis styling");
@@ -115,12 +115,12 @@ assert.match(viewerSource, /id="closeTool"/, "Done hides editor controls");
 assert.doesNotMatch(viewerSource, /class="tool-tabs"/,
   "duplicated top tabs must not occupy picture space");
 
-assert.match(source("js/lets-try-unit.js"), /const cropEdges = \["cropTop", "cropRight", "cropBottom", "cropLeft"\]/,
+assert.match(source("js/classroom.js"), /const cropEdges = \["cropTop", "cropRight", "cropBottom", "cropLeft"\]/,
   "classroom renderer handles all four crop edges");
 
 
 
-const db = context().LETS_TRY_DATA;
+const db = context().ALTE_DATA;
 for (const [sheet,ratio] of [
   ["flags","4 / 3"], ["emotions","2 / 3"],
   ["sports","9 / 8"], ["bodyParts","1 / 2"],
@@ -185,17 +185,17 @@ for (const id of visiblePictureCategories) {
 // Simulate a partly drawn sheet: one existing picture plus an unfinished word.
 // The complete word remains in the master, but isn't sent to the standalone deck.
 const partial = context("?category=nature");
-partial.LETS_TRY_DATA.categories.nature.items.push({
+partial.ALTE_DATA.categories.nature.items.push({
   id: "not-yet-illustrated", defaultIn: [], word: "not yet illustrated"
 });
-assert.equal(partial.LETS_TRY_DATA.getCategory("nature").items.length, 2);
-assert.equal(partial.LETS_TRY_DATA.getCategoryPictureItems("nature").length, 1);
-assert.equal(partial.LETS_TRY_DATA.hasCategoryPictures("nature"), true,
+assert.equal(partial.ALTE_DATA.getCategory("nature").items.length, 2);
+assert.equal(partial.ALTE_DATA.getCategoryPictureItems("nature").length, 1);
+assert.equal(partial.ALTE_DATA.hasCategoryPictures("nature"), true,
   "one mapped picture is enough to expose a category");
 vm.runInContext(source("config/categories.js"), partial);
 checkDeck("Partially pictured Nature",
-  partial.window.LETS_TRY_UNIT_CONFIG.cards, 1, 1);
-const unfiltered = partial.LETS_TRY_CARD_FACTORY.makeCategoryCards("nature",
+  partial.window.ALTE_UNIT_CONFIG.cards, 1, 1);
+const unfiltered = partial.ALTE_CARD_FACTORY.makeCategoryCards("nature",
   { defaults: "all", onlyWithPictures: true });
 assert.equal(unfiltered.length, 1,
   "factory can select only pictured cards without changing master data");
@@ -226,11 +226,11 @@ for (const [id, position] of Object.entries(stationeryCells)) {
 
 
 // Standalone Shapes must use EXACTLY the same shared number/colour controls
-// and original seven artworks as Let's Try! 1 Unit 7.
+// and original seven artworks as Book 1 Unit 7.
 const standaloneShapes = config("config/categories.js", "?category=shapes");
-const bookOneShapes = config("config/units/lt1-unit7.js");
+const bookOneShapes = config("config/units/book1-unit7.js");
 checkDeck("Standalone Shapes", standaloneShapes.cards, 7, 7);
-checkDeck("LT1 Unit 7 Shapes", bookOneShapes.cards, 7, 7);
+checkDeck("Book 1 Unit 7 Shapes", bookOneShapes.cards, 7, 7);
 assert.equal(JSON.stringify(standaloneShapes.shapePractice),
   JSON.stringify(db.categories.shapes.shapePractice),
   "standalone Shapes uses master practice settings");
@@ -251,7 +251,7 @@ for (let i = 0; i < standaloneShapes.cards.length; i++) {
   assert.equal(a.visual.defaultColourName, b.visual.defaultColourName,
     "same default shape colour");
 }
-assert.match(source("js/lets-try-unit.js"), /"shape-practice-mode", Boolean\(SHAPE_PRACTICE\)/,
+assert.match(source("js/classroom.js"), /"shape-practice-mode", Boolean\(SHAPE_PRACTICE\)/,
   "shared renderer activates layout by practice configuration");
 assert.match(sharedCssSource, /html\.shared-unit-template\.shape-practice-mode \.answer-area/,
   "palette side padding is shared by unit and category pages");
@@ -259,14 +259,14 @@ assert.doesNotMatch(sharedCssSource,
   /html\.shared-unit-template\[data-unit="7"\] \.answer-area/,
   "shape layout is not accidentally applied to unrelated Unit 7 pages");
 
-checkDeck("LT1 Unit 1", config("config/units/lt1-unit1.js").cards, 14, 9);
-checkDeck("LT1 Unit 2", config("config/units/lt1-unit2.js").cards, 9, 6);
-checkDeck("LT2 Unit 1", config("config/units/lt2-unit1.js").cards, 14, 11);
+checkDeck("Book 1 Unit 1", config("config/units/book1-unit1.js").cards, 14, 9);
+checkDeck("Book 1 Unit 2", config("config/units/book1-unit2.js").cards, 9, 6);
+checkDeck("Book 2 Unit 1", config("config/units/book2-unit1.js").cards, 14, 11);
 
-const unit5 = config("config/units/lt1-unit5.js");
-checkDeck("LT1 Unit 5", unit5.cards, 39, 21);
-assert.equal(unit5.categories.join(","), "sports,food,fruit", "LT1 Unit 5 categories");
-assert.equal(unit5.grammar, "I like [word].", "LT1 Unit 5 grammar");
+const unit5 = config("config/units/book1-unit5.js");
+checkDeck("Book 1 Unit 5", unit5.cards, 39, 21);
+assert.equal(unit5.categories.join(","), "sports,food,fruit", "Book 1 Unit 5 categories");
+assert.equal(unit5.grammar, "I like [word].", "Book 1 Unit 5 grammar");
 for (const [id, sentence] of [
   ["hamburger", "I like hamburgers."],
   ["sausage", "I like sausages."],
@@ -277,18 +277,18 @@ for (const [id, sentence] of [
 }
 assert.equal(unit5.cards.find(card => card.id === "noodle").word, "noodles");
 assert.match(unit5.cards.find(card => card.id === "sausage").visual.src, /fruit\.webp$/);
-assert.ok(unit5.cards.every(card => card.visual?.position), "LT1 Unit 5 image positions");
+assert.ok(unit5.cards.every(card => card.visual?.position), "Book 1 Unit 5 image positions");
 
-// LT2 Unit 2 must not show an empty screen when only Weather is selected
+// Book 2 Unit 2 must not show an empty screen when only Weather is selected
 // while the former phrase mode was Let's. Exercise the actual shared rebuildDeck.
-const weatherUnit = config("config/units/lt2-unit2.js");
-checkDeck("LT2 Unit 2", weatherUnit.cards, 16, 16);
+const weatherUnit = config("config/units/book2-unit2.js");
+checkDeck("Book 2 Unit 2", weatherUnit.cards, 16, 16);
 assert.equal(weatherUnit.phraseSwitch, undefined,
-  "LT2 Unit 2 no longer adds a footer phrase switch");
+  "Book 2 Unit 2 no longer adds a footer phrase switch");
 assert.deepEqual(Array.from(weatherUnit.displayModes),
   ["pictureText","picture","pictureIts","pictureLets","text"],
-  "LT2 Unit 2 has two distinct phrase options in Settings");
-const classroomSource = source("js/lets-try-unit.js");
+  "Book 2 Unit 2 has two distinct phrase options in Settings");
+const classroomSource = source("js/classroom.js");
 assert.match(classroomSource, /value="pictureIts"/,
   "It's phrase choice is in Settings");
 assert.match(classroomSource, /value="pictureLets"/,
@@ -326,7 +326,7 @@ assert.match(sharedCssSource, /white-space: normal;[\s\S]*?overflow-wrap: anywhe
 // is selected. The two phrase settings only change displayed text.
 const phraseSelected = new Set(weatherUnit.cards.map(c => c.id));
 const selectionCount = () => weatherUnit.cards.filter(c => phraseSelected.has(c.id)).length;
-assert.equal(selectionCount(),16,"LT2 Unit 2 initially has 16 cards");
+assert.equal(selectionCount(),16,"Book 2 Unit 2 initially has 16 cards");
 for (const category of ["playActivities","clothes"])
   weatherUnit.cards.filter(c => c.category === category).forEach(c => phraseSelected.delete(c.id));
 assert.equal(selectionCount(),6,"Weather only shows six cards");
@@ -335,44 +335,44 @@ assert.equal(selectionCount(),10,"Weather plus Play Activities shows ten cards")
 weatherUnit.cards.filter(c => c.category === "clothes").forEach(c => phraseSelected.add(c.id));
 assert.equal(selectionCount(),16,"Selecting Clothes restores all sixteen cards");
 
-const lt2Unit4 = config("config/units/lt2-unit4.js");
-assert.ok(lt2Unit4.cards.every(card => card.sentence.startsWith("It’s ")),
-  "LT2 Unit 4 cards use It's sentences");
-assert.equal(lt2Unit4.displayModeLabels.pictureSentence,"Picture + It’s",
-  "LT2 Unit 4 phrase setting");
-const lt2Unit8 = config("config/units/lt2-unit8.js");
-checkDeck("LT2 Unit 8 with School Rooms artwork", lt2Unit8.cards, 16, 14);
-assert.ok(lt2Unit8.cards.every(card => card.visual.src?.includes("schoolRooms.webp")),
+const book2Unit4 = config("config/units/book2-unit4.js");
+assert.ok(book2Unit4.cards.every(card => card.sentence.startsWith("It’s ")),
+  "Book 2 Unit 4 cards use It's sentences");
+assert.equal(book2Unit4.displayModeLabels.pictureSentence,"Picture + It’s",
+  "Book 2 Unit 4 phrase setting");
+const book2Unit8 = config("config/units/book2-unit8.js");
+checkDeck("Book 2 Unit 8 with School Rooms artwork", book2Unit8.cards, 16, 14);
+assert.ok(book2Unit8.cards.every(card => card.visual.src?.includes("schoolRooms.webp")),
   "all sixteen Unit 8 cards use the global School Rooms sheet");
 for (const id of ["restroom","entrance"]) {
-  const card = lt2Unit8.cards.find(entry => entry.id === id);
+  const card = book2Unit8.cards.find(entry => entry.id === id);
   assert.ok(card, id + " remains available as a Unit 8 card");
   assert.equal(card.textbook, false, id + " starts unselected in Unit 8");
 }
 assert.equal(config("config/categories.js","?category=schoolPlaces")
   .cards.filter(card => card.textbook).length,16,
   "standalone School Places still defaults to all sixteen pictures");
-assert.equal(lt2Unit8.schoolShortenSetting,true,"LT2 Unit 8 offers optional school shortening");
-assert.ok(lt2Unit8.cards.some(c => c.word==="school principal’s office"),
-  "LT2 Unit 8 master office names remain intact");
+assert.equal(book2Unit8.schoolShortenSetting,true,"Book 2 Unit 8 offers optional school shortening");
+assert.ok(book2Unit8.cards.some(c => c.word==="school principal’s office"),
+  "Book 2 Unit 8 master office names remain intact");
 assert.match(classroomSource,/schoolShortenButton/,
   "Unit 8 school-shortening button exists");
-const lt2Unit9 = config("config/units/lt2-unit9.js");
-assert.ok(lt2Unit9.cards.every(card => card.sentence==="I "+card.word+"."),
-  "LT2 Unit 9 has I ~. sentences");
-assert.equal(lt2Unit9.displayModeLabels.pictureSentence,"Picture + I ~.",
-  "LT2 Unit 9 phrase mode enabled");
-const lt1Unit2 = config("config/units/lt1-unit2.js");
-assert.equal(lt1Unit2.displayModeLabels.pictureSentence,"Picture + I’m",
-  "LT1 Unit 2 describes its I'm phrase");
-const lt1Unit8 = config("config/units/lt1-unit8.js");
-assert.ok(lt1Unit8.cards.every(card => !card.underlineToken),
-  "LT1 Unit 8 has no stray underline mark on an");
+const book2Unit9 = config("config/units/book2-unit9.js");
+assert.ok(book2Unit9.cards.every(card => card.sentence==="I "+card.word+"."),
+  "Book 2 Unit 9 has I ~. sentences");
+assert.equal(book2Unit9.displayModeLabels.pictureSentence,"Picture + I ~.",
+  "Book 2 Unit 9 phrase mode enabled");
+const book1Unit2 = config("config/units/book1-unit2.js");
+assert.equal(book1Unit2.displayModeLabels.pictureSentence,"Picture + I’m",
+  "Book 1 Unit 2 describes its I'm phrase");
+const book1Unit8 = config("config/units/book1-unit8.js");
+assert.ok(book1Unit8.cards.every(card => !card.underlineToken),
+  "Book 1 Unit 8 has no stray underline mark on an");
 
 assert.doesNotMatch(sharedCssSource, /html\.shared-unit-template\[data-unit="2"\]/,
   "portrait size overrides cannot accidentally affect both books");
-assert.match(sharedCssSource, /\[data-book="lt1"\]\[data-unit="2"\]/,
-  "feelings portrait overrides apply only to LT1 Unit 2");
+assert.match(sharedCssSource, /\[data-book="book1"\]\[data-unit="2"\]/,
+  "feelings portrait overrides apply only to Book 1 Unit 2");
 for (const [category,id,ratio] of [
   ["worldGreetings","china","4 / 3"],
   ["feelings","happy","2 / 3"],
@@ -383,10 +383,22 @@ for (const [category,id,ratio] of [
     category + " cards inherit canonical aspect ratio");
 }
 
-const unit4 = config("config/units/lt2-unit4.js");
-assert.equal(unit4.cards.length, 22, "LT2 Unit 4 combined card count");
+const unit4 = config("config/units/book2-unit4.js");
+assert.equal(unit4.cards.length, 22, "Book 2 Unit 4 combined card count");
 assert.equal(unit4.cards.filter(card => card.category === "clockTimes" && card.textbook).length, 0,
-  "LT2 Unit 4 clocks must remain optional");
-assert.ok(unit4.cards.every(card => card.visual?.position), "LT2 Unit 4 sprite positions");
+  "Book 2 Unit 4 clocks must remain optional");
+assert.ok(unit4.cards.every(card => card.visual?.position), "Book 2 Unit 4 sprite positions");
 
 console.log("Vocabulary checks passed: 21 mapped picture categories including Jobs and 16 school rooms, partial decks, textbook units and phrase settings.");
+
+// Compatibility and new navigation checks for the ALT-e naming migration.
+const loaderSource = source("js/unit-loader.js");
+assert.match(loaderSource, /lt1: "book1", lt2: "book2"/, "old bookmarked unit IDs remain accepted");
+for (const n of [1, 2]) {
+  assert.ok(fs.existsSync(path.join(root, "book-" + n + ".html")), "new book menu exists");
+  assert.match(source("lets_try_" + n + ".html"), new RegExp("book-" + n + "\\.html"), "old menu redirects to new menu");
+  for (let unit = 1; unit <= 9; unit++) {
+    assert.ok(fs.existsSync(path.join(root, "config/units/book" + n + "-unit" + unit + ".js")), "renamed unit config exists");
+  }
+}
+assert.match(source("js/classroom.js"), /LEGACY_PREFERENCES_KEY/, "saved teacher preferences remain readable");

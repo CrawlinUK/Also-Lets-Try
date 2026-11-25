@@ -1,8 +1,8 @@
-# Let’s Try! 1 image/data inventory
+# Book 1 image/data inventory
 
 The shared source of truth for vocabulary and image mappings is:
 
-`js/lets-try-data.js`
+`js/vocabulary-data.js`
 
 ## Current image assets
 
@@ -25,9 +25,9 @@ The shared source of truth for vocabulary and image mappings is:
 ## Next work
 
 - Reconstruct the twelve stationery card definitions and their final crop/position corrections.
-- Complete Let’s Try! 1 vocabulary/image sets for Units 6–9 from the textbook/master list.
+- Complete Book 1 vocabulary/image sets for Units 6–9 from the textbook/master list.
 - After checking the shared data against the current working units, migrate Units 1–4 so their duplicated card/image definitions can be removed.
 
 ## Rule going forward
 
-Once a category has moved into `js/lets-try-data.js`, sprite positions and image filenames should not be duplicated in individual unit HTML files. Fixing an image alignment should then require one change only.
+Once a category has moved into `js/vocabulary-data.js`, sprite positions and image filenames should not be duplicated in individual unit HTML files. Fixing an image alignment should then require one change only.

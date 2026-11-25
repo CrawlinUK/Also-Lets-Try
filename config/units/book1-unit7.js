@@ -1,30 +1,30 @@
-/* LT1 Unit 7 — shared-template configuration */
+/* Book 1 Unit 7 — shared-template configuration */
 (function () {
   "use strict";
 
-  const UNIT_BOOK_ID = "lt1";
+  const UNIT_BOOK_ID = "book1";
   const UNIT_NUMBER = 7;
-  const UNIT_CATEGORY_IDS = LETS_TRY_DATA.getUnitCategoryIds(UNIT_BOOK_ID, UNIT_NUMBER);
+  const UNIT_CATEGORY_IDS = ALTE_DATA.getUnitCategoryIds(UNIT_BOOK_ID, UNIT_NUMBER);
   const UNIT_DEFAULT_IDS = new Set(
-    Object.values(LETS_TRY_DATA.getUnitDefaults(UNIT_BOOK_ID, UNIT_NUMBER)).flat()
+    Object.values(ALTE_DATA.getUnitDefaults(UNIT_BOOK_ID, UNIT_NUMBER)).flat()
   );
 
   // Category and textbook unit share the same master practice settings.
-  const SHARED_SHAPE_PRACTICE = LETS_TRY_DATA.getCategory("shapes").shapePractice;
+  const SHARED_SHAPE_PRACTICE = ALTE_DATA.getCategory("shapes").shapePractice;
   const DEFAULT_SHAPE_COLOURS = SHARED_SHAPE_PRACTICE.defaultColours;
 
   function shapeVisual(id) {
-    const file = LETS_TRY_DATA.assets.vectors.shapes[id];
+    const file = ALTE_DATA.assets.vectors.shapes[id];
     return {
       type: "shape-svg",
       shapeId: id,
-      src: LETS_TRY_DATA.assetUrl(file),
+      src: ALTE_DATA.assetUrl(file),
       defaultColourName: DEFAULT_SHAPE_COLOURS[id],
       aspectRatio: "1 / 1"
     };
   }
 
-  const shapeCategory = LETS_TRY_DATA.getCategory("shapes");
+  const shapeCategory = ALTE_DATA.getCategory("shapes");
   const cards = shapeCategory.items.map((entry) => {
     const word = entry.id.replace(/-/g, " ");
     return {
@@ -40,8 +40,8 @@
     };
   });
 
-  window.LETS_TRY_UNIT_CATEGORY_IDS = UNIT_CATEGORY_IDS;
-  window.LETS_TRY_UNIT_CONFIG = {
+  window.ALTE_UNIT_CATEGORY_IDS = UNIT_CATEGORY_IDS;
+  window.ALTE_UNIT_CONFIG = {
     bookId: UNIT_BOOK_ID,
     unitNumber: "7",
     unitTitle: "This is for you.",
@@ -50,7 +50,7 @@
     unitColour: "#6F58A3",
     unitNumberColour: "#8E79BB",
 
-    menuFile: "lets_try_1.html",
+    menuFile: "book-1.html",
 
     defaultPrompt: "",
     selectionHeading: "Shapes",

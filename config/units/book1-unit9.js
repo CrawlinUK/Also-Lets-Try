@@ -1,11 +1,11 @@
-/* LT1 Unit 9 — Who are you? */
+/* Book 1 Unit 9 — Who are you? */
 (function () {
   "use strict";
 
-  const UNIT_BOOK_ID = "lt1";
+  const UNIT_BOOK_ID = "book1";
   const UNIT_NUMBER = 9;
-  const sheets = LETS_TRY_DATA.assets.sheets;
-  const cells = LETS_TRY_DATA.assets.knownCells;
+  const sheets = ALTE_DATA.assets.sheets;
+  const cells = ALTE_DATA.assets.knownCells;
 
   // Core vocabulary: the 12 animals of the Chinese zodiac, using the
   // existing classroom vocabulary/artwork already in the project.
@@ -28,7 +28,7 @@
     const position = cells.animals[id];
     if (!position) throw new Error(`Missing Unit 9 animal position for ${id}.`);
     return {
-      src: LETS_TRY_DATA.assetUrl(sheets.animals.file),
+      src: ALTE_DATA.assetUrl(sheets.animals.file),
       size: sheets.animals.backgroundSize,
       position,
       flip: false,
@@ -48,9 +48,9 @@
     visual: animalVisual(id)
   }));
 
-  window.LETS_TRY_UNIT_CATEGORY_IDS = ["animals"];
+  window.ALTE_UNIT_CATEGORY_IDS = ["animals"];
 
-  window.LETS_TRY_UNIT_CONFIG = {
+  window.ALTE_UNIT_CONFIG = {
     bookId: UNIT_BOOK_ID,
     unitNumber: "9",
     unitTitle: "Who are you?",
@@ -59,7 +59,7 @@
     unitColour: "#14A83B",
     unitNumberColour: "#54BE6D",
 
-    menuFile: "lets_try_1.html",
+    menuFile: "book-1.html",
 
     defaultPrompt: "I’m a ~",
     selectionHeading: "Unit 9 animals",

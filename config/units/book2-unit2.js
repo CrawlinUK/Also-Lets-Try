@@ -1,17 +1,17 @@
-/* LT2 Unit 2 — Let’s play cards. */
+/* Book 2 Unit 2 — Let’s play cards. */
 (function () {
   "use strict";
-  const bookId = "lt2";
+  const bookId = "book2";
   const unitNumber = 2;
-  const categoryIds = LETS_TRY_DATA.getUnitCategoryIds(bookId, unitNumber);
-  const defaults = LETS_TRY_DATA.getUnitDefaults(bookId, unitNumber);
+  const categoryIds = ALTE_DATA.getUnitCategoryIds(bookId, unitNumber);
+  const defaults = ALTE_DATA.getUnitDefaults(bookId, unitNumber);
 
   function human(id) {
     return String(id).replace(/-/g, " ");
   }
 
-  const sheets = LETS_TRY_DATA.assets.sheets;
-  const cells = LETS_TRY_DATA.assets.knownCells;
+  const sheets = ALTE_DATA.assets.sheets;
+  const cells = ALTE_DATA.assets.knownCells;
 
   function spriteVisual(categoryId, id) {
     const map = {
@@ -24,7 +24,7 @@
       return { type: "text", text: human(id), aspectRatio: "1 / 1" };
     }
     return {
-      src: LETS_TRY_DATA.assetUrl(source.sheet.file),
+      src: ALTE_DATA.assetUrl(source.sheet.file),
       size: source.size,
       position: source.cells[id],
       flip: false,
@@ -33,7 +33,7 @@
   }
 
   const cards = categoryIds.flatMap((categoryId) => {
-    const category = LETS_TRY_DATA.getCategory(categoryId);
+    const category = ALTE_DATA.getCategory(categoryId);
     const defaultIds = new Set(defaults[categoryId] || []);
     return category.items.map((entry) => {
       const word = human(entry.id);
@@ -59,15 +59,15 @@
     });
   });
 
-  window.LETS_TRY_UNIT_CATEGORY_IDS = categoryIds;
-  window.LETS_TRY_UNIT_CONFIG = {
+  window.ALTE_UNIT_CATEGORY_IDS = categoryIds;
+  window.ALTE_UNIT_CONFIG = {
     bookId,
     unitNumber: "2",
     unitTitle: "Let’s play cards.",
     browserTitle: "Bk2U2 — Let’s play cards.",
     unitColour: "#F6AB00",
     unitNumberColour: "#F8C34A",
-    menuFile: "lets_try_2.html",
+    menuFile: "book-2.html",
     defaultPrompt: "Let’s ~",
     // Phrase choices are in Settings, not an extra button in the footer.
     // Both modes keep every selected card in the deck.

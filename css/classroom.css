@@ -1498,9 +1498,9 @@ html.shared-unit-template .answer-area {
   padding: 0 12px 4px;
 }
 
-/* LT1 Unit 7: long quantity/colour/shape phrases need a smaller text ceiling
+/* Book 1 Unit 7: long quantity/colour/shape phrases need a smaller text ceiling
    than ordinary vocabulary cards on landscape tablets. */
-html.shared-unit-template[data-book="lt1"][data-unit="7"] .display-text {
+html.shared-unit-template[data-book="book1"][data-unit="7"] .display-text {
   font-size: calc(clamp(2rem, 4.3vw, 4.5rem) * var(--text-scale, 1));
   line-height: 1.08;
   overflow-wrap: normal;
@@ -1515,18 +1515,18 @@ html.shared-unit-template .display-text {
 
 /* Unit 2 uses portrait artwork, so reserve enough vertical room for
    HandwritingWeCan descenders in Picture + Text mode. */
-html.shared-unit-template[data-book="lt1"][data-unit="2"] .flashcard:not(.picture-only):not(.text-only) .picture-frame {
+html.shared-unit-template[data-book="book1"][data-unit="2"] .flashcard:not(.picture-only):not(.text-only) .picture-frame {
   width: calc(min(43vh, 40vw, 500px) * var(--picture-scale));
 }
 
-html.shared-unit-template[data-book="lt1"][data-unit="2"] .flashcard:not(.picture-only) .display-text {
+html.shared-unit-template[data-book="book1"][data-unit="2"] .flashcard:not(.picture-only) .display-text {
   padding-bottom: .14em;
   line-height: 1.12;
 }
 
 /* Portrait-safe Picture Only sizing: use the available height rather than
    treating the portrait frame like a square/landscape picture. */
-html.shared-unit-template[data-book="lt1"][data-unit="2"] .flashcard.picture-only .picture-frame {
+html.shared-unit-template[data-book="book1"][data-unit="2"] .flashcard.picture-only .picture-frame {
   width: auto;
   height: calc(min(72vh, 760px) * var(--picture-scale));
   max-width: 92%;
@@ -2010,7 +2010,7 @@ html.shared-unit-template .display-mode-options label[hidden] {
 }
 
 /* Book 1 Unit 3 has three display choices; Book 2 Unit 3 has four. */
-html.shared-unit-template[data-book="lt1"][data-unit="3"] .display-mode-options {
+html.shared-unit-template[data-book="book1"][data-unit="3"] .display-mode-options {
   grid-template-columns: repeat(3, minmax(0, 1fr));
 }
 
@@ -2650,7 +2650,7 @@ html.shared-unit-template .control-bar:not(:has(#floatingTimer:not([hidden]))):h
 /* AUTOMATIC COUNTDOWN — one light-red beat per second.
    Only the timer number pulses, and the +/- duration controls are locked
    while Play is active. Respect reduced-motion accessibility settings. */
-@keyframes lets-try-countdown-beat {
+@keyframes alte-countdown-beat {
   0%   { color: #f19ca3; transform: scale(1.1); }
   45%  { color: #c54e58; transform: scale(1); }
   100% { color: var(--ink); transform: scale(1); }
@@ -2658,7 +2658,7 @@ html.shared-unit-template .control-bar:not(:has(#floatingTimer:not([hidden]))):h
 html.shared-unit-template .control-bar .floating-timer.is-counting .timer-value::before {
   display: inline-block;
   transform-origin: center;
-  animation: lets-try-countdown-beat 1s ease-out infinite;
+  animation: alte-countdown-beat 1s ease-out infinite;
 }
 html.shared-unit-template .control-bar .floating-timer.timer-control button:disabled {
   opacity: .3;

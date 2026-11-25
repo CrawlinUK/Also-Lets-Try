@@ -1,7 +1,7 @@
 "use strict";
 
-const CACHE_NAME = "also-lets-try-assets-v1";
-const CACHE_PREFIX = "also-lets-try-assets-";
+const CACHE_NAME = "alte-assets-v1";
+const CACHE_PREFIX = "alte-assets-";
 const CACHE_MAX_AGE = 7 * 24 * 60 * 60 * 1000;
 const CACHED_AT_HEADER = "x-also-cached-at";
 const ASSET_PATTERN = /\.(?:png|jpe?g|webp|gif|avif|svg|woff2?|otf|ttf)$/i;
@@ -67,7 +67,7 @@ self.addEventListener("activate", (event) => {
     const names = await caches.keys();
     await Promise.all(
       names
-        .filter((name) => name.startsWith(CACHE_PREFIX) && name !== CACHE_NAME)
+        .filter((name) => (name.startsWith(CACHE_PREFIX) || name.startsWith("also-lets-try-assets-")) && name !== CACHE_NAME)
         .map((name) => caches.delete(name))
     );
     await cleanupExpiredAssets();

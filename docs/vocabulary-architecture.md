@@ -4,17 +4,17 @@
 
 The current database is ordinary JavaScript, not SQL or JSON yet:
 
-- `js/lets-try-data.js` contains vocabulary records, category labels,
+- `js/vocabulary-data.js` contains vocabulary records, category labels,
   textbook default tags, image sheets, sprite-cell positions and the
   canonical `getWordVisual(categoryId, itemId)` resolver.
-- `js/lets-try-card-factory.js` turns a category's records into flashcards.
+- `js/card-factory.js` turns a category's records into flashcards.
   It can select **all**, **none**, or **tagged** words by default. It also
   supports category lists, a unit grammar template containing `[word]`,
   and optional named word forms (for example, `grammarForm: "like"`).
 - Standalone Categories require **no manual ready flag**. The shared
-  `LETS_TRY_DATA.getCategoryPictureItems(id)` returns the master entries that
+  `ALTE_DATA.getCategoryPictureItems(id)` returns the master entries that
   have a mapped picture via `getWordVisual`, and
-  `LETS_TRY_DATA.hasCategoryPictures(id)` is true when at least one exists.
+  `ALTE_DATA.hasCategoryPictures(id)` is true when at least one exists.
 - `categories.html` lists **only** categories containing pictures; no
   crossed-out placeholders. It displays the first three *pictured* words where
   they fit. The menu and `config/categories.js` use the same shared artwork
@@ -37,7 +37,7 @@ The current database is ordinary JavaScript, not SQL or JSON yet:
   square 500×500 cells on a 2000×2000 canvas). Each picture position is
   recorded explicitly in `assets.knownCells.schoolRooms` in the **physical**
   row order, independent of the category word order. School office names
-  with apostrophes are defined once in the category entries. Let’s Try! 2
+  with apostrophes are defined once in the category entries. Book 2
   Unit 8 now uses these shared visuals and retains its optional classroom
   wording switch that removes “school” from principal/nurse office names.
   Since all 16 are illustrated, School Places appears automatically on
@@ -45,14 +45,14 @@ The current database is ordinary JavaScript, not SQL or JSON yet:
 
 - The master `shapes.shapePractice` profile contains its default shape
   colours, palette order and 1–5 count options. Both the standalone Shapes
-  deck and Let’s Try! 1 Unit 7 enable those **same** options. Shape SVG
+  deck and Book 1 Unit 7 enable those **same** options. Shape SVG
   artwork is identified centrally as `shape-svg`, allowing the shared
   classroom renderer to recolour and repeat it without duplicating cards.
   Other categories do not inherit the Shapes controls.
-- `config/units/lt1-unit5.js` is now a **declarative** unit containing
+- `config/units/book1-unit5.js` is now a **declarative** unit containing
   only settings, categories (`sports`, `food`, `fruit`) and the grammar form.
-  `js/lets-try-unit-loader.js` automatically creates its card list.
-- `config/units/lt1-unit1.js`, `lt1-unit2.js` and `lt2-unit1.js`
+  `js/unit-loader.js` automatically creates its card list.
+- `config/units/book1-unit1.js`, `book1-unit2.js` and `book2-unit1.js`
   also use the shared generator. Other units still have bespoke card-building
   logic and must be migrated carefully.
 - `vocabulary-viewer.html` is the first stage of the image calibration editor.
@@ -114,11 +114,11 @@ data/
   images/
     sprite-sheets.json
   books/
-    lt1.json
-    lt2.json
+    book1.json
+    book2.json
 js/
-  lets-try-data-loader.js
-  lets-try-card-factory.js
+  vocabulary-data-loader.js
+  card-factory.js
 vocabulary-viewer.html
 ```
 

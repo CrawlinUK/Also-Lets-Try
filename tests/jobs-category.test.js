@@ -7,7 +7,7 @@ const vm = require("node:vm");
 const root = path.resolve(__dirname, "..");
 const scope = {
   window: {},
-  document: { currentScript: { src: "https://example.invalid/js/lets-try-data.js" } },
+  document: { currentScript: { src: "https://example.invalid/js/vocabulary-data.js" } },
   location: { href: "https://example.invalid/unit.html", search: "?category=jobs" },
   URL, URLSearchParams
 };
@@ -15,12 +15,12 @@ vm.createContext(scope);
 function load(file) {
   vm.runInContext(fs.readFileSync(path.join(root, file), "utf8"), scope, { filename: file });
 }
-load("js/lets-try-data.js");
-scope.LETS_TRY_DATA = scope.window.LETS_TRY_DATA;
-load("js/lets-try-card-factory.js");
-scope.LETS_TRY_CARD_FACTORY = scope.window.LETS_TRY_CARD_FACTORY;
+load("js/vocabulary-data.js");
+scope.ALTE_DATA = scope.window.ALTE_DATA;
+load("js/card-factory.js");
+scope.ALTE_CARD_FACTORY = scope.window.ALTE_CARD_FACTORY;
 load("config/categories.js");
-const db = scope.LETS_TRY_DATA;
+const db = scope.ALTE_DATA;
 const jobs = db.getCategory("jobs");
 const expected = [
   [
@@ -72,7 +72,7 @@ assert.equal(new Set(jobs.items.map(item => item.id)).size, 36);
 assert.ok(jobs.items.every(item => item.defaultIn.length === 0));
 assert.equal(db.getCategoryPictureItems("jobs").length, 36);
 assert.ok(db.hasCategoryPictures("jobs"));
-for (const book of ["lt1","lt2"]) {
+for (const book of ["book1","book2"]) {
   for (let unit = 1; unit <= 9; unit++) {
     assert.ok(!db.getUnitCategoryIds(book, unit).includes("jobs"));
   }
@@ -86,7 +86,7 @@ expected.forEach((ids, set) => {
     assert.equal(v.position, ["0%","33.333%","66.667%","100%"][cell % 4] + " " + ["0%","50%","100%"][Math.floor(cell / 4)], id);
   });
 });
-const deck = scope.window.LETS_TRY_UNIT_CONFIG;
+const deck = scope.window.ALTE_UNIT_CONFIG;
 assert.equal(deck.unitTitle, "Jobs");
 assert.equal(deck.bookId, "categories");
 assert.equal(deck.cards.length, 36);

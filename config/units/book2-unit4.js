@@ -1,12 +1,12 @@
-/* LT2 Unit 4 — What time is it? Activity and clock sprites. */
+/* Book 2 Unit 4 — What time is it? Activity and clock sprites. */
 (function () {
   "use strict";
-  const bookId = "lt2";
+  const bookId = "book2";
   const unitNumber = 4;
-  const defaults = LETS_TRY_DATA.getUnitDefaults(bookId, unitNumber);
-  const sheets = LETS_TRY_DATA.assets.sheets;
+  const defaults = ALTE_DATA.getUnitDefaults(bookId, unitNumber);
+  const sheets = ALTE_DATA.assets.sheets;
 
-  const activityCards = LETS_TRY_DATA.getCategory("dailyTimes").items.map((entry, index) => {
+  const activityCards = ALTE_DATA.getCategory("dailyTimes").items.map((entry, index) => {
     const word = entry.id.replace(/-/g, " ");
     return {
       id: entry.id,
@@ -18,13 +18,13 @@
       teacherAnswer: word,
       textbook: (defaults.dailyTimes || []).includes(entry.id),
       visual: {
-        src: LETS_TRY_DATA.assetUrl(sheets.timeActivities.file),
-        size: sheets.timeActivities.backgroundSize, position: LETS_TRY_DATA.assets.knownCells.dailyTimes[entry.id], flip: false, cropTop: 0
+        src: ALTE_DATA.assetUrl(sheets.timeActivities.file),
+        size: sheets.timeActivities.backgroundSize, position: ALTE_DATA.assets.knownCells.dailyTimes[entry.id], flip: false, cropTop: 0
       }
     };
   });
 
-  const clockCards = LETS_TRY_DATA.getCategory("clockTimes").items.map((entry, index) => {
+  const clockCards = ALTE_DATA.getCategory("clockTimes").items.map((entry, index) => {
     const hour = index + 1;
     const word = hour + " o’clock";
     return {
@@ -37,21 +37,21 @@
       teacherAnswer: word,
       textbook: false, // Clock cards remain available as optional extras.
       visual: {
-        src: LETS_TRY_DATA.assetUrl(sheets.clocks.file),
-        size: sheets.clocks.backgroundSize, position: LETS_TRY_DATA.assets.knownCells.clockTimes[entry.id], flip: false, cropTop: 0
+        src: ALTE_DATA.assetUrl(sheets.clocks.file),
+        size: sheets.clocks.backgroundSize, position: ALTE_DATA.assets.knownCells.clockTimes[entry.id], flip: false, cropTop: 0
       }
     };
   });
 
-  window.LETS_TRY_UNIT_CATEGORY_IDS = ["dailyTimes", "clockTimes"];
-  window.LETS_TRY_UNIT_CONFIG = {
+  window.ALTE_UNIT_CATEGORY_IDS = ["dailyTimes", "clockTimes"];
+  window.ALTE_UNIT_CONFIG = {
     bookId,
     unitNumber: "4",
     unitTitle: "What time is it?",
     browserTitle: "Bk2U4 — What time is it?",
     unitColour: "#ED6D00",
     unitNumberColour: "#F28C45",
-    menuFile: "lets_try_2.html",
+    menuFile: "book-2.html",
     defaultPrompt: "What time is it?",
     selectionHeading: "Activities and clocks",
     wordLabel: "Word",

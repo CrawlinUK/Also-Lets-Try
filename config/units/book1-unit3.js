@@ -1,4 +1,4 @@
-/* LT1 Unit 3 — shared-template configuration */
+/* Book 1 Unit 3 — shared-template configuration */
 (function () {
   "use strict";
 
@@ -18,7 +18,7 @@
 
   const textbook = new Set(Array.from({length:20},(_,index)=>index+1));
   const values = [...textbook,30,40,50,60,70,80,90,100];
-  const digitBase = LETS_TRY_DATA.assetUrl("images/numbers/");
+  const digitBase = ALTE_DATA.assetUrl("images/numbers/");
 
   const cards = values.map((value) => ({
     id: String(value),
@@ -33,20 +33,20 @@
       type: "number-svg",
       text: String(value),
       digitBase,
-      digitVersion: window.LETS_TRY_NUMBER_SVG_VERSION || "",
+      digitVersion: window.ALTE_NUMBER_SVG_VERSION || "",
       colour: numberColour(value)
     }
   }));
 
-  window.LETS_TRY_UNIT_CATEGORY_IDS = ["numbers"];
-  window.LETS_TRY_UNIT_CONFIG = {
-    bookId: "lt1",
+  window.ALTE_UNIT_CATEGORY_IDS = ["numbers"];
+  window.ALTE_UNIT_CONFIG = {
+    bookId: "book1",
     unitNumber: "3",
     unitTitle: "How many?",
     browserTitle: "Bk1U3 — How many?",
     unitColour: "#E84283",
     unitNumberColour: "#F06AA0",
-    menuFile: "lets_try_1.html",
+    menuFile: "book-1.html",
     defaultPrompt: "",
     sentenceLabel: "Word",
     showPictureSentenceMode: false,

@@ -1,12 +1,12 @@
-/* LT1 Unit 8 — What’s this? */
+/* Book 1 Unit 8 — What’s this? */
 (function () {
   "use strict";
 
-  const UNIT_BOOK_ID = "lt1";
+  const UNIT_BOOK_ID = "book1";
   const UNIT_NUMBER = 8;
 
-  const sheets = LETS_TRY_DATA.assets.sheets;
-  const cells = LETS_TRY_DATA.assets.knownCells;
+  const sheets = ALTE_DATA.assets.sheets;
+  const cells = ALTE_DATA.assets.knownCells;
 
   const AN_ARTICLE_IDS = new Set(["apple", "elephant", "onion", "orange", "owl"]);
 
@@ -59,7 +59,7 @@
   function spriteVisual(file, size, position) {
     if (!position) throw new Error("Missing Unit 8 sprite position.");
     return {
-      src: LETS_TRY_DATA.assetUrl(file),
+      src: ALTE_DATA.assetUrl(file),
       size,
       position,
       flip: false,
@@ -82,7 +82,7 @@
 
     if (categoryId === "nature" && id === "tree") {
       return {
-        src: LETS_TRY_DATA.assetUrl(LETS_TRY_DATA.assets.images.nature.tree),
+        src: ALTE_DATA.assetUrl(ALTE_DATA.assets.images.nature.tree),
         size: "contain",
         position: "center",
         flip: false,
@@ -131,7 +131,7 @@
     visual: visualFor(category, id)
   }));
 
-  window.LETS_TRY_UNIT_CATEGORY_IDS = [
+  window.ALTE_UNIT_CATEGORY_IDS = [
     "animals",
     "nature",
     "vegetables",
@@ -140,7 +140,7 @@
     "sports"
   ];
 
-  window.LETS_TRY_UNIT_CONFIG = {
+  window.ALTE_UNIT_CONFIG = {
     bookId: UNIT_BOOK_ID,
     unitNumber: "8",
     unitTitle: "What’s this?",
@@ -149,7 +149,7 @@
     unitColour: "#0B7CC3",
     unitNumberColour: "#5AA9DA",
 
-    menuFile: "lets_try_1.html",
+    menuFile: "book-1.html",
 
     defaultPrompt: "It’s a ~",
     selectionHeading: "Unit 8 words",

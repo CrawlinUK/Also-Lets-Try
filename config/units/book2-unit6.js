@@ -1,15 +1,15 @@
-/* LT2 Unit 6 — shared alphabet configuration */
+/* Book 2 Unit 6 — shared alphabet configuration */
 (function () {
   "use strict";
 
-  const UNIT_BOOK_ID = "lt2";
+  const UNIT_BOOK_ID = "book2";
   const UNIT_NUMBER = 6;
-  const UNIT_CATEGORY_IDS = LETS_TRY_DATA.getUnitCategoryIds(UNIT_BOOK_ID, UNIT_NUMBER);
+  const UNIT_CATEGORY_IDS = ALTE_DATA.getUnitCategoryIds(UNIT_BOOK_ID, UNIT_NUMBER);
   const UNIT_DEFAULT_IDS = new Set(
-    Object.values(LETS_TRY_DATA.getUnitDefaults(UNIT_BOOK_ID, UNIT_NUMBER)).flat()
+    Object.values(ALTE_DATA.getUnitDefaults(UNIT_BOOK_ID, UNIT_NUMBER)).flat()
   );
 
-  const alphabet = LETS_TRY_DATA.getCategory("alphabet");
+  const alphabet = ALTE_DATA.getCategory("alphabet");
 
   const cards = alphabet.items.map((entry) => {
     const letter = entry.id.toLowerCase();
@@ -31,8 +31,8 @@
     };
   });
 
-  window.LETS_TRY_UNIT_CATEGORY_IDS = UNIT_CATEGORY_IDS;
-  window.LETS_TRY_UNIT_CONFIG = {
+  window.ALTE_UNIT_CATEGORY_IDS = UNIT_CATEGORY_IDS;
+  window.ALTE_UNIT_CONFIG = {
     bookId: UNIT_BOOK_ID,
     unitNumber: "6",
     unitTitle: "Alphabet",
@@ -41,7 +41,7 @@
     unitColour: "#E94643",
     unitNumberColour: "#EF7471",
 
-    menuFile: "lets_try_2.html",
+    menuFile: "book-2.html",
 
     defaultPrompt: "",
     selectionHeading: "Letters",

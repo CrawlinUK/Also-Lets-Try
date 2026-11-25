@@ -1,23 +1,25 @@
-/* Shared Let’s Try unit loader */
+/* Shared ALT-e unit loader */
 (function () {
   "use strict";
 
   const current = document.currentScript && document.currentScript.src
     ? new URL(document.currentScript.src)
-    : new URL("js/lets-try-unit-loader.js", location.href);
+    : new URL("js/unit-loader.js", location.href);
   const projectRoot = new URL("../", current);
-  const ASSET_VERSION = "20261125-flashboard-order-v73";
+  const ASSET_VERSION = "20261125-alte-v74";
 
   const params = new URLSearchParams(location.search);
-  const book = (params.get("book") || "lt1").toLowerCase();
+  const requestedBook = (params.get("book") || "book1").toLowerCase();
+  // Accept bookmarked unit URLs from older ALT-e versions.
+  const book = ({ lt1: "book1", lt2: "book2" })[requestedBook] || requestedBook;
   const unit = String(Math.max(1, Math.min(9, Number(params.get("unit")) || 5)));
 
   document.documentElement.classList.add("shared-unit-template");
   document.documentElement.dataset.book = book;
   document.documentElement.dataset.unit = unit;
 
-  window.LETS_TRY_ASSET_VERSION = ASSET_VERSION;
-  window.LETS_TRY_NUMBER_SVG_VERSION = ASSET_VERSION;
+  window.ALTE_ASSET_VERSION = ASSET_VERSION;
+  window.ALTE_NUMBER_SVG_VERSION = ASSET_VERSION;
 
   function registerAssetCache() {
     if (!("serviceWorker" in navigator) || location.protocol !== "https:") return;
@@ -69,11 +71,11 @@
   }
 
   function installNumberSprite(items) {
-    if (!Array.isArray(items) || document.getElementById("letsTryNumberSprite")) return;
+    if (!Array.isArray(items) || document.getElementById("alteNumberSprite")) return;
 
     const ns = "http://www.w3.org/2000/svg";
     const sprite = document.createElementNS(ns, "svg");
-    sprite.id = "letsTryNumberSprite";
+    sprite.id = "alteNumberSprite";
     sprite.setAttribute("aria-hidden", "true");
     sprite.setAttribute("width", "0");
     sprite.setAttribute("height", "0");
@@ -142,7 +144,7 @@
   }
 
   function preloadUnitPictures() {
-    const config = window.LETS_TRY_UNIT_CONFIG;
+    const config = window.ALTE_UNIT_CONFIG;
     if (!config || !Array.isArray(config.cards)) return Promise.resolve([]);
 
     const urls = [...new Set(
@@ -159,11 +161,11 @@
     return Promise.all(urls.map(preloadPicture));
   }
 
-  window.LETS_TRY_PRELOAD_NUMBER_SVGS = preloadNumberSvgs;
-  window.LETS_TRY_PRELOAD_UNIT_PICTURES = preloadUnitPictures;
+  window.ALTE_PRELOAD_NUMBER_SVGS = preloadNumberSvgs;
+  window.ALTE_PRELOAD_UNIT_PICTURES = preloadUnitPictures;
 
   let numberSvgPreloadPromise =
-    book === "lt1" && unit === "3"
+    book === "book1" && unit === "3"
       ? preloadNumberSvgs()
       : null;
 
@@ -196,22 +198,22 @@
 
   window.addEventListener("DOMContentLoaded", async () => {
     try {
-      await loadScript("js/lets-try-data.js");
-      await loadScript("js/lets-try-card-factory.js");
+      await loadScript("js/vocabulary-data.js");
+      await loadScript("js/card-factory.js");
       await loadScript(book === "categories" ? "config/categories.js" : `config/units/${book}-unit${unit}.js`);
 
-      const config = window.LETS_TRY_UNIT_CONFIG;
+      const config = window.ALTE_UNIT_CONFIG;
       // Declarative units name their categories and grammar; the factory builds cards.
       // Existing units with an explicit cards array continue unchanged.
       if (config && !Array.isArray(config.cards) && Array.isArray(config.categories)) {
-        config.cards = window.LETS_TRY_CARD_FACTORY.makeCardsForCategories(config.categories, {
+        config.cards = window.ALTE_CARD_FACTORY.makeCardsForCategories(config.categories, {
           bookId: config.bookId,
           unitNumber: config.unitNumber,
           defaults: config.defaults || "tagged",
           grammar: config.grammar,
           grammarForm: config.grammarForm
         });
-        window.LETS_TRY_UNIT_CATEGORY_IDS = config.categories.slice();
+        window.ALTE_UNIT_CATEGORY_IDS = config.categories.slice();
       }
       const usesNumberSvgs = Boolean(
         config
@@ -236,8 +238,8 @@
         installNumberSprite(await numberSvgPreloadPromise);
       }
 
-      await loadScript("js/lets-try-unit.js");
-      await loadScript("js/lets-try-ui.js");
+      await loadScript("js/classroom.js");
+      await loadScript("js/classroom-ui.js");
 
       requestAnimationFrame(() => {
         requestAnimationFrame(hideLoadingScreen);

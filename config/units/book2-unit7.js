@@ -1,12 +1,12 @@
-/* LT2 Unit 7 — What do you want? */
+/* Book 2 Unit 7 — What do you want? */
 (function () {
   "use strict";
-  const bookId = "lt2";
+  const bookId = "book2";
   const unitNumber = 7;
-  const categoryIds = LETS_TRY_DATA.getUnitCategoryIds(bookId, unitNumber);
-  const defaults = LETS_TRY_DATA.getUnitDefaults(bookId, unitNumber);
-  const sheets = LETS_TRY_DATA.assets.sheets;
-  const cells = LETS_TRY_DATA.assets.knownCells;
+  const categoryIds = ALTE_DATA.getUnitCategoryIds(bookId, unitNumber);
+  const defaults = ALTE_DATA.getUnitDefaults(bookId, unitNumber);
+  const sheets = ALTE_DATA.assets.sheets;
+  const cells = ALTE_DATA.assets.knownCells;
 
   const plurals = Object.freeze({
     apple: "apples",
@@ -38,7 +38,7 @@
   function visualFor(categoryId, id) {
     if (categoryId === "fruit") {
       return {
-        src: LETS_TRY_DATA.assetUrl(sheets.fruit.file),
+        src: ALTE_DATA.assetUrl(sheets.fruit.file),
         size: sheets.fruit.backgroundSize,
         position: cells.fruit[id],
         flip: false,
@@ -46,7 +46,7 @@
       };
     }
     return {
-      src: LETS_TRY_DATA.assetUrl(sheets.vegetables.file),
+      src: ALTE_DATA.assetUrl(sheets.vegetables.file),
       size: sheets.vegetables.backgroundSize,
       position: cells.vegetables[id],
       flip: false,
@@ -55,7 +55,7 @@
   }
 
   const cards = categoryIds.flatMap((categoryId) => {
-    const category = LETS_TRY_DATA.getCategory(categoryId);
+    const category = ALTE_DATA.getCategory(categoryId);
     const defaultIds = new Set(defaults[categoryId] || []);
     return category.items.map((entry) => {
       const word = wordFor(entry.id);
@@ -73,15 +73,15 @@
     });
   });
 
-  window.LETS_TRY_UNIT_CATEGORY_IDS = categoryIds;
-  window.LETS_TRY_UNIT_CONFIG = {
+  window.ALTE_UNIT_CATEGORY_IDS = categoryIds;
+  window.ALTE_UNIT_CONFIG = {
     bookId,
     unitNumber: "7",
     unitTitle: "What do you want?",
     browserTitle: "Bk2U7 — What do you want?",
     unitColour: "#6F58A3",
     unitNumberColour: "#8E79BB",
-    menuFile: "lets_try_2.html",
+    menuFile: "book-2.html",
     defaultPrompt: "I want ~, please.",
     selectionHeading: "Fruit and vegetables",
     wordLabel: "Food",

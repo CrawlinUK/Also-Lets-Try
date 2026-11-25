@@ -1,7 +1,7 @@
 /*
-  LET'S TRY! SHARED MASTER DATA
+  ALT-e shared master data
   =============================
-  Category-first vocabulary for Let’s Try! 1 and 2.
+  Category-first vocabulary for Book 1 and 2.
 
   Tag rule:
   - Each word may have defaultIn tags such as "1-1" or "2-7".
@@ -225,7 +225,7 @@
     shapes: {
       label: "Shapes",
       // One set of practice options for both the standalone category and
-      // Let's Try! 1 Unit 7. Classroom controls read this shared profile.
+      // Book 1 Unit 7. Classroom controls read this shared profile.
       shapePractice: {
         colourCategoryId: "colours",
         counts: [1, 2, 3, 4, 5],
@@ -266,7 +266,7 @@
         item("crow", ["1-8"]), item("moth", ["1-8"]), item("owl", ["1-8"]),
         item("starfish", ["1-8"]), item("jellyfish", ["1-8"]), item("seahorse", ["1-8"])
       ],
-      note: "Bear appears on the source word-card sheet but is not in the requested LT1 Unit 8 deck."
+      note: "Bear appears on the source word-card sheet but is not in the requested Book 1 Unit 8 deck."
     },
 
     nature: {
@@ -435,7 +435,7 @@
         physicalCells: 16,
         logicalCategories: ["worldGreetings"],
         status: "mapped",
-        note: "Source artwork: lipis/flag-icons (MIT). Includes LT1/LT2 flags plus UK and Philippines."
+        note: "Source artwork: lipis/flag-icons (MIT). Includes Book 1/Book 2 flags plus UK and Philippines."
       },
 
       emotions: {
@@ -1012,7 +1012,7 @@
   }
 
   const BOOKS = {
-    lt1: {
+    book1: {
       label: "Book 1",
       units: {
         1: { title: "Hello!" },
@@ -1027,7 +1027,7 @@
       }
     },
 
-    lt2: {
+    book2: {
       label: "Book 2",
       units: {
         1: { title: "Hello, world!", status: "greeting-transliterations-to-verify" },
@@ -1134,7 +1134,7 @@
   }
 
   function getUnitKey(bookId, unitNumber) {
-    const bookNumber = bookId === "lt1" ? "1" : bookId === "lt2" ? "2" : String(bookId);
+    const bookNumber = bookId === "book1" ? "1" : bookId === "book2" ? "2" : String(bookId);
     return `${bookNumber}-${unitNumber}`;
   }
 
@@ -1172,7 +1172,7 @@
     return result;
   }
 
-  global.LETS_TRY_DATA = Object.freeze({
+  global.ALTE_DATA = Object.freeze({
     version: 21,
     assetUrl,
     categories: CATEGORIES,

@@ -2,12 +2,12 @@
     (() => {
       "use strict";
 
-      const UNIT_CONFIG = window.LETS_TRY_UNIT_CONFIG;
+      const UNIT_CONFIG = window.ALTE_UNIT_CONFIG;
       if (!UNIT_CONFIG || !Array.isArray(UNIT_CONFIG.cards)) {
         throw new Error("Shared unit config was not loaded.");
       }
 
-      const UNIT_CATEGORY_IDS = window.LETS_TRY_UNIT_CATEGORY_IDS
+      const UNIT_CATEGORY_IDS = window.ALTE_UNIT_CATEGORY_IDS
         || [...new Set(UNIT_CONFIG.cards.map((card) => card.category).filter(Boolean))];
       const PLACEHOLDER_IMAGE = "";
       const SHAPE_PRACTICE = UNIT_CONFIG.shapePractice || null;
@@ -24,7 +24,7 @@
         5: "five"
       });
 
-      const appHost = document.getElementById("letsTryApp");
+      const appHost = document.getElementById("alteApp");
       if (!appHost) {
         throw new Error("Shared unit app host was not found.");
       }
@@ -186,7 +186,8 @@
         ? textbookIds
         : UNIT_CONFIG.cards.slice(0, 1).map((card) => card.id);
 
-      const TEACHER_PREFERENCES_KEY = "alsoLetsTry.teacherPreferences.v1";
+      const TEACHER_PREFERENCES_KEY = "alte.teacherPreferences.v1";
+      const LEGACY_PREFERENCES_KEY = "alsoLetsTry.teacherPreferences.v1";
 
       function clampNumber(value, minimum, maximum, fallback) {
         const number = Number(value);
@@ -202,7 +203,7 @@
         };
 
         try {
-          const stored = JSON.parse(window.localStorage.getItem(TEACHER_PREFERENCES_KEY) || "{}");
+          const stored = JSON.parse(window.localStorage.getItem(TEACHER_PREFERENCES_KEY) || window.localStorage.getItem(LEGACY_PREFERENCES_KEY) || "{}");
           return {
             sizeBalance: clampNumber(stored.sizeBalance, 0, 100, defaults.sizeBalance),
             missingAnswerSize: clampNumber(stored.missingAnswerSize, 8, 24, defaults.missingAnswerSize)
@@ -299,7 +300,7 @@
       function shapeColourEntries() {
         if (!SHAPE_PRACTICE) return [];
         const colourCategoryId = SHAPE_PRACTICE.colourCategoryId || "colours";
-        const colourCategory = LETS_TRY_DATA.getCategory(colourCategoryId);
+        const colourCategory = ALTE_DATA.getCategory(colourCategoryId);
         const entries = (colourCategory ? colourCategory.items : []).filter((entry) => entry.hex);
         const byId = new Map(entries.map((entry) => [entry.id, entry]));
         const requestedOrder = Array.isArray(SHAPE_PRACTICE.colourOrder)
@@ -523,14 +524,14 @@
           }
         });
 
-        const relevantExtras = LETS_TRY_DATA.getExtraGamesForCategories(activeCategoryIds());
+        const relevantExtras = ALTE_DATA.getExtraGamesForCategories(activeCategoryIds());
         relevantExtras.forEach((game) => {
           const button = makeGameMenuButton(game.name, { extraGame: game.id });
           button.classList.add("extra-game-button");
           fragment.append(button);
         });
 
-        if (LETS_TRY_DATA.getAllExtraGames().length) {
+        if (ALTE_DATA.getAllExtraGames().length) {
           const offTopicButton = makeGameMenuButton("Off topic games", { action: "offTopicGames" });
           offTopicButton.classList.add("off-topic-games-button");
           fragment.append(offTopicButton);
@@ -541,7 +542,7 @@
       }
 
       function openExtraGame(gameId) {
-        const game = LETS_TRY_DATA.getExtraGame(gameId);
+        const game = ALTE_DATA.getExtraGame(gameId);
         if (!game) return;
         closeGameMenu();
         window.open(game.url, "_blank", "noopener,noreferrer");
@@ -549,7 +550,7 @@
 
       function initialisePage() {
         document.documentElement.classList.add("shared-unit-template");
-        document.documentElement.dataset.book = UNIT_CONFIG.bookId || "lt1";
+        document.documentElement.dataset.book = UNIT_CONFIG.bookId || "book1";
         document.documentElement.dataset.unit = String(UNIT_CONFIG.unitNumber);
         document.title = UNIT_CONFIG.browserTitle;
         document.documentElement.style.setProperty("--unit-colour", UNIT_CONFIG.unitColour);
@@ -690,8 +691,8 @@
               || "");
           const colourName = isShapeCard ? shapeColourName(card) : defaultColourName;
           const useDefaultArtwork = colourName === defaultColourName;
-          const colourValue = colourName && typeof LETS_TRY_DATA.getColourValue === "function"
-            ? LETS_TRY_DATA.getColourValue(colourName)
+          const colourValue = colourName && typeof ALTE_DATA.getColourValue === "function"
+            ? ALTE_DATA.getColourValue(colourName)
             : null;
 
           element.style.backgroundImage = "none";
@@ -824,9 +825,9 @@
           if (
             state.letterColourMode === "colour"
             && visual.alphabetLetter
-            && typeof LETS_TRY_DATA.getAlphabetColour === "function"
+            && typeof ALTE_DATA.getAlphabetColour === "function"
           ) {
-            element.style.color = LETS_TRY_DATA.getAlphabetColour(visual.alphabetLetter) || "";
+            element.style.color = ALTE_DATA.getAlphabetColour(visual.alphabetLetter) || "";
           }
           element.style.backgroundImage = "none";
           element.style.backgroundSize = "";
@@ -956,7 +957,7 @@
         const fragment = document.createDocumentFragment();
 
         UNIT_CATEGORY_IDS.forEach((categoryId) => {
-          const category = LETS_TRY_DATA.getCategory(categoryId);
+          const category = ALTE_DATA.getCategory(categoryId);
           const cards = UNIT_CONFIG.cards.filter((card) => card.category === categoryId);
           if (!cards.length) return;
 
@@ -1048,7 +1049,7 @@
         let cards = selectedCards();
         // When the current phrase has no selected cards, follow the selected
         // vocabulary into a phrase that does. This fixes Weather-only
-        // selections opening an empty "Let's ~" deck in LT2 Unit 2.
+        // selections opening an empty "Let's ~" deck in Book 2 Unit 2.
         const modes = UNIT_CONFIG.phraseSwitch?.modes;
         if (!cards.length && Array.isArray(modes)) {
           const previous = state.phraseSwitchMode;
@@ -1406,7 +1407,7 @@
         elements.guessCategorySection.hidden = categories.length <= 1;
 
         const buttons = categories.map((categoryId) => {
-          const category = LETS_TRY_DATA.getCategory(categoryId);
+          const category = ALTE_DATA.getCategory(categoryId);
           const button = document.createElement("button");
           button.type = "button";
           button.dataset.guessCategory = categoryId;
@@ -3300,7 +3301,7 @@
 
         if (button.dataset.action === "offTopicGames") {
           closeGameMenu();
-          window.open(LETS_TRY_DATA.getExtraGamesPageUrl(), "_blank", "noopener,noreferrer");
+          window.open(ALTE_DATA.getExtraGamesPageUrl(), "_blank", "noopener,noreferrer");
         }
       });
 

@@ -1,13 +1,13 @@
-/* LT2 Unit 3 — I like Mondays. */
+/* Book 2 Unit 3 — I like Mondays. */
 (function () {
   "use strict";
-  const bookId = "lt2";
+  const bookId = "book2";
   const unitNumber = 3;
   const categoryId = "days";
-  const category = LETS_TRY_DATA.getCategory(categoryId);
-  const defaults = new Set(LETS_TRY_DATA.getUnitDefaults(bookId, unitNumber)[categoryId] || []);
-  const sheet = LETS_TRY_DATA.assets.sheets.days;
-  const cells = LETS_TRY_DATA.assets.knownCells.days;
+  const category = ALTE_DATA.getCategory(categoryId);
+  const defaults = new Set(ALTE_DATA.getUnitDefaults(bookId, unitNumber)[categoryId] || []);
+  const sheet = ALTE_DATA.assets.sheets.days;
+  const cells = ALTE_DATA.assets.knownCells.days;
 
   const cards = category.items.map((entry) => ({
     id: entry.id,
@@ -19,7 +19,7 @@
     teacherAnswer: entry.id,
     textbook: defaults.has(entry.id),
     visual: {
-      src: LETS_TRY_DATA.assetUrl(sheet.file),
+      src: ALTE_DATA.assetUrl(sheet.file),
       size: "400% 200%",
       position: cells[entry.id],
       flip: false,
@@ -27,15 +27,15 @@
     }
   }));
 
-  window.LETS_TRY_UNIT_CATEGORY_IDS = [categoryId];
-  window.LETS_TRY_UNIT_CONFIG = {
+  window.ALTE_UNIT_CATEGORY_IDS = [categoryId];
+  window.ALTE_UNIT_CONFIG = {
     bookId,
     unitNumber: "3",
     unitTitle: "I like Mondays.",
     browserTitle: "Bk2U3 — I like Mondays.",
     unitColour: "#E84283",
     unitNumberColour: "#EF78A5",
-    menuFile: "lets_try_2.html",
+    menuFile: "book-2.html",
     defaultPrompt: "It’s ~",
     selectionHeading: "Days",
     wordLabel: "Day",

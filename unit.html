@@ -5,14 +5,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>ALT-e — Classroom Tools</title>
   <link rel="preload"
-        href="font/HandwritingWeCan-Medium.otf?v=20261013-lt2-unit2-images"
+        href="font/HandwritingWeCan-Medium.otf?v=20261013-book2-unit2-images"
         as="font"
         type="font/otf"
         crossorigin>
-  <link rel="preload" href="images/ui/AlsoHomeSweet.svg?v=20261013-lt2-unit2-images" as="image" type="image/svg+xml">
-  <link rel="preload" href="images/ui/AlsoBackArrow.svg?v=20261013-lt2-unit2-images" as="image" type="image/svg+xml">
-  <link rel="preload" href="images/ui/AlsoNewWindowIcon.svg?v=20261013-lt2-unit2-images" as="image" type="image/svg+xml">
-  <link rel="preload" href="images/ui/AlsoCogSettings.svg?v=20261013-lt2-unit2-images" as="image" type="image/svg+xml">
+  <link rel="preload" href="images/ui/AlsoHomeSweet.svg?v=20261013-book2-unit2-images" as="image" type="image/svg+xml">
+  <link rel="preload" href="images/ui/AlsoBackArrow.svg?v=20261013-book2-unit2-images" as="image" type="image/svg+xml">
+  <link rel="preload" href="images/ui/AlsoNewWindowIcon.svg?v=20261013-book2-unit2-images" as="image" type="image/svg+xml">
+  <link rel="preload" href="images/ui/AlsoCogSettings.svg?v=20261013-book2-unit2-images" as="image" type="image/svg+xml">
   <style>
     #loadingScreen {
       position: fixed;
@@ -50,7 +50,7 @@
       line-height: 1;
       color: #00ada9;
       transform-origin: center;
-      animation: lets-try-cog-clockwise 2.2s linear infinite;
+      animation: alte-cog-clockwise 2.2s linear infinite;
     }
     .loading-cog:first-child {
       left: 0;
@@ -63,7 +63,7 @@
       height: 48px;
       font-size: 48px;
       color: #56666a;
-      animation-name: lets-try-cog-counterclockwise;
+      animation-name: alte-cog-counterclockwise;
       animation-duration: 1.75s;
     }
     #loadingLabel {
@@ -74,18 +74,18 @@
     #loadingScreen.loading-error .loading-cog {
       animation-play-state: paused;
     }
-    @keyframes lets-try-cog-clockwise {
+    @keyframes alte-cog-clockwise {
       to { transform: rotate(360deg); }
     }
-    @keyframes lets-try-cog-counterclockwise {
+    @keyframes alte-cog-counterclockwise {
       to { transform: rotate(-360deg); }
     }
     @media (prefers-reduced-motion: reduce) {
       .loading-cog { animation-duration: 6s; }
     }
   </style>
-  <link rel="stylesheet" href="css/lets-try.css?v=20261125-flashboard-order-v73">
-  <script src="js/lets-try-unit-loader.js?v=20261125-flashboard-order-v73" defer></script>
+  <link rel="stylesheet" href="css/classroom.css?v=20261125-alte-v74">
+  <script src="js/unit-loader.js?v=20261125-alte-v74" defer></script>
 </head>
 <body>
   <div id="loadingScreen" role="status" aria-live="polite" aria-label="Loading">
@@ -97,7 +97,7 @@
       <div id="loadingLabel">Loading…</div>
     </div>
   </div>
-  <div id="letsTryApp"></div>
+  <div id="alteApp"></div>
   <noscript>This classroom app requires JavaScript.</noscript>
 </body>
 </html>

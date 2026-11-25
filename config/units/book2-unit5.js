@@ -1,11 +1,11 @@
-/* LT2 Unit 5 — Do you have a pen? */
+/* Book 2 Unit 5 — Do you have a pen? */
 (function () {
   "use strict";
-  const bookId = "lt2";
+  const bookId = "book2";
   const unitNumber = 5;
   const categoryId = "stationery";
-  const category = LETS_TRY_DATA.getCategory(categoryId);
-  const defaults = new Set(LETS_TRY_DATA.getUnitDefaults(bookId, unitNumber)[categoryId] || []);
+  const category = ALTE_DATA.getCategory(categoryId);
+  const defaults = new Set(ALTE_DATA.getUnitDefaults(bookId, unitNumber)[categoryId] || []);
 
   function label(id) {
     return String(id).replace(/-/g, " ");
@@ -15,8 +15,8 @@
     return /^[aeiou]/i.test(word) ? "an" : "a";
   }
 
-  const sheet = LETS_TRY_DATA.assets.sheets.stationery;
-  const cells = LETS_TRY_DATA.assets.knownCells.stationery;
+  const sheet = ALTE_DATA.assets.sheets.stationery;
+  const cells = ALTE_DATA.assets.knownCells.stationery;
 
   const cards = category.items.map((entry) => {
     const word = label(entry.id);
@@ -30,20 +30,20 @@
       teacherAnswer: word,
       textbook: defaults.has(entry.id),
       visual: cells[entry.id]
-        ? { src: LETS_TRY_DATA.assetUrl(sheet.file), size: sheet.backgroundSize, position: cells[entry.id], flip: false, cropTop: 0 }
+        ? { src: ALTE_DATA.assetUrl(sheet.file), size: sheet.backgroundSize, position: cells[entry.id], flip: false, cropTop: 0 }
         : { type: "text", text: word, aspectRatio: "1 / 1" }
     };
   });
 
-  window.LETS_TRY_UNIT_CATEGORY_IDS = [categoryId];
-  window.LETS_TRY_UNIT_CONFIG = {
+  window.ALTE_UNIT_CATEGORY_IDS = [categoryId];
+  window.ALTE_UNIT_CONFIG = {
     bookId,
     unitNumber: "5",
     unitTitle: "Do you have a pen?",
     browserTitle: "Bk2U5 — Do you have a pen?",
     unitColour: "#00ADA9",
     unitNumberColour: "#52C8C4",
-    menuFile: "lets_try_2.html",
+    menuFile: "book-2.html",
     defaultPrompt: "Do you have a ~?",
     selectionHeading: "Stationery",
     wordLabel: "Stationery",

@@ -1,16 +1,16 @@
-/* LT1 Unit 5 — category-driven configuration; vocabulary and artwork are shared. */
+/* Book 1 Unit 5 — category-driven configuration; vocabulary and artwork are shared. */
 (function () {
   "use strict";
 
-  window.LETS_TRY_UNIT_CONFIG = {
-    bookId: "lt1",
+  window.ALTE_UNIT_CONFIG = {
+    bookId: "book1",
     unitNumber: "5",
     unitTitle: "What do you like?",
     browserTitle: "Bk1U5 — What do you like?",
 
     unitColour: "#00ADA9",
     unitNumberColour: "#52C8C4",
-    menuFile: "lets_try_1.html",
+    menuFile: "book-1.html",
 
     defaultPrompt: "What do you like?",
     selectionHeading: "Words",

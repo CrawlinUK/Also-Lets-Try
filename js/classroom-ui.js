@@ -4,11 +4,11 @@
   const root = document.documentElement;
   const currentScriptUrl = document.currentScript && document.currentScript.src
     ? new URL(document.currentScript.src)
-    : new URL("js/lets-try-ui.js", location.href);
+    : new URL("js/classroom-ui.js", location.href);
   const uiAsset = (name) => {
     const url = new URL("../images/ui/" + name, currentScriptUrl);
-    if (window.LETS_TRY_ASSET_VERSION) {
-      url.searchParams.set("v", window.LETS_TRY_ASSET_VERSION);
+    if (window.ALTE_ASSET_VERSION) {
+      url.searchParams.set("v", window.ALTE_ASSET_VERSION);
     }
     return url.href;
   };

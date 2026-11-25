@@ -1,10 +1,10 @@
 /* Category-first flashcard builder.
-   Vocabulary and artwork come from LETS_TRY_DATA; units only choose how to use them.
+   Vocabulary and artwork come from ALTE_DATA; units only choose how to use them.
    No UI/DOM rendering occurs in this module. */
 (function (global) {
   "use strict";
-  const database = global.LETS_TRY_DATA;
-  if (!database) throw new Error("Load lets-try-data.js before lets-try-card-factory.js");
+  const database = global.ALTE_DATA;
+  if (!database) throw new Error("Load vocabulary-data.js before card-factory.js");
 
   function makeCategoryCards(categoryId, options = {}) {
     const category = database.getCategory(categoryId);
@@ -64,5 +64,5 @@
     return categoryIds.flatMap(categoryId => makeCategoryCards(categoryId, options));
   }
 
-  global.LETS_TRY_CARD_FACTORY = Object.freeze({ makeCategoryCards, makeCardsForCategories });
+  global.ALTE_CARD_FACTORY = Object.freeze({ makeCategoryCards, makeCardsForCategories });
 })(window);

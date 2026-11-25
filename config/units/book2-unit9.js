@@ -1,11 +1,11 @@
-/* LT2 Unit 9 — This is my day. */
+/* Book 2 Unit 9 — This is my day. */
 (function () {
   "use strict";
-  const bookId = "lt2";
+  const bookId = "book2";
   const unitNumber = 9;
   const categoryId = "dailyRoutine";
-  const category = LETS_TRY_DATA.getCategory(categoryId);
-  const defaults = new Set(LETS_TRY_DATA.getUnitDefaults(bookId, unitNumber)[categoryId] || []);
+  const category = ALTE_DATA.getCategory(categoryId);
+  const defaults = new Set(ALTE_DATA.getUnitDefaults(bookId, unitNumber)[categoryId] || []);
 
   function label(id) {
     return String(id).replace(/-/g, " ");
@@ -22,20 +22,20 @@
       optionLabel: word,
       teacherAnswer: word,
       textbook: defaults.has(entry.id),
-      visual: LETS_TRY_DATA.getWordVisual(categoryId, entry.id)
+      visual: ALTE_DATA.getWordVisual(categoryId, entry.id)
         || { type: "text", text: word, aspectRatio: "1 / 1" }
     };
   });
 
-  window.LETS_TRY_UNIT_CATEGORY_IDS = [categoryId];
-  window.LETS_TRY_UNIT_CONFIG = {
+  window.ALTE_UNIT_CATEGORY_IDS = [categoryId];
+  window.ALTE_UNIT_CONFIG = {
     bookId,
     unitNumber: "9",
     unitTitle: "This is my day.",
     browserTitle: "Bk2U9 — This is my day.",
     unitColour: "#14A83B",
     unitNumberColour: "#54BE6D",
-    menuFile: "lets_try_2.html",
+    menuFile: "book-2.html",
     defaultPrompt: "I ~.",
     selectionHeading: "Daily routine",
     wordLabel: "Activity",
