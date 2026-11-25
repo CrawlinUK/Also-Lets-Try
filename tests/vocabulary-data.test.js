@@ -126,16 +126,16 @@ for (const side of ["cropTop","cropRight","cropBottom","cropLeft"]) {
   assert.equal(untouchedVisual[side] || 0, 0, "global default " + side);
 }
 
-assert.equal(Object.keys(db.categories).length, 24, "vocabulary category count");
+assert.equal(Object.keys(db.categories).length, 25, "vocabulary category count");
 const visiblePictureCategories = Object.keys(db.categories)
   .filter(id => db.hasCategoryPictures(id));
-assert.equal(visiblePictureCategories.length, 19,
-  "all nineteen picture categories appear, without a ready flag");
+assert.equal(visiblePictureCategories.length, 21,
+  "all twenty-one picture categories appear, without a ready flag");
 assert.deepEqual(visiblePictureCategories, [
   "worldGreetings", "feelings", "sports", "food", "fruit",
   "vegetables", "shapes", "animals", "nature", "bodyParts",
   "describingWords", "weather", "clothes", "playActivities",
-  "days", "dailyTimes", "clockTimes", "stationery", "schoolPlaces"
+  "days", "dailyTimes", "clockTimes", "stationery", "schoolPlaces", "dailyRoutine", "jobs"
 ], "all mapped categories appear in database order");
 assert.ok(Object.values(db.categories).every(cat => !Object.hasOwn(cat, "ready")),
   "no subjective ready fields remain in the master");
@@ -388,4 +388,4 @@ assert.equal(unit4.cards.filter(card => card.category === "clockTimes" && card.t
   "LT2 Unit 4 clocks must remain optional");
 assert.ok(unit4.cards.every(card => card.visual?.position), "LT2 Unit 4 sprite positions");
 
-console.log("Vocabulary checks passed: 19 mapped picture categories including 16 school rooms, partial decks, textbook units and phrase settings.");
+console.log("Vocabulary checks passed: 21 mapped picture categories including Jobs and 16 school rooms, partial decks, textbook units and phrase settings.");
