@@ -2326,6 +2326,24 @@
         inkLayer.setAttribute("aria-label", "Drawing surface");
         const inkGroup = document.createElementNS(ns, "g");
         inkLayer.append(inkGroup);
+        // Eraser feedback uses the same SVG coordinates as the real eraser.
+        // Keep the preview separate from ink so Undo and Redo are unaffected.
+        const eraserPreviewGroup=document.createElementNS(ns,"g");
+        eraserPreviewGroup.classList.add("flash-board-eraser-preview");
+        eraserPreviewGroup.setAttribute("pointer-events","none");
+        const eraserCircle=document.createElementNS(ns,"ellipse");
+        eraserCircle.setAttribute("rx","15");
+        eraserCircle.setAttribute("ry","15");
+        eraserCircle.classList.add("flash-board-eraser-circle");
+        const eraserHighlightedStroke=document.createElementNS(ns,"path");
+        eraserHighlightedStroke.classList.add("flash-board-eraser-highlight");
+        eraserHighlightedStroke.setAttribute("fill","none");
+        eraserHighlightedStroke.setAttribute("stroke-width","10");
+        eraserHighlightedStroke.setAttribute("stroke-linecap","round");
+        eraserHighlightedStroke.setAttribute("stroke-linejoin","round");
+        eraserPreviewGroup.append(eraserCircle,eraserHighlightedStroke);
+        inkLayer.append(eraserPreviewGroup);
+        eraserPreviewGroup.style.display="none";
         // Paint the ink beneath the cards. A separate transparent input layer
         // sits above cards only while the pencil is active.
         board.prepend(inkLayer);
@@ -2446,6 +2464,7 @@
           pen.setAttribute("aria-pressed", String(tool === "draw"));
           eraser.setAttribute("aria-pressed", String(tool === "erase"));
           drawingSurface.classList.toggle("drawing", (tool === "draw" || tool === "erase") && !removalMode);
+          if(tool!=="erase")eraserPreviewGroup.style.display="none";
           // The S button stays independent of the active manipulation tool.
           board.classList.toggle("text-mode",tool === "text");
           textToolButton?.classList.toggle("active",tool === "text");
@@ -2976,6 +2995,32 @@
           }
           return false;
         };
+        // The partial outline matches the 15-unit mask radius exactly.
+        // Whole-stroke feedback uses the very same nearStroke test as removal.
+        const updateEraserPreview = (event) => {
+          if(currentTool!=="erase" || !board.isConnected){
+            eraserPreviewGroup.style.display="none";
+            return;
+          }
+          const point=pointOf(event);
+          eraserPreviewGroup.style.display="";
+          if(eraserMode==="part"){
+            eraserCircle.style.display="";
+            eraserCircle.setAttribute("cx",String(point[0]));
+            eraserCircle.setAttribute("cy",String(point[1]));
+            eraserHighlightedStroke.style.display="none";
+          }else{
+            eraserCircle.style.display="none";
+            const target=[...state.flashBoardInk].reverse().find(stroke=>nearStroke(stroke,point));
+            if(target){
+              eraserHighlightedStroke.style.display="";
+              eraserHighlightedStroke.setAttribute("d",target.points.map((p,i)=>
+                (i?"L":"M")+p[0].toFixed(2)+" "+p[1].toFixed(2)).join(" "));
+            }else{
+              eraserHighlightedStroke.style.display="none";
+            }
+          }
+        };
         const applyEraser = point => {
           if (eraserMode === "whole") {
             // Hit the original path, even when an earlier erase hid part of it.
@@ -3107,6 +3152,7 @@
           }
           drawingSurface.setPointerCapture(event.pointerId);
           const point = pointOf(event);
+          if(currentTool==="erase")updateEraserPreview(event);
           beginInkAction();
           if (currentTool === "draw") {
             clearShapeHold();
@@ -3119,6 +3165,7 @@
           }
         });
         drawingSurface.addEventListener("pointermove", event => {
+          if(currentTool==="erase")updateEraserPreview(event);
           if (activeStroke) {
             if(activeStroke.snapped)return;
             activeStroke.points.push(pointOf(event));
@@ -3132,8 +3179,18 @@
           activeStroke = null;
           erasing = false;
         };
-        drawingSurface.addEventListener("pointerup", stopStroke);
-        drawingSurface.addEventListener("pointercancel", stopStroke);
+        drawingSurface.addEventListener("pointerup", event=>{
+          stopStroke();
+          if(event.pointerType!=="mouse")eraserPreviewGroup.style.display="none";
+          else if(currentTool==="erase")updateEraserPreview(event);
+        });
+        drawingSurface.addEventListener("pointercancel",()=>{
+          stopStroke();
+          eraserPreviewGroup.style.display="none";
+        });
+        drawingSurface.addEventListener("pointerleave",event=>{
+          if(event.pointerType==="mouse" && !erasing)eraserPreviewGroup.style.display="none";
+        });
         renderInk();
         renderTexts();
         // Measure the actual text-only cards before positioning them. The
