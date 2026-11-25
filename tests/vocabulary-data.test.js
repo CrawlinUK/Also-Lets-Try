@@ -80,6 +80,11 @@ assert.match(sharedCssSource, /data-book="categories"\] \.site-title \.unit-word
 assert.match(sharedCssSource, /data-book="categories"\] \.site-title \.unit-number/,
   "hide unit number only for Categories");
 
+assert.doesNotMatch(source("js/lets-try-unit.js"), /imageDiagnostic|imageDiagnosis|image-diagnostic|data-diagnostic/i,
+  "classroom must not expose developer image diagnosis controls");
+assert.doesNotMatch(sharedCssSource, /image-diagnostic|data-diagnostic/i,
+  "remove obsolete classroom diagnosis styling");
+
 const viewerSource = source("vocabulary-viewer.html");
 assert.match(viewerSource, /function row\(\s*\w+\s*,\s*\w+\s*\)/,
   "viewer metadata helper required before artwork can render");
