@@ -1013,7 +1013,7 @@
 
   const BOOKS = {
     lt1: {
-      label: "Let’s Try! 1",
+      label: "Book 1",
       units: {
         1: { title: "Hello!" },
         2: { title: "How are you?" },
@@ -1028,7 +1028,7 @@
     },
 
     lt2: {
-      label: "Let’s Try! 2",
+      label: "Book 2",
       units: {
         1: { title: "Hello, world!", status: "greeting-transliterations-to-verify" },
         2: { title: "Let’s play cards." },
