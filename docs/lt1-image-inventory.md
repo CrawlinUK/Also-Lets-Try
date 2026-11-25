@@ -9,7 +9,7 @@ The shared source of truth for vocabulary and image mappings is:
 | Asset | Purpose | State |
 |---|---|---|
 | `images/flags.png` | Unit 1 greetings / countries | Mapped |
-| `images/emotions.jpg` | Unit 2 feelings | Mapped |
+| `images/emotions.webp` | Unit 2 feelings | Mapped |
 | `images/sports.png` | Sports sprite sheet | Mapped (all 12 cells) |
 | `images/foods.png` | Unit 4 food | Mapped |
 | `images/fruit.png` | Fruit + sausage sprite sheet | Mapped (all 12 cells) |

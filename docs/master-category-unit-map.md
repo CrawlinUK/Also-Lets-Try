@@ -41,7 +41,7 @@ Examples:
 ## Existing shared image assets
 
 - `images/flags.svg` — 16 vector flags
-- `images/emotions.jpg` — feelings
+- `images/emotions.webp` — feelings
 - `images/foods.png` — food/drink sheet
 - `images/fruit.png` — 11 fruits + sausage
 - `images/veg.png` — 9 vegetables
@@ -50,7 +50,7 @@ Examples:
 - `images/shapes/` — circle, triangle, square, rectangle, heart, diamond and star SVGs; mapped to the Shapes category
 - `images/Adjectives.png` — 8 describing-word pictures in a 4 × 2 sheet; mapped
 - `images/BodyParts.png` — 8 body-part pictures in a 4 × 2 sheet; mapped
-- `images/animals.jpg` — 17 animal pictures; exact grid/cell order still to verify
+- `images/animals.webp` — 17 animal pictures; exact grid/cell order still to verify
 - `images/days.png` — 7 day icons + 1 empty cell in a 4 × 2 sheet; mapped
 - `images/sports_original.png` — reference copy
 
