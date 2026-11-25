@@ -1,0 +1,297 @@
+/* Flash Board text objects remain below cards but above board ink. */
+html.shared-unit-template .flash-board-text-layer {
+  position:absolute;inset:0;z-index:1;pointer-events:none;
+}
+html.shared-unit-template .flash-board-user-text {
+  position:absolute;display:flex;align-items:center;justify-content:center;
+  box-sizing:border-box;padding:4px 8px;overflow:hidden;
+  font-family:"HandwritingWeCan","Century Gothic",sans-serif;
+  font-weight:800;font-size:clamp(17px,2.3vw,34px);
+  line-height:1.1;text-align:center;overflow-wrap:anywhere;
+  white-space:pre-wrap;touch-action:none;user-select:none;
+  cursor:grab;border:2px solid transparent;border-radius:7px;
+}
+html.shared-unit-template .flash-board-user-text.text-selected {
+  border-color:#3388d5;outline:1px dashed #c2deee;
+}
+html.shared-unit-template .flash-board.text-mode .flash-board-card {
+  pointer-events:none;
+}
+html.shared-unit-template .flash-board.text-mode .flash-board-drawing-surface {
+  pointer-events:none;
+}
+html.shared-unit-template .flash-board.text-mode { cursor:crosshair; }
+html.shared-unit-template .flash-board-suffix { font-weight:800;font-size:21px; }
+html.shared-unit-template .flash-board-text-dialog {
+  position:fixed;inset:0;z-index:20000;
+  display:flex;align-items:flex-start;justify-content:center;
+  padding:clamp(30px,12vh,100px) 16px 16px;
+  background:#142a3c77;box-sizing:border-box;
+}
+html.shared-unit-template .flash-board-text-panel {
+  width:min(580px,96vw);background:white;border-radius:17px;
+  padding:22px;box-sizing:border-box;box-shadow:0 12px 32px #152b4255;
+  display:flex;flex-direction:column;gap:14px;
+}
+html.shared-unit-template .flash-board-text-panel strong {font-size:20px;}
+html.shared-unit-template .flash-board-text-panel input {
+  width:100%;box-sizing:border-box;border:2px solid #64bacc;
+  border-radius:12px;padding:14px 13px;font-size:24px;
+  background:#fff;color:#172b3b;
+}
+html.shared-unit-template .flash-board-text-actions {
+  display:flex;gap:10px;justify-content:flex-end;
+}
+html.shared-unit-template .flash-board-text-actions button {
+  border:1px solid #beced8;border-radius:10px;
+  padding:10px 20px;font-size:17px;cursor:pointer;
+  background:#edf3f6;color:#243444;
+}
+html.shared-unit-template .flash-board-text-actions button:first-child {background:#fff;}
+html.shared-unit-template .flash-board-text-actions button:last-child {background:#347cca;color:white;}
+
+/* v58: Explicit text-box rectangles and full-board drawing capture. */
+html.shared-unit-template .flash-board.text-mode .flash-board-text-layer {
+  z-index:105;
+  pointer-events:auto;
+  cursor:crosshair;
+  touch-action:none;
+}
+html.shared-unit-template .flash-board-user-text {
+  background:rgba(255,255,255,.70);
+  border:2px solid #a7b9c6;
+  border-radius:7px;
+  overflow:hidden;
+  white-space:pre-wrap;
+  box-shadow:0 2px 5px #1e354322;
+}
+html.shared-unit-template .flash-board.text-mode .flash-board-user-text {
+  cursor:grab;
+}
+html.shared-unit-template .flash-board-text-panel textarea {
+  width:100%;min-height:90px;box-sizing:border-box;
+  border:2px solid #64bacc;border-radius:12px;
+  padding:12px 13px;font-size:24px;
+  background:#fff;color:#172b3b;
+  font-family:inherit;resize:vertical;
+}
+
+/* Text creation preview and resize affordance (v59). */
+html.shared-unit-template .flash-board-text-marquee {
+  position:absolute;
+  box-sizing:border-box;
+  border:2px dashed #2382d4;
+  background:rgba(55,150,231,.10);
+  pointer-events:none;
+  z-index:10;
+}
+html.shared-unit-template .flash-board-text-marquee[hidden] {display:none !important;}
+html.shared-unit-template .flash-board-text-resizer {
+  position:absolute;
+  width:18px;height:18px;
+  right:0;bottom:0;
+  transform:translate(20%,20%);
+  border:2px solid white;
+  border-radius:4px;
+  background:#2382d4;
+  box-shadow:0 0 0 1px #2369a2;
+  cursor:nwse-resize;
+  touch-action:none;
+  pointer-events:auto;
+}
+html.shared-unit-template .flash-board.text-mode .flash-board-user-text {
+  overflow:visible;
+}
+
+/* S now targets Flash Board vocabulary cards, not custom text boxes. */
+html.shared-unit-template .flash-board.plural-mode .flash-board-card {cursor:pointer;}
+html.shared-unit-template .flash-board.plural-mode .flash-board-text-layer {pointer-events:none;}
+
+/* Flash Board toolbar groups: Move / drawing + history / text / actions. */
+html.shared-unit-template .flash-board-tools .flash-board-remove { margin-top:0; border-top:1px solid #c9d7df; }
+html.shared-unit-template .flash-board-tools .flash-board-tool[aria-label="Order cards"] { margin-top:13px; }
+
+/* Flash Board text editor formatting row. */
+html.shared-unit-template .flash-board-text-format {
+  display:flex;flex-wrap:wrap;align-items:center;gap:9px;
+}
+html.shared-unit-template .flash-board-text-format label {
+  display:flex;align-items:center;gap:6px;
+  color:#334a59;font-size:14px;font-weight:600;
+}
+html.shared-unit-template .flash-board-text-format select {
+  padding:8px 10px;border:1px solid #b7cbd8;border-radius:9px;
+  font-size:16px;background:#fff;color:#182b38;
+}
+html.shared-unit-template .flash-board-text-format button {
+  width:39px;height:39px;border:1px solid #b7cbd8;border-radius:9px;
+  background:#fff;color:#23384c;font-size:19px;cursor:pointer;
+}
+html.shared-unit-template .flash-board-text-format .flash-board-format-bold {font-weight:900;}
+html.shared-unit-template .flash-board-text-format .flash-board-format-italic {font-style:italic;font-family:Georgia,serif;}
+html.shared-unit-template .flash-board-text-format button.active {
+  background:#dbebfa;border-color:#2780d0;color:#145693;
+}
+
+/* v63 — text objects stay visually above movable flashcards.
+   The transparent layer itself is click-through outside Text mode. */
+html.shared-unit-template .flash-board-text-layer {
+  z-index:1000000;
+}
+html.shared-unit-template .flash-board.text-mode .flash-board-text-layer {
+  z-index:1000000;
+}
+html.shared-unit-template .flash-board-text-actions .flash-board-text-delete {
+  margin-right:auto;
+  background:#fff0f0;
+  border-color:#e8a1a1;
+  color:#a32525;
+}
+html.shared-unit-template .flash-board-tools .flash-board-tool[aria-label="Order cards"],
+html.shared-unit-template .flash-board-tools .flash-board-remove {
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:0;line-height:1;
+}
+html.shared-unit-template .flash-board-tools .flash-board-action-symbol {
+  font-size:22px;line-height:23px;
+}
+html.shared-unit-template .flash-board-tools .flash-board-action-label {
+  font-family:Arial,sans-serif;font-weight:700;
+  font-size:9px;line-height:10px;letter-spacing:0;
+  text-transform:lowercase;
+}
+html.shared-unit-template .flash-board-tools .flash-board-bin-icon {
+  width:24px;height:24px;flex:0 0 auto;
+}
+html.shared-unit-template .flash-board-suffix {
+  font-size:20px;letter-spacing:-1px;
+}
+
+/* v64: the text editor must sit above the high-z-index canvas text layer.
+   Otherwise the canvas can intercept Done/Cancel taps on some devices. */
+html.shared-unit-template .flash-board-text-dialog {
+  z-index:2147483647;
+  pointer-events:auto;
+  isolation:isolate;
+}
+html.shared-unit-template .flash-board-text-panel,
+html.shared-unit-template .flash-board-text-panel button {
+  pointer-events:auto;
+}
+
+/* v65: size controls live in a compact flyout beside the Order/Remove group. */
+html.shared-unit-template .flash-board-size-menu {
+  position:absolute;
+  right:calc(100% + 8px);
+  bottom:42px;
+  display:flex;
+  flex-direction:column;
+  min-width:116px;
+  padding:6px;
+  gap:4px;
+  border:1px solid #cbd7dd;
+  border-radius:11px;
+  background:#fff;
+  box-shadow:0 4px 12px #243a4b2d;
+  z-index:130;
+}
+html.shared-unit-template .flash-board-size-menu[hidden] {display:none;}
+html.shared-unit-template .flash-board-size-menu button {
+  border:0;
+  border-radius:7px;
+  padding:9px 11px;
+  background:#eff5f8;
+  color:#213248;
+  text-align:left;
+  font-size:14px;
+  cursor:pointer;
+  touch-action:manipulation;
+}
+html.shared-unit-template .flash-board-size-menu button:active,
+html.shared-unit-template .flash-board-size-menu button:hover {
+  background:#dbeaf4;
+}
+
+html.shared-unit-template .flash-board-tools .flash-board-tool[aria-label="Card size"] {
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:0;
+  line-height:1;
+}
+
+
+/* v68: Flash Board tool state and unobtrusive eraser-mode badge. */
+html.shared-unit-template.flash-board-mode .card-counter { display:none !important; }
+html.shared-unit-template .flash-board-tools .flash-board-tool[aria-label="Eraser"] {
+  position:relative;
+}
+html.shared-unit-template .flash-board-eraser-badge {
+  position:absolute;
+  right:-3px;
+  bottom:-4px;
+  border-radius:5px;
+  border:1px solid #b6cbd7;
+  background:#fff;
+  color:#22455a;
+  padding:1px 2px;
+  font:700 8px/1 Arial,sans-serif;
+  text-transform:uppercase;
+  pointer-events:none;
+}
+html.shared-unit-template .flash-board-eraser-menu button.chosen {
+  background:#dcecff;
+  color:#15588a;
+  box-shadow:inset 3px 0 #2686d6;
+}
+html.shared-unit-template .flash-board-tool.flash-board-suffix:disabled {
+  opacity:.4;
+  cursor:default;
+}
+
+/* Flash Board eraser cursor: same coordinate system as stroke masks. */
+html.shared-unit-template .flash-board-eraser-preview {
+  pointer-events:none;
+}
+html.shared-unit-template .flash-board-eraser-circle {
+  fill:rgba(47,132,214,.16);
+  stroke:#207ed1;
+  stroke-width:2.5;
+  stroke-dasharray:5 3;
+  vector-effect:non-scaling-stroke;
+}
+html.shared-unit-template .flash-board-eraser-highlight {
+  stroke:rgba(240,71,54,.85);
+  vector-effect:non-scaling-stroke;
+  pointer-events:none;
+}
+html.shared-unit-template .flash-board-drawing-surface.drawing {
+  touch-action:none;
+}
+
+/* v70: Picture-card caption visibility is independent of card positions,
+   teacher-created text, and original vocabulary labels. */
+html.shared-unit-template .flash-board.labels-hidden .flash-board-caption,
+html.shared-unit-template .flash-board-bin.labels-hidden .flash-board-caption {
+  display:none !important;
+}
+html.shared-unit-template .flash-board-tools .flash-board-label-toggle {
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:0;
+  line-height:1;
+}
+html.shared-unit-template .flash-board-tools .flash-board-label-toggle .flash-board-action-symbol {
+  font-size:18px;
+}
+
+/* Order supports desktop double-click and tablet double-tap. */
+html.shared-unit-template .flash-board-tools .flash-board-tool[aria-label^="Order cards"] {
+  touch-action:manipulation;
+  user-select:none;
+  -webkit-user-select:none;
+  -webkit-tap-highlight-color:transparent;
+}

@@ -1,0 +1,151 @@
+/* Universal Flash Board: free draggable cards in a bounded classroom canvas. */
+html.shared-unit-template .flash-board {
+  position:relative;
+  width:100%;
+  height:100%;
+  min-height:0;
+  overflow:hidden;
+  background:#f7faf8;
+  border-radius:15px;
+  touch-action:none;
+}
+html.shared-unit-template .flash-board-card {
+  position:absolute;
+  box-sizing:border-box;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:3px;
+  padding:clamp(2px,.4vw,7px);
+  border:1px solid #cfdde4;
+  border-radius:9px;
+  background:#fff;
+  box-shadow:0 3px 10px #243a4b2d;
+  cursor:grab;
+  touch-action:none;
+  user-select:none;
+  -webkit-user-select:none;
+  overflow:hidden;
+}
+html.shared-unit-template .flash-board-card.dragging {
+  z-index:10;
+  cursor:grabbing;
+  box-shadow:0 12px 24px #243a4b44;
+}
+html.shared-unit-template .flash-board-picture {
+  width:100%;
+  height:auto;
+  max-width:100%;
+  max-height:85%;
+  min-height:0;
+  flex:1 1 auto;
+  border:0;
+  box-shadow:none;
+  background-size:contain;
+}
+html.shared-unit-template .flash-board-word {
+  font-family:"HandwritingWeCan","Century Gothic",sans-serif;
+  font-size:clamp(.65rem,1.35vw,1.4rem);
+  line-height:1.1;
+  font-weight:700;
+  text-align:center;
+  overflow-wrap:anywhere;
+  flex:0 0 auto;
+}
+html.shared-unit-template .flash-board-card:focus-visible { outline:3px solid var(--unit-colour); }
+
+/* Word-only cards fit their text rather than occupying picture-size rectangles. */
+html.shared-unit-template .flash-board-card.word-only {
+  display: block;
+  width: max-content;
+  height: max-content;
+  max-width: min(94%, 520px);
+  min-width: 0;
+  min-height: 0;
+  padding: 5px;
+  overflow: visible;
+  line-height: 1;
+}
+html.shared-unit-template .flash-board-card.word-only .flash-board-word {
+  display: block;
+  font-size: clamp(1.5rem, 2.8vw, 3rem);
+  font-weight: 800;
+  line-height: 1.08;
+  text-wrap: balance;
+  overflow-wrap: break-word;
+}
+@media (max-width: 600px) {
+  html.shared-unit-template .flash-board-card.word-only .flash-board-word {
+    font-size: clamp(1.2rem, 4vw, 2rem);
+  }
+}
+
+/* Flash Board phase 1: each picture preserves its source aspect ratio;
+   captions overlay the media instead of reducing artwork height. */
+html.shared-unit-template .flash-board-card.visual-card {
+  padding:0;
+  display:block;
+}
+html.shared-unit-template .flash-board-media {
+  position:relative;
+  width:100%;
+  height:100%;
+  overflow:hidden;
+  border-radius:inherit;
+  background:#fff;
+}
+html.shared-unit-template .flash-board-card .flash-board-media > .flash-board-picture {
+  position:absolute;
+  inset:0;
+  display:block;
+  width:100%;
+  height:100%;
+  max-width:none;
+  max-height:none;
+  flex:none;
+  border:0;
+  box-shadow:none;
+  background-repeat:no-repeat;
+  background-position:center;
+  /* Keep sprites' existing sizing; overriding background-size would break
+     the crop coordinates of a sheet. */
+}
+html.shared-unit-template .flash-board-caption {
+  position:absolute;
+  left:0;
+  right:0;
+  bottom:0;
+  z-index:1;
+  background:rgba(255,255,255,.60);
+  color:#111;
+  padding:5px 7px;
+  font-family:"HandwritingWeCan","Century Gothic",sans-serif;
+  font-size:clamp(.85rem,1.2vw,1.35rem);
+  font-weight:800;
+  line-height:1.12;
+  text-align:center;
+  text-wrap:balance;
+  overflow-wrap:anywhere;
+  pointer-events:none;
+}
+
+/* Flash Board alphabet: use a centred glyph, not the image-card layout.
+   The same rule works for upper and lower case and does not affect numbers. */
+html.shared-unit-template .flash-board-card.letter-visual-card .flash-board-picture.text-visual {
+  display:grid;
+  place-items:center;
+  box-sizing:border-box;
+  font-size:clamp(2rem, min(8vw, 13vh), 7rem);
+  font-weight:500;
+  line-height:1;
+  overflow:hidden;
+  padding:0.06em;
+  aspect-ratio:auto;
+}
+/* A 4:3 sprite cell must use the exact geometry of one flag;
+   background-position then maps each source cell edge to the card edge. */
+html.shared-unit-template .flash-board-card.visual-card .flash-board-media {
+  isolation:isolate;
+}
+

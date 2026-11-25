@@ -52,7 +52,12 @@ function checkDeck(label, cards, expectedCount, expectedSelected) {
 // Standalone Categories come directly from picture mappings in the master
 // database. Missing picture entries are hidden, not displayed as placeholders.
 const categoryMenuSource = source("categories.html");
-const sharedCssSource = source("css/classroom.css");
+function readClassroomCss() {
+  const entry = fs.readFileSync(path.join(__dirname, "../css/classroom.css"), "utf8");
+  return [...entry.matchAll(/@import url\("([^"]+)"\);/g)]
+    .map(match => fs.readFileSync(path.join(__dirname, "../css", match[1]), "utf8")).join("\n");
+}
+const sharedCssSource = readClassroomCss();
 assert.match(categoryMenuSource, /data\.getCategoryPictureItems\(id\)/,
   "menu lists only categories with picture cards");
 assert.match(categoryMenuSource, /if \(!pictureItems\.length\) return;/,

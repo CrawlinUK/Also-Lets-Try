@@ -1,0 +1,244 @@
+/* ============================================================
+   SHARED UNIT TEMPLATE — UNIT 5 BASELINE
+   These rules are being proven here before rolling into the unit template.
+   ============================================================ */
+
+html.shared-unit-template .answer-area {
+  padding: 0 12px 4px;
+}
+
+/* Book 1 Unit 7: long quantity/colour/shape phrases need a smaller text ceiling
+   than ordinary vocabulary cards on landscape tablets. */
+html.shared-unit-template[data-book="book1"][data-unit="7"] .display-text {
+  font-size: calc(clamp(2rem, 4.3vw, 4.5rem) * var(--text-scale, 1));
+  line-height: 1.08;
+  overflow-wrap: normal;
+}
+
+html.shared-unit-template .display-text {
+  max-width: calc(100% - 24px);
+  white-space: normal;
+  overflow-wrap: anywhere;
+  text-wrap: balance;
+}
+
+/* Unit 2 uses portrait artwork, so reserve enough vertical room for
+   HandwritingWeCan descenders in Picture + Text mode. */
+html.shared-unit-template[data-book="book1"][data-unit="2"] .flashcard:not(.picture-only):not(.text-only) .picture-frame {
+  width: calc(min(43vh, 40vw, 500px) * var(--picture-scale));
+}
+
+html.shared-unit-template[data-book="book1"][data-unit="2"] .flashcard:not(.picture-only) .display-text {
+  padding-bottom: .14em;
+  line-height: 1.12;
+}
+
+/* Portrait-safe Picture Only sizing: use the available height rather than
+   treating the portrait frame like a square/landscape picture. */
+html.shared-unit-template[data-book="book1"][data-unit="2"] .flashcard.picture-only .picture-frame {
+  width: auto;
+  height: calc(min(72vh, 760px) * var(--picture-scale));
+  max-width: 92%;
+  max-height: 88%;
+}
+
+html.shared-unit-template .settings-panel {
+  top: 8px;
+  right: 8px;
+  width: min(720px, 50vw);
+  max-height: calc(var(--viewport-height) - 16px);
+  padding: 10px 12px;
+  border-radius: 14px;
+}
+
+html.shared-unit-template .settings-heading {
+  align-items: center;
+  gap: 8px;
+}
+
+html.shared-unit-template .settings-heading h2 {
+  font-size: 24px;
+  line-height: 1;
+}
+
+html.shared-unit-template .close-button {
+  width: 34px;
+  height: 34px;
+  font-size: 22px;
+}
+
+html.shared-unit-template .setting-section {
+  margin-top: 10px;
+}
+
+html.shared-unit-template .selection-section {
+  margin-top: 8px;
+}
+
+html.shared-unit-template .setting-actions-top {
+  grid-template-columns: 1fr 1fr;
+  margin: 0 0 7px;
+  gap: 6px;
+}
+
+html.shared-unit-template .setting-actions-top button {
+  min-height: 34px;
+  border: 1px solid var(--line);
+  background: #f7faf8;
+}
+
+html.shared-unit-template .message:empty {
+  display: none;
+}
+
+html.shared-unit-template .message {
+  margin: 4px 0;
+  font-size: 13px;
+}
+
+html.shared-unit-template .category-word-groups {
+  display: grid;
+  gap: 7px;
+}
+
+html.shared-unit-template .category-word-group {
+  display: grid;
+  gap: 3px;
+}
+
+html.shared-unit-template .category-option {
+  min-height: 31px;
+  padding: 3px 8px;
+  text-align: left;
+  background: #ffffff;
+  border: 1px solid var(--line);
+  border-radius: 7px;
+  font-size: 15px;
+  font-weight: 900;
+}
+
+html.shared-unit-template .category-option.all-selected {
+  color: #145e42;
+  background: #eaf8f1;
+  border-color: #28a36a;
+}
+
+html.shared-unit-template .category-option.partial-selected {
+  color: #7a4712;
+  background: #fff1df;
+  border-color: #e49a45;
+}
+
+html.shared-unit-template .category-option.none-selected {
+  color: var(--ink);
+  background: #ffffff;
+  border-color: var(--line);
+  box-shadow: none;
+}
+
+html.shared-unit-template .category-card-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 2px 4px;
+}
+
+html.shared-unit-template .card-option {
+  min-height: 28px;
+  padding: 2px 5px;
+  border-width: 1px;
+  border-radius: 5px;
+  font-size: 14px;
+  line-height: 1.1;
+}
+
+html.shared-unit-template .setting-section h3 {
+  margin-bottom: 5px;
+  font-size: 16px;
+}
+
+html.shared-unit-template .segmented span {
+  padding: 5px 6px;
+}
+
+html.shared-unit-template .balance-labels {
+  margin-bottom: 3px;
+  font-size: 14px;
+}
+
+html.shared-unit-template .control-bar .floating-timer {
+  position: static;
+  width: 100%;
+  min-height: 64px;
+  display: grid;
+  grid-template-columns: 38px minmax(42px, 1fr) 38px;
+  grid-template-areas: "down value up";
+  gap: 4px;
+  padding: 6px 8px;
+  border: 1px solid var(--line);
+  border-radius: 15px;
+  background: var(--surface);
+  box-shadow: 0 5px 12px rgba(20, 40, 35, .12);
+}
+
+html.shared-unit-template .control-bar .floating-timer .timer-value {
+  grid-area: value;
+}
+
+html.shared-unit-template .control-bar .floating-timer .timer-value::before {
+  content: attr(data-seconds) "s";
+  font-size: 25px;
+  line-height: 1;
+}
+
+html.shared-unit-template .control-bar .floating-timer .timer-value::after {
+  display: none;
+}
+
+html.shared-unit-template .control-bar .floating-timer.timer-control button {
+  width: 34px;
+  height: 34px;
+  font-size: 20px;
+}
+
+html.shared-unit-template .control-bar:has(#floatingTimer:not([hidden])) {
+  grid-template-columns:
+    minmax(120px, .75fr)
+    minmax(150px, 1fr)
+    minmax(140px, .9fr)
+    minmax(130px, .75fr)
+    68px
+    68px;
+}
+
+html.shared-unit-template .control-bar:not(:has(#floatingTimer:not([hidden]))) {
+  grid-template-columns:
+    minmax(130px, .75fr)
+    minmax(150px, 1fr)
+    minmax(150px, 1fr)
+    68px
+    68px;
+}
+
+@media (max-width: 900px) {
+  html.shared-unit-template .settings-panel {
+    width: min(680px, 58vw);
+  }
+
+  html.shared-unit-template .category-card-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+
+html.shared-unit-template .settings-icon-button {
+  min-width: 0;
+  padding-left: 10px;
+  padding-right: 10px;
+}
+
+html.shared-unit-template .settings-icon-button .ui-icon {
+  width: 28px;
+  height: 28px;
+}
+
+

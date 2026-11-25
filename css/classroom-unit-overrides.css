@@ -1,0 +1,39 @@
+/* Standalone Categories use the shared flashcard header without "Unit" or a unit number. */
+html.shared-unit-template[data-book="categories"] .site-title .unit-word,
+html.shared-unit-template[data-book="categories"] .site-title .unit-number {
+  display: none !important;
+}
+html.shared-unit-template[data-book="categories"] .site-title {
+  gap: 0;
+}
+
+
+/* Unit-specific office-name option; only shown when a unit opts in. */
+html.shared-unit-template .school-shortening-section[hidden]{display:none!important}
+html.shared-unit-template .school-shortening-button{
+  min-height:42px;width:100%;padding:8px 12px;border:1px solid var(--line);
+  border-radius:10px;background:#f3f7f9;color:var(--ink);
+  font:inherit;font-weight:800;cursor:pointer
+}
+html.shared-unit-template .school-shortening-button[aria-pressed="true"]{
+  background:#def3e7;border-color:#32a46d
+}
+/* Preserve right-hand punctuation and give fluid text a little breathing room
+   at each edge. */
+html.shared-unit-template .display-text{
+  box-sizing:border-box;
+  padding-inline:.08em;
+}
+
+
+/* Long words/sentences must never be cut off at the stage edge.
+   CSS owns the responsive font size; wrapping is the safe fallback for unusually
+   long phrases instead of freezing the text to a JavaScript-calculated pixel size. */
+html.shared-unit-template .flashcard .answer-area > .display-text:not([aria-hidden="true"]) {
+  min-width: 0;
+  max-width: calc(100% - 24px);
+  white-space: normal;
+  overflow-wrap: anywhere;
+  text-wrap: balance;
+}
+

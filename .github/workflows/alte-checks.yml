@@ -45,6 +45,9 @@ jobs:
       - name: Shared classroom checks
         if: ${{ !cancelled() && steps.syntax.outcome == 'success' }}
         run: node tests/shared-classroom.test.js
+      - name: CSS structure checks
+        if: ${{ !cancelled() && steps.syntax.outcome == 'success' }}
+        run: node tests/css-structure.test.js
       - name: Vocabulary checks
         if: ${{ !cancelled() && steps.syntax.outcome == 'success' }}
         run: node tests/vocabulary-data.test.js

@@ -1,0 +1,12 @@
+/* Shared ALT-e colour tokens. Activity-specific colours remain local. */
+:root {
+  --ink: #17191d;
+  --muted: #5f6872;
+  --line: #dce4e8;
+  --surface: #ffffff;
+  --page: #f5f8f6;
+  --green: #20b769;
+  --purple: #7955cf;
+  --soft: #eff4f7;
+  --shadow: 0 10px 30px rgba(31, 47, 40, 0.12);
+}

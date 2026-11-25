@@ -67,7 +67,12 @@ reveal().handlers.click();
 assert.equal(reveal().children[0].cardId,"a");
 game.reset();game.render();assert.equal(returned,true);
 categories=[];game.open();assert.equal(settingsOpened,true);
-const css=read("css/classroom.css");
+function readClassroomCss() {
+  const entry = fs.readFileSync(path.join(__dirname, "../css/classroom.css"), "utf8");
+  return [...entry.matchAll(/@import url\("([^"]+)"\);/g)]
+    .map(match => fs.readFileSync(path.join(__dirname, "../css", match[1]), "utf8")).join("\n");
+}
+const css=readClassroomCss();
 assert.match(css,/\.guess-stage\s*\{[^}]*grid-template-rows:\s*minmax\(0, 1fr\) auto;/);
 assert.match(css,/\.guess-main-word\s*\{[^}]*padding:\s*\.22em \.08em \.18em;[^}]*overflow:\s*visible;[^}]*line-height:\s*1\.20;/);
 assert.match(css,/\.guess-reveal-area \.guess-picture\s*\{[^}]*96cqh/);

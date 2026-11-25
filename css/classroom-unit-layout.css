@@ -1,0 +1,456 @@
+/* ============================================================
+   SHARED UNIT ENGINE
+   Units 1–5 now use the same live DOM. The former Unit 1–3 standalone
+   stylesheet blocks were removed after migration to prevent cascade conflicts.
+   ============================================================ */
+
+/* ============================================================
+   UNITS 4–5 — SHARED PICTURE-UNIT RULES
+   These rules are the current basis for standard picture/text units.
+   Future normal units should inherit from the shared unit template/core.
+   ============================================================ */
+
+/* Units 4–5 shared flashcard/game layout */
+
+html.shared-unit-template {
+      /* These values are replaced from UNIT_CONFIG when the page loads. */
+      --unit-colour: #999999;
+      --unit-number-colour: #bbbbbb;
+      /* Fluid classroom typography: viewport width drives the size continuously,
+         while rem/maximum limits keep it readable on tablets and large displays. */
+      --display-size: clamp(3.5rem, calc(6.8vw + .4rem), 8.625rem);
+      --answer-gap: 18px;
+    }
+
+    html.shared-unit-template .site-header {
+      position: relative;
+    }
+
+    html.shared-unit-template .site-title {
+      white-space: nowrap;
+    }
+
+    html.shared-unit-template .game-title {
+      position: static;
+      flex: 1;
+      min-width: 0;
+      max-width: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 6px 8px 4px;
+      overflow: hidden;
+      transform: none;
+      font-size: clamp(25px, 2.8vw, 40px);
+      line-height: 1.15;
+      white-space: nowrap;
+      pointer-events: none;
+    }
+
+    html.shared-unit-template .flashcard {
+      min-width: 0;
+      grid-template-rows: minmax(0, 1fr);
+      padding: 12px;
+    }
+
+    html.shared-unit-template .flashcard-stage {
+      width: 100%;
+      height: 100%;
+      min-width: 0;
+      min-height: 0;
+      display: grid;
+    }
+
+    html.shared-unit-template .answer-area {
+      min-width: 0;
+      padding: 10px 100px 18px;
+    }
+
+    html.shared-unit-template .picture-frame {
+      width: calc(min(48vh, 46vw, 560px) * var(--picture-scale));
+      max-width: 90%;
+      aspect-ratio: var(--picture-ratio, 3 / 2);
+      background: #ffffff;
+      border-radius: 14px;
+      box-shadow: 0 9px 22px rgba(25, 38, 33, .22);
+    }
+
+    html.shared-unit-template .card-picture,
+html.shared-unit-template .game-picture {
+      width: 100%;
+      height: 100%;
+      background-color: #ffffff;
+      background-repeat: no-repeat;
+      background-position: center;
+      background-size: contain;
+      transform-origin: center;
+    }
+
+    html.shared-unit-template .flashcard.picture-only .picture-frame {
+      width: calc(min(74vh, 68vw, 820px) * var(--picture-scale));
+      max-width: 95%;
+      display: grid;
+      place-items: center;
+    }
+
+    /* Picture-only mode keeps a small white safety margin around the artwork. */
+    html.shared-unit-template .flashcard.picture-only .card-picture {
+      width: 94%;
+      height: 94%;
+    }
+
+    html.shared-unit-template .game-area {
+      width: 100%;
+      height: 100%;
+      min-width: 0;
+      min-height: 0;
+      display: grid;
+      padding: 0;
+    }
+
+    html.shared-unit-template .game-grid {
+      width: 100%;
+      height: 100%;
+      min-width: 0;
+      min-height: 0;
+      display: grid;
+      grid-template-columns: repeat(var(--grid-cols, 3), minmax(0, 1fr));
+      grid-template-rows: repeat(var(--grid-rows, 2), minmax(0, 1fr));
+      gap: 12px;
+      align-content: stretch;
+      justify-content: stretch;
+    }
+
+    html.shared-unit-template .game-tile {
+      min-width: 0;
+      min-height: 0;
+      display: grid;
+      place-items: center;
+      padding: 5px;
+      overflow: hidden;
+      background: #f7faf8;
+      border: 2px solid var(--line);
+      border-radius: 18px;
+    }
+
+    html.shared-unit-template .game-picture {
+      width: 94%;
+      height: auto;
+      max-width: 94%;
+      max-height: 94%;
+      aspect-ratio: var(--visual-ratio, 1);
+      background-size: contain;
+      filter: drop-shadow(0 5px 7px rgba(25, 38, 33, .18));
+    }
+
+    @supports (width: 1cqw) {
+      html.shared-unit-template .game-tile {
+        container-type: size;
+      }
+
+      html.shared-unit-template .game-tile .game-picture {
+        width: min(94cqw, calc(94cqh * var(--visual-ratio, 1)));
+        height: auto;
+        max-width: 94cqw;
+        max-height: 94cqh;
+        aspect-ratio: var(--visual-ratio, 1);
+      }
+    }
+
+    html.shared-unit-template .game-tile.covered {
+      background: #eef2f4;
+      border-style: dashed;
+    }
+
+    html.shared-unit-template .game-tile.covered::after {
+      content: "?";
+      color: #7a8790;
+      font-size: clamp(54px, 8vw, 110px);
+      font-weight: 900;
+    }
+
+    html.shared-unit-template .game-tile.covered .game-picture {
+      display: none;
+    }
+
+    /* Missing / Keyword: use the available board area for the artwork itself.
+       Tiles remain full-size tap targets, while only the image gets a frame. */
+    html.shared-unit-template .game-grid {
+      gap: clamp(3px, .55vw, 9px);
+    }
+
+    html.shared-unit-template .game-tile {
+      padding: 2px;
+      background: transparent;
+      border: 0;
+      border-radius: 8px;
+    }
+
+    html.shared-unit-template .game-picture {
+      width: 100%;
+      max-width: 100%;
+      max-height: 100%;
+      border: 2px solid rgba(255, 255, 255, .95);
+      border-radius: 2px;
+      box-shadow: 0 4px 10px rgba(25, 38, 33, .18);
+      filter: none;
+    }
+
+    @supports (width: 1cqw) {
+      html.shared-unit-template .game-tile .game-picture {
+        width: min(100cqw, calc(100cqh * var(--visual-ratio, 1)));
+        max-width: 100cqw;
+        max-height: 100cqh;
+      }
+    }
+
+    html.shared-unit-template .game-tile.covered {
+      background: #eef2f4;
+      border: 2px dashed var(--line);
+      border-radius: 10px;
+    }
+
+    html.shared-unit-template .game-tile:focus-visible {
+      outline: 3px solid var(--unit-colour);
+      outline-offset: -3px;
+    }
+
+    html.shared-unit-template .game-tile.selected {
+      padding: 0;
+      border: 6px solid var(--unit-colour);
+    }
+
+    html.shared-unit-template .side-nav {
+      padding: 0;
+    }
+
+    html.shared-unit-template .side-previous {
+      left: 0;
+    }
+
+    html.shared-unit-template .side-next {
+      right: 0;
+    }
+
+    html.shared-unit-template .control-bar {
+      grid-template-columns: minmax(130px, .75fr) minmax(150px, 1fr) minmax(150px, 1fr) minmax(150px, 1fr);
+    }
+
+    html.shared-unit-template .game-menu {
+      width: min(260px, 80vw);
+    }
+
+    html.shared-unit-template .settings-panel {
+      width: min(460px, calc(100vw - 32px));
+    }
+
+    html.shared-unit-template .category-option-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    html.shared-unit-template .category-option {
+      min-height: 48px;
+      padding: 8px 10px;
+      background: #fff7f0;
+      border: 2px solid #f2c29e;
+      border-radius: 12px;
+      font-weight: 900;
+    }
+
+    html.shared-unit-template .category-option:hover,
+html.shared-unit-template .category-option:focus-visible {
+      background: #ffead9;
+      border-color: var(--unit-colour);
+    }
+
+    html.shared-unit-template .card-option-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    html.shared-unit-template .card-option {
+      min-width: 0;
+      min-height: 50px;
+      padding: 7px;
+      overflow: hidden;
+      background: #ffffff;
+      border: 2px solid var(--line);
+      border-radius: 12px;
+      font-weight: 900;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    html.shared-unit-template .card-option.selected {
+      color: #145e42;
+      background: #eaf8f1;
+      border-color: #28a36a;
+    }
+
+    html.shared-unit-template .segmented {
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1px;
+      border: 1px solid #cbd8df;
+      border-radius: 11px;
+      background: #cbd8df;
+    }
+
+    html.shared-unit-template .segmented label {
+      position: relative;
+      background: var(--surface);
+    }
+
+    html.shared-unit-template .segmented span {
+      padding: 8px;
+      border: 0;
+      background: var(--surface);
+      cursor: pointer;
+    }
+
+    html.shared-unit-template .segmented input:checked + span {
+      color: #0d5fa7;
+      background: #eaf5ff;
+      box-shadow: inset 0 0 0 2px #1789df;
+    }
+
+    html.shared-unit-template .balance-labels {
+      margin-bottom: 7px;
+      font-size: 16px;
+      font-weight: 800;
+    }
+
+    html.shared-unit-template .balance-slider {
+      grid-template-columns: auto minmax(0, 1fr) auto;
+      gap: 10px;
+      font-weight: 900;
+    }
+
+    html.shared-unit-template .balance-slider input {
+      width: 100%;
+      accent-color: #168cf0;
+    }
+
+    @media (max-width: 850px) {
+      html.shared-unit-template .app {
+        padding-left: 72px;
+        padding-right: 72px;
+      }
+      html.shared-unit-template .side-nav {
+        width: 64px;
+        border-radius: 22px;
+        font-size: 56px;
+      }
+      html.shared-unit-template .control-bar {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+      html.shared-unit-template .control-bar::before {
+        left: -72px;
+        right: -72px;
+      }
+      html.shared-unit-template .game-grid {
+        gap: 8px;
+      }
+    }
+
+    @media (max-width: 650px) {
+      html.shared-unit-template .site-header {
+        height: 60px;
+        padding: 7px 10px;
+      }
+      html.shared-unit-template .unit-word,
+html.shared-unit-template .unit-name {
+        font-size: 22px;
+      }
+      html.shared-unit-template .unit-number {
+        font-size: 50px;
+        -webkit-text-stroke-width: 3px;
+      }
+      html.shared-unit-template .game-title {
+        max-width: 40vw;
+        padding-top: 5px;
+        font-size: 21px;
+        line-height: 1.15;
+      }
+      html.shared-unit-template .app {
+        height: calc(100vh - 60px);
+        padding: 8px 58px;
+      }
+      html.shared-unit-template .flashcard {
+        padding: 8px;
+      }
+      html.shared-unit-template .answer-area {
+        padding: 8px 50px 12px;
+      }
+      html.shared-unit-template .side-nav {
+        width: 52px;
+        border-radius: 18px;
+        font-size: 46px;
+      }
+      html.shared-unit-template .control-bar::before {
+        left: -58px;
+        right: -58px;
+      }
+      html.shared-unit-template .control,
+html.shared-unit-template .card-counter {
+        min-height: 48px;
+      }
+
+      html.shared-unit-template .floating-timer {
+        left: 12px;
+        bottom: 12px;
+      }
+      html.shared-unit-template .floating-auto {
+        right: 12px;
+        bottom: 12px;
+        width: 64px;
+        height: 64px;
+        font-size: 28px;
+      }
+      html.shared-unit-template .card-option-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+      html.shared-unit-template .segmented {
+        grid-template-columns: 1fr;
+      }
+      html.shared-unit-template .segmented span {
+        border-right: 0;
+        border-bottom: 1px solid #cbd8df;
+      }
+      html.shared-unit-template .segmented label:last-child span {
+        border-bottom: 0;
+      }
+    }
+
+/* Units 4–5 shared continuation */
+
+/* Teacher-only Missing Game answer hints */
+
+/*
+  SIDE-ARROW GUTTER STANDARDISATION
+  ---------------------------------
+  Units 1-3 intentionally use the same side-arrow geometry as Unit 4:
+  arrows sit flush with the viewport edge (left/right: 0), while the
+  existing .app horizontal padding leaves a small visible gutter before
+  the flashcard. Keep this consistent across future units.
+*/
+
+
+/*
+  UNITS 4–5 CATEGORY TOGGLES
+  -----------------------
+  Category buttons are multi-select toggles. A category appears selected when
+  all of its core unit cards are selected. Extra support cards do not control
+  the category state and can still be selected manually.
+*/
+html.shared-unit-template .category-option.selected {
+  color: #145e42;
+  background: #eaf8f1;
+  border-color: #28a36a;
+  box-shadow: inset 0 0 0 1px rgba(40, 163, 106, .22);
+}
+
+

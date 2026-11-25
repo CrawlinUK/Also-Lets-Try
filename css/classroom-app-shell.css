@@ -1,0 +1,391 @@
+/* ============================================================
+   SHARED CLASSROOM APP SHELL
+   Tablet-safe viewport, focus mode, SVG controls and compact timer.
+   ============================================================ */
+
+html[data-unit] {
+  --header-height: 78px;
+  --viewport-height: 100dvh;
+}
+
+html[data-unit],
+html[data-unit] body {
+  height: 100%;
+  overscroll-behavior: none;
+}
+
+html[data-unit] body {
+  height: var(--viewport-height);
+  max-height: var(--viewport-height);
+  overflow: hidden;
+}
+
+html[data-unit] .site-header {
+  height: var(--header-height);
+}
+
+html[data-unit] .site-header-inner {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  min-width: 0;
+}
+
+html[data-unit] .app {
+  height: calc(var(--viewport-height) - var(--header-height));
+  min-height: 0;
+}
+
+html[data-unit].game-focus {
+  --header-height: 0px;
+  --game-left-rail: 100px;
+  --game-right-rail: 96px;
+}
+
+html[data-unit].game-focus .site-header {
+  position: fixed;
+  z-index: 32;
+  left: 0;
+  top: 0;
+  bottom: 82px;
+  width: var(--game-left-rail);
+  height: auto;
+  min-height: 0;
+  display: block;
+  padding: 10px 10px 0;
+  background: transparent;
+  border: 0;
+  pointer-events: none;
+}
+
+html[data-unit].game-focus .site-header-inner {
+  width: 100%;
+  height: 100%;
+  display: block;
+  position: relative;
+}
+
+html[data-unit].game-focus .site-header::after {
+  content: "";
+  position: absolute;
+  left: 10px;
+  right: 10px;
+  top: 66px;
+  height: 1px;
+  background: #cbd4d8;
+}
+
+html[data-unit].game-focus .site-title,
+html[data-unit].game-focus .game-title {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  margin: -1px !important;
+  padding: 0 !important;
+  overflow: hidden !important;
+  clip: rect(0 0 0 0) !important;
+  clip-path: inset(50%) !important;
+  white-space: nowrap !important;
+}
+
+html[data-unit].game-focus .menu-button {
+  position: relative;
+  z-index: 2;
+  width: 52px;
+  min-height: 52px;
+  margin: 0 auto;
+  border-radius: 14px;
+  pointer-events: auto;
+}
+
+html[data-unit].game-focus .app {
+  height: var(--viewport-height);
+  padding: 12px var(--game-right-rail) 10px var(--game-left-rail);
+  gap: 10px;
+}
+
+html[data-unit].game-focus .control-bar {
+  margin: 0;
+}
+
+html[data-unit].game-focus .control-bar::before {
+  left: calc(-1 * var(--game-left-rail));
+  right: calc(-1 * var(--game-right-rail));
+}
+
+/* iPad Safari owns the fullscreen close control in the top-left.
+   Use both the standards and WebKit fullscreen pseudo-classes, with our
+   JS class as a fallback, so the offset follows Safari's real fullscreen state. */
+:is(
+  html[data-unit].is-ipad:fullscreen,
+  html[data-unit].is-ipad:-webkit-full-screen,
+  html[data-unit].is-ipad.is-fullscreen
+):not(.game-focus) .site-header-inner {
+  padding-left: 88px;
+}
+
+:is(
+  html[data-unit].is-ipad:fullscreen,
+  html[data-unit].is-ipad:-webkit-full-screen,
+  html[data-unit].is-ipad.is-fullscreen
+):not(.game-focus) .site-header .menu-button {
+  order: 3;
+  margin-left: auto;
+  margin-right: 0;
+}
+
+/* Game fullscreen: reserve Safari's top-left exit-control zone for the whole
+   header rail, then start teacher answers beneath the Home control. */
+:is(
+  html[data-unit].is-ipad:fullscreen,
+  html[data-unit].is-ipad:-webkit-full-screen,
+  html[data-unit].is-ipad.is-fullscreen
+).game-focus .site-header-inner {
+  padding-top: 48px;
+}
+
+:is(
+  html[data-unit].is-ipad:fullscreen,
+  html[data-unit].is-ipad:-webkit-full-screen,
+  html[data-unit].is-ipad.is-fullscreen
+).game-focus .site-header::after {
+  top: 114px;
+}
+
+:is(
+  html[data-unit].is-ipad:fullscreen,
+  html[data-unit].is-ipad:-webkit-full-screen,
+  html[data-unit].is-ipad.is-fullscreen
+).game-focus .missing-answer-hints {
+  top: 126px;
+  height: calc(var(--viewport-height) - 126px - 82px);
+}
+
+.ui-icon {
+  display: inline-grid;
+  place-items: center;
+  width: 1.15em;
+  height: 1.15em;
+  flex: 0 0 auto;
+}
+
+.ui-icon img {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: contain;
+}
+
+.ui-icon svg {
+  width: 100%;
+  height: 100%;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.ui-icon svg .fill {
+  fill: currentColor;
+  stroke: none;
+}
+
+.menu-button {
+  display: grid;
+  place-items: center;
+}
+
+.menu-button .ui-icon {
+  width: 30px;
+  height: 30px;
+}
+
+.side-nav {
+  display: grid;
+  place-items: center;
+}
+
+.side-nav .ui-icon {
+  width: 52px;
+  height: 52px;
+}
+
+.floating-auto .ui-icon {
+  width: 34px;
+  height: 34px;
+}
+
+.control .ui-icon,
+.game-menu-button .ui-icon {
+  width: 1.1em;
+  height: 1.1em;
+}
+
+#gameButton,
+#settingsButton,
+#shuffleButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.floating-timer {
+  display: grid;
+  grid-template-columns: 42px 42px;
+  grid-template-areas:
+    "value value"
+    "down up";
+  align-items: center;
+  justify-items: center;
+  gap: 3px 6px;
+  padding: 8px 9px;
+  border-radius: 20px;
+}
+
+.floating-timer .timer-value {
+  grid-area: value;
+  min-width: 0;
+  display: grid;
+  justify-items: center;
+  line-height: 1;
+  font-size: 0;
+}
+
+.floating-timer .timer-value::before {
+  content: attr(data-seconds);
+  font-size: 29px;
+  font-weight: 900;
+  line-height: .9;
+}
+
+.floating-timer .timer-value::after {
+  content: "seconds";
+  margin-top: 3px;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.floating-timer button:first-of-type {
+  grid-area: down;
+}
+
+.floating-timer button:last-of-type {
+  grid-area: up;
+}
+
+.floating-timer.timer-control button {
+  width: 40px;
+  height: 36px;
+  font-size: 22px;
+}
+
+.fullscreen-button {
+  position: static;
+  z-index: auto;
+  width: 100%;
+  height: 100%;
+  min-height: 64px;
+  display: grid;
+  place-items: center;
+  padding: 8px;
+  color: var(--ink);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 15px;
+  box-shadow: 0 5px 12px rgba(20, 40, 35, .12);
+}
+
+.fullscreen-button .ui-icon {
+  width: 28px;
+  height: 28px;
+}
+
+.fullscreen-button:hover,
+.fullscreen-button:focus-visible {
+  background: #eef4f6;
+}
+
+@media (max-width: 850px) {
+  html[data-unit] {
+    --header-height: 72px;
+  }
+
+  html[data-unit].game-focus {
+    --header-height: 0px;
+    --game-left-rail: 88px;
+    --game-right-rail: 84px;
+  }
+
+  html[data-unit].game-focus .site-header {
+    width: var(--game-left-rail);
+    bottom: 76px;
+    padding-left: 8px;
+    padding-right: 8px;
+  }
+
+  html[data-unit].game-focus .app {
+    padding-left: var(--game-left-rail);
+    padding-right: var(--game-right-rail);
+  }
+
+  html[data-unit].game-focus .control-bar::before {
+    left: calc(-1 * var(--game-left-rail));
+    right: calc(-1 * var(--game-right-rail));
+  }
+
+  html[data-unit] .side-nav .ui-icon {
+    width: 42px;
+    height: 42px;
+  }
+
+}
+
+@media (max-width: 650px) {
+  html[data-unit] {
+    --header-height: 60px;
+  }
+
+  html[data-unit].game-focus {
+    --header-height: 0px;
+    --game-left-rail: 76px;
+    --game-right-rail: 72px;
+  }
+
+  html[data-unit].game-focus .site-header {
+    width: var(--game-left-rail);
+    bottom: 68px;
+    padding-left: 6px;
+    padding-right: 6px;
+  }
+
+  html[data-unit].game-focus .menu-button {
+    width: 48px;
+    min-height: 48px;
+  }
+
+  html[data-unit].game-focus .app {
+    padding-left: var(--game-left-rail);
+    padding-right: var(--game-right-rail);
+  }
+
+  html[data-unit].game-focus .control-bar::before {
+    left: calc(-1 * var(--game-left-rail));
+    right: calc(-1 * var(--game-right-rail));
+  }
+
+  .menu-button .ui-icon {
+    width: 26px;
+    height: 26px;
+  }
+
+}
+
+
+
+

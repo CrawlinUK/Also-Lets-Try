@@ -1,0 +1,36 @@
+/* ============================================================
+   TABLET / SHARED ENGINE CLEANUP
+   Final responsive rules intentionally come last.
+   ============================================================ */
+@media (max-width: 900px) {
+  html.shared-unit-template .control-bar:has(#floatingTimer:not([hidden])),
+  html.shared-unit-template .control-bar:not(:has(#floatingTimer:not([hidden]))) {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  html.shared-unit-template.guess-focus .control-bar:not(:has(#floatingTimer:not([hidden]))) {
+    grid-template-columns: minmax(120px, 1fr) minmax(150px, 1fr) 62px 62px;
+  }
+
+  .fullscreen-button {
+    min-height: 48px;
+  }
+
+  html.shared-unit-template .guess-word-list {
+    left: 6px;
+    width: 74px;
+  }
+}
+
+@media (max-width: 650px) {
+  html.shared-unit-template .control-bar:has(#floatingTimer:not([hidden])),
+  html.shared-unit-template .control-bar:not(:has(#floatingTimer:not([hidden]))) {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  html.shared-unit-template.guess-focus .control-bar:not(:has(#floatingTimer:not([hidden]))) {
+    grid-template-columns: minmax(110px, 1fr) minmax(130px, 1fr) 56px 56px;
+  }
+}
+
+
