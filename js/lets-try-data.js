@@ -404,7 +404,7 @@
     sheets: {
       ...Object.fromEntries(JOB_SETS.map((ids, index) => [
         "jobSet" + (index + 1), {
-          file: "images/jobSet" + (index + 1) + ".webp",
+          file: "images/jobs/jobSet" + (index + 1) + ".webp",
           cellAspectRatio: "1 / 1",
           backgroundSize: "400% 300%",
           grid: "4x3",

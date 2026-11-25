@@ -80,7 +80,7 @@ for (const book of ["lt1","lt2"]) {
 expected.forEach((ids, set) => {
   ids.forEach((id, cell) => {
     const v = db.getWordVisual("jobs", id);
-    assert.ok(v.src.endsWith("/images/jobSet" + (set + 1) + ".webp"), id);
+    assert.ok(v.src.endsWith("/images/jobs/jobSet" + (set + 1) + ".webp"), id);
     assert.equal(v.size, "400% 300%", id);
     assert.equal(v.aspectRatio, "1 / 1", id);
     assert.equal(v.position, ["0%","33.333%","66.667%","100%"][cell % 4] + " " + ["0%","50%","100%"][Math.floor(cell / 4)], id);
@@ -93,7 +93,7 @@ assert.equal(deck.cards.length, 36);
 assert.ok(deck.cards.every(card => card.textbook && card.visual.src));
 assert.equal(deck.cards.find(card => card.id === "youtuber").word, "YouTuber");
 for (let set = 1; set <= 3; set++) {
-  const file = path.join(root, "images", "jobSet" + set + ".webp");
+  const file = path.join(root, "images", "jobs", "jobSet" + set + ".webp");
   assert.ok(fs.existsSync(file), "Missing original Jobs sheet: " + file);
   const bytes = fs.readFileSync(file);
   assert.equal(bytes.toString("ascii", 0, 4), "RIFF");
