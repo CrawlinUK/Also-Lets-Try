@@ -39,6 +39,9 @@ jobs:
       - name: Drawing tools checks
         if: ${{ !cancelled() && steps.syntax.outcome == 'success' }}
         run: node tests/drawing-tools.test.js
+      - name: Settings checks
+        if: ${{ !cancelled() && steps.syntax.outcome == 'success' }}
+        run: node tests/settings.test.js
       - name: Vocabulary checks
         if: ${{ !cancelled() && steps.syntax.outcome == 'success' }}
         run: node tests/vocabulary-data.test.js

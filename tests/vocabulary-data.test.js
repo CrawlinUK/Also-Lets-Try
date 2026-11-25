@@ -402,4 +402,4 @@ for (const n of [1, 2]) {
     assert.ok(fs.existsSync(path.join(root, "config/units/book" + n + "-unit" + unit + ".js")), "renamed unit config exists");
   }
 }
-assert.match(source("js/classroom.js"), /LEGACY_PREFERENCES_KEY/, "saved teacher preferences remain readable");
+assert.match(source("js/settings.js"), /LEGACY_PREFERENCES_KEY/, "saved teacher preferences remain readable");
