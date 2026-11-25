@@ -2554,105 +2554,106 @@
         orderButton.innerHTML = '<span class="flash-board-action-symbol" aria-hidden="true">▦</span><span class="flash-board-action-label">order</span>';
         orderButton.title = "Click to tidy your arrangement; double-click to restore vocabulary order";
         orderButton.setAttribute("aria-label", "Order cards: click to tidy, double-click for original order");
-        const orderByVocabulary=()=>{
-          // entries are in UNIT_CONFIG.cards order, not the order in which
-          // cards were moved or removed. Never restore binned cards here.
-          const remaining=entries.filter(entry=>!binned.has(entry.card.id));
-          if(!remaining.length || !board.clientWidth || !board.clientHeight)return;
-          const shape=optimalGameShape(board.clientWidth,board.clientHeight,remaining.map(entry=>entry.card));
-          const cols=shape.columns,rows=shape.rows;
-          const width=100/cols,height=100/rows;
-          remaining.forEach((entry,index)=>{
-            const row=Math.floor(index/cols);
-            const countInRow=Math.min(cols,remaining.length-row*cols);
-            const col=index%cols;
-            const size=dimensions(entry.tile);
-            const rowStart=(100-countInRow*width)/2;
-            entry.last=place(entry.tile,{
-              x:rowStart+col*width+(width-size.width)/2,
-              y:row*height+(height-size.height)/2
-            });
-            positions.set(entry.card.id,entry.last);
-          });
-        };
-        const handleOrderClick = event => {
-          if(event.detail>=2) {
-            palette.hidden=true;
-            eraseMenu.hidden=true;
-            setTool("move");
-            orderByVocabulary();
-            return;
-          }
-          // Single click preserves the teacher's existing row groups.
-          tidyCurrentRows();
-        };
-        const tidyCurrentRows=() => {
-          palette.hidden = true;
-          eraseMenu.hidden = true;
+        // Both Order actions share the SAME rows and spacing.
+        // One tap tidies the existing row/column order; two taps put the
+        // original vocabulary sequence into those existing row slots.
+        const arrangeBoardRows = restoreVocabularyOrder => {
+          palette.hidden=true;
+          eraseMenu.hidden=true;
           setTool("move");
-          if (!entries.length || !board.clientWidth || !board.clientHeight) return;
-          // Group cards into the rows the teacher has already made.
-          // Then preserve left-to-right order within each row. Do not
-          // independently match cards to nearest grid slots: that can
-          // scramble a deliberately arranged 6+4 layout into 4+4+2.
+          if(!board.isConnected || !board.clientWidth || !board.clientHeight)return;
           const activeEntries=entries.filter(entry=>!binned.has(entry.card.id));
-          if (!activeEntries.length) return;
-          const items = activeEntries.map((entry, index) => {
-            const pos = entry.last || {x:0,y:0};
-            const size = dimensions(entry.tile);
+          if(!activeEntries.length)return;
+          const items=activeEntries.map(entry=>{
+            const size=dimensions(entry.tile);
+            const position=entry.last || {x:0,y:0};
             return {
-              entry, index, width:size.width, height:size.height,
-              cx:pos.x + size.width/2, cy:pos.y + size.height/2
+              entry, width:size.width, height:size.height,
+              cx:position.x+size.width/2, cy:position.y+size.height/2,
+              // Entries are created in the exact vocabulary source order.
+              sourceIndex:entry.index
             };
           });
-          const median = values => {
-            const sorted = [...values].sort((a,b)=>a-b);
-            return sorted[Math.floor(sorted.length/2)] || 0;
-          };
-          const cardHeight = median(items.map(item => item.height));
-          const rowTolerance = Math.max(6, cardHeight * .65);
+          const sortedHeights=items.map(item=>item.height).sort((a,b)=>a-b);
+          const medianHeight=sortedHeights[Math.floor(sortedHeights.length/2)] || 0;
+          const rowTolerance=Math.max(6,medianHeight*.65);
           items.sort((a,b)=>a.cy-b.cy || a.cx-b.cx);
-          const groupedRows = [];
-          items.forEach(item => {
-            // Join the closest row only if its vertical centre is close.
-            let nearest = null, distance = Infinity;
-            groupedRows.forEach(row => {
-              const delta = Math.abs(row.cy-item.cy);
-              if (delta < distance) { nearest=row; distance=delta; }
-            });
-            if (nearest && distance <= rowTolerance) {
+          const groupedRows=[];
+          for(const item of items){
+            let nearest=null,nearestDistance=Infinity;
+            for(const row of groupedRows){
+              const difference=Math.abs(row.cy-item.cy);
+              if(difference<nearestDistance){nearest=row;nearestDistance=difference;}
+            }
+            if(nearest && nearestDistance<=rowTolerance){
               nearest.items.push(item);
-              nearest.cy = nearest.items.reduce((sum,c)=>sum+c.cy,0)/nearest.items.length;
-            } else groupedRows.push({cy:item.cy,items:[item]});
-          });
+              nearest.cy=nearest.items.reduce((sum,other)=>sum+other.cy,0)/nearest.items.length;
+            }else{
+              groupedRows.push({cy:item.cy,items:[item]});
+            }
+          }
           groupedRows.sort((a,b)=>a.cy-b.cy);
-          const rowCount = groupedRows.length;
-          const maxHeight = Math.max(...items.map(item=>item.height));
-          const verticalGap = Math.max(1.8, Math.min(4, (100-rowCount*maxHeight)/Math.max(1,rowCount+1)));
-          const totalHeight = rowCount*maxHeight+(rowCount-1)*verticalGap;
-          const topStart = Math.max(0, (100-totalHeight)/2);
-          groupedRows.forEach((row, rowIndex) => {
-            row.items.sort((a,b)=>a.cx-b.cx || a.index-b.index);
-            const totalWidth = row.items.reduce((sum,item)=>sum+item.width,0);
-            const freeSpace = Math.max(0,100-totalWidth);
-            const desiredGap = Math.min(5, freeSpace/Math.max(1,row.items.length+1));
-            const occupied = totalWidth + desiredGap*(row.items.length-1);
-            let left = Math.max(0,(100-occupied)/2);
-            row.items.forEach(item => {
-              item.entry.last = place(item.entry.tile,{
+          groupedRows.forEach(row=>row.items.sort((a,b)=>a.cx-b.cx || a.sourceIndex-b.sourceIndex));
+
+          if(restoreVocabularyOrder){
+            // Reassign vocabulary cards to the row slots teachers already
+            // arranged. A 3/4/4 layout stays 3/4/4, not 6/5.
+            // Binned cards are omitted without creating empty gaps.
+            const sorted=[...items].sort((a,b)=>a.sourceIndex-b.sourceIndex);
+            let next=0;
+            for(const row of groupedRows){
+              row.items=sorted.slice(next,next+row.items.length);
+              next+=row.items.length;
+            }
+          }
+
+          const rowCount=groupedRows.length;
+          const rowHeights=groupedRows.map(row=>Math.max(...row.items.map(item=>item.height)));
+          const totalCardsHeight=rowHeights.reduce((sum,h)=>sum+h,0);
+          const verticalGap=Math.max(1.8,Math.min(4,(100-totalCardsHeight)/Math.max(1,rowCount+1)));
+          const totalHeight=totalCardsHeight+(rowCount-1)*verticalGap;
+          let top=Math.max(0,(100-totalHeight)/2);
+          for(let i=0;i<rowCount;i++){
+            const row=groupedRows[i];
+            const rowHeight=rowHeights[i];
+            const totalWidth=row.items.reduce((sum,item)=>sum+item.width,0);
+            const freeSpace=Math.max(0,100-totalWidth);
+            const gap=Math.min(5,freeSpace/Math.max(1,row.items.length+1));
+            const occupied=totalWidth+gap*(row.items.length-1);
+            let left=Math.max(0,(100-occupied)/2);
+            for(const item of row.items){
+              item.entry.last=place(item.entry.tile,{
                 x:left,
-                y:topStart+rowIndex*(maxHeight+verticalGap)+(maxHeight-item.height)/2
+                y:top+(rowHeight-item.height)/2
               });
               positions.set(item.entry.card.id,item.entry.last);
-              left += item.width+desiredGap;
-            });
-          });
+              left+=item.width+gap;
+            }
+            top+=rowHeight+verticalGap;
+          }
         };
-        orderButton.addEventListener("click",handleOrderClick);
-        orderButton.addEventListener("dblclick",event=>{
-          // Fallback for desktop browsers where click detail differs.
-          event.preventDefault();
-          orderByVocabulary();
+        // Do not run a single-click tidy before a double-click. That first
+        // tidy previously changed the row layout used by the second action.
+        let orderClickTimer=null;
+        let lastOrderTap=0;
+        orderButton.addEventListener("click",event=>{
+          const now=Date.now();
+          const isDouble=event.detail>=2 || (lastOrderTap>0 && now-lastOrderTap<340);
+          if(orderClickTimer!==null){
+            clearTimeout(orderClickTimer);
+            orderClickTimer=null;
+          }
+          if(isDouble){
+            lastOrderTap=0;
+            arrangeBoardRows(true);
+          }else{
+            lastOrderTap=now;
+            orderClickTimer=setTimeout(()=>{
+              orderClickTimer=null;
+              lastOrderTap=0;
+              arrangeBoardRows(false);
+            },340);
+          }
         });
         removeButton=document.createElement("button");
         removeButton.type="button";
