@@ -591,6 +591,7 @@
         flashBoardRedo: [],
         flashBoardPenColour: "#e53935",
         flashBoardCardScale: 1,
+        flashBoardLabelsVisible: true,
         flashBoardPositions: new Map(),
         flashBoardBinned: new Set(),
         flashBoardTexts: [],
@@ -2006,6 +2007,7 @@
           ? pluralForm(card.word) : (card.word||"");
         const board = document.createElement("div");
         board.className = "flash-board";
+        board.classList.toggle("labels-hidden", !state.flashBoardLabelsVisible);
         board.setAttribute("aria-label", "Freely arrange selected flash cards");
         board.addEventListener("contextmenu", event => event.preventDefault());
         board.addEventListener("selectstart", event => event.preventDefault());
@@ -2025,6 +2027,7 @@
         let cellWidth = 100;
         let cellHeight = 100 / rows;
         const textOnly = state.displayMode === "text";
+        const hasCardCaptions = !textOnly && state.displayMode !== "picture";
         const visualSize = (card) => {
           const cardWidth = Math.min(75, Math.min(38, cellWidth * .94) * state.flashBoardCardScale);
           const cardHeight = Math.min(80, Math.min(48, cellHeight * .93) * state.flashBoardCardScale);
@@ -2206,6 +2209,7 @@
         bin=document.createElement("aside");
         bin.id="flashBoardBin";
         bin.className="flash-board-bin";
+        bin.classList.toggle("labels-hidden", !state.flashBoardLabelsVisible);
         bin.setAttribute("aria-label","Card bin");
         const binHeading=document.createElement("div");
         binHeading.className="flash-board-bin-heading";
@@ -2938,6 +2942,28 @@
           });
           renderBin();
         };
+        // Hide only picture-card captions; word-only cards and teacher text
+        // stay visible so this control never makes a word-only deck vanish.
+        const labelsButton=document.createElement("button");
+        labelsButton.type="button";
+        labelsButton.className="flash-board-tool flash-board-label-toggle";
+        labelsButton.innerHTML='<span class="flash-board-action-symbol" aria-hidden="true">Aa</span><span class="flash-board-action-label">labels</span>';
+        labelsButton.setAttribute("aria-label","Show or hide flashcard labels");
+        const syncLabelButton=()=>{
+          const visible=state.flashBoardLabelsVisible;
+          labelsButton.classList.toggle("active",visible);
+          labelsButton.setAttribute("aria-pressed",String(visible));
+          labelsButton.title=visible?"Hide flashcard labels":"Show flashcard labels";
+          board.classList.toggle("labels-hidden",!visible);
+          bin.classList.toggle("labels-hidden",!visible);
+        };
+        labelsButton.disabled=!hasCardCaptions;
+        syncLabelButton();
+        labelsButton.addEventListener("click",()=>{
+          state.flashBoardLabelsVisible=!state.flashBoardLabelsVisible;
+          syncLabelButton();
+        });
+        toolRail.insertBefore(labelsButton,orderButton);
         const sizeButton=document.createElement("button");
         sizeButton.type="button";
         sizeButton.className="flash-board-tool";
