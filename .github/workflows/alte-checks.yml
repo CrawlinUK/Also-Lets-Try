@@ -36,6 +36,9 @@ jobs:
       - name: Flash Board checks
         if: ${{ !cancelled() && steps.syntax.outcome == 'success' }}
         run: node tests/flash-board.test.js
+      - name: Drawing tools checks
+        if: ${{ !cancelled() && steps.syntax.outcome == 'success' }}
+        run: node tests/drawing-tools.test.js
       - name: Vocabulary checks
         if: ${{ !cancelled() && steps.syntax.outcome == 'success' }}
         run: node tests/vocabulary-data.test.js
