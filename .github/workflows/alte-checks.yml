@@ -14,16 +14,18 @@ jobs:
     timeout-minutes: 5
     steps:
       - name: Check out repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
       - name: Set up Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v5
         with:
           node-version: '22'
       - name: Check JavaScript syntax
+        id: syntax
         run: |
           find js config tests -name '*.js' -print0 | xargs -0 -n 1 node --check
           node --check sw.js
       - name: Vocabulary checks
         run: node tests/vocabulary-data.test.js
       - name: Jobs category checks
+        if: ${{ !cancelled() && steps.syntax.outcome == 'success' }}
         run: node tests/jobs-category.test.js

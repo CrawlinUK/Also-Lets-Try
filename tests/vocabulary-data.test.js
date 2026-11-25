@@ -81,9 +81,9 @@ assert.match(sharedCssSource, /data-book="categories"\] \.site-title \.unit-numb
   "hide unit number only for Categories");
 
 const viewerSource = source("vocabulary-viewer.html");
-assert.match(viewerSource, /function row\(label,value\)/,
+assert.match(viewerSource, /function row\(\s*\w+\s*,\s*\w+\s*\)/,
   "viewer metadata helper required before artwork can render");
-assert.match(viewerSource, /db\.getWordVisual\(category,id\)/,
+assert.match(viewerSource, /db\.getWordVisual\(\s*categoryId\s*,\s*itemId\s*\)/,
   "viewer uses shared artwork mapping");
 assert.match(viewerSource, /cellAspectRatio/,
   "viewer reads canonical sprite cell proportions");
@@ -297,28 +297,21 @@ assert.doesNotMatch(classroomSource,
   "do not observe the element being resized");
 assert.doesNotMatch(classroomSource, /lastTextFitKey/,
   "do not cache a width measurement made before layout or fonts settle");
-assert.match(classroomSource, /textMeasure\.getBoundingClientRect\(\)\.width/,
-  "measure unclipped text in an independent natural-size node");
-assert.match(classroomSource, /elements\.flashcard\.append\(textMeasure\)/,
-  "hidden text measurement is outside the answer-area flex layout");
-assert.doesNotMatch(classroomSource, /elements\.answerArea\.append\(textMeasure\)/,
-  "never add measuring text as an answer-area flex child");
-assert.match(classroomSource, /position: "fixed"/,
-  "measurement never consumes stage layout space");
+// Typography now uses fluid CSS instead of a hidden JavaScript measuring node.
+assert.match(sharedCssSource, /--display-size:\s*clamp\(/,
+  "responsive display typography uses a viewport-aware size");
+assert.match(classroomSource, /text\.style\.removeProperty\("font-size"\)/,
+  "remove stale JavaScript font sizing");
+assert.match(classroomSource, /text\.style\.removeProperty\("white-space"\)/,
+  "CSS owns wrapping");
 assert.match(classroomSource, /document\.fonts\.addEventListener\("loadingdone"/,
   "refit after handwriting font finishes loading");
 assert.match(classroomSource, /if \(artworkFitScheduled\) return;/,
   "refit requests should be coalesced into one animation frame");
 assert.match(classroomSource, /requestAnimationFrame\(\(\) => \{\s*artworkFitScheduled = false;\s*fitFlashcardArtwork\(\);/,
   "verify the text again on the next layout frame without requiring window resize");
-assert.match(classroomSource, /inkRange\.getBoundingClientRect\(\)\.width/,
-  "the actual visible sentence, not only the probe, is checked for clipping");
-assert.match(classroomSource, /actualWidth > availableWidth \* \.99/,
-  "any initial overflow forces smaller handwriting before image sizing");
-assert.match(classroomSource, /text\.style\.whiteSpace = "normal"/,
-  "wrap only when the sentence cannot fit even at the readable minimum");
-assert.match(classroomSource, /Math\.min\(widthFit, heightFit\)/,
-  "text fitting accounts for both stage width and available height");
+assert.match(classroomSource, /Math\.min\(availableWidth, availableHeight \* ratio\)/,
+  "artwork fits both available dimensions while preserving proportions");
 assert.match(classroomSource, /dimensions\.height - verticalPadding - textHeight - gap - 24/,
   "picture must reserve space for the complete sentence and padding");
 assert.match(sharedCssSource, /white-space: normal;[\s\S]*?overflow-wrap: anywhere;/,
