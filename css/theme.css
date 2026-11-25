@@ -10,3 +10,33 @@
   --soft: #eff4f7;
   --shadow: 0 10px 30px rgba(31, 47, 40, 0.12);
 }
+
+/* The action label tells the teacher which lighting mode the button will select. */
+.alte-lights-toggle {
+  display:inline-flex;align-items:center;justify-content:center;gap:6px;
+  flex:0 0 auto;margin-left:auto;padding:6px 10px;min-height:42px;
+  border:1px solid var(--line);border-radius:11px;
+  background:var(--soft);color:var(--ink);font:inherit;font-size:15px;font-weight:700;cursor:pointer;
+}
+.alte-lights-toggle svg { width:22px;height:22px;flex:none; }
+.alte-lights-toggle:focus-visible { outline:3px solid #00ada9;outline-offset:2px; }
+.alte-lights-panel { min-height:32px;padding:4px 8px; }
+html[data-theme="dark"] {
+  color-scheme:dark;
+  --ink:#f1f3f5;
+  --muted:#b5bfcc;
+  --line:#46525f;
+  --surface:#222831;
+  --page:#151a21;
+  --soft:#303945;
+  --shadow:0 10px 30px rgba(0,0,0,.28);
+  --green:#20b769;
+  --purple:#7955cf;
+}
+html[data-theme="dark"] .alte-lights-toggle svg { color:#ffd879; }
+html[data-theme="dark"] .back { background:var(--soft);color:var(--ink); }
+html[data-theme="dark"] .tag { background:var(--soft);color:var(--muted); }
+@media (max-width:650px) {
+  .alte-lights-toggle:not(.alte-lights-panel) .alte-lights-label { display:none; }
+  .alte-lights-toggle:not(.alte-lights-panel) { padding:6px;min-width:38px; }
+}

@@ -6,7 +6,7 @@
     ? new URL(document.currentScript.src)
     : new URL("js/unit-loader.js", location.href);
   const projectRoot = new URL("../", current);
-  const ASSET_VERSION = "20261125-alte-v74";
+  const ASSET_VERSION = "20261125-alte-v75";
 
   const params = new URLSearchParams(location.search);
   const requestedBook = (params.get("book") || "book1").toLowerCase();
@@ -247,6 +247,7 @@
       await loadScript("js/shared/presentation.js");
       await loadScript("js/shared/grid-layout.js");
       await loadScript("js/classroom.js");
+      window.ALTE_THEME?.mount();
       await loadScript("js/classroom-ui.js");
 
       requestAnimationFrame(() => {

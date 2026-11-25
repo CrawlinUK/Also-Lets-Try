@@ -1,0 +1,29 @@
+/* Classroom night palette — preserve white artwork and the light drawing canvas. */
+html.shared-unit-template.game-focus .site-header-inner .alte-lights-toggle { display:none; }
+html.shared-unit-template .site-header-inner .alte-lights-toggle { margin-left:auto; }
+html.shared-unit-template .settings-heading .alte-lights-toggle { margin-left:auto; }
+html[data-theme="dark"].shared-unit-template :is(.game-title,.keyboard-help,.missing-answer-hints,.guess-tap-prompt) { color:var(--muted); }
+html[data-theme="dark"].shared-unit-template :is(.floating-timer,.timer-control button,.side-nav,.keyboard-help,.setting-actions-top button,.guess-random-button,.guess-word-button,.guess-mode-options button,.guess-category-options button,.card-option,.category-option,.settings-preview,.segmented,.fullscreen-button) {
+  background:var(--soft);color:var(--ink);border-color:var(--line);
+}
+html[data-theme="dark"].shared-unit-template :is(.side-nav:hover,.side-nav:focus-visible,.fullscreen-button:hover,.fullscreen-button:focus-visible,.category-option:hover,.category-option:focus-visible) { background:#3c4958; }
+html[data-theme="dark"].shared-unit-template :is(.card-option.selected,.category-option.selected,.category-option.all-selected,.guess-category-options button.selected) { background:#204c3b;color:#bcf3d6;border-color:#4bb785; }
+html[data-theme="dark"].shared-unit-template .category-option.partial-selected { background:#533f26;color:#ffe0aa;border-color:#ba8a4f; }
+html[data-theme="dark"].shared-unit-template .category-option.none-selected { background:var(--soft);color:var(--ink); }
+html[data-theme="dark"].shared-unit-template .segmented input:checked + span { background:#254e77;color:#d4eaff; }
+html[data-theme="dark"].shared-unit-template .guess-word-button.current { background:#514625;color:#fff1bc; }
+html[data-theme="dark"].shared-unit-template .game-tile { background:transparent; }
+html[data-theme="dark"].shared-unit-template .game-tile.covered { background:#303945;border-color:#8493a6; }
+html[data-theme="dark"].shared-unit-template .game-tile.covered::after { color:#d5deeb; }
+html[data-theme="dark"].shared-unit-template .message { color:#ffb1a9; }
+html[data-theme="dark"].shared-unit-template .site-header::after { background:var(--line); }
+html[data-theme="dark"].shared-unit-template :is(#menuButton,#settingsButton) .ui-icon img { filter:brightness(0) invert(1); }
+html[data-theme="dark"].shared-unit-template :is(.flash-board,.flash-board-card,.flash-board-user-text,.text-visual) { color:#17191d; }
+html[data-theme="dark"].shared-unit-template .flash-board { background:#f7faf8; }
+html[data-theme="dark"].shared-unit-template :is(.flash-board-tools,.flash-board-bin,.flash-board-size-menu,.flash-board-eraser-menu,.flash-board-palette,.flash-board-text-panel) { background:var(--surface);color:var(--ink);border-color:var(--line); }
+html[data-theme="dark"].shared-unit-template :is(.flash-board-tool,.flash-board-size-menu button,.flash-board-eraser-menu button,.flash-board-text-panel input,.flash-board-text-panel textarea,.flash-board-text-format select,.flash-board-text-format button,.flash-board-text-actions button) { background:var(--soft);color:var(--ink);border-color:var(--line); }
+html[data-theme="dark"].shared-unit-template :is(.flash-board-tool.active,.flash-board-eraser-menu button.chosen,.flash-board-text-format button.active) { background:#254e77;color:#d4eaff;border-color:#72b4f4; }
+html[data-theme="dark"].shared-unit-template .flash-board-bin-heading,
+html[data-theme="dark"].shared-unit-template .flash-board-text-format label { color:var(--muted); }
+html[data-theme="dark"].shared-unit-template #loadingScreen { background:var(--page); }
+html[data-theme="dark"].shared-unit-template .loading-panel { color:var(--ink); }
