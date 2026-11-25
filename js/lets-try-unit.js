@@ -1983,20 +1983,22 @@
         ]);
         const nounCategories = new Set([
           "fruit","food","animals","animal","vegetables","shapes",
-          "schoolSupplies","stationery","schoolItems","classroomObjects"
+          "schoolSupplies","stationery","schoolItems","classroomObjects","jobs"
         ]);
         const pluralEligible = card => {
           const word=String(card.word||"").trim().toLowerCase();
           const category=String(card.category||"");
           return nounCategories.has(category) && /^[a-z][a-z -]*$/.test(word)
-            && !nonCountWords.has(word) && (!/s$/.test(word) || !!irregularPlurals[word]);
+            && !nonCountWords.has(word);
         };
         const pluralForm = word => {
+          const parts=word.split(" ");
+          if(parts.length>1)return parts.slice(0,-1).join(" ")+" "+pluralForm(parts[parts.length-1]);
           const key=word.toLowerCase();
           if (irregularPlurals[key])return irregularPlurals[key];
           if (/[^aeiou]y$/i.test(word))return word.slice(0,-1)+"ies";
           if (/(ch|sh|x|z|s)$/i.test(word))return word+"es";
-          if (/fe$/i.test(word))return word.slice(0,-2)+"ves";
+          if (/(?:knife|wife|life)$/i.test(word))return word.slice(0,-2)+"ves";
           return word+"s";
         };
         const cardLabel = card => pluralCards.has(card.id) && pluralEligible(card)
@@ -2413,10 +2415,21 @@
         ];
         let currentTool = "move";
         let eraserMode = "part";
+        let erasePartButton, eraseWholeButton;
         const eraser = document.createElement("button");
         eraser.type = "button";
         eraser.className = "flash-board-tool";
-        eraser.innerHTML = '<img src="images/ui/AlsoEraser.svg" alt="" aria-hidden="true">';
+        eraser.innerHTML = '<img src="images/ui/AlsoEraser.svg" alt="" aria-hidden="true"><span class="flash-board-eraser-badge" aria-hidden="true">part</span>';
+        const eraserBadge=eraser.querySelector(".flash-board-eraser-badge");
+        const updateEraserMode=()=>{
+          eraserBadge.textContent=eraserMode==="whole"?"line":"part";
+          eraser.title=eraserMode==="whole"?"Eraser: whole line":"Eraser: partial";
+          for(const [button,mode] of [[erasePartButton,"part"],[eraseWholeButton,"whole"]]){
+            if(!button)continue;
+            button.classList.toggle("chosen",eraserMode===mode);
+            button.setAttribute("aria-pressed",String(eraserMode===mode));
+          }
+        };
         eraser.title = "Erase (tap again for options)";
         eraser.setAttribute("aria-label", "Eraser");
         const eraseMenu = document.createElement("div");
@@ -2451,9 +2464,11 @@
           button.append(symbol, words);
           button.addEventListener("click", action);
           eraseMenu.append(button);
+          return button;
         };
-        menuOption("Erase parts", "◌", () => { eraserMode = "part"; eraseMenu.hidden = true; setTool("erase"); });
-        menuOption("Whole stroke", "〰", () => { eraserMode = "whole"; eraseMenu.hidden = true; setTool("erase"); });
+        erasePartButton=menuOption("Erase parts", "◌", () => { eraserMode="part"; eraseMenu.hidden=true; updateEraserMode(); setTool("erase"); });
+        eraseWholeButton=menuOption("Whole stroke", "〰", () => { eraserMode="whole"; eraseMenu.hidden=true; updateEraserMode(); setTool("erase"); });
+        updateEraserMode();
         menuOption("Clear all", "✕", () => {
           beginInkAction();
           state.flashBoardInk.length = 0;
@@ -2597,7 +2612,7 @@
         textToolButton.setAttribute("aria-pressed","false");
         textToolButton.addEventListener("click",()=>{
           removalMode=false;palette.hidden=true;eraseMenu.hidden=true;
-          setTool("text");
+          setTool(currentTool==="text"?"move":"text");
         });
         suffixButton=document.createElement("button");
         suffixButton.type="button";
@@ -2605,23 +2620,28 @@
         suffixButton.textContent="Ss";
         suffixButton.title="Toggle plural forms for applicable flashcards";
         suffixButton.setAttribute("aria-label","Pluralise applicable flashcards");
-        suffixButton.setAttribute("aria-pressed",String(cards.some(card=>pluralCards.has(card.id))));
+        const eligiblePluralCards=cards.filter(pluralEligible);
+        const refreshPluralButton=()=>{
+          const enabled=eligiblePluralCards.length>0 && eligiblePluralCards.every(card=>pluralCards.has(card.id));
+          suffixButton.classList.toggle("active",enabled);
+          suffixButton.setAttribute("aria-pressed",String(enabled));
+          suffixButton.disabled=!eligiblePluralCards.length;
+          suffixButton.title=eligiblePluralCards.length?"Pluralise applicable flashcards":"No applicable cards in this selection";
+        };
         suffixButton.addEventListener("click",()=>{
-          const eligible=cards.filter(pluralEligible);
-          const enabled=eligible.some(card=>pluralCards.has(card.id));
-          eligible.forEach(card=>{
+          const enabled=eligiblePluralCards.every(card=>pluralCards.has(card.id));
+          eligiblePluralCards.forEach(card=>{
             if(enabled)pluralCards.delete(card.id);
             else pluralCards.add(card.id);
           });
-          suffixButton.classList.toggle("active",!enabled);
-          suffixButton.setAttribute("aria-pressed",String(!enabled));
+          refreshPluralButton();
           entries.forEach(entry=>{
             const caption=entry.tile.querySelector(".flash-board-word, .flash-board-caption");
             if(caption)caption.textContent=cardLabel(entry.card);
           });
           renderBin();
         });
-        suffixButton.classList.toggle("active",cards.some(card=>pluralCards.has(card.id)));
+        refreshPluralButton();
         const editText=(item,isNew=false)=>{
           document.getElementById("flashBoardTextDialog")?.remove();
           const overlay=document.createElement("div");
