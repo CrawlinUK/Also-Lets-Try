@@ -1423,6 +1423,7 @@
       }
 
       function render() {
+        document.documentElement.classList.toggle("flash-board-mode",state.gameMode === "flashboard");
         if (state.gameMode !== "flashboard") {
           document.getElementById("flashBoardTools")?.remove();
           document.getElementById("flashBoardBin")?.remove();
@@ -2395,6 +2396,7 @@
           if (undoButton) undoButton.disabled = !state.flashBoardUndo.length;
           if (redoButton) redoButton.disabled = !state.flashBoardRedo.length;
         };
+        state.flashBoardMenuController?.abort();
         const toolRail = document.createElement("div");
         toolRail.className = "flash-board-tools";
         const pen = document.createElement("button");
@@ -2945,6 +2947,14 @@
         });
         toolRail.insertBefore(sizeButton,removeButton);
         toolRail.insertBefore(sizeMenu,removeButton);
+        const menuController=new AbortController();
+        state.flashBoardMenuController=menuController;
+        document.addEventListener("pointerdown",event=>{
+          const target=event.target;
+          if(!pen.contains(target) && !palette.contains(target))palette.hidden=true;
+          if(!eraser.contains(target) && !eraseMenu.contains(target))eraseMenu.hidden=true;
+          if(!sizeButton.contains(target) && !sizeMenu.contains(target))sizeMenu.hidden=true;
+        },{capture:true,signal:menuController.signal});
         const pointOf = (event) => {
           const rect = inkLayer.getBoundingClientRect();
           return [
@@ -3080,6 +3090,21 @@
         drawingSurface.addEventListener("pointerdown", event => {
           if (currentTool === "move" || currentTool === "text" || (event.pointerType === "mouse" && event.button !== 0)) return;
           event.preventDefault();
+          // Tapping a card while painting or erasing exits to Move mode.
+          // The transparent drawing surface intercepts taps, so hit-test
+          // the actual card rectangles beneath it before starting a stroke.
+          const cardHit=entries.filter(entry=>!binned.has(entry.card.id) &&
+            entry.tile.getBoundingClientRect().left<=event.clientX &&
+            entry.tile.getBoundingClientRect().right>=event.clientX &&
+            entry.tile.getBoundingClientRect().top<=event.clientY &&
+            entry.tile.getBoundingClientRect().bottom>=event.clientY)
+            .sort((a,b)=>(Number(b.tile.style.zIndex)||0)-(Number(a.tile.style.zIndex)||0))[0];
+          if(cardHit && (currentTool==="draw" || currentTool==="erase")){
+            palette.hidden=true;
+            eraseMenu.hidden=true;
+            setTool("move");
+            return;
+          }
           drawingSurface.setPointerCapture(event.pointerId);
           const point = pointOf(event);
           beginInkAction();
